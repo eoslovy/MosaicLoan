@@ -4,7 +4,8 @@
     "airbnb/hooks",
     "next/core-web-vitals",
     "eslint:recommended",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:storybook/recommended"
   ],
   "env": {
     "browser": true,
@@ -12,14 +13,18 @@
     "node": true
   },
   "rules": {
-    "prettier/prettier": ["error"],
+    "prettier/prettier": [
+      "error"
+    ],
     "react/react-in-jsx-scope": "off",
     "import/no-extraneous-dependencies": "off",
     "import/no-unresolved": "off",
     "react/jsx-filename-extension": [
       "warn",
       {
-        "extensions": [".tsx"]
+        "extensions": [
+          ".tsx"
+        ]
       }
     ],
     "react/function-component-definition": [
@@ -32,7 +37,9 @@
   },
   "overrides": [
     {
-      "files": ["./src/app/layout.tsx"],
+      "files": [
+        "./src/app/layout.tsx"
+      ],
       "rules": {
         "camelcase": "off"
       }
