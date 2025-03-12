@@ -1,9 +1,16 @@
-// 버튼 컴포넌트
-export type ButtonProps = {
-  label: string; // 버튼에 표시될 text -> 필수로 하자
-  onClick?: () => void;
-  variant?: 'filled' | 'outline';
-  size?: 'small' | 'medium' | 'large';
-  icon?: string;
+export type ButtonType = "filled" | "outline";
+export type TextColor = "white" | "gray" | "light_blue" | "blue" | "black";
+export type TextSize = "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
+
+export interface TextProps {
+  text: string;
+  size?: TextSize;
+  color?: TextColor;
+}
+
+export interface ButtonProps {
+  label: TextProps;
+  variant?: ButtonType;
   disabled?: boolean;
-};
+  onClick?: () => void;
+}
