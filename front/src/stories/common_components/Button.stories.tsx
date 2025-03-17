@@ -6,7 +6,14 @@ const meta: Meta<typeof Button> = {
   component: Button,
   tags: ["autodocs"],
   argTypes: {
-    variant: { control: "radio", options: ["filled", "outlined"] },
+    variant: { 
+      control: "radio", 
+      options: ["filled", "outlined", "non-selected", "disabled"] 
+    },
+    size: {
+      control: "radio", 
+      options: ["normal", "large"]
+    },
     disabled: { control: "boolean" },
     label: {
       control: "object",
@@ -15,26 +22,71 @@ const meta: Meta<typeof Button> = {
   },
 };
 
+
 export default meta;
 type Story = StoryObj<typeof Button>;
 
-export const Filled: Story = {
+export const FilledNormal: Story = {
   args: {
     variant: "filled",
-    label: { text: "Click me", size: "md", color: "white"},
+    size: "normal",
+    label: { text: "Click me", size: "md", color: "white" },
   },
 };
 
-export const Outlined: Story = {
+export const FilledLarge: Story = {
   args: {
-    variant: "outline",
-    label: { text: "Click me", size: "lg", color: "black" },
+    variant: "filled",
+    size: "large",
+    label: { text: "Click me", size: "md", color: "white" },
   },
 };
 
-export const Disabled: Story = {
+export const OutlinedNormal: Story = {
+  args: {
+    variant: "outlined",
+    size: "normal",
+    label: { text: "Click me", size: "lg", color: "blue" },
+  },
+};
+
+export const OutlinedLarge: Story = {
+  args: {
+    variant: "outlined",
+    size: "large",
+    label: { text: "Click me", size: "lg", color: "blue" },
+  },
+};
+
+export const NonSelectedNormal: Story = {
+  args: {
+    variant: "non-selected",
+    size: "normal",
+    label: { text: "Not Selected", size: "md", color: "gray" },
+  },
+};
+
+export const NonSelectedLarge: Story = {
+  args: {
+    variant: "non-selected",
+    size: "large",
+    label: { text: "Not Selected", size: "md", color: "gray" },
+  },
+};
+
+export const DisabledNormal: Story = {
   args: {
     variant: "filled",
+    size: "normal",
+    label: { text: "Disabled", size: "xl", color: "gray" },
+    disabled: true,
+  },
+};
+
+export const DisabledLarge: Story = {
+  args: {
+    variant: "filled",
+    size: "large",
     label: { text: "Disabled", size: "xl", color: "gray" },
     disabled: true,
   },

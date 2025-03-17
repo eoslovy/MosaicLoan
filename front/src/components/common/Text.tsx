@@ -6,4 +6,5 @@ const Text: React.FC<TextProps> = ({ text, size = "medium", color = "blue" }) =>
   return <span className={`${styles.text} ${styles[size]} ${styles[color]}`}>{text}</span>;
 };
 
+
 export default Text;

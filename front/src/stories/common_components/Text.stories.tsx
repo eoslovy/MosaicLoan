@@ -6,13 +6,19 @@ const meta: Meta<typeof Text> = {
   component: Text,
   tags: ["autodocs"],
   argTypes: {
+    text: {
+      control: "text",
+      description: "텍스트 내용을 설정합니다.",
+    },
     size: { 
       control: "radio", 
-      options: ["xs", "sm", "md", "lg", "xl", "xxl"] 
+      options: ["xs", "sm", "md", "lg", "xl", "xxl"],
+      description: "텍스트 크기를 설정합니다.",
     },
     color: { 
       control: "radio", 
-      options: ["gray", "light-blue", "blue", "black"] 
+      options: ["gray", "light-blue", "blue", "black", "white"],
+      description: "텍스트 색상을 설정합니다.",
     },
   },
 };
@@ -41,5 +47,13 @@ export const SmallGray: Story = {
     text: "Small Gray Text",
     size: "xs",
     color: "gray",
+  },
+};
+
+export const WhiteText: Story = {
+  args: {
+    text: "White Text",
+    size: "lg",
+    color: "white",
   },
 };

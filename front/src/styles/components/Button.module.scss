@@ -11,35 +11,63 @@
   white-space: nowrap;
   
   font-size: inherit;
-  padding: 10px 20px;
+  // padding: 10px 20px;
   min-width: max-content;
 
-  /* 그림자 효과 */
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
 }
 
-// Filled 스타일
+.normal {
+  padding: 14px 21px;
+}
+
+.large {
+  padding: 14px 100px;
+}
+
 .filled {
-  background-color: $primary-color; // #145DA0
-  color: $secondary-color; // #FAFAF8
+  background-color: $primary-color;
+  color: $secondary-color;
+
   &:hover {
     background-color: $hover-primary;
   }
 }
 
-// Outlined 스타일
 .outlined {
-  background-color: $secondary-color; // #FAFAF8
-  border: 2px solid $primary-color; // 
-  color: $primary-color; // #145DA0
+  background-color: $secondary-color;
+  box-shadow: 0 0 0 2px $primary-color inset;
+  span {
+    color: $primary-color !important;
+  }
+  
   &:hover {
-    background-color: $primary-color;
-    color: $secondary-color;
+    background-color: $hover-primary;
+    box-shadow: 0 0 0 2px $hover-primary inset;
+    span {
+      color: $secondary-color !important;
+    }
   }
 }
 
-// 비활성화 스타일
+.non-selected {
+  background-color: $non-selected-color;
+  span {
+    color: $text-gray;
+  }
+  
+  &:hover {
+    background-color: $primary-color;
+    span {
+      color: $secondary-color;
+    }
+  }
+}
+
 .disabled {
   opacity: 0.5;
+  span {
+    color: $text-gray !important;
+  }
   cursor: not-allowed;
 }
