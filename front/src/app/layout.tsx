@@ -1,16 +1,12 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Noto_Sans_KR } from 'next/font/google';
 import React from 'react';
 import './globals.css';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+const notoSansKR = Noto_Sans_KR({
+  variable: '--font-noto-sans-kr',
+  weight: ['300', '400', '500', '700'], // 원하는 굵기 선택
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -23,8 +19,8 @@ const RootLayout = ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => (
-  <html lang='en'>
-    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+  <html lang="ko">
+    <body className={`${notoSansKR.variable} antialiased`}>
       {children}
     </body>
   </html>

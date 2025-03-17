@@ -16,3 +16,9 @@ export interface ButtonProps {
   disabled?: boolean;
   onClick?: () => void;
 }
+
+interface StatCardProps {
+  icon: "users" | "trendingUp" | "clock"; 
+  value: string;
+  label: string;
+}
