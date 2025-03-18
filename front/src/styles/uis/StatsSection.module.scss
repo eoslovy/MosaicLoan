@@ -3,17 +3,19 @@
 .statsSection {
   display: grid;
   grid-template-columns: repeat(3, 1fr); // 기본적으로 3개 컬럼
-  gap: 1.25rem;
+  // gap: 1.25rem;
   width: 100%;
-  max-width: 1031px;
+
+  max-width: 64.44rem;
   min-height: 470px;
   margin: auto;
+  
   justify-content: center;
   justify-items: center;
   align-items: center;
   padding: 2rem 0; // 여백 추가해서서 중앙 정렬 유지하기기
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1000px) {
     grid-template-columns: 1fr; // 모바일에서는 한 줄씩 배치
     row-gap: 1.5rem; // 세로 간격 추가하기_카드 간격
   }
@@ -22,7 +24,7 @@
 .sectionWrapper {
   width: 100%;
   min-height: 470px;
-  background-color: #EEF7F9;
+  background-color: $light-blue;
   display: flex;
   justify-content: center;
   align-items: center;
