@@ -3,7 +3,7 @@ import { Meta, StoryFn } from "@storybook/react";
 import StatCard from "@/components/common/StatCard"
 
 export default {
-  title: "Components/StatCard",
+  title: "common/StatCard",
   component: StatCard,
   argTypes: {
     icon: { control: "select", options: ["users", "trendingUp", "clock"] },

@@ -22,3 +22,9 @@ interface StatCardProps {
   value: string;
   label: string;
 }
+
+interface ServiceInfoCardProps {
+  icon: "shield" | "users" | "trendingUp" | "clock";
+  value: string;
+  label: string;
+}

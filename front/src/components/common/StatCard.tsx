@@ -18,7 +18,7 @@ const unitMap = {
 const StatCard: React.FC<StatCardProps> = ({ icon, value, label }) => {
   const IconComponent = iconMap[icon];
 
-const unit = unitMap[icon];
+  const unit = unitMap[icon];
   const [count, setCount] = useState(0);
 
   useEffect(() => {
