@@ -28,3 +28,9 @@ interface ServiceInfoCardProps {
   value: string;
   label: string;
 }
+
+interface BasicInfoCardProps {
+  icon: "creditCard" | "trendingUp" | "clock" | "arrowUpRight";
+  value: string;
+  label: string;
+}
