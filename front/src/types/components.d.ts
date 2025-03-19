@@ -1,6 +1,6 @@
 export type ButtonType = "filled" | "outlined" | "non-selected";
 export type ButtonSize = "normal" | "large";
-export type TextColor = "white" | "gray" | "light-blue" | "blue" | "black";
+export type TextColor = "white" | "gray" | "light-blue" | "blue" | "black" | "text-ascendRed" | "text-descentBlue";
 export type TextSize = "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
 
 export interface TextProps {
@@ -34,3 +34,13 @@ interface BasicInfoCardProps {
   value: string;
   label: string;
 }
+
+interface UserInfoCardProps {
+  icon: "clock" | "triangleAlert";
+  title: TextProps;
+  category: TextProps;
+  categoryValue: TextProps;
+  totalCount: TextProps;
+  changeRate: TextProps;
+}
+

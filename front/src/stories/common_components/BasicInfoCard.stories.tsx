@@ -3,7 +3,7 @@ import { Meta, StoryFn } from "@storybook/react";
 import BasicInfoCard from "@/components/common/BasicInfoCard";
 
 export default {
-  title: "Components/BasicInfoCard",
+  title: "common/BasicInfoCard",
   component: BasicInfoCard,
   parameters: {
     layout: "centered",
