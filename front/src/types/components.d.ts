@@ -71,4 +71,8 @@ export interface BarLineChartProps {
   lineColor?: string;
 }
 
-
+export interface BarChartProps {
+  labels: string[];
+  values: number[];
+  title?: string;
+}
