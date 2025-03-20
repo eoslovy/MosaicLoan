@@ -2,6 +2,7 @@ export type ButtonType = "filled" | "outlined" | "non-selected";
 export type ButtonSize = "normal" | "large";
 export type TextColor = "white" | "gray" | "light-blue" | "blue" | "black" | "text-ascendRed" | "text-descentBlue";
 export type TextSize = "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
+export type DoughnutChartType = "repay-complete" | "investing";
 
 export interface TextProps {
   text: string;
@@ -44,3 +45,8 @@ interface UserInfoCardProps {
   changeRate: TextProps;
 }
 
+interface DoughnutChartProps {
+  percentage: number;
+  type: DoughnutChartType;
+  label?: string;
+}
