@@ -3,6 +3,7 @@ export type ButtonSize = "normal" | "large";
 export type TextColor = "white" | "gray" | "light-blue" | "blue" | "black" | "text-ascendRed" | "text-descentBlue";
 export type TextSize = "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
 export type DoughnutChartType = "repay-complete" | "investing";
+export type DateUnit = "day" | "week" | "month";
 
 export interface TextProps {
   text: string;
@@ -56,3 +57,18 @@ interface PieChartProps {
   data: number[];
   colors?: string[];
 }
+
+export interface BarLineChartProps {
+  labels: string[]; //날짜짜
+  rawBarData: { [category: string]: number[] };
+  rawLineData: number[];
+  dateUnit?: DateUnit;
+  displayCount?: number;
+  barCategories: string[];
+  barLabel?: string;
+  lineLabel?: string;
+  barColors?: string[];
+  lineColor?: string;
+}
+
+
