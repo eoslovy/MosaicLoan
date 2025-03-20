@@ -50,3 +50,9 @@ interface DoughnutChartProps {
   type: DoughnutChartType;
   label?: string;
 }
+
+interface PieChartProps {
+  labels: string[];
+  data: number[];
+  colors?: string[];
+}
