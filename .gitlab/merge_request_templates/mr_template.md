@@ -1,5 +1,5 @@
-## 🔥 jira Issues
-#jira_link
+## 🔥 jira Issue 번호
+### [Issue link]()
 
 ## 💜 작업 내용
 - [x] ~ 기능 구현

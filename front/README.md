@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## skills
 
-## Getting Started
 
-First, run the development server:
+## script
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm dev : Next.js 개발 서버 실행
+
+pnpm build : Next.js 애플리케이션을 프로덕션 용으로 빌드
+
+pnpm start : 빌드된 Next.js 앱을 실행 (build한 다음 실행해야함)
+
+pnpm lint : ESLint를 실행하여 코드의 문법 오류나 스타일 위반을 검사하고 자동으로 수정
+
+pnpm format : Prettier로 전체 프로젝트의 코드를 자동 포맷팅
+
+pnpm jest:test : Jest로 테스트를 실행하고, 테스트 커버리지 리포트를 생성
+
+pnpm jest:test:watch : Jest를 watch 모드로 실행 (파일이 변경될 때마다 자동으로 테스트를 다시 실행)
+
+pnpm storybook : Storybook을 개발 모드로 실행 (기본적으로 6006포트)
+
+pnpm build-storybook : Storybook을 정적 사이트로 빌드 (결과물이 storybook-static 폴더에 생성됨. 이걸 배포할 수 있음)
+
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
