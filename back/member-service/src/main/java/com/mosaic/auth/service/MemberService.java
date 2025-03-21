@@ -21,12 +21,12 @@ public class MemberService {
     private final JwtProvider jwtProvider;
 
     @Transactional
-    public Member findOrCreateUser(KakaoMemberResponse kakaoMemberResponse) {
+    public Member findOrCreateMember(KakaoMemberResponse kakaoMemberResponse) {
         return memberRepository.findByOauthId(kakaoMemberResponse.getId())
                 .orElseGet(() -> {
                     Member member = new Member();
                     member.setOauthId(kakaoMemberResponse.getId());
-                    member.setName(kakaoMemberResponse.getProperties().getNickname());
+                    member.setName(kakaoMemberResponse.getNickname());
                     return memberRepository.save(member);
                 });
     }

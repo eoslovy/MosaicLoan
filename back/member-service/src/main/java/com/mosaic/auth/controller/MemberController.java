@@ -24,18 +24,18 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse<?>> me(@AuthenticationPrincipal MemberPrincipal user) {
-        if (user == null) {
+    public ResponseEntity<ApiResponse<?>> me(@AuthenticationPrincipal MemberPrincipal member) {
+        if (member == null) {
             return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.error("로그인되지 않았습니다."));
         }
 
-        Map<String, Object> userData = new HashMap<>();
-        userData.put("id", user.getId());
-        userData.put("username", user.getUsername());
+        Map<String, Object> memberData = new HashMap<>();
+        memberData.put("id", member.getId());
+        memberData.put("username", member.getUsername());
         
-        return ResponseEntity.ok(ApiResponse.success(userData));
+        return ResponseEntity.ok(ApiResponse.success(memberData));
     }
 
     @PostMapping("/logout")

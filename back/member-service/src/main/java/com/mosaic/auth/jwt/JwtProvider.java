@@ -33,19 +33,19 @@ public class JwtProvider {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    public String createAccessToken(Long userId, String name) {
-        return createToken(userId, name, accessTokenValidity);
+    public String createAccessToken(Long memberId, String name) {
+        return createToken(memberId, name, accessTokenValidity);
     }
 
-    public String createRefreshToken(Long userId, String name) {
-        return createToken(userId, name, refreshTokenValidity);
+    public String createRefreshToken(Long memberId, String name) {
+        return createToken(memberId, name, refreshTokenValidity);
     }
 
-    private String createToken(Long userId, String name, long validity) {
+    private String createToken(Long memberId, String name, long validity) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + validity);
 
-        Claims claims = Jwts.claims().setSubject(String.valueOf(userId));
+        Claims claims = Jwts.claims().setSubject(String.valueOf(memberId));
         claims.put("name", name);
 
         return Jwts.builder()
@@ -68,7 +68,7 @@ public class JwtProvider {
         }
     }
 
-    public Long getUserIdFromToken(String token) {
+    public Long getMemberIdFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -92,11 +92,11 @@ public class JwtProvider {
         this.redisTemplate = redisTemplate;
     }
 
-    // Redis에 userId를 키로, refreshToken을 값으로 저장
+    // Redis에 memberId를 키로, refreshToken을 값으로 저장
     // 만료 시간은 refreshToken의 유효기간만큼
-    public void saveRefreshToken(Long userId, String refreshToken) {
+    public void saveRefreshToken(Long memberId, String refreshToken) {
         redisTemplate.opsForValue().set(
-                "refresh:" + userId,
+                "refresh:" + memberId,
                 refreshToken,
                 Duration.ofMillis(refreshTokenValidity)
         );
@@ -125,8 +125,8 @@ public class JwtProvider {
     }
 
     // Redis에서 리프레시 토큰 조회
-    public String getRefreshToken(Long userId) {
-        return redisTemplate.opsForValue().get("refresh:" + userId);
+    public String getRefreshToken(Long memberId) {
+        return redisTemplate.opsForValue().get("refresh:" + memberId);
     }
 
     public String getNameFromToken(String token) {

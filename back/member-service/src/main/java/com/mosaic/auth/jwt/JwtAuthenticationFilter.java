@@ -28,21 +28,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = extractAccessTokenFromCookie(request);
 
         if (token != null && jwtProvider.validateToken(token) && !jwtProvider.isBlacklisted(token)) {
-            Long userId = jwtProvider.getUserIdFromToken(token);
+            Long memberId = jwtProvider.getMemberIdFromToken(token);
             String name = jwtProvider.getNameFromToken(token);
             
             // 토큰 만료 시간 확인
             if (isTokenExpiringSoon(token)) {
                 // 만료가 임박한 경우 리프레시 토큰으로 갱신
-                String refreshToken = jwtProvider.getRefreshToken(userId);
+                String refreshToken = jwtProvider.getRefreshToken(memberId);
                 if (refreshToken != null && jwtProvider.validateToken(refreshToken)) {
-                    String newAccessToken = jwtProvider.createAccessToken(userId, name);
+                    String newAccessToken = jwtProvider.createAccessToken(memberId, name);
                     CookieUtil.addCookie(response, "access-token", newAccessToken, 
                             (int) (jwtProvider.getAccessTokenValidity() / 1000));
                 }
             }
 
-            MemberPrincipal memberPrincipal = new MemberPrincipal(userId, name);
+            MemberPrincipal memberPrincipal = new MemberPrincipal(memberId, name);
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(memberPrincipal, null, memberPrincipal.getAuthorities());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

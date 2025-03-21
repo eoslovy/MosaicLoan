@@ -47,10 +47,10 @@ public class KakaoOAuthService {
         KakaoTokenResponse token = getAccessToken(code);
 
         // 2. 카카오 유저 정보 조회
-        KakaoMemberResponse kakaoUser = getUserInfo(token.getAccessToken());
+        KakaoMemberResponse kakaoMember = getMemberInfo(token.getAccessToken());
 
         // 3. DB 저장 or 기존 유저 조회
-        Member member = memberService.findOrCreateUser(kakaoUser);
+        Member member = memberService.findOrCreateMember(kakaoMember);
 
         // 4. JWT 발급
         String accessToken = jwtProvider.createAccessToken(member.getId(), member.getName());
@@ -82,7 +82,7 @@ public class KakaoOAuthService {
         return objectMapper.readValue(conn.getInputStream(), KakaoTokenResponse.class);
     }
 
-    private KakaoMemberResponse getUserInfo(String accessToken) throws IOException {
+    private KakaoMemberResponse getMemberInfo(String accessToken) throws IOException {
         URL url = new URL("https://kapi.kakao.com/v2/user/me");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
