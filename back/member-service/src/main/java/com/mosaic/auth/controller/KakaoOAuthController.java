@@ -19,7 +19,7 @@ public class KakaoOAuthController {
 
     // 1. 로그인 버튼 클릭 시 → 카카오 로그인 페이지로 리다이렉트
     @GetMapping("/login")
-    public void redirectToKakaoLogin(HttpServletResponse response) throws IOException {
+    public void KakaoLogin(HttpServletResponse response) throws IOException {
         String redirectUrl = kakaoOAuthService.getKakaoLoginUrl();
         response.sendRedirect(redirectUrl);
     }
