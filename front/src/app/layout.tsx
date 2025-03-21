@@ -4,6 +4,7 @@ import React from 'react';
 import './globals.css';
 
 const notoSansKR = Noto_Sans_KR({
+  subsets: ['latin'],
   variable: '--font-noto-sans-kr',
   weight: ['300', '400', '500', '700'], // 원하는 굵기 선택
   display: 'swap',
@@ -19,10 +20,8 @@ const RootLayout = ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => (
-  <html lang="ko">
-    <body className={`${notoSansKR.variable} antialiased`}>
-      {children}
-    </body>
+  <html lang='ko'>
+    <body className={`${notoSansKR.variable} antialiased`}>{children}</body>
   </html>
 );
 

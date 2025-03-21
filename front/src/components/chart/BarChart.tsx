@@ -1,7 +1,7 @@
-import React from  "react";
-import { Bar } from "react-chartjs-2";
-import { BarChartProps } from "@/types/components";
-import styles from "@/styles/charts/BarChart.module.scss";
+import React from 'react';
+import { Bar } from 'react-chartjs-2';
+import { BarChartProps } from '@/types/components';
+import styles from '@/styles/charts/BarChart.module.scss';
 import {
   Chart as ChartJS,
   BarElement,
@@ -9,7 +9,7 @@ import {
   LinearScale,
   Tooltip,
   Legend,
-} from "chart.js";
+} from 'chart.js';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -20,9 +20,15 @@ const BarChart: React.FC<BarChartProps> = ({ labels, values, title }) => {
     labels,
     datasets: [
       {
-        label: "상태별 금액",
+        label: '상태별 금액',
         data: values,
-        backgroundColor: ["#10B981", "#6366F1", "#F59E0B", "#EF4444", "#9CA3AF"],
+        backgroundColor: [
+          '#10B981',
+          '#6366F1',
+          '#F59E0B',
+          '#EF4444',
+          '#9CA3AF',
+        ],
         borderRadius: 4,
       },
     ],
@@ -54,12 +60,13 @@ const BarChart: React.FC<BarChartProps> = ({ labels, values, title }) => {
         suggestedMax: maxValue * 1.1, // Y축 최대값을 상태별 금액의 최대값으로 설정 (10% 여유 추가)
         ticks: {
           callback: (tickValue: string | number) => {
-            if (typeof tickValue !== "number") return tickValue; 
-  
-            if (tickValue >= 1_000_000_000) return `${tickValue / 1_000_000_000}억`;
+            if (typeof tickValue !== 'number') return tickValue;
+
+            if (tickValue >= 1_000_000_000)
+              return `${tickValue / 1_000_000_000}억`;
             if (tickValue >= 10_000_000) return `${tickValue / 10_000_000}천만`;
             if (tickValue >= 1_000_000) return `${tickValue / 1_000_000}백만`;
-            if (tickValue >= 100_000) return `${tickValue / 100_000}십만`; 
+            if (tickValue >= 100_000) return `${tickValue / 100_000}십만`;
             return `${tickValue.toLocaleString()} 원`;
           },
         },

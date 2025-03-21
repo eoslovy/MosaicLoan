@@ -1,12 +1,12 @@
-import React from "react";
-import { Meta, StoryFn } from "@storybook/react";
-import StatsSection from "@/components/ui/StatsSection";
+import React from 'react';
+import { Meta, StoryFn } from '@storybook/react';
+import StatsSection from '@/components/ui/StatsSection';
 
 export default {
-  title: "Components/StatsSection",
+  title: 'Components/StatsSection',
   component: StatsSection,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
 } as Meta<typeof StatsSection>;
 

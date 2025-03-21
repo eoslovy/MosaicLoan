@@ -18,7 +18,19 @@
     ],
     "react/react-in-jsx-scope": "off",
     "import/no-extraneous-dependencies": "off",
-    "import/no-unresolved": "off",
+    // "import/no-unresolved": "off",
+    "no-nested-ternary": "off",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "ts": "never",
+        "tsx": "never",
+        "js": "never",
+        "jsx": "never"
+      }
+    ],
+    "react/jsx-props-no-spreading": "off",
     "react/jsx-filename-extension": [
       "warn",
       {

@@ -1,9 +1,16 @@
-export type ButtonType = "filled" | "outlined" | "non-selected";
-export type ButtonSize = "normal" | "large";
-export type TextColor = "white" | "gray" | "light-blue" | "blue" | "black" | "text-ascendRed" | "text-descentBlue";
-export type TextSize = "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
-export type DoughnutChartType = "repay-complete" | "investing";
-export type DateUnit = "day" | "week" | "month";
+export type ButtonType = 'filled' | 'outlined' | 'non-selected';
+export type ButtonSize = 'normal' | 'large';
+export type TextColor =
+  | 'white'
+  | 'gray'
+  | 'light-blue'
+  | 'blue'
+  | 'black'
+  | 'text-ascendRed'
+  | 'text-descentBlue';
+export type TextSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+export type DoughnutChartType = 'repay-complete' | 'investing';
+export type DateUnit = 'day' | 'week' | 'month';
 
 export interface TextProps {
   text: string;
@@ -19,26 +26,26 @@ export interface ButtonProps {
   onClick?: () => void;
 }
 
-interface StatCardProps {
-  icon: "users" | "trendingUp" | "clock"; 
+export interface StatCardProps {
+  icon: 'users' | 'trendingUp' | 'clock';
   value: string;
   label: string;
 }
 
-interface ServiceInfoCardProps {
-  icon: "shield" | "users" | "trendingUp" | "clock";
+export interface ServiceInfoCardProps {
+  icon: 'shield' | 'users' | 'trendingUp' | 'clock';
   value: string;
   label: string;
 }
 
-interface BasicInfoCardProps {
-  icon: "creditCard" | "trendingUp" | "clock" | "arrowUpRight";
+export interface BasicInfoCardProps {
+  icon: 'creditCard' | 'trendingUp' | 'clock' | 'arrowUpRight';
   value: string;
   label: string;
 }
 
-interface UserInfoCardProps {
-  icon: "clock" | "triangleAlert";
+export interface UserInfoCardProps {
+  icon: 'clock' | 'triangleAlert';
   title: TextProps;
   category: TextProps;
   categoryValue: TextProps;
@@ -46,20 +53,28 @@ interface UserInfoCardProps {
   changeRate: TextProps;
 }
 
-interface DoughnutChartProps {
+export interface ChartInfoCardProps {
+  category: TextProps;
+  title: TextProps;
+  categoryCount: TextProps;
+  totalCount: TextProps;
+  changeValue: TextProps;
+}
+
+export interface DoughnutChartProps {
   percentage: number;
   type: DoughnutChartType;
   label?: string;
 }
 
-interface PieChartProps {
+export interface PieChartProps {
   labels: string[];
   data: number[];
   colors?: string[];
 }
 
 export interface BarLineChartProps {
-  labels: string[]; //날짜짜
+  labels: string[]; // 날짜짜
   rawBarData: { [category: string]: number[] };
   rawLineData: number[];
   dateUnit?: DateUnit;
