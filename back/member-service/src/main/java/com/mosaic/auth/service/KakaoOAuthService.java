@@ -1,12 +1,11 @@
 package com.mosaic.auth.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mosaic.auth.domain.Member;
 import com.mosaic.auth.jwt.JwtProvider;
-import com.mosaic.auth.model.KakaoTokenResponse;
 import com.mosaic.auth.model.KakaoMemberResponse;
+import com.mosaic.auth.model.KakaoTokenResponse;
 import com.mosaic.auth.util.CookieUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,9 +59,8 @@ public class KakaoOAuthService {
         jwtProvider.saveRefreshToken(member.getId(), refreshToken);
 
         // 6. 액세스 토큰만 쿠키에 저장
-        Cookie accessCookie = CookieUtil.createHttpOnlyCookie("access-token", accessToken, 
+        CookieUtil.addCookie(response, "access-token", accessToken, 
                 (int) (jwtProvider.getAccessTokenValidity() / 1000));
-        response.addCookie(accessCookie);
     }
 
     private KakaoTokenResponse getAccessToken(String code) throws IOException {
