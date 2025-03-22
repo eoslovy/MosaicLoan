@@ -1,4 +1,4 @@
-@import "../variables.scss";
+@use '../variables.scss' as *;
 
 .statsSection {
   display: grid;
@@ -9,7 +9,7 @@
   max-width: 64.44rem;
   min-height: 470px;
   margin: auto;
-  
+
   justify-content: center;
   justify-items: center;
   align-items: center;

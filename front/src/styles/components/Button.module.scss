@@ -1,4 +1,4 @@
-@import "../variables.scss";
+@use '../variables.scss' as *;
 
 .button {
   display: inline-flex;
@@ -7,9 +7,11 @@
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  transition: background $button-transition, color $button-transition;
+  transition:
+    background $button-transition,
+    color $button-transition;
   white-space: nowrap;
-  
+
   font-size: inherit;
   // padding: 10px 20px;
   min-width: max-content;
@@ -40,7 +42,7 @@
   span {
     color: $primary-color !important;
   }
-  
+
   &:hover {
     background-color: $hover-primary;
     box-shadow: 0 0 0 2px $hover-primary inset;
@@ -55,7 +57,7 @@
   span {
     color: $text-gray;
   }
-  
+
   &:hover {
     background-color: $primary-color;
     span {

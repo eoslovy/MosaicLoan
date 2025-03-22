@@ -1,8 +1,11 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import Button from '@/components/common/Button';
 import Text from '@/components/common/Text';
 import styles from '@/styles/layout/Nav.module.scss';
+import { handleKakaoLogin } from '@/utils/auth';
 
 const Nav = () => {
   return (
@@ -39,6 +42,7 @@ const Nav = () => {
           label={{ text: '로그인', size: 'sm', color: 'blue' }}
           variant='outlined'
           size='normal'
+          onClick={handleKakaoLogin}
         />
         <Button
           label={{ text: '회원가입', size: 'sm', color: 'white' }}

@@ -1,4 +1,4 @@
-@import "../variables.scss";
+@use '../variables.scss' as *;
 
 .statCard {
   display: flex;
@@ -20,11 +20,13 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 
-    .value, .label {
+    .value,
+    .label {
       transition: color 0.3s ease-in-out;
     }
-  
-    &:hover .value, &:hover .label {
+
+    &:hover .value,
+    &:hover .label {
       color: $white;
     }
   }
