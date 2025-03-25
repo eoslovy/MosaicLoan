@@ -2,6 +2,7 @@ package com.mosaic.auth.controller;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +18,9 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/auth/kakao")
 public class KakaoOAuthController {
 
+	@Value("${BASE_FRONT_URL}")
+	private String baseFrontUrl;
+
 	private final KakaoOAuthService kakaoOAuthService;
 
 	// 1. 로그인 버튼 클릭 시 → 카카오 로그인 페이지로 리다이렉트
@@ -30,6 +34,6 @@ public class KakaoOAuthController {
 	@GetMapping("/callback")
 	public void kakaoCallback(@RequestParam String code, HttpServletResponse response) throws IOException {
 		kakaoOAuthService.processKakaoLogin(code, response);
-		response.sendRedirect("/me"); // 로그인 성공 시 /me로 리디렉트
+		response.sendRedirect(baseFrontUrl);
 	}
 }

@@ -3,6 +3,7 @@ package com.mosaic.auth.config;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -20,8 +21,8 @@ import com.mosaic.auth.dto.ErrorResponse;
 import com.mosaic.auth.exception.ErrorCode;
 import com.mosaic.auth.jwt.JwtAuthenticationFilter;
 import com.mosaic.auth.jwt.JwtProvider;
+import com.mosaic.auth.service.RedisService;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,10 +32,14 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+	@Value("${BASE_FRONT_URL}")
+	private String baseFrontUrl;
+
 	private final JwtProvider jwtProvider;
 	private final ObjectMapper objectMapper;
+	private final RedisService redisService;
 
-	private void sendErrorResponse(HttpServletRequest request, HttpServletResponse response, HttpStatus status,
+	private void sendErrorResponse(HttpServletResponse response, HttpStatus status,
 		String message, ErrorCode code) throws IOException {
 		response.setContentType("application/json;charset=UTF-8");
 		response.setStatus(status.value());
@@ -46,16 +51,16 @@ public class SecurityConfig {
 		objectMapper.writeValue(response.getWriter(), errorResponse);
 	}
 
-	void handleUnauthorized(HttpServletRequest request, HttpServletResponse response,
+	void handleUnauthorized(HttpServletResponse response,
 		AuthenticationException authException) throws IOException {
 		log.info(authException.getMessage(), authException);
-		sendErrorResponse(request, response, HttpStatus.UNAUTHORIZED, "인증이 필요한 요청입니다.", ErrorCode.UNAUTHORIZED);
+		sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "인증이 필요한 요청입니다.", ErrorCode.UNAUTHORIZED);
 	}
 
-	void handleAccessDenied(HttpServletRequest request, HttpServletResponse response,
+	void handleAccessDenied(HttpServletResponse response,
 		AccessDeniedException accessDeniedException) throws IOException {
 		log.info(accessDeniedException.getMessage(), accessDeniedException);
-		sendErrorResponse(request, response, HttpStatus.FORBIDDEN, "해당 리소스에 대한 접근 권한이 없습니다.", ErrorCode.ACCESS_DENIED);
+		sendErrorResponse(response, HttpStatus.FORBIDDEN, "해당 리소스에 대한 접근 권한이 없습니다.", ErrorCode.ACCESS_DENIED);
 	}
 
 	@Bean
@@ -75,20 +80,21 @@ public class SecurityConfig {
 			)
 			.exceptionHandling(ex -> ex
 				.authenticationEntryPoint((request, response, authException) -> {
-					handleUnauthorized(request, response, authException);
+					handleUnauthorized(response, authException);
 				})
 				.accessDeniedHandler((request, response, accessDeniedException) -> {
-					handleAccessDenied(request, response, accessDeniedException);
+					handleAccessDenied(response, accessDeniedException);
 				})
 			)
-			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, redisService),
+				UsernamePasswordAuthenticationFilter.class)
 			.build();
 	}
 
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+		configuration.setAllowedOrigins(Arrays.asList(baseFrontUrl));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		configuration.setAllowedHeaders(Arrays.asList("*"));
 		configuration.setAllowCredentials(true); // 쿠키 허용
