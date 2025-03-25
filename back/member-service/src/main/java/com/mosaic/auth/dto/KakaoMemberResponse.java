@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class KakaoMemberResponse {
 	private Long id;
-
-	@JsonProperty("properties")
 	private Properties properties;
 
 	@Getter
