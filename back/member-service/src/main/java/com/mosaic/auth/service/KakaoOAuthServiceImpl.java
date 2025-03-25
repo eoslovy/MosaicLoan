@@ -29,6 +29,7 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
 	private final MemberService memberService;
 	private final JwtProvider jwtProvider;
 	private final WebClient webClient;
+	private final RedisService redisService;
 
 	@Override
 	public String getKakaoLoginUrl() {
@@ -52,18 +53,18 @@ public class KakaoOAuthServiceImpl implements KakaoOAuthService {
 		Member member = memberService.findOrCreateMember(kakaoMember);
 
 		// 4. 기존 로그인 세션이 있는지 확인
-		String existingToken = jwtProvider.getAccessToken(member.getId());
+		String existingToken = redisService.getAccessToken(member.getId());
 		if (existingToken != null) {
 			// 기존 토큰을 블랙리스트에 추가하여 로그아웃 처리
-			jwtProvider.blacklistToken(existingToken, jwtProvider.getAccessTokenValidity());
-			jwtProvider.deleteAccessToken(member.getId());
+			redisService.addToBlacklist(existingToken, jwtProvider.getAccessTokenValidity());
+			redisService.deleteAccessToken(member.getId());
 		}
 
 		// 5. 새로운 JWT 발급
 		String accessToken = jwtProvider.createAccessToken(member.getId());
 
 		// 6. Redis에 새로운 access token 저장
-		jwtProvider.saveAccessToken(member.getId(), accessToken);
+		redisService.saveAccessToken(member.getId(), accessToken, jwtProvider.getAccessTokenValidity());
 
 		// 7. 액세스 토큰을 쿠키에 저장
 		CookieUtil.addCookie(response, "access-token", accessToken,
