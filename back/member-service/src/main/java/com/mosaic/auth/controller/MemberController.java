@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mosaic.auth.dto.MemberPrincipal;
 import com.mosaic.auth.dto.MemberResponse;
-import com.mosaic.auth.exception.ErrorCode;
-import com.mosaic.auth.exception.UnauthorizedException;
 import com.mosaic.auth.service.MemberService;
 import com.mosaic.auth.util.CookieUtil;
 
@@ -25,10 +23,6 @@ public class MemberController {
 
 	@GetMapping("/me")
 	public ResponseEntity<MemberResponse> me(@AuthenticationPrincipal MemberPrincipal member) {
-		if (member == null) {
-			throw new UnauthorizedException(ErrorCode.NOT_LOGGED_IN);
-		}
-
 		return ResponseEntity.ok(MemberResponse.from(member));
 	}
 
@@ -36,6 +30,7 @@ public class MemberController {
 	public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
 		String accessToken = CookieUtil.getCookieValue(request, "access-token");
 		memberService.logout(response, accessToken);
+		CookieUtil.deleteCookie(response, accessToken);
 		return ResponseEntity.ok().build();
 	}
 }
