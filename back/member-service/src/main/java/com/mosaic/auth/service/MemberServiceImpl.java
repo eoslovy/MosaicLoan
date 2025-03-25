@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Date;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class MemberServiceImpl implements MemberService {
 
 	private final MemberRepository memberRepository;
 	private final JwtProvider jwtProvider;
+	private final RedisService redisService;
 
 	@Override
 	@Transactional
@@ -42,7 +45,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 		
 		// 이미 블랙리스트에 있는 토큰인지 확인
-		if (jwtProvider.isBlacklisted(accessToken)) {
+		if (redisService.isBlacklisted(accessToken)) {
 			throw new InvalidTokenException(ErrorCode.TOKEN_ALREADY_LOGGED_OUT);
 		}
 
@@ -50,10 +53,12 @@ public class MemberServiceImpl implements MemberService {
 		Integer memberId = jwtProvider.getMemberIdFromToken(accessToken);
 
 		// Redis에서 access token 삭제
-		jwtProvider.deleteAccessToken(memberId);
+		redisService.deleteAccessToken(memberId);
 
 		// 액세스 토큰을 블랙리스트에 추가
-		jwtProvider.blacklistToken(accessToken, jwtProvider.getAccessTokenValidity());
+		Date expiration = jwtProvider.getExpiration(accessToken);
+		long expirationMillis = expiration.getTime() - System.currentTimeMillis();
+		redisService.addToBlacklist(accessToken, expirationMillis);
 		
 		// 액세스 토큰 쿠키 제거
 		CookieUtil.deleteCookie(response, "access-token");
