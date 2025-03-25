@@ -12,7 +12,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 
+@Getter
 @Component
 public class JwtProvider {
 
@@ -73,9 +75,5 @@ public class JwtProvider {
 			.parseClaimsJws(token)
 			.getBody()
 			.getExpiration();
-	}
-
-	public long getAccessTokenValidity() {
-		return accessTokenValidity;
 	}
 }
