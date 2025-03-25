@@ -1,11 +1,9 @@
 package com.mosaic.auth.jwt;
 
 import java.security.Key;
-import java.time.Duration;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -24,9 +22,6 @@ public class JwtProvider {
 	@Value("${jwt.access-expiration}")
 	private long accessTokenValidity;
 
-	@Value("${jwt.refresh-expiration}")
-	private long refreshTokenValidity;
-
 	private Key key;
 
 	@PostConstruct
@@ -36,10 +31,6 @@ public class JwtProvider {
 
 	public String createAccessToken(Integer memberId) {
 		return createToken(memberId, accessTokenValidity);
-	}
-
-	public String createRefreshToken(Integer memberId) {
-		return createToken(memberId, refreshTokenValidity);
 	}
 
 	private String createToken(Integer memberId, long validity) {
@@ -84,46 +75,7 @@ public class JwtProvider {
 			.getExpiration();
 	}
 
-	private final StringRedisTemplate redisTemplate;
-
-	public JwtProvider(StringRedisTemplate redisTemplate) {
-		this.redisTemplate = redisTemplate;
-	}
-
-	// Redis에 memberId를 키로, accessToken을 값으로 저장
-	public void saveAccessToken(Integer memberId, String accessToken) {
-		redisTemplate.opsForValue().set(
-			"access:" + memberId,
-			accessToken,
-			Duration.ofMillis(accessTokenValidity)
-		);
-	}
-
-	// Redis에서 memberId로 accessToken 조회
-	public String getAccessToken(Integer memberId) {
-		return redisTemplate.opsForValue().get("access:" + memberId);
-	}
-
-	// 로그아웃 시 엑세스 토큰 블랙리스트 등록
-	public void blacklistToken(String token, long expirationMillis) {
-		redisTemplate.opsForValue().set(
-			"blacklist:" + token,
-			"logout",
-			Duration.ofMillis(expirationMillis)
-		);
-	}
-
-	// 블랙리스트 확인
-	public boolean isBlacklisted(String token) {
-		return redisTemplate.hasKey("blacklist:" + token);
-	}
-
 	public long getAccessTokenValidity() {
 		return accessTokenValidity;
-	}
-
-	// Redis에서 memberId로 accessToken 삭제
-	public void deleteAccessToken(Integer memberId) {
-		redisTemplate.delete("access:" + memberId);
 	}
 }
