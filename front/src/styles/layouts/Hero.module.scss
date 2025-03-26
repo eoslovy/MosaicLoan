@@ -12,90 +12,58 @@
   }
 }
 
+@keyframes floatUpDown {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes shadowScale {
+  0%, 100% {
+    transform: scaleX(2) scaleY(2);
+  }
+  50% {
+    transform: scaleX(1.5) scaleY(1.5);
+  }
+}
+
 .hero {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 2rem;
-  padding: 3rem 1.5rem;
-  max-width: 1440px;
-  margin: 0 auto;
-  // background-color: red;
+  background: linear-gradient(to bottom, #F5F5F0, #EDF6F9);
+  width: 100%;
+  min-height: auto;
+  padding: 2.5rem 1rem;
 
-  @media (max-width: 900px) {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  @media (max-width: 600px) {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  @media (min-width: 640px) {
+    padding: 4rem 1rem;
   }
 }
 
 .hero__image {
-  flex-shrink: 0;
-  width: 100%;
+  position: relative;
   display: flex;
   justify-content: center;
+  align-items: center;
 
-  @media (min-width: 768px) {
-    width: auto;
-    justify-content: flex-start;
+  img {
+    z-index: 2;
+    animation: floatUpDown 4s ease-in-out infinite;
   }
 
-  animation: floatUpDown 5s ease-in-out infinite;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    width: 140px;
+    height: 30px;
+    background: #D2E5EB;
+    border-radius: 50%;
+    filter: blur(6px);
+    z-index: 1;
+
+    animation: shadowScale 4s ease-in-out infinite;
+    transform-origin: center;
+  }
 }
-
-
-// .hero__content {
-//   display: flex;
-//   flex-direction: column;
-//   gap: 1.5rem;
-//   align-items: flex-start;
-//   max-width: 600px;
-//   flex: 1;
-
-//   @media (max-width: 768px) {
-//     align-items: center;
-//     text-align: center;
-//   }
-
-//   .text-4xl {
-//     font-size: clamp(1.5rem, 5vw, 3rem); // 최소 24px ~ 최대 48px
-//     font-weight: 700;
-//   }
-
-//   .text-xl {
-//     font-size: clamp(1rem, 3.5vw, 1.25rem); // 최소 16px ~ 최대 20px
-//     font-weight: 400;
-//   }
-
-//   .text-light-blue {
-//     color: $light-blue;
-//   }
-
-//   .text-black {
-//     color: $text-black;
-//   }
-// }
-
-// .hero__buttons {
-//   display: flex;
-//   gap: 1rem;
-//   flex-wrap: wrap;
-
-//   @media (max-width: 480px) {
-//     flex-direction: column;
-//     width: 100%;
-//     align-items: center;
-//   }
-// }

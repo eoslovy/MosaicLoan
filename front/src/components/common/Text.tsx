@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { TextProps, TextColor, TextSize } from '@/types/components';
+import { TextProps, TextColor, TextSize, TextWeight } from '@/types/components';
 
 const sizeClasses: Record<TextSize, string> = {
   xs: 'text-xs',
@@ -8,7 +8,7 @@ const sizeClasses: Record<TextSize, string> = {
   lg: 'text-lg',
   xl: 'text-xl',
   xxl: 'text-2xl',
-  'text-4xl': 'text-4xl font-bold',
+  'text-4xl': 'text-4xl',
 };
 
 const colorClasses: Record<TextColor, string> = {
@@ -21,16 +21,30 @@ const colorClasses: Record<TextColor, string> = {
   'text-descentBlue': 'text-blue-300',
 };
 
+const weightClasses: Record<TextWeight, string> = {
+  thin: 'font-thin',
+  extralight: 'font-extralight',
+  light: 'font-light',
+  normal: 'font-normal',
+  medium: 'font-medium',
+  semibold: 'font-semibold',
+  bold: 'font-bold',
+  extrabold: 'font-extrabold',
+  black: 'font-black',
+};
+
 const Text = ({
   text,
   size = 'md',
   color = 'black',
+  weight = 'normal',
   className = '',
 }: TextProps) => {
   const combinedClassName = clsx(
     'inline-block',
     sizeClasses[size],
     colorClasses[color],
+    weightClasses[weight],
     className,
   );
 

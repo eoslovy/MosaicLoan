@@ -3,11 +3,12 @@ import React from 'react';
 import Hero from '@/components/layout/Hero';
 
 const Home = () => (
-  <div className='w-full min-h-screen flex flex-col font-[family-name:var(--font-geist-sans)]'>
+  <div className='w-full flex flex-col'>
     {/* 메인 콘텐츠 */}
-    <main className='flex flex-col gap-8 px-6 sm:px-10 pt-3 sm:pt-10 items-center sm:items-start'>
-      <Hero />
-    </main>
+    {/* <main className='flex flex-col gap-0 px-6 sm:px-10 pt-0 items-center sm:items-start'>
+    </main> */}
+
+    <Hero />
 
     {/* 푸터 */}
     <footer className='mt-auto flex gap-6 flex-wrap items-center justify-center py-6'>

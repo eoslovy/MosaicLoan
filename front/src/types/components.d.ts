@@ -11,11 +11,22 @@ export type TextColor =
 export type TextSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'text-4xl';
 export type DoughnutChartType = 'repay-complete' | 'investing';
 export type DateUnit = 'day' | 'week' | 'month';
+export type TextWeight =
+  | 'thin' // 100
+  | 'extralight' // 200
+  | 'light' // 300
+  | 'normal' // 400
+  | 'medium' // 500
+  | 'semibold' // 600
+  | 'bold' // 700
+  | 'extrabold' // 800
+  | 'black'; // 900
 
 export interface TextProps {
   text: string;
   size?: TextSize;
   color?: TextColor;
+  weight?: TextWeight;
   className?: string;
 }
 
