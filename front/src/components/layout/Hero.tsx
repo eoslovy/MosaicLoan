@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import Text from '@/components/common/Text';
 import Button from '@/components/common/Button';
 import styles from '@/styles/layouts/Hero.module.scss';
+import Link from 'next/link';
 
 const Hero = () => {
   return (
@@ -47,16 +48,20 @@ const Hero = () => {
 
           {/* 버튼 영역 */}
           <div className='flex flex-wrap gap-4 justify-center md:justify-start'>
-            <Button
-              label={{ text: '대출하기', size: 'sm', color: 'white' }}
-              variant='filled'
-              size='normal'
-            />
-            <Button
-              label={{ text: '투자하기', size: 'sm', color: 'blue' }}
-              variant='outlined'
-              size='normal'
-            />
+            <Link href="/borrower">
+              <Button
+                label={{ text: '대출하기', size: 'sm', color: 'white' }}
+                variant='filled'
+                size='normal'
+              />
+            </Link>
+            <Link href="/investor">
+              <Button
+                label={{ text: '투자하기', size: 'sm', color: 'blue' }}
+                variant='outlined'
+                size='normal'
+              />
+            </Link>
           </div>
 
           {/* 설명 텍스트 */}

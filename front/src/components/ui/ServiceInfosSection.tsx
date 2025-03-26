@@ -3,7 +3,9 @@
 import React from 'react';
 import styles from '@/styles/uis/ServiceInfosSection.module.scss';
 import Text from '@/components/common/Text';
+import Button from '@/components/common/Button';
 import ServiceInfoCard from '@/components/common/ServiceInfoCard';
+import Link from 'next/link';
 
 const ServiceInfosSection = () => {
   return (
@@ -65,6 +67,13 @@ const ServiceInfosSection = () => {
           }
         />
         </div>
+        <Link href="/about">
+          <Button
+            label={{ text: '서비스 더 알아보기', size: 'sm', color: 'blue' }}
+            variant="outlined"
+            size="normal"
+          />
+        </Link>
       </div>
     </section>
   );
