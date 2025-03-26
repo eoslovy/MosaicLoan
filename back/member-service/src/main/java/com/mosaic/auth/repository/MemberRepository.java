@@ -1,10 +1,11 @@
 package com.mosaic.auth.repository;
 
-import com.mosaic.auth.domain.Member;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
-    Optional<Member> findByOauthId(Long oauthId);
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.mosaic.auth.domain.Member;
+
+public interface MemberRepository extends JpaRepository<Member, Integer> {
+	Optional<Member> findByOauthId(String oauthId);
 }
