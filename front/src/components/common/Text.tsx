@@ -1,10 +1,5 @@
-import React from 'react';
 import clsx from 'clsx';
 import { TextProps, TextColor, TextSize } from '@/types/components';
-
-type ExtendedTextProps = TextProps & {
-  className?: string;
-};
 
 const sizeClasses: Record<TextSize, string> = {
   xs: 'text-xs',
@@ -26,17 +21,17 @@ const colorClasses: Record<TextColor, string> = {
   'text-descentBlue': 'text-blue-300',
 };
 
-const Text: React.FC<ExtendedTextProps> = ({
+const Text = ({
   text,
   size = 'md',
   color = 'black',
   className = '',
-}) => {
+}: TextProps) => {
   const combinedClassName = clsx(
     'inline-block',
     sizeClasses[size],
     colorClasses[color],
-    className
+    className,
   );
 
   return <span className={combinedClassName}>{text}</span>;

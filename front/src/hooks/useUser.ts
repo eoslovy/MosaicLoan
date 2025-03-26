@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-export function useUser() {
+const useUser = () => {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
@@ -18,4 +18,6 @@ export function useUser() {
   }, []);
 
   return user;
-}
+};
+
+export default useUser;

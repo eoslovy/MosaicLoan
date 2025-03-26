@@ -16,6 +16,7 @@ export interface TextProps {
   text: string;
   size?: TextSize;
   color?: TextColor;
+  className?: string;
 }
 
 export interface ButtonProps {
