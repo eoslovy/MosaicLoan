@@ -1,0 +1,73 @@
+@import "../variables.scss";
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background $button-transition, color $button-transition;
+  white-space: nowrap;
+  
+  font-size: inherit;
+  // padding: 10px 20px;
+  min-width: max-content;
+
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.normal {
+  padding: 14px 21px;
+}
+
+.large {
+  padding: 14px 100px;
+}
+
+.filled {
+  background-color: $primary-color;
+  color: $secondary-color;
+
+  &:hover {
+    background-color: $hover-primary;
+  }
+}
+
+.outlined {
+  background-color: $secondary-color;
+  box-shadow: 0 0 0 2px $primary-color inset;
+  span {
+    color: $primary-color !important;
+  }
+  
+  &:hover {
+    background-color: $hover-primary;
+    box-shadow: 0 0 0 2px $hover-primary inset;
+    span {
+      color: $secondary-color !important;
+    }
+  }
+}
+
+.non-selected {
+  background-color: $non-selected-color;
+  span {
+    color: $text-gray;
+  }
+  
+  &:hover {
+    background-color: $primary-color;
+    span {
+      color: $secondary-color;
+    }
+  }
+}
+
+.disabled {
+  opacity: 0.5;
+  span {
+    color: $text-gray !important;
+  }
+  cursor: not-allowed;
+}

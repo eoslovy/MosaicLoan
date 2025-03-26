@@ -1,0 +1,50 @@
+@use "sass:math";
+
+/* 색상 */
+$primary-color: #145da0;
+$secondary-color: #fafaf8;
+$non-selected-color: #f3f4f6;
+$hover-primary: #2e8bc0;
+$text-white: #fafaf8;
+$text-gray: #606975;
+$text-light-blue: #2e8bc0;
+$text-blue: #145da0;
+$text-black: #222222;
+$light-blue: #EEF7F9;
+$white: #FFFFFF;
+$icon-bg: #EDF6FA;
+$card-radius: #E5E7EB;
+
+$ascend-red: #F15454;
+$descent-blue: #1C64F2;
+
+
+
+/* 폰트 크기 */
+$text-xs: 0.75rem; // 12px
+$text-sm: 0.875rem; // 14px
+$text-md: 1rem; // 16px
+$text-lg: 1.125rem; // 18px
+$text-xl: 1.25rem; // 20px
+$text-2xl: 1.5rem; // 24px
+$text-3xl: 2.25rem; // 36px
+// $text-xs: 12px;
+// $text-sm: 14px;
+// $text-md: 16px;
+// $text-lg: 18px;
+// $text-xl: 20px;
+// $text-xxl: 24px;
+
+/* 폰트 굵기 */
+
+
+
+
+
+
+
+/* 버튼 크기 조정 */
+$button-padding-ratio: 0.5; // 버튼 높이에 대한 패딩 비율
+$button-min-width-ratio: 5; // 텍스트 크기의 몇 배로 설정할지
+$button-border-radius: 8px;
+$button-transition: 0.2s;

@@ -1,0 +1,55 @@
+@import "../variables.scss";
+
+.chartInfoCard {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 300px;
+  background-color: $white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chartWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  max-width: 100px;
+  margin-right: 1rem;
+}
+
+.textWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  & > *:first-child {
+    margin-bottom: 1rem;
+  }
+}
+
+.countWrapper {
+  display: flex;
+  align-items: center;
+  font-size: $text-sm;
+  color: $text-gray;
+  
+  & > * {
+    margin-right: 0.25rem;
+  }
+  
+  & > *:last-child {
+    margin-right: 0;
+    margin-left: 0.25rem;
+  }
+}
+
+.changeValue {
+  margin-top: 0.5rem;
+  font-size: $text-sm;
+  font-weight: bold;
+  color: $text-blue;
+}

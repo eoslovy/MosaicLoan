@@ -1,0 +1,61 @@
+@import "../variables.scss";
+
+.serviceInfoCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  padding: 1.25rem;
+  width: 295px;
+  height: 258px;
+  max-width: 100%;
+  background-color: $white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 6px 12px $hover-primary;
+    transform: translateY(-2px);
+
+    .value, .label {
+      transition: color 0.3s ease-in-out;
+    }
+  }
+}
+
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; // 그룹 전체 왼쪽 정렬
+  gap: 1rem; // 요소들 간 간격 조정
+  padding-right: 20px; // 우측 여백 추가
+  padding-top: 20px; // 상단 여백 추가
+}
+
+.iconWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 60px;
+  background-color: $icon-bg;
+  border-radius: 50%;
+}
+
+.value {
+  margin: 0;
+  font-size: $text-2xl;
+  font-weight: bold;
+  color: $text-blue;
+  text-align: left;
+}
+
+.label {
+  margin: 0;
+  font-size: $text-md;
+  color: $text-gray;
+  text-align: left;
+  white-space: pre-line;
+}

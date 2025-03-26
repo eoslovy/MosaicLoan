@@ -1,0 +1,60 @@
+@import "../variables.scss";
+
+.text {
+  font-weight: bold;
+  display: inline-block;
+}
+
+// 텍스트 크기 설정
+.xs {
+  font-size: $text-xs;
+}
+
+.sm {
+  font-size: $text-sm;
+}
+
+.md {
+  font-size: $text-md;
+}
+
+.lg {
+  font-size: $text-lg;
+}
+
+.xl {
+  font-size: $text-xl;
+}
+
+.xxl {
+  font-size: $text-2xl;
+}
+
+// 텍스트 색상 설정
+.white {
+  color: $text-white;
+}
+
+.gray {
+  color: $text-gray;
+}
+
+.light-blue {
+  color: $text-light-blue;
+}
+
+.blue {
+  color: $text-blue;
+}
+
+.black {
+  color: $text-black;
+}
+
+.text-ascendRed {
+  color: $ascend-red;
+}
+
+.text-descentBlue {
+  color: $descent-blue;
+}

@@ -1,0 +1,34 @@
+@import "../variables.scss";
+
+.barLineChartWrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.barLineChartContainer {
+  min-width: 800px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.barLineChart {
+  width: 100%;
+  max-width: 1000px;
+  height: 450px;
+}
+
+@media (max-width: 768px) {
+  .barLineChart {
+    max-width: 800px;
+    height: 350px;
+  }
+}
+
+@media (max-width: 480px) {
+  .barLineChart {
+    max-width: 600px;
+    height: 300px;
+  }
+}
