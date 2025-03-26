@@ -8,7 +8,7 @@ export type TextColor =
   | 'black'
   | 'text-ascendRed'
   | 'text-descentBlue';
-export type TextSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+export type TextSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'text-4xl';
 export type DoughnutChartType = 'repay-complete' | 'investing';
 export type DateUnit = 'day' | 'week' | 'month';
 

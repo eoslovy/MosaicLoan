@@ -4,10 +4,21 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Button from '@/components/common/Button';
 import Text from '@/components/common/Text';
-import styles from '@/styles/layout/Nav.module.scss';
+import styles from '@/styles/layouts/Nav.module.scss';
 import { handleKakaoLogin } from '@/utils/auth';
+import { useUser } from '@/hooks/useUser';
 
 const Nav = () => {
+  const user = useUser();
+
+  const handleLogout = async () => {
+    await fetch('http://localhost:8080/logout', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    window.location.reload();
+  };
+
   return (
     <nav className={styles.nav}>
       {/* 로고 부분 */}
@@ -36,19 +47,33 @@ const Nav = () => {
         </Link>
       </div>
 
-      {/* 로그인 관련 버튼 */}
+      {/* 로그인/로그아웃 영역 */}
       <div className={styles.nav__right}>
-        <Button
-          label={{ text: '로그인', size: 'sm', color: 'blue' }}
-          variant='outlined'
-          size='normal'
-          onClick={handleKakaoLogin}
-        />
-        <Button
-          label={{ text: '회원가입', size: 'sm', color: 'white' }}
-          variant='filled'
-          size='normal'
-        />
+      {user ? (
+        <>
+          <Text text={`${user.username}님`} size='sm' color='blue' />
+          <Button
+            label={{ text: '로그아웃', size: 'sm', color: 'blue' }}
+            variant='outlined'
+            size='normal'
+            onClick={handleLogout}
+          />
+        </>
+      ) : (
+        <>
+          <Button
+            label={{ text: '로그인', size: 'sm', color: 'blue' }}
+            variant='outlined'
+            size='normal'
+            onClick={handleKakaoLogin}
+          />
+          <Button
+            label={{ text: '회원가입', size: 'sm', color: 'white' }}
+            variant='filled'
+            size='normal'
+          />
+        </>
+      )}
       </div>
     </nav>
   );

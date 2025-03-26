@@ -1,0 +1,101 @@
+@use '../variables.scss' as *;
+
+@keyframes floatUpDown {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 3rem 1.5rem;
+  max-width: 1440px;
+  margin: 0 auto;
+  // background-color: red;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.hero__image {
+  flex-shrink: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  @media (min-width: 768px) {
+    width: auto;
+    justify-content: flex-start;
+  }
+
+  animation: floatUpDown 5s ease-in-out infinite;
+}
+
+
+// .hero__content {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 1.5rem;
+//   align-items: flex-start;
+//   max-width: 600px;
+//   flex: 1;
+
+//   @media (max-width: 768px) {
+//     align-items: center;
+//     text-align: center;
+//   }
+
+//   .text-4xl {
+//     font-size: clamp(1.5rem, 5vw, 3rem); // 최소 24px ~ 최대 48px
+//     font-weight: 700;
+//   }
+
+//   .text-xl {
+//     font-size: clamp(1rem, 3.5vw, 1.25rem); // 최소 16px ~ 최대 20px
+//     font-weight: 400;
+//   }
+
+//   .text-light-blue {
+//     color: $light-blue;
+//   }
+
+//   .text-black {
+//     color: $text-black;
+//   }
+// }
+
+// .hero__buttons {
+//   display: flex;
+//   gap: 1rem;
+//   flex-wrap: wrap;
+
+//   @media (max-width: 480px) {
+//     flex-direction: column;
+//     width: 100%;
+//     align-items: center;
+//   }
+// }
