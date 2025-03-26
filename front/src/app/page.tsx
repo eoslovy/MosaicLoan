@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import React from 'react';
 import Hero from '@/components/layout/Hero';
+import StatsSection from '@/components/ui/StatsSection';
 
 const Home = () => (
   <div className='w-full flex flex-col'>
@@ -8,7 +9,11 @@ const Home = () => (
     {/* <main className='flex flex-col gap-0 px-6 sm:px-10 pt-0 items-center sm:items-start'>
     </main> */}
 
-    <Hero />
+    <main>
+      <Hero />
+      <StatsSection />
+      {/* 필요한 다른 섹션들... */}
+    </main>
 
     {/* 푸터 */}
     <footer className='mt-auto flex gap-6 flex-wrap items-center justify-center py-6'>

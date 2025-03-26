@@ -1,50 +1,19 @@
 import clsx from 'clsx';
-import { TextProps, TextColor, TextSize, TextWeight } from '@/types/components';
-
-const sizeClasses: Record<TextSize, string> = {
-  xs: 'text-xs',
-  sm: 'text-sm',
-  md: 'text-base',
-  lg: 'text-lg',
-  xl: 'text-xl',
-  xxl: 'text-2xl',
-  'text-4xl': 'text-4xl',
-};
-
-const colorClasses: Record<TextColor, string> = {
-  white: 'text-white',
-  gray: 'text-gray-500',
-  'light-blue': 'text-sky-400',
-  blue: 'text-blue-500',
-  black: 'text-black',
-  'text-ascendRed': 'text-red-500',
-  'text-descentBlue': 'text-blue-300',
-};
-
-const weightClasses: Record<TextWeight, string> = {
-  thin: 'font-thin',
-  extralight: 'font-extralight',
-  light: 'font-light',
-  normal: 'font-normal',
-  medium: 'font-medium',
-  semibold: 'font-semibold',
-  bold: 'font-bold',
-  extrabold: 'font-extrabold',
-  black: 'font-black',
-};
+import { TextProps } from '@/types/components';
+import styles from '@/styles/components/Text.module.scss';
 
 const Text = ({
   text,
   size = 'md',
   color = 'black',
-  weight = 'normal',
+  weight = 'regular',
   className = '',
 }: TextProps) => {
   const combinedClassName = clsx(
-    'inline-block',
-    sizeClasses[size],
-    colorClasses[color],
-    weightClasses[weight],
+    styles.text,
+    styles[`text--size-${size}`],
+    styles[`text--color-${color}`],
+    styles[`text--weight-${weight}`],
     className,
   );
 

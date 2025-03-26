@@ -64,6 +64,7 @@ const Hero = () => {
             text='안전하고 간편한 투자, 개인 맞춤형 대출에는 모자익론'
             className='text-base sm:text-lg font-normal'
             color='blue'
+            
           />
         </div>
       </div>

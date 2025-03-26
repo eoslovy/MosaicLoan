@@ -8,14 +8,22 @@ export type TextColor =
   | 'black'
   | 'text-ascendRed'
   | 'text-descentBlue';
-export type TextSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'text-4xl';
+  export type TextSize =
+  | 'xs'
+  | 'sm'
+  | 'md'
+  | 'lg'
+  | 'xl'
+  | 'xxl'
+  | 'text-3xl'
+  | 'text-4xl';
 export type DoughnutChartType = 'repay-complete' | 'investing';
 export type DateUnit = 'day' | 'week' | 'month';
 export type TextWeight =
   | 'thin' // 100
   | 'extralight' // 200
   | 'light' // 300
-  | 'normal' // 400
+  | 'regular' // 400
   | 'medium' // 500
   | 'semibold' // 600
   | 'bold' // 700
