@@ -29,10 +29,10 @@
 .contentWrapper {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; // 그룹 전체 왼쪽 정렬
-  gap: 1rem; // 요소들 간 간격 조정
-  padding-right: 20px; // 우측 여백 추가
-  padding-top: 20px; // 상단 여백 추가
+  align-items: flex-start;
+  gap: 1rem;
+  padding-right: 20px;
+  padding-top: 20px;
 }
 
 .iconWrapper {
@@ -45,18 +45,6 @@
   border-radius: 50%;
 }
 
-.value {
-  margin: 0;
-  font-size: $text-2xl;
-  font-weight: bold;
-  color: $text-blue;
-  text-align: left;
-}
-
-.label {
-  margin: 0;
-  font-size: $text-md;
-  color: $text-gray;
-  text-align: left;
-  white-space: pre-line;
+.fullWidth {
+  width: 100%;
 }

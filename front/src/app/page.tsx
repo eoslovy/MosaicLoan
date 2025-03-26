@@ -2,6 +2,7 @@ import Image from 'next/image';
 import React from 'react';
 import Hero from '@/components/layout/Hero';
 import StatsSection from '@/components/ui/StatsSection';
+import ServiceInfosSection from '@/components/ui/ServiceInfosSection';
 
 const Home = () => (
   <div className='w-full flex flex-col'>
@@ -12,7 +13,7 @@ const Home = () => (
     <main>
       <Hero />
       <StatsSection />
-      {/* 필요한 다른 섹션들... */}
+      <ServiceInfosSection />
     </main>
 
     {/* 푸터 */}

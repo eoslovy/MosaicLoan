@@ -55,7 +55,7 @@ export interface StatCardProps {
 export interface ServiceInfoCardProps {
   icon: 'shield' | 'users' | 'trendingUp' | 'clock';
   value: string;
-  label: string;
+  label: JSX.Element;
 }
 
 export interface BasicInfoCardProps {
@@ -94,7 +94,7 @@ export interface PieChartProps {
 }
 
 export interface BarLineChartProps {
-  labels: string[]; // 날짜짜
+  labels: string[]; // 날짜
   rawBarData: { [category: string]: number[] };
   rawLineData: number[];
   dateUnit?: DateUnit;
