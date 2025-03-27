@@ -1,0 +1,69 @@
+@use '../variables.scss' as *;
+
+@keyframes floatUpDown {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatUpDown {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes shadowScale {
+  0%, 100% {
+    transform: scaleX(2) scaleY(2);
+  }
+  50% {
+    transform: scaleX(1.5) scaleY(1.5);
+  }
+}
+
+.hero {
+  background: linear-gradient(to bottom, #F5F5F0, #EDF6F9);
+  width: 100%;
+  min-height: auto;
+  padding: 2.5rem 1rem;
+
+  @media (min-width: 640px) {
+    padding: 4rem 1rem;
+  }
+}
+
+.hero__image {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    z-index: 2;
+    animation: floatUpDown 4s ease-in-out infinite;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    width: 140px;
+    height: 30px;
+    background: #D2E5EB;
+    border-radius: 50%;
+    filter: blur(6px);
+    z-index: 1;
+
+    animation: shadowScale 4s ease-in-out infinite;
+    transform-origin: center;
+  }
+}

@@ -1,60 +1,104 @@
-@import "../variables.scss";
+@use '../variables.scss' as *;
 
 .text {
-  font-weight: bold;
   display: inline-block;
-}
 
-// 텍스트 크기 설정
-.xs {
-  font-size: $text-xs;
-}
+  // 색상
+  &--color-white {
+    color: $text-white;
+  }
 
-.sm {
-  font-size: $text-sm;
-}
+  &--color-gray {
+    color: $text-gray;
+  }
 
-.md {
-  font-size: $text-md;
-}
+  &--color-light-blue {
+    color: $text-light-blue;
+  }
 
-.lg {
-  font-size: $text-lg;
-}
+  &--color-blue {
+    color: $text-blue;
+  }
 
-.xl {
-  font-size: $text-xl;
-}
+  &--color-black {
+    color: $text-black;
+  }
 
-.xxl {
-  font-size: $text-2xl;
-}
+  &--color-text-ascendRed {
+    color: $ascend-red;
+  }
 
-// 텍스트 색상 설정
-.white {
-  color: $text-white;
-}
+  &--color-text-descentBlue {
+    color: $descent-blue;
+  }
 
-.gray {
-  color: $text-gray;
-}
+  // 크기
+  &--size-xs {
+    font-size: $text-xs;
+  }
 
-.light-blue {
-  color: $text-light-blue;
-}
+  &--size-sm {
+    font-size: $text-sm;
+  }
 
-.blue {
-  color: $text-blue;
-}
+  &--size-md {
+    font-size: $text-md;
+  }
 
-.black {
-  color: $text-black;
-}
+  &--size-lg {
+    font-size: $text-lg;
+  }
 
-.text-ascendRed {
-  color: $ascend-red;
-}
+  &--size-xl {
+    font-size: $text-xl;
+  }
 
-.text-descentBlue {
-  color: $descent-blue;
+  &--size-2xl {
+    font-size: $text-2xl;
+  }
+
+  &--size-text-3xl {
+    font-size: $text-3xl;
+  }
+
+  &--size-text-4xl {
+    font-size: $text-4xl;
+  }
+
+  // 굵기
+  &--weight-thin {
+    font-weight: 100;
+  }
+
+  &--weight-extralight {
+    font-weight: 200;
+  }
+
+  &--weight-light {
+    font-weight: 300;
+  }
+
+  &--weight-regular {
+    font-weight: 400;
+  }
+
+  &--weight-medium {
+    font-weight: 500;
+  }
+
+  &--weight-semibold {
+    font-weight: 600;
+  }
+
+  &--weight-bold {
+    font-weight: 700;
+  }
+
+  &--weight-extrabold {
+    font-weight: 800;
+  }
+
+  &--weight-black {
+    font-weight: 900;
+  }
 }

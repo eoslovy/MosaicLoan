@@ -1,0 +1,82 @@
+@use '../variables.scss' as *;
+
+.calculatorBody {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.calculatorWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  max-width: 960px;
+  background-color: $white;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.tabButtons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tabButton {
+  padding: 0.5rem 1.25rem;
+  font-size: $text-md;
+  font-weight: 500;
+  color: $text-blue;
+  border: 2px solid $text-blue;
+  background-color: transparent;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: $hover-primary;
+    color: $white;
+    border-color: $hover-primary;
+  }
+}
+
+.active {
+  background-color: $text-blue;
+  color: $white;
+}
+
+.calculatorBody {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+}
+
+.leftPanel {
+  flex: 1;
+  min-width: 320px;
+  max-width: 580px;
+}
+
+.rightPanel {
+  flex: 0 0 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 768px) {
+    flex: none;
+    width: 100%;
+    justify-content: center;
+  }
+}

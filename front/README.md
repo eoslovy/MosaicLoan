@@ -1,6 +1,5 @@
 ## skills
 
-
 ## script
 
 ```bash
