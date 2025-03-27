@@ -3,7 +3,7 @@ import { Meta, StoryFn } from '@storybook/react';
 import StatsSection from '@/components/ui/StatsSection';
 
 export default {
-  title: 'Components/StatsSection',
+  title: 'UI/StatsSection',
   component: StatsSection,
   parameters: {
     layout: 'fullscreen',

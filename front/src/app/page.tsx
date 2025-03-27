@@ -3,6 +3,7 @@ import React from 'react';
 import Hero from '@/components/layout/Hero';
 import StatsSection from '@/components/ui/StatsSection';
 import ServiceInfosSection from '@/components/ui/ServiceInfosSection';
+import InvestmentCalculator from '@/components/ui/InvestmentCalculator';
 
 const Home = () => (
   <div className='w-full flex flex-col'>
@@ -14,6 +15,9 @@ const Home = () => (
       <Hero />
       <StatsSection />
       <ServiceInfosSection />
+      <div className="flex justify-center items-center px-4 py-20 bg-[#f9fafb]">
+        <InvestmentCalculator />
+      </div>
     </main>
 
     {/* 푸터 */}
