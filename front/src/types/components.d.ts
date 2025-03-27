@@ -111,3 +111,41 @@ export interface BarChartProps {
   values: number[];
   title?: string;
 }
+
+export interface SliderProps {
+  value: number;
+  min: number;
+  max: number;
+  step?: number;
+  onChange: (value: number) => void;
+  labelLeft?: string;
+  labelRight?: string;
+}
+
+export interface SliderGroupItemProps {
+  title: string;
+  valueText: string;
+  sliderValue: number;
+  min: number;
+  max: number;
+  step?: number;
+  labelLeft?: string;
+  labelRight?: string;
+  onChange: (value: number) => void;
+  bgColor?: 'light-blue' | 'none';
+}
+
+export interface InvestmentResultPanelProps {
+  amount: number; // 투자 금액
+  duration: number; // 투자 기간_개월월
+  rate: number; // 연ㄴ수익률 (%)
+}
+
+export interface InvestmentInputPanelProps {
+  amount: number;
+  setAmount: React.Dispatch<React.SetStateAction<number>>;
+  duration: number;
+  setDuration: React.Dispatch<React.SetStateAction<number>>;
+  rate: number;
+  setRate: React.Dispatch<React.SetStateAction<number>>;
+}
