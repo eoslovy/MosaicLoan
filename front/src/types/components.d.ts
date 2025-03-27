@@ -3,6 +3,7 @@ import type React, { JSX } from 'react';
 export type ButtonType = 'filled' | 'outlined' | 'non-selected';
 export type ButtonSize = 'normal' | 'large';
 export type TextColor =
+  | 'primary-blue'
   | 'white'
   | 'gray'
   | 'light-blue'
@@ -150,4 +151,17 @@ export interface InvestmentInputPanelProps {
   setDuration: React.Dispatch<React.SetStateAction<number>>;
   rate: number;
   setRate: React.Dispatch<React.SetStateAction<number>>;
+}
+
+export interface SectionTab {
+  label: TextProps;
+  href: string;
+}
+
+export interface SectionTabNavProps {
+  title: TextProps;
+  description: TextProps;
+  tabs: SectionTab[];
+  activeIndex: number;
+  onTabClick: (index: number) => void;
 }
