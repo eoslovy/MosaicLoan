@@ -1,0 +1,23 @@
+@use '../variables.scss' as *;
+
+.sliderGroupItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1.25rem 1.5rem; 
+  box-sizing: border-box;
+}
+
+.bgLightBlue {
+  background-color: $light-blue;
+  border-radius: 8px;
+}
+
+
+.valueText {
+  font-size: $text-2xl;
+  font-weight: bold;
+  color: $text-blue;
+  text-align: left;
+}
