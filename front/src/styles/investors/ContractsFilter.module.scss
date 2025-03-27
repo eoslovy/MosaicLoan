@@ -1,0 +1,94 @@
+@use '../variables.scss' as *;
+
+.filterContainer {
+  background-color: $white;
+  padding: 1.5rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  // max-width: 1200px;
+  margin: 2rem 10rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.filterItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dateInput {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  width: 140px;
+}
+
+.tilde {
+  margin: 0 0.5rem;
+}
+
+.select {
+  min-width: 160px;
+  font-size: 0.9rem;
+}
+
+.toggleButton {
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: $text-gray;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+.searchButton {
+  background-color: $primary-color;
+  color: $white;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: darken($primary-color, 5%);
+  }
+}
+
+.detailBox {
+  background-color: #f8f9fb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detailInner {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.buttonWrapper {
+  display: flex;
+  justify-content: flex-end;
+}

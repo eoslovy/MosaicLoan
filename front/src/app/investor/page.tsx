@@ -6,6 +6,9 @@ import type { TextProps, SectionTab } from '@/types/components';
 import Overview from '@/components/investor/Overview';
 import OverviewTable from '@/components/investor/OverviewTable';
 import OverviewInvestSimulation from '@/components/investor/OverviewInvestSimulation';
+import TotalContractsOverview from '@/components/investor/TotalContractsOverview';
+import ContractsFilter from '@/components/investor/ContractsFilter';
+import ContractsList from '@/components/investor/ContractsList';
 
 const InvestorPage = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -31,7 +34,7 @@ const InvestorPage = () => {
     },
     {
       label: { text: '채권 거래 내역', size: 'sm', color: 'gray' },
-      href: '/investor/transactions',
+      href: '/investor/contracts',
     },
     {
       label: { text: '채권 통계', size: 'sm', color: 'gray' },
@@ -49,8 +52,17 @@ const InvestorPage = () => {
             <OverviewInvestSimulation />
           </>
         );
-      // case 1:
-      //   return <Transactions />;
+      case 1:
+        return (
+          <>
+            <div className='bg-[#edf6fa] py-10 px-10'>
+              <TotalContractsOverview />
+            </div>
+            <ContractsFilter />
+            <ContractsList />
+          </>
+        );
+
       // case 2:
       //   return <Statistics />;
       default:
@@ -69,7 +81,7 @@ const InvestorPage = () => {
       />
 
       {/* 탭에 따라 다른 페이지 로딩하기기기 */}
-      <div className='mt-10'>{renderTabContent()}</div>
+      <div>{renderTabContent()}</div>
     </main>
   );
 };

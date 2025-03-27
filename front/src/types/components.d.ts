@@ -185,3 +185,15 @@ export interface BasicTableProps {
   viewAllLink?: string;
   showHeader?: boolean;
 }
+
+export interface ProgressItem {
+  label: string;
+  count: number;
+  percentage: number;
+  color: string;
+}
+
+export interface ProgressGroupProps {
+  title?: string;
+  items: ProgressItem[];
+}

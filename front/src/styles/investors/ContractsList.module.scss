@@ -1,0 +1,69 @@
+.tableContainer {
+  margin: 2rem 10rem;
+  padding-bottom: 15rem;
+  background-color: #f9f9f9;
+}
+
+.contractsTable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.contractsTable th,
+.contractsTable td {
+  padding: 12px 15px;
+  text-align: left;
+  border: 1px solid #f1f1f1;
+}
+
+.contractsTable th {
+  background-color: #f9f9f9;
+  cursor: pointer;
+  position: relative; /* Added for sorting arrow positioning */
+}
+
+.contractsTable td {
+  background-color: #fff;
+}
+
+.contractsTable th .sortArrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+}
+
+.contractsTable th.sortedAsc .sortArrow.asc,
+.contractsTable th.sortedDesc .sortArrow.desc {
+  display: block;
+}
+
+.pill {
+  padding: 5px 10px;
+  border-radius: 20px;
+  background-color: #e0f7fa;
+  font-size: 12px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: flex-end; /* Align pagination buttons to the right */
+  margin-top: 20px;
+}
+
+.paginationButton {
+  padding: 10px;
+  background-color: #145da0;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin: 0 5px;
+  border-radius: 5px;
+}
+
+.paginationButton:hover {
+  background-color: #0d4d8f;
+}

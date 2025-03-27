@@ -137,7 +137,7 @@ const OverviewTable = () => {
           title='투자 현황'
           columns={['투자명', '투자금액', '금리', '상환일', '상태']}
           rows={fixedInvestmentRows}
-          viewAllLink='/investor/transactions'
+          viewAllLink='/investor/contracts'
         />
       </div>
       <div className={styles.rightTable}>
