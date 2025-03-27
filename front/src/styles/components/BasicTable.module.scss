@@ -1,0 +1,76 @@
+@use '../variables.scss' as *;
+
+.wrapper {
+  background-color: $white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.viewAll {
+  font-size: $text-xs;
+  color: $primary-color;
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+
+.title {
+  font-size: $text-lg;
+  font-weight: bold;
+  color: $text-gray;
+  margin-bottom: 1rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  
+
+  th {
+    text-align: left;
+    padding: 0.75rem;
+    font-size: $text-sm;
+    color: $text-gray;
+    // border-bottom: 1px solid $text-gray;
+    height: 56px;
+  }
+
+  td {
+    padding: 0.75rem;
+    font-size: $text-sm;
+    color: $text-black;
+    // border-bottom: 1px solid $text-gray;
+    height: 56px;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.table thead tr {
+  background-color: #f9fafb;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #f9fafb;
+}

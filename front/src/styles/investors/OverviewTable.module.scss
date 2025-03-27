@@ -1,0 +1,82 @@
+@use '../variables.scss' as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 2rem auto;
+  padding: 2rem 1rem; 
+
+  // @media (min-width: 768px) {
+  //   padding: 3rem 2rem;
+  // }
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: stretch;
+    padding: 2rem 5rem;
+  }
+}
+
+.leftTable {
+  flex: 2;
+}
+
+.rightTable {
+  flex: 1;
+}
+
+.leftTable,
+.rightTable {
+  display: flex;
+  flex-direction: column;
+}
+
+.labelWithDate {
+  display: flex;
+  flex-direction: column;
+
+  p {
+    font-weight: 500;
+    color: $text-black;
+  }
+
+  .date {
+    font-size: $text-xs;
+    color: $text-gray;
+  }
+}
+
+.amount {
+  color: $text-green;
+  font-weight: 700;
+  text-align: right;
+}
+
+// 상태 뱃지
+.badgeSuccess {
+  background-color: #d1fae5;
+  color: #059669;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badgeWarning {
+  background-color: #fef9c3;
+  color: #b45309;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badgeDanger {
+  background-color: #fee2e2;
+  color: #dc2626;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}

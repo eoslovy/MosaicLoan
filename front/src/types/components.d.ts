@@ -120,7 +120,7 @@ export interface SliderProps {
   min: number;
   max: number;
   step?: number;
-  // onChange: (value: number) => void;
+  onChange: (value: number) => void;
   labelLeft?: string;
   labelRight?: string;
 }
@@ -134,7 +134,7 @@ export interface SliderGroupItemProps {
   step?: number;
   labelLeft?: string;
   labelRight?: string;
-  // onChange: (value: number) => void;
+  onChange: (value: number) => void;
   bgColor?: 'light-blue' | 'none';
 }
 
@@ -165,4 +165,23 @@ export interface SectionTabNavProps {
   activeIndex: number;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onTabClick: (_index: number) => void;
+}
+
+export interface BasicTableCell {
+  key: string;
+  content: string | number | React.ReactNode;
+}
+
+export interface BasicTableRow {
+  key: string;
+  cells: BasicTableCell[];
+}
+
+export interface BasicTableProps {
+  title?: string;
+  columns: string[];
+  rows: BasicTableRow[];
+  className?: string;
+  viewAllLink?: string;
+  showHeader?: boolean;
 }

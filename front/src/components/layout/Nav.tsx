@@ -51,7 +51,7 @@ const Nav = () => {
       <div className={styles.nav__right}>
         {user ? (
           <>
-            <Text text={`${user.username}님`} size='sm' color='blue' />
+            <Text text={`${user.name}님`} size='sm' color='blue' />
             <Button
               label={{ text: '로그아웃', size: 'sm', color: 'blue' }}
               variant='outlined'

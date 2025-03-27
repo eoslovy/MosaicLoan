@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import SectionTabNav from '@/components/layout/SectionTabNav';
 import type { TextProps, SectionTab } from '@/types/components';
 import Overview from '@/components/investor/Overview';
+import OverviewTable from '@/components/investor/OverviewTable';
+import OverviewInvestSimulation from '@/components/investor/OverviewInvestSimulation';
 
 const InvestorPage = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -43,8 +45,8 @@ const InvestorPage = () => {
         return (
           <>
             <Overview />
-            {/* <AnotherOverviewSection />
-            <SomeChart /> */}
+            <OverviewTable />
+            <OverviewInvestSimulation />
           </>
         );
       // case 1:
