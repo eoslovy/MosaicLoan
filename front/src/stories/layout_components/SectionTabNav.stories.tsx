@@ -60,8 +60,8 @@ export const Default: Story = {
     description,
     tabs,
     activeIndex: 0,
-    onTabClick: (index: number) => {
-      console.log('Tab clicked:', index);
-    },
+    // onTabClick: (index: number) => {
+
+    // },
   },
 };

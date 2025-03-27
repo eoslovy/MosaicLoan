@@ -163,5 +163,6 @@ export interface SectionTabNavProps {
   description: TextProps;
   tabs: SectionTab[];
   activeIndex: number;
-  onTabClick: (index: number) => void;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onTabClick: (_index: number) => void;
 }

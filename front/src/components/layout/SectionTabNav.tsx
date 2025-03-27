@@ -18,17 +18,17 @@ const SectionTabNav: React.FC<SectionTabNavProps> = ({
       <div className={styles.header}>
         <Text
           className={clsx(styles.title, title.className)}
-          weight="bold"
-          color="primary-blue"
-          size="text-3xl"
+          weight='bold'
+          color='primary-blue'
+          size='text-3xl'
           {...title}
         />
         {description && (
           <Text
             {...description}
             className={clsx(styles.description, description.className)}
-            weight="regular"
-            color="gray"
+            weight='regular'
+            color='gray'
           />
         )}
       </div>
@@ -41,12 +41,9 @@ const SectionTabNav: React.FC<SectionTabNavProps> = ({
               [styles.active]: idx === activeIndex,
             })}
             onClick={() => onTabClick(idx)}
-            type="button"
+            type='button'
           >
-            <Text
-              {...tab.label}
-              className={clsx(tab.label.className)}
-            />
+            <Text {...tab.label} className={clsx(tab.label.className)} />
           </button>
         ))}
       </div>

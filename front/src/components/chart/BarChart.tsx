@@ -2,6 +2,7 @@ import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { BarChartProps } from '@/types/components';
 import styles from '@/styles/charts/BarChart.module.scss';
+import type { TooltipItem } from 'chart.js';
 import {
   Chart as ChartJS,
   BarElement,
@@ -43,8 +44,12 @@ const BarChart: React.FC<BarChartProps> = ({ labels, values, title }) => {
       },
       tooltip: {
         callbacks: {
-          label: (tooltipItem: any) => {
-            return ` ${tooltipItem.raw.toLocaleString()} 원`; // 툴팁은 원 단위 유지
+          label: (tooltipItem: TooltipItem<'bar'>) => {
+            const { raw } = tooltipItem;
+            if (typeof raw === 'number') {
+              return ` ${raw.toLocaleString()} 원`;
+            }
+            return '';
           },
         },
       },
