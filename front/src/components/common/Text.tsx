@@ -9,13 +9,13 @@ const Text = ({
   weight = 'regular',
   className = '',
 }: TextProps) => {
-const combinedClassName = clsx(
-  styles.text,
-  styles[`text--size-${size}`],
-  styles[`text--color-${color}`],
-  styles[`text--weight-${weight}`],
-  className,
-);
+  const combinedClassName = clsx(
+    styles.text,
+    styles[`text--size-${size}`],
+    styles[`text--color-${color}`],
+    styles[`text--weight-${weight}`],
+    className,
+  );
 
   return <span className={combinedClassName}>{text}</span>;
 };

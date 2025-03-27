@@ -17,28 +17,28 @@ const InvestmentResultPanel: React.FC<InvestmentResultPanelProps> = ({
   return (
     <div className={styles.resultWrapper}>
       <div className={styles.iconWrapper}>
-        <Calculator size={32} color="#145DA0" />
+        <Calculator size={32} color='#145DA0' />
       </div>
 
       <Text
-        text="예상 수익금액"
-        size="sm"
-        color="light-blue"
-        weight="regular"
+        text='예상 수익금액'
+        size='sm'
+        color='light-blue'
+        weight='regular'
       />
 
       <Text
         text={`₩ ${total.toLocaleString()}`}
-        size="text-3xl"
-        color="blue"
-        weight="bold"
+        size='text-3xl'
+        color='blue'
+        weight='bold'
       />
 
       <Text
         text={`원금 ₩${amount.toLocaleString()} + 이자 ₩${interest.toLocaleString()}`}
-        size="md"
-        color="gray"
-        weight="regular"
+        size='md'
+        color='gray'
+        weight='regular'
       />
     </div>
   );

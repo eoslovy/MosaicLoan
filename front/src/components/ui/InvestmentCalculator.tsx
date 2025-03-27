@@ -13,8 +13,15 @@ const InvestmentCalculator = () => {
   return (
     <section className={styles.calculatorWrapper}>
       <div className={styles.tabButtons}>
-        <button className={`${styles.tabButton} ${styles.active}`}>투자 계산기</button>
-        <button className={styles.tabButton}>대출 계산기</button>
+        <button
+          type='button'
+          className={`${styles.tabButton} ${styles.active}`}
+        >
+          투자 계산기
+        </button>
+        <button type='button' className={styles.tabButton}>
+          대출 계산기
+        </button>
       </div>
 
       <div className={styles.calculatorBody}>
@@ -30,7 +37,11 @@ const InvestmentCalculator = () => {
         </div>
 
         <div className={styles.rightPanel}>
-          <InvestmentResultPanel amount={amount} duration={duration} rate={rate} />
+          <InvestmentResultPanel
+            amount={amount}
+            duration={duration}
+            rate={rate}
+          />
         </div>
       </div>
     </section>

@@ -15,7 +15,7 @@ const Home = () => (
       <Hero />
       <StatsSection />
       <ServiceInfosSection />
-      <div className="flex justify-center items-center px-4 py-20 bg-[#f9fafb]">
+      <div className='flex justify-center items-center px-4 py-20 bg-[#f9fafb]'>
         <InvestmentCalculator />
       </div>
     </main>

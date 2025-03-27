@@ -23,15 +23,15 @@ const SliderGroupItem: React.FC<SliderGroupItemProps> = ({
     <div
       className={clsx(
         styles.sliderGroupItem,
-        bgColor === 'light-blue' && styles.bgLightBlue
+        bgColor === 'light-blue' && styles.bgLightBlue,
       )}
     >
-      <Text text={title} size="sm" color="gray" weight="regular" />
+      <Text text={title} size='sm' color='gray' weight='regular' />
       <Text
         text={valueText}
-        size="xl"
-        color="blue"
-        weight="bold"
+        size='xl'
+        color='blue'
+        weight='bold'
         className={styles.valueText}
       />
 

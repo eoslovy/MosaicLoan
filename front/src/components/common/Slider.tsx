@@ -16,7 +16,7 @@ const Slider: React.FC<SliderProps> = ({
   return (
     <div className={styles.sliderWrapper}>
       <input
-        type="range"
+        type='range'
         className={styles.slider}
         min={min}
         max={max}

@@ -1,3 +1,5 @@
+import type React, { JSX } from 'react';
+
 export type ButtonType = 'filled' | 'outlined' | 'non-selected';
 export type ButtonSize = 'normal' | 'large';
 export type TextColor =
@@ -8,7 +10,7 @@ export type TextColor =
   | 'black'
   | 'text-ascendRed'
   | 'text-descentBlue';
-  export type TextSize =
+export type TextSize =
   | 'xs'
   | 'sm'
   | 'md'
@@ -117,7 +119,7 @@ export interface SliderProps {
   min: number;
   max: number;
   step?: number;
-  onChange: (value: number) => void;
+  // onChange: (value: number) => void;
   labelLeft?: string;
   labelRight?: string;
 }
@@ -131,7 +133,7 @@ export interface SliderGroupItemProps {
   step?: number;
   labelLeft?: string;
   labelRight?: string;
-  onChange: (value: number) => void;
+  // onChange: (value: number) => void;
   bgColor?: 'light-blue' | 'none';
 }
 

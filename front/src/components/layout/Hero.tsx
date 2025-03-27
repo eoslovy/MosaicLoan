@@ -48,14 +48,14 @@ const Hero = () => {
 
           {/* 버튼 영역 */}
           <div className='flex flex-wrap gap-4 justify-center md:justify-start'>
-            <Link href="/borrower">
+            <Link href='/borrower'>
               <Button
                 label={{ text: '대출하기', size: 'sm', color: 'white' }}
                 variant='filled'
                 size='normal'
               />
             </Link>
-            <Link href="/investor">
+            <Link href='/investor'>
               <Button
                 label={{ text: '투자하기', size: 'sm', color: 'blue' }}
                 variant='outlined'
@@ -69,7 +69,6 @@ const Hero = () => {
             text='안전하고 간편한 투자, 개인 맞춤형 대출에는 모자익론'
             className='text-base sm:text-lg font-normal'
             color='blue'
-            
           />
         </div>
       </div>

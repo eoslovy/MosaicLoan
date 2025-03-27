@@ -18,14 +18,14 @@ export const Default: Story = {
     return (
       <div style={{ width: '400px', padding: '2rem', background: '#f5f5f5' }}>
         <SliderGroupItem
-          title="투자 금액"
+          title='투자 금액'
           valueText={`₩${value.toLocaleString()}`}
           sliderValue={value}
           min={100000}
           max={50000000}
           step={100000}
-          labelLeft="10만원"
-          labelRight="5천만원"
+          labelLeft='10만원'
+          labelRight='5천만원'
           onChange={(val) => setValue(val)}
         />
       </div>

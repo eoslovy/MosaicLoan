@@ -18,8 +18,8 @@ export const Default = () => {
         max={500}
         step={10}
         onChange={setValue}
-        labelLeft="₩0"
-        labelRight="₩500"
+        labelLeft='₩0'
+        labelRight='₩500'
       />
     </div>
   );

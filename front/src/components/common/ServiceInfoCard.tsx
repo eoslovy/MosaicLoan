@@ -23,21 +23,11 @@ const ServiceInfoCard: React.FC<ServiceInfoCardProps> = ({
   return (
     <article className={`${styles.serviceInfoCard} ${styles.contentWrapper}`}>
       <div className={styles.iconWrapper}>
-        <IconComponent size={25} color="#145DA0" />
+        <IconComponent size={25} color='#145DA0' />
       </div>
 
-      <Text
-        text={value}
-        size="xl"
-        color="blue"
-        weight="bold"
-      />
-      <Text
-        text={label}
-        size="md"
-        color="gray"
-        weight="regular"
-      />
+      <Text text={value} size='xl' color='blue' weight='bold' />
+      <Text text={label} size='md' color='gray' weight='regular' />
     </article>
   );
 };
