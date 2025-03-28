@@ -22,9 +22,10 @@ const Nav = () => {
 
       if (res.ok) {
         setUser(null); // 상태 초기화
-      } else {
-        console.error('Logout failed:', res.status);
       }
+      // else {
+      //   console.error('Logout failed:', res.status);
+      // }
     } catch (err) {
       console.error('Logout error:', err);
     }
