@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class EvaluationAggregatorService {
 
-	private final EvaluationDataService dataService;
+	private final EvaluationRedisService dataService;
 	private final WebSocketService webSocketService;
 	private final CalculationService calculationService;
 
@@ -49,16 +49,15 @@ public class EvaluationAggregatorService {
 			if (dataService.getReceivedCount(caseId) == EXPECTED_SOURCES.size()) {
 				// 데이터 집계
 				Map<String, Object> mergedPayload = dataService.collectAllPayloads(caseId, EXPECTED_SOURCES);
-				log.info("최종 평가 데이터: {}", mergedPayload);
 
-				// ✅ 모델링 서버 호출
+				// 모델링 서버 호출
 				double probability = modelingClientService.getRepaymentProbability(mergedPayload);
 
-				// ✅ 계산 및 저장
+				// 계산 및 저장
 				calculationService.evaluateCredit(Integer.valueOf(caseId), Integer.valueOf(memberId), probability);
 
-				// WebSocket으로 결과 전송
-				webSocketService.sendResult(caseId, mergedPayload);
+				// WebSocket으로 완료 알림 전송
+				webSocketService.sendEvaluationComplete(Integer.valueOf(memberId));
 
 				// 데이터 정리
 				dataService.cleanup(caseId, EXPECTED_SOURCES);
