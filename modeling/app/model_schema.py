@@ -123,5 +123,5 @@ prediction_schema = StructType([
     StructField("dpd_acceleration", DoubleType(), True),
     StructField("projected_dpd", DoubleType(), True),
     StructField("debt_elasticity", DoubleType(), True),
-    StructField("target", DoubleType(), True)
+    StructField("target", LongType(), True)
 ])

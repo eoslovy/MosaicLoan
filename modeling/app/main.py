@@ -73,7 +73,7 @@ async def predict(request: PredictionRequest):
     try:
         # Dict를 Spark DataFrame으로 변환
         input_df = spark.createDataFrame([request.features], schema=prediction_schema)
-        
+
         # 모델 예측 수행
         result_df = model.transform(input_df)
         
@@ -85,9 +85,15 @@ async def predict(request: PredictionRequest):
         probability_udf = udf(lambda v: float(v[1]) if v is not None else None, DoubleType())
         
         # 확률값 추출
-        probability = float(result_df.select(probability_udf(col("probability"))).collect()[0][0])
+        probability_row = result_df.select(probability_udf(col("probability"))).collect()[0][0]
+
+        logger.info(f"예측된 확률(probability): {probability_row}")
+
+        if probability_row is None:
+            logger.error("예측 결과가 null입니다. 모델이 올바르게 예측하지 못했습니다.")
+            raise HTTPException(status_code=503, detail="모델 예측 결과가 null입니다.")
         
-        return PredictionResponse(prediction=probability)
+        return PredictionResponse(prediction=probability_row)
     except Exception as e:
         logger.error(f"예측 중 오류 발생: {e}")
         raise HTTPException(status_code=500, detail=str(e))
