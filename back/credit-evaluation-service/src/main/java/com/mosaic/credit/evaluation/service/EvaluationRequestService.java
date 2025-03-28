@@ -8,6 +8,8 @@ import com.mosaic.credit.evaluation.domain.EvaluationCase;
 import com.mosaic.credit.evaluation.dto.EvaluationStartRequest;
 import com.mosaic.credit.evaluation.repository.CreditEvaluationRepository;
 import com.mosaic.credit.evaluation.repository.EvaluationCaseRepository;
+import com.mosaic.credit.evaluation.exception.KafkaException;
+import com.mosaic.credit.evaluation.exception.ErrorCode;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,7 @@ public class EvaluationRequestService {
 	public void requestEvaluation(Integer memberId) {
 		// 사용되지 않은 case_id 하나 찾기
 		EvaluationCase availableCase = caseRepository.findFirstByIsCheckedFalse()
-			.orElseThrow(() -> new IllegalStateException("사용 가능한 case_id가 없습니다."));
+			.orElseThrow(() -> new KafkaException(ErrorCode.NO_AVAILABLE_CASE));
 
 		// 사용 처리
 		availableCase.markAsChecked();
@@ -35,16 +37,11 @@ public class EvaluationRequestService {
 		request.setCaseId(String.valueOf(availableCase.getCaseId()));
 		request.setMemberId(memberId);
 
-		log.info("Kafka 메시지 발행 시작: {}", request);
 		kafkaTemplate.send("EvaluationStart", request)
 			.whenComplete((result, ex) -> {
 				if (ex != null) {
-					log.error("Kafka 메시지 발행 실패: {}", ex.getMessage());
-				} else {
-					log.info("Kafka 메시지 발행 성공: topic={}, partition={}, offset={}", 
-						result.getRecordMetadata().topic(),
-						result.getRecordMetadata().partition(),
-						result.getRecordMetadata().offset());
+					throw new KafkaException(ErrorCode.KAFKA_PUBLISH_ERROR, 
+						"Kafka 메시지 발행 실패: memberId = " + memberId + ", caseId = " + availableCase.getCaseId());
 				}
 			});
 	}
