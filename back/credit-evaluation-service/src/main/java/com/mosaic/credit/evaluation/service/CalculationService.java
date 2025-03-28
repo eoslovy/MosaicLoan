@@ -19,12 +19,13 @@ public class CalculationService {
 	@Transactional
 	public CreditEvaluation evaluateCredit(Integer caseId, Integer memberId, double probability) {
 		// 1. 부도 확률 계산
-		double defaultRate = 1 - probability;
+		int defaultRate = (int)Math.round(probability * 10000);
 
 		// 2. 이자율 계산 (무위험 이자율 4%, 손실률 0.5 가정)
 		double riskFreeRate = 0.04;
 		double lossGivenDefault = 0.5;
-		double interestRate = riskFreeRate + (defaultRate * lossGivenDefault) / (1 - defaultRate);
+		int interestRate = (int)Math.round(
+			(riskFreeRate + (defaultRate * lossGivenDefault) / defaultRate) * 10000);
 
 		// 3. 대출 가능 한도 계산 (예시: 1000만 원 * 신뢰도)
 		int maxLoanLimit = (int) (10000000 * probability); // 가변 조정 가능
