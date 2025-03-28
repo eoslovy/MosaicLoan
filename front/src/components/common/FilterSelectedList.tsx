@@ -1,23 +1,15 @@
 'use client';
 
 import React from 'react';
-import styles from '@/styles/components/FilterSelectTable.module.scss';
+import styles from '@/styles/components/FilterSelectedList.module.scss';
 
-interface ContractRow {
-  id: string;
-  name: string;
-  count: number;
-  startDate: string;
-  status: '진행중' | '완료';
-}
-
-interface FilterSelectTableProps {
-  data: ContractRow[];
+interface FilterSelectedListProps {
+  data: { id: string; name: string }[];
   selectedIds: string[];
   onSelect: (selected: string[]) => void;
 }
 
-const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
+const FilterSelectedList: React.FC<FilterSelectedListProps> = ({
   data,
   selectedIds,
   onSelect,
@@ -30,24 +22,23 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
     }
   };
 
-  const toggleSelectAll = () => {
-    if (selectedIds.length === data.length) {
-      onSelect([]);
-    } else {
-      onSelect(data.map((row) => row.id));
-    }
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.headerRow}>
-        <label>
+        <label htmlFor='selectAll'>
           <input
             type='checkbox'
+            id='selectAll'
             checked={selectedIds.length === data.length}
-            onChange={toggleSelectAll}
+            onChange={() =>
+              onSelect(
+                selectedIds.length === data.length
+                  ? []
+                  : data.map((item) => item.id),
+              )
+            }
           />
-          전체선택
+          전체 선택
         </label>
         <span className={styles.count}>
           총 {data.length}건 중 {selectedIds.length}건
@@ -55,45 +46,24 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
       </div>
 
       <div className={styles.tableWrapper}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th />
-              <th>투자명</th>
-              <th>거래 건수</th>
-              <th>투자 시작일</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row) => (
-              <tr key={row.id}>
-                <td>
-                  <input
-                    type='checkbox'
-                    checked={selectedIds.includes(row.id)}
-                    onChange={() => toggleSelection(row.id)}
-                  />
-                </td>
-                <td>
-                  <span
-                    className={
-                      row.status === '완료'
-                        ? styles.finishedBadge
-                        : styles.ongoingBadge
-                    }
-                  >
-                    {row.name}
-                  </span>
-                </td>
-                <td>{row.count}건</td>
-                <td>{row.startDate}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <ul className={styles.selectedList}>
+          {data.map((item) => (
+            <li key={item.id} className={styles.listItem}>
+              <label htmlFor={`select-${item.id}`}>
+                <input
+                  type='checkbox'
+                  id={`select-${item.id}`}
+                  checked={selectedIds.includes(item.id)}
+                  onChange={() => toggleSelection(item.id)}
+                />
+                {item.name}
+              </label>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
 };
 
-export default FilterSelectTable;
+export default FilterSelectedList;

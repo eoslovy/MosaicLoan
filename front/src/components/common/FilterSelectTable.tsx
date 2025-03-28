@@ -12,8 +12,8 @@ interface ContractRow {
 }
 
 interface FilterSelectTableProps {
-  data: ContractRow[]; // Make sure data is passed as an array
-  selectedIds: string[]; // Make sure selectedIds is an array
+  data: ContractRow[];
+  selectedIds: string[];
   onSelect: (selected: string[]) => void;
 }
 
@@ -41,13 +41,14 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.headerRow}>
-        <label>
+        <label htmlFor='selectAll' className={styles.checkboxLabel}>
           <input
             type='checkbox'
+            id='selectAll'
             checked={selectedIds.length === data.length}
             onChange={toggleSelectAll}
           />
-          전체선택
+          <span>전체선택</span>
         </label>
         <span className={styles.count}>
           총 {data.length}건 중 {selectedIds.length}건
@@ -58,7 +59,7 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
         <table className={styles.table}>
           <thead>
             <tr>
-              <th />
+              {/* <th /> */}
               <th>투자명</th>
               <th>거래 건수</th>
               <th>투자 시작일</th>
@@ -68,12 +69,24 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
             {data.map((row) => (
               <tr key={row.id}>
                 <td>
-                  <input
-                    type='checkbox'
-                    checked={selectedIds.includes(row.id)}
-                    onChange={() => toggleSelection(row.id)}
-                  />
+                  <div className={styles.checkboxWrapper}>
+                    <input
+                      type='checkbox'
+                      id={`select-${row.id}`}
+                      checked={selectedIds.includes(row.id)}
+                      onChange={() => toggleSelection(row.id)}
+                      aria-labelledby={`label-${row.id}`}
+                    />
+                    <label
+                      id={`label-${row.id}`}
+                      htmlFor={`select-${row.id}`}
+                      className={styles.checkboxLabel}
+                    >
+                      <span className='sr-only'>{row.name} 선택</span>
+                    </label>
+                  </div>
                 </td>
+
                 <td>
                   <span
                     className={

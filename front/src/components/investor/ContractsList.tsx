@@ -112,6 +112,7 @@ const ContractsList = () => {
 
       <div className={styles.pagination}>
         <button
+          type='button'
           className={styles.paginationButton}
           onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
         >
@@ -119,6 +120,7 @@ const ContractsList = () => {
         </button>
         <span>{currentPage}</span>
         <button
+          type='button'
           className={styles.paginationButton}
           onClick={() =>
             setCurrentPage(

@@ -4,7 +4,7 @@ import React from 'react';
 import styles from '@/styles/investors/TotalContractsOverview.module.scss';
 import ProgressGroup from '@/components/common/ProgressGroup';
 import BasicCard from '@/components/common/BasicInfoCard';
-import { TrendingUp, DollarSign, AlertTriangle } from 'lucide-react';
+// import { TrendingUp, DollarSign, AlertTriangle } from 'lucide-react';
 
 const TotalContractsOverview = () => {
   const progressItems = [
@@ -25,7 +25,7 @@ const TotalContractsOverview = () => {
       {/* 오른쪽: 세로로 카드 3개 */}
       <div className={styles.right}>
         <BasicCard
-          icon='trendingUp'
+          icon='creditCard'
           label='전체 채권 개수'
           value='1,250,000,000 + 개'
         />

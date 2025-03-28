@@ -34,7 +34,7 @@ export type TextWeight =
   | 'black'; // 900
 
 export interface TextProps {
-  text: string;
+  text: string | React.ReactNode;
   size?: TextSize;
   color?: TextColor;
   weight?: TextWeight;

@@ -65,7 +65,7 @@ const ContractsFilter = () => {
     <div className={styles.filterContainer}>
       <div className={styles.row}>
         <div className={styles.filterItem}>
-          <label>거래일</label>
+          <span className={styles.label}>거래일</span>
           <DatePicker
             selected={startDate}
             onChange={(date: Date | null) => setStartDate(date)}
@@ -106,7 +106,9 @@ const ContractsFilter = () => {
 
         {!isOpen && (
           <div className={styles.filterItem}>
-            <button className={styles.searchButton}>검색하기</button>
+            <button type='button' className={styles.searchButton}>
+              검색하기
+            </button>
           </div>
         )}
       </div>
@@ -123,7 +125,9 @@ const ContractsFilter = () => {
           </div>
 
           <div className={styles.buttonWrapper}>
-            <button className={styles.searchButton}>검색하기</button>
+            <button type='button' className={styles.searchButton}>
+              검색하기
+            </button>
           </div>
         </div>
       )}

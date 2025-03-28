@@ -1,4 +1,4 @@
-import { ProgressItem, ProgressGroupProps } from '@/types/components';
+import { ProgressGroupProps } from '@/types/components';
 import React from 'react';
 import styles from '@/styles/components/ProgressGroup.module.scss';
 // import clsx from 'clsx';
