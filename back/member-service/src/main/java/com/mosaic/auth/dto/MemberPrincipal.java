@@ -12,9 +12,11 @@ import lombok.Getter;
 @Getter
 public class MemberPrincipal implements UserDetails {
 	private final Integer id;
+	private final String name;
 
-	public MemberPrincipal(Integer id) {
+	public MemberPrincipal(Integer id, String name) {
 		this.id = id;
+		this.name = name;
 	}
 
 	@Override
@@ -29,7 +31,7 @@ public class MemberPrincipal implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return String.valueOf(id);
+		return name;
 	}
 
 	@Override
