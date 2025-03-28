@@ -15,22 +15,11 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/evaluation")
 public class EvaluationRequestController {
 
-	// private final KafkaTemplate<String, Object> kafkaTemplate;
 	private final EvaluationRequestService evaluationRequestService;
-
-	// @PostMapping
-	// public ResponseEntity<String> evaluate(@RequestParam String caseId) {
-	// 	kafkaTemplate.send("EvaluationStart", caseId);
-	// 	return ResponseEntity.ok("Evaluation started: " + caseId);
-	// }
 
 	@PostMapping
 	public ResponseEntity<String> requestEvaluation(@RequestParam Integer memberId) {
-		try {
-			evaluationRequestService.requestEvaluation(memberId);
-			return ResponseEntity.ok("신용평가 요청이 완료되었습니다.");
-		} catch (IllegalStateException e) {
-			return ResponseEntity.badRequest().body("❌ 요청 실패: " + e.getMessage());
-		}
+		evaluationRequestService.requestEvaluation(memberId);
+		return ResponseEntity.ok("신용평가 요청이 완료되었습니다.");
 	}
 }
