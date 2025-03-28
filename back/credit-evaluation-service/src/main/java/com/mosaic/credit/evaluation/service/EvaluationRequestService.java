@@ -6,10 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.mosaic.credit.evaluation.domain.EvaluationCase;
 import com.mosaic.credit.evaluation.dto.EvaluationStartRequest;
-import com.mosaic.credit.evaluation.repository.CreditEvaluationRepository;
-import com.mosaic.credit.evaluation.repository.EvaluationCaseRepository;
-import com.mosaic.credit.evaluation.exception.KafkaException;
 import com.mosaic.credit.evaluation.exception.ErrorCode;
+import com.mosaic.credit.evaluation.exception.KafkaException;
+import com.mosaic.credit.evaluation.repository.EvaluationCaseRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 public class EvaluationRequestService {
 
 	private final EvaluationCaseRepository caseRepository;
-	private final CreditEvaluationRepository evaluationRepository;
 	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Transactional
