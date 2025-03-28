@@ -19,13 +19,12 @@ RUN poetry config virtualenvs.create false
 # 종속성 파일 복사 및 설치
 COPY pyproject.toml poetry.lock* ./
 # 명령어에 --no-root 옵션 추가 (중요!)
-RUN pip install fastapi uvicorn pyspark==3.5.5 pydantic python-dotenv
-
+RUN pip install fastapi uvicorn pyspark==3.5.5 pydantic python-dotenv numpy
 # 애플리케이션 코드 복사
 COPY . .
 
 # 모델 디렉토리 생성
-RUN mkdir -p models/spark_model
+RUN mkdir -p models/gbt_model
 
 # 실행 스크립트에 실행 권한 부여
 RUN chmod +x /app/scripts/entrypoint.sh
@@ -34,7 +33,7 @@ RUN chmod +x /app/scripts/entrypoint.sh
 EXPOSE 8000
 
 # 환경 변수 설정
-ENV MODEL_PATH=/app/models/spark_model
+ENV MODEL_PATH=/app/models/gbt_model
 ENV PYTHONPATH=/app
 
 # 실행

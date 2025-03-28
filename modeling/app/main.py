@@ -5,6 +5,7 @@ from typing import Dict, Any, List
 import os
 import logging
 from pydantic import BaseModel
+from .model_schema import prediction_schema
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO)
@@ -18,7 +19,7 @@ class PredictionRequest(BaseModel):
     features: Dict[str, Any]
 
 class PredictionResponse(BaseModel):
-    prediction: List[Any]
+    prediction: float
 
 # 전역 변수 - Spark 세션 및 모델
 spark = None
@@ -33,15 +34,15 @@ async def startup_event():
     spark = SparkSession.builder \
         .appName("FastAPI-PySpark") \
         .config("spark_ensemble.executor.cores", "8") \
-        .config("spark_ensemble.driver.memory", "16g") \
-        .config("spark_ensemble.executor.memory", "24g") \
-        .config("spark_ensemble.driver.maxResultSize", "8g") \
+        .config("spark_ensemble.driver.memory", "8g") \
+        .config("spark_ensemble.executor.memory", "12g") \
+        .config("spark_ensemble.driver.maxResultSize", "4g") \
         .config("spark_ensemble.memory.fraction", "0.8") \
         .master("local[*]") \
         .getOrCreate()
     
     # 모델 로드
-    model_path = os.environ.get("MODEL_PATH", "./models/spark_model")
+    model_path = os.environ.get("MODEL_PATH", "./models/gbt_model")
     try:
         logger.info(f"모델 로드 중: {model_path}")
         model = PipelineModel.load(model_path)
@@ -71,7 +72,7 @@ async def predict(request: PredictionRequest):
     
     try:
         # Dict를 Spark DataFrame으로 변환
-        input_df = spark.createDataFrame([request.features])
+        input_df = spark.createDataFrame([request.features], schema=prediction_schema)
         
         # 모델 예측 수행
         result_df = model.transform(input_df)
@@ -107,4 +108,4 @@ async def health():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)
