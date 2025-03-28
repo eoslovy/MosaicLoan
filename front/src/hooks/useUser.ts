@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import {useUserStore} from '@/stores/userStore';
+import { useUserStore } from '@/stores/userStore';
 
 const useUser = () => {
   const { user, setUser } = useUserStore();

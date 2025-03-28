@@ -7,7 +7,7 @@ import Text from '@/components/common/Text';
 import styles from '@/styles/layouts/Nav.module.scss';
 import { handleKakaoLogin } from '@/utils/auth';
 import useUser from '@/hooks/useUser';
-import {useUserStore} from '@/stores/userStore';
+import { useUserStore } from '@/stores/userStore';
 
 const Nav = () => {
   const user = useUser();
@@ -76,14 +76,12 @@ const Nav = () => {
             />
           </>
         ) : (
-          <>
-            <Button
-              label={{ text: '로그인', size: 'sm', color: 'blue' }}
-              variant='outlined'
-              size='normal'
-              onClick={handleKakaoLogin}
-            />
-          </>
+          <Button
+            label={{ text: '로그인', size: 'sm', color: 'blue' }}
+            variant='outlined'
+            size='normal'
+            onClick={handleKakaoLogin}
+          />
         )}
       </div>
     </nav>

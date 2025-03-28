@@ -1,4 +1,4 @@
-import {useUserStore} from '@/stores/userStore';
+import { useUserStore } from '@/stores/userStore';
 
 export const handleKakaoLogin = () => {
   window.location.href = 'http://localhost:8080/auth/kakao/login';
