@@ -30,10 +30,10 @@ public class CreditEvaluation {
 	private Integer memberId;
 
 	@Column(name = "default_rate", nullable = false)
-	private Double defaultRate;
+	private Integer defaultRate;
 
 	@Column(name = "interest_rate", nullable = false)
-	private Double interestRate;
+	private Integer interestRate;
 
 	@Column(name = "max_loan_limit", nullable = false)
 	private Integer maxLoanLimit;
