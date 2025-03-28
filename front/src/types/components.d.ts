@@ -3,6 +3,7 @@ import type React, { JSX } from 'react';
 export type ButtonType = 'filled' | 'outlined' | 'non-selected';
 export type ButtonSize = 'normal' | 'large';
 export type TextColor =
+  | 'primary-blue'
   | 'white'
   | 'gray'
   | 'light-blue'
@@ -33,7 +34,7 @@ export type TextWeight =
   | 'black'; // 900
 
 export interface TextProps {
-  text: string;
+  text: string | React.ReactNode;
   size?: TextSize;
   color?: TextColor;
   weight?: TextWeight;
@@ -119,7 +120,7 @@ export interface SliderProps {
   min: number;
   max: number;
   step?: number;
-  // onChange: (value: number) => void;
+  onChange: (value: number) => void;
   labelLeft?: string;
   labelRight?: string;
 }
@@ -133,7 +134,7 @@ export interface SliderGroupItemProps {
   step?: number;
   labelLeft?: string;
   labelRight?: string;
-  // onChange: (value: number) => void;
+  onChange: (value: number) => void;
   bgColor?: 'light-blue' | 'none';
 }
 
@@ -150,4 +151,49 @@ export interface InvestmentInputPanelProps {
   setDuration: React.Dispatch<React.SetStateAction<number>>;
   rate: number;
   setRate: React.Dispatch<React.SetStateAction<number>>;
+}
+
+export interface SectionTab {
+  label: TextProps;
+  href: string;
+}
+
+export interface SectionTabNavProps {
+  title: TextProps;
+  description: TextProps;
+  tabs: SectionTab[];
+  activeIndex: number;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onTabClick: (_index: number) => void;
+}
+
+export interface BasicTableCell {
+  key: string;
+  content: string | number | React.ReactNode;
+}
+
+export interface BasicTableRow {
+  key: string;
+  cells: BasicTableCell[];
+}
+
+export interface BasicTableProps {
+  title?: string;
+  columns: string[];
+  rows: BasicTableRow[];
+  className?: string;
+  viewAllLink?: string;
+  showHeader?: boolean;
+}
+
+export interface ProgressItem {
+  label: string;
+  count: number;
+  percentage: number;
+  color: string;
+}
+
+export interface ProgressGroupProps {
+  title?: string;
+  items: ProgressItem[];
 }

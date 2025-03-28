@@ -1,21 +1,36 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useUserStore } from '@/stores/userStore';
 
 const useUser = () => {
-  const [user, setUser] = useState<any>(null);
+  const { user, setUser } = useUserStore();
 
   useEffect(() => {
-    fetch('http://localhost:8080/me', {
-      credentials: 'include', // access-token 쿠키 포함
-    })
-      .then((res) => {
-        if (res.ok) return res.json();
-        throw new Error('Not authenticated');
-      })
-      .then((data) => setUser(data.data))
-      .catch(() => setUser(null));
-  }, []);
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('http://localhost:8080/me', {
+          credentials: 'include',
+        });
+
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        // console.log('[useUser] /me 응답:', data);
+
+        if (data && data.username) {
+          // console.log('[useUser] setUser 실행');
+          setUser(data);
+        } else {
+          // console.log('[useUser] 응답에 data 없음, setUser(null)');
+          setUser(null);
+        }
+      } catch {
+        setUser(null);
+      }
+    };
+
+    fetchUser();
+  }, [setUser]);
 
   return user;
 };
