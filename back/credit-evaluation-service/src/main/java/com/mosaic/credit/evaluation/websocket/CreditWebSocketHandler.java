@@ -15,30 +15,30 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class CreditWebSocketHandler extends TextWebSocketHandler {
 
-    private final Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
+    private final Map<Integer, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        String caseId = WebSocketUrlParser.getCaseId(session);
-        sessionMap.put(caseId, session);
-        log.info("WebSocket 연결됨: caseId = {}", caseId);
+        Integer memberId = WebSocketUrlParser.getMemberId(session);
+        sessionMap.put(memberId, session);
+        log.info("WebSocket 연결됨: memberId = {}", memberId);
     }
 
-    public void sendMessage(String caseId, String message) {
-        WebSocketSession session = sessionMap.get(caseId);
+    public void sendMessage(Integer memberId, String message) {
+        WebSocketSession session = sessionMap.get(memberId);
         if (session != null && session.isOpen()) {
             try {
                 session.sendMessage(new TextMessage(message));
             } catch (Exception e) {
-                log.error("WebSocket 메시지 전송 실패: caseId = {}", caseId, e);
+                log.error("WebSocket 메시지 전송 실패: memberId = {}", memberId, e);
             }
         }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        String caseId = WebSocketUrlParser.getCaseId(session);
-        sessionMap.remove(caseId);
-        log.info("WebSocket 연결 종료: caseId = {}", caseId);
+        Integer memberId = WebSocketUrlParser.getMemberId(session);
+        sessionMap.remove(memberId);
+        log.info("WebSocket 연결 종료: memberId = {}", memberId);
     }
 } 
