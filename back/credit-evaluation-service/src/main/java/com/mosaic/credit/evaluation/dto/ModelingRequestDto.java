@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ModelingRequestDto {
-	private Map<String, Object> payload;
+	private Map<String, Object> features;
 }
-

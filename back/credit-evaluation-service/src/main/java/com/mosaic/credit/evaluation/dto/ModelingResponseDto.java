@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ModelingResponseDto {
-	private Double probability;  // 0.0 ~ 1.0
+	private Double prediction;  // 0.0 ~ 1.0
 }
 
