@@ -6,7 +6,8 @@ import com.mosaic.credit.evaluation.exception.EvaluationException;
 import com.mosaic.credit.evaluation.exception.ErrorCode;
 
 public class WebSocketUrlParser {
-    public static String getCaseId(WebSocketSession session) {
+    // WebSocket 연결이 처음 맺어질 때 URL에서 memberId를 추출
+    public static Integer getMemberId(WebSocketSession session) {
         String uri = session.getUri().toString();
         String[] parts = uri.split("\\?");
         if (parts.length < 2) {
@@ -15,8 +16,8 @@ public class WebSocketUrlParser {
 
         String[] params = parts[1].split("&");
         for (String param : params) {
-            if (param.startsWith(WebSocketConstants.CASE_ID_PARAM + "=")) {
-                return param.split("=")[1];
+            if (param.startsWith(WebSocketConstants.MEMBER_ID_PARAM + "=")) {
+                return Integer.valueOf(param.split("=")[1]);
             }
         }
 
