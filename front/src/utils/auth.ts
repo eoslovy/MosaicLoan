@@ -1,4 +1,5 @@
-// 카카오 로그인 URL 리다이렉트
+import {useUserStore} from '@/stores/userStore';
+
 export const handleKakaoLogin = () => {
   window.location.href = 'http://localhost:8080/auth/kakao/login';
 };
@@ -14,10 +15,13 @@ export const fetchUser = async () => {
   return json.data;
 };
 
-// 로그아웃
 export const handleLogout = async () => {
   await fetch('http://localhost:8080/logout', {
     method: 'POST',
     credentials: 'include',
   });
+
+  // 상태 초기화
+  const { setUser } = useUserStore.getState();
+  setUser(null);
 };
