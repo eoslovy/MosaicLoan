@@ -20,8 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mosaic.auth.dto.ErrorResponse;
 import com.mosaic.auth.exception.ErrorCode;
 import com.mosaic.auth.jwt.JwtAuthenticationFilter;
-import com.mosaic.auth.jwt.JwtProvider;
-import com.mosaic.auth.service.RedisService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +33,8 @@ public class SecurityConfig {
 	@Value("${BASE_FRONT_URL}")
 	private String baseFrontUrl;
 
-	private final JwtProvider jwtProvider;
 	private final ObjectMapper objectMapper;
-	private final RedisService redisService;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
 	private void sendErrorResponse(HttpServletResponse response, HttpStatus status,
 		String message, ErrorCode code) throws IOException {
@@ -86,8 +83,7 @@ public class SecurityConfig {
 					handleAccessDenied(response, accessDeniedException);
 				})
 			)
-			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, redisService),
-				UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 			.build();
 	}
 
