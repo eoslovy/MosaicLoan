@@ -2,7 +2,7 @@ import type { InvestmentSummary } from '@/types/pages';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const fetchInvestmentSummary = async (): Promise<InvestmentSummary> => {
+const fetchInvestmentSummary = async (): Promise<InvestmentSummary> => {
   const res = await fetch(`${API_URL}/api/investments/overview`, {
     headers: {
       'Content-Type': 'application/json',
@@ -19,3 +19,5 @@ export const fetchInvestmentSummary = async (): Promise<InvestmentSummary> => {
   const data = await res.json();
   return data.summary;
 };
+
+export default fetchInvestmentSummary;

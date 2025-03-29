@@ -1,4 +1,5 @@
 'use client';
+
 import React from 'react';
 import Overview from '@/components/investor/Overview';
 import OverviewTable from '@/components/investor/OverviewTable';

@@ -10,7 +10,7 @@ const tabPaths = [
   '/investor/statistics',
 ];
 
-export default function InvestorLayout({ children }: { children: React.ReactNode }) {
+const InvestorLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -20,9 +20,14 @@ export default function InvestorLayout({ children }: { children: React.ReactNode
   };
 
   return (
-    <main className="bg-[#fafaf8]">
-      <InvestSectionTabNav activeIndex={activeIndex} onTabClick={handleTabClick} />
+    <main className='bg-[#fafaf8]'>
+      <InvestSectionTabNav
+        activeIndex={activeIndex}
+        onTabClick={handleTabClick}
+      />
       {children}
     </main>
   );
-}
+};
+
+export default InvestorLayout;

@@ -8,7 +8,7 @@ import ContractsList from '@/components/investor/ContractsList';
 const ContractsPage = () => {
   return (
     <>
-      <div className="py-10 px-10">
+      <div className='py-10 px-10'>
         <TotalContractsOverview />
       </div>
       <ContractsFilter />

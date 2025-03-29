@@ -8,8 +8,11 @@ import type { SectionTab } from '@/types/components';
 import type { InvestSectionTabNavProps } from '@/types/pages';
 import { TextProps } from '@/types/components';
 
-const InvestSectionTabNav: React.FC<InvestSectionTabNavProps> = ({ activeIndex, onTabClick }) => {
-  const title:TextProps = {
+const InvestSectionTabNav: React.FC<InvestSectionTabNavProps> = ({
+  activeIndex,
+  onTabClick,
+}) => {
+  const title: TextProps = {
     text: '투자하기',
     size: 'text-3xl',
     color: 'primary-blue',
@@ -17,7 +20,7 @@ const InvestSectionTabNav: React.FC<InvestSectionTabNavProps> = ({ activeIndex, 
     className: '',
   };
 
-  const description:TextProps = {
+  const description: TextProps = {
     text: '투자 현황 및 수익 내역을 확인해 보세요',
     size: 'md',
     color: 'gray',
@@ -43,10 +46,7 @@ const InvestSectionTabNav: React.FC<InvestSectionTabNavProps> = ({ activeIndex, 
   return (
     <section className={styles.container}>
       <div className={styles.header}>
-        <Text
-          className={clsx(styles.title, title.className)}
-          {...title}
-        />
+        <Text className={clsx(styles.title, title.className)} {...title} />
         {description && (
           <Text
             className={clsx(styles.description, description.className)}
@@ -63,7 +63,7 @@ const InvestSectionTabNav: React.FC<InvestSectionTabNavProps> = ({ activeIndex, 
               [styles.active]: idx === activeIndex,
             })}
             onClick={() => onTabClick(idx)}
-            type="button"
+            type='button'
           >
             <Text {...tab.label} />
           </button>

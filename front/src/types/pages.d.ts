@@ -1,7 +1,7 @@
 export type InvestSectionTabNavProps = {
   activeIndex: number;
   onTabClick: (idx: number) => void;
-}
+};
 
 export interface EmptyStateProps {
   message?: string;
