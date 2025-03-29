@@ -7,16 +7,28 @@ import Text from '@/components/common/Text';
 import styles from '@/styles/layouts/Nav.module.scss';
 import { handleKakaoLogin } from '@/utils/auth';
 import useUser from '@/hooks/useUser';
+import { useUserStore } from '@/stores/userStore';
 
 const Nav = () => {
   const user = useUser();
+  const setUser = useUserStore((state) => state.setUser);
 
   const handleLogout = async () => {
-    await fetch('http://localhost:8080/logout', {
-      method: 'POST',
-      credentials: 'include',
-    });
-    window.location.reload();
+    try {
+      const res = await fetch('http://localhost:8080/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (res.ok) {
+        setUser(null); // 상태 초기화
+      }
+      // else {
+      //   console.error('Logout failed:', res.status);
+      // }
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
   };
 
   return (
@@ -51,7 +63,12 @@ const Nav = () => {
       <div className={styles.nav__right}>
         {user ? (
           <>
-            <Text text={`${user.name}님`} size='sm' color='blue' />
+            <Button
+              label={{ text: `${user.username}님`, size: 'sm', color: 'blue' }}
+              variant='outlined'
+              size='normal'
+              onClick={() => {}}
+            />
             <Button
               label={{ text: '로그아웃', size: 'sm', color: 'blue' }}
               variant='outlined'
@@ -60,19 +77,12 @@ const Nav = () => {
             />
           </>
         ) : (
-          <>
-            <Button
-              label={{ text: '로그인', size: 'sm', color: 'blue' }}
-              variant='outlined'
-              size='normal'
-              onClick={handleKakaoLogin}
-            />
-            <Button
-              label={{ text: '회원가입', size: 'sm', color: 'white' }}
-              variant='filled'
-              size='normal'
-            />
-          </>
+          <Button
+            label={{ text: '로그인', size: 'sm', color: 'blue' }}
+            variant='outlined'
+            size='normal'
+            onClick={handleKakaoLogin}
+          />
         )}
       </div>
     </nav>

@@ -5,13 +5,16 @@ import java.util.Date;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.mosaic.auth.domain.Member;
 import com.mosaic.auth.dto.MemberPrincipal;
 import com.mosaic.auth.exception.CookieNotFoundException;
 import com.mosaic.auth.exception.ErrorCode;
 import com.mosaic.auth.exception.InvalidTokenException;
 import com.mosaic.auth.exception.TokenNotFoundException;
+import com.mosaic.auth.repository.MemberRepository;
 import com.mosaic.auth.service.RedisService;
 import com.mosaic.auth.util.CookieUtil;
 
@@ -23,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -31,6 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
 	private final RedisService redisService;
+	private final MemberRepository memberRepository;
 
 	// 모든 HTTP 요청에 대해 JWT 토큰 검증 및 인증 처리를 수행
 	@Override
@@ -65,7 +70,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	// Spring Security 인증 정보 설정
 	private void setAuthentication(Integer memberId) {
-		MemberPrincipal memberPrincipal = new MemberPrincipal(memberId);
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new InvalidTokenException(ErrorCode.TOKEN_NOT_FOUND));
+		MemberPrincipal memberPrincipal = new MemberPrincipal(member.getId(), member.getName());
 		UsernamePasswordAuthenticationToken authentication =
 			new UsernamePasswordAuthenticationToken(memberPrincipal, null, null);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
