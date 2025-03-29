@@ -1,9 +1,13 @@
 import type { InvestmentSummary } from '@/types/pages';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const isStaticExport = process.env.STATIC_EXPORT === 'true';
 
 const fetchInvestmentSummary = async (): Promise<InvestmentSummary> => {
-  const res = await fetch(`${API_URL}/api/investments/overview`, {
+  const url = isStaticExport
+    ? `${process.env.NEXT_PUBLIC_API_URL}/api/investments/overview`
+    : `/api/investor/overview`;
+
+  const res = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
     },

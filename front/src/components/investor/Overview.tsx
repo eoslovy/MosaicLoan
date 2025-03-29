@@ -4,15 +4,9 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import BasicInfoCard from '@/components/common/BasicInfoCard';
 import styles from '@/styles/investors/Overview.module.scss';
-import type { InvestmentSummary } from '@/types/pages';
+// import type { InvestmentSummary } from '@/types/pages';
 import EmptyState from '@/components/empty/investor/EmptyState';
-// import fetchInvestmentSummary from '@/service/apis/investments';
-
-const fetchInvestmentSummary = async (): Promise<InvestmentSummary> => {
-  const res = await fetch('/api/investor/overview');
-  const data = await res.json();
-  return data.summary;
-};
+import fetchInvestmentSummary from '@/service/apis/investments';
 
 const Overview = () => {
   const { data, isError } = useQuery({
