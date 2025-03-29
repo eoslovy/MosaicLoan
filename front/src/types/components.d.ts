@@ -197,3 +197,7 @@ export interface ProgressGroupProps {
   title?: string;
   items: ProgressItem[];
 }
+
+export interface StatusBadgeProps {
+  status: '상환완료' | '상환중' | '부실';
+}

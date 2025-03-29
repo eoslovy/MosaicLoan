@@ -6,7 +6,7 @@ import BasicInfoCard from '@/components/common/BasicInfoCard';
 import styles from '@/styles/investors/Overview.module.scss';
 // import type { InvestmentSummary } from '@/types/pages';
 import EmptyState from '@/components/empty/investor/EmptyState';
-import fetchInvestmentSummary from '@/service/apis/investments';
+import { fetchInvestmentSummary } from '@/service/apis/investments';
 
 const Overview = () => {
   const { data, isError } = useQuery({
