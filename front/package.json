@@ -6,19 +6,14 @@
   "scripts": {
     "dev": "next dev",
     "dev:local": "cross-env STATIC_EXPORT=false next dev",
-
     "build": "npm run lint && next build",
     "build:static": "cross-env STATIC_EXPORT=true next build && next export",
-
     "serve": "serve -s out",
-
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "format": "prettier --write .",
-
     "test": "jest --coverage",
     "test:watch": "jest --watch",
-    
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build"
   },
@@ -26,6 +21,7 @@
     "@tanstack/react-query": "^5.70.0",
     "chart.js": "^4.4.8",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.482.0",
     "next": "15.2.1",
     "react": "^19.0.0",
@@ -51,6 +47,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/date-fns": "^2.6.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-datepicker": "^7.0.0",

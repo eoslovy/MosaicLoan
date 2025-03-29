@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '@/styles/components/FilterSelectTable.module.scss';
 
 interface ContractRow {
@@ -22,6 +22,9 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
   selectedIds = [],
   onSelect,
 }) => {
+  const [allSelected, setAllSelected] = useState(false);
+
+  // 개별 선택 토글
   const toggleSelection = (id: string) => {
     if (selectedIds.includes(id)) {
       onSelect(selectedIds.filter((item) => item !== id));
@@ -30,23 +33,29 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
     }
   };
 
-  const toggleSelectAll = () => {
-    if (selectedIds.length === data.length) {
+  // 전체 선택/해제
+  const handleSelectAll = () => {
+    if (allSelected) {
       onSelect([]);
     } else {
       onSelect(data.map((row) => row.id));
     }
   };
 
+  // selectedIds 변경 시 전체 선택 상태 업데이트
+  useEffect(() => {
+    setAllSelected(selectedIds.length === data.length && data.length > 0);
+  }, [selectedIds, data]);
+
   return (
     <div className={styles.container}>
       <div className={styles.headerRow}>
-        <label htmlFor='selectAll' className={styles.checkboxLabel}>
+        <label htmlFor="selectAll" className={styles.checkboxLabel}>
           <input
-            type='checkbox'
-            id='selectAll'
-            checked={selectedIds.length === data.length}
-            onChange={toggleSelectAll}
+            type="checkbox"
+            id="selectAll"
+            checked={allSelected}
+            onChange={handleSelectAll}
           />
           <span>전체선택</span>
         </label>
@@ -59,7 +68,15 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
         <table className={styles.table}>
           <thead>
             <tr>
-              {/* <th /> */}
+              <th>
+                선택
+                {/* <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={handleSelectAll}
+                />
+                전체선택 */}
+              </th>
               <th>투자명</th>
               <th>거래 건수</th>
               <th>투자 시작일</th>
@@ -71,7 +88,7 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
                 <td>
                   <div className={styles.checkboxWrapper}>
                     <input
-                      type='checkbox'
+                      type="checkbox"
                       id={`select-${row.id}`}
                       checked={selectedIds.includes(row.id)}
                       onChange={() => toggleSelection(row.id)}
@@ -82,7 +99,7 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
                       htmlFor={`select-${row.id}`}
                       className={styles.checkboxLabel}
                     >
-                      <span className='sr-only'>{row.name} 선택</span>
+                      <span className="sr-only">{row.name} 선택</span>
                     </label>
                   </div>
                 </td>

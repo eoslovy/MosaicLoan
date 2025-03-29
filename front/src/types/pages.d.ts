@@ -52,3 +52,11 @@ export interface ContractSummaryResponse {
   totalProfit: number;
   totalLoss: number;
 }
+
+export interface ContractRow {
+  id: string;
+  name: string;
+  count: number;
+  startDate: string;
+  status: '진행중' | '완료';
+}

@@ -1,64 +1,71 @@
+'use client';
+
 import React, { useState } from 'react';
 import styles from '@/styles/investors/ContractsFilter.module.scss';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Select, { MultiValue, StylesConfig } from 'react-select';
-import { ChevronDown, ChevronUp, Filter } from 'lucide-react';
+import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 import FilterSelectTable from '@/components/common/FilterSelectTable';
+import type { ContractRow } from '@/types/pages';
+import { subYears, isBefore } from 'date-fns';
 
 const typeOptions = [
-  { value: 'all', label: '전체 유형' },
   { value: 'repayment', label: '상환' },
   { value: 'delayed', label: '연체' },
   { value: 'defaulted', label: '부실' },
 ];
 
-const customSelectStyles: StylesConfig<{ label: string; value: string }, true> =
-  {
-    container: (base) => ({
-      ...base,
-      minWidth: '160px',
-    }),
-  };
-
-interface ContractRow {
-  id: string;
-  name: string;
-  count: number;
-  startDate: string;
-  status: '진행중' | '완료'; // status 필드를 "진행중" 또는 "완료"로 지정
-}
+const customSelectStyles: StylesConfig<{ label: string; value: string }, true> = {
+  container: (base) => ({
+    ...base,
+    minWidth: '160px',
+  }),
+};
 
 const ContractsFilter = () => {
-  const [startDate, setStartDate] = useState<Date | null>(
-    new Date('2024-12-14'),
-  );
-  const [endDate, setEndDate] = useState<Date | null>(new Date('2025-03-17'));
-  const [selectedTypes, setSelectedTypes] = useState<
-    MultiValue<{ label: string; value: string }>
-  >([typeOptions[0]]);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]); // Initialize as empty array
+  const today = new Date();
+  const oneYearAgo = subYears(today, 1);
+
+  const [startDate, setStartDate] = useState<Date | null>(oneYearAgo);
+  const [endDate, setEndDate] = useState<Date | null>(today);
+  const [selectedTypes, setSelectedTypes] = useState<MultiValue<{ label: string; value: string }>>(typeOptions);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
-  const data: ContractRow[] = [
-    {
-      id: '1',
-      name: '투자 A',
-      count: 5,
-      startDate: '2024-01-01',
-      status: '진행중',
-    },
-    {
-      id: '2',
-      name: '투자 B',
-      count: 10,
-      startDate: '2024-02-01',
-      status: '완료',
-    },
-    // 데이터 수정 시 status 값을 "진행중" 또는 "완료"로 설정
-  ];
+  const handleStartDateChange = (date: Date | null) => {
+    if (!date) return;
+    setStartDate(date);
+    if (endDate && isBefore(endDate, date)) {
+      setEndDate(date);
+    }
+  };
 
-  // 선택된 항목들 필터링
+  const handleEndDateChange = (date: Date | null) => {
+    if (!date) return;
+    if (startDate && isBefore(date, startDate)) {
+      setEndDate(startDate);
+    } else {
+      setEndDate(date);
+    }
+  };
+
+  const handleTypeChange = (value: MultiValue<{ label: string; value: string }>) => {
+    setSelectedTypes(value);
+  };
+
+  const handleRemoveSelected = (id: string) => {
+    setSelectedIds((prev) => prev.filter((selectedId) => selectedId !== id));
+  };
+
+  const data: ContractRow[] = Array.from({ length: 14 }, (_, idx) => ({
+    id: `mock-${idx + 1}`,
+    name: idx % 2 === 0 ? '투자 A' : '투자 B',
+    count: idx % 2 === 0 ? 5 : 10,
+    startDate: idx % 2 === 0 ? '2024-01-01' : '2024-02-01',
+    status: idx % 2 === 0 ? '진행중' : '완료',
+  }));
+
   const selectedData = data.filter((row) => selectedIds.includes(row.id));
 
   return (
@@ -66,19 +73,9 @@ const ContractsFilter = () => {
       <div className={styles.row}>
         <div className={styles.filterItem}>
           <span className={styles.label}>거래일</span>
-          <DatePicker
-            selected={startDate}
-            onChange={(date: Date | null) => setStartDate(date)}
-            dateFormat='yyyy-MM-dd'
-            className={styles.dateInput}
-          />
+          <DatePicker selected={startDate} onChange={handleStartDateChange} dateFormat="yyyy-MM-dd" className={styles.dateInput} />
           <span className={styles.tilde}>~</span>
-          <DatePicker
-            selected={endDate}
-            onChange={(date: Date | null) => setEndDate(date)}
-            dateFormat='yyyy-MM-dd'
-            className={styles.dateInput}
-          />
+          <DatePicker selected={endDate} onChange={handleEndDateChange} dateFormat="yyyy-MM-dd" className={styles.dateInput} />
         </div>
 
         <div className={styles.filterItem}>
@@ -87,28 +84,22 @@ const ContractsFilter = () => {
             options={typeOptions}
             isMulti
             value={selectedTypes}
-            onChange={(value) => setSelectedTypes(value)}
+            onChange={handleTypeChange}
             className={styles.select}
             styles={customSelectStyles}
+            closeMenuOnSelect={false}
           />
         </div>
 
         <div className={styles.filterItem}>
-          <button
-            type='button'
-            className={styles.toggleButton}
-            onClick={() => setIsOpen((prev) => !prev)}
-          >
-            상세 필터링 설정{' '}
-            {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          <button type="button" className={styles.toggleButton} onClick={() => setIsOpen((prev) => !prev)}>
+            상세 필터링 설정 {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </button>
         </div>
 
         {!isOpen && (
-          <div className={styles.filterItem}>
-            <button type='button' className={styles.searchButton}>
-              검색하기
-            </button>
+          <div className={styles.buttonWrapper}>
+            <button type="button" className={styles.searchButton}>검색하기</button>
           </div>
         )}
       </div>
@@ -116,38 +107,30 @@ const ContractsFilter = () => {
       {isOpen && (
         <div className={styles.detailBox}>
           <div className={styles.detailInner}>
-            {/* Pass the selectedIds to FilterSelectTable */}
-            <FilterSelectTable
-              data={data} // Pass data
-              selectedIds={selectedIds} // Pass selectedIds
-              onSelect={setSelectedIds} // Pass the function to update selectedIds
-            />
+            <div className={styles.tableWrapper}>
+              <FilterSelectTable data={data} selectedIds={selectedIds} onSelect={setSelectedIds} />
+            </div>
+
+            <div className={styles.selectedData}>
+              {selectedData.map((row, index) => (
+                <div key={`${row.id}-${index}`} className={styles.selectedItem}>
+                <span
+                  className={row.status === '진행중' ? styles.ongoingBadge : styles.finishedBadge}
+                >
+                  {row.name}
+                  <X size={14} onClick={() => handleRemoveSelected(row.id)} />
+                </span>
+              </div>
+              
+              ))}
+            </div>
           </div>
 
           <div className={styles.buttonWrapper}>
-            <button type='button' className={styles.searchButton}>
-              검색하기
-            </button>
+            <button type="button" className={styles.searchButton}>검색하기</button>
           </div>
         </div>
       )}
-
-      <div className={styles.selectedData}>
-        {/* Display selected items */}
-        {selectedData.map((row) => (
-          <div key={row.id} className={styles.selectedItem}>
-            <span
-              className={
-                row.status === '진행중'
-                  ? styles.ongoingBadge
-                  : styles.finishedBadge
-              }
-            >
-              {row.name}
-            </span>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
