@@ -15,16 +15,16 @@ const ContractsPage = () => {
   });
 
   if (isLoading) {
-    return <EmptyState message="채권 정보를 불러오는 중입니다" />;
+    return <EmptyState message='채권 정보를 불러오는 중입니다' />;
   }
 
   if (isError || !data) {
-    return <EmptyState message="채권 요약 정보를 불러올 수 없습니다." />;
+    return <EmptyState message='채권 요약 정보를 불러올 수 없습니다.' />;
   }
 
   return (
     <>
-      <div className="py-10 px-10">
+      <div className='py-10 px-10'>
         <TotalContractsOverview data={data} />
       </div>
       <ContractsFilter />

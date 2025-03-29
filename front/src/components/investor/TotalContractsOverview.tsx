@@ -19,21 +19,31 @@ const statusMap = {
   transferred: { label: '소유권 이전', color: '#2E2E2E' },
 };
 
-const TotalContractsOverview: React.FC<TotalContractsOverviewProps> = ({ data }) => {
-  const { statusDistribution, totalContractCount, totalProfit, totalLoss } = data;
+const TotalContractsOverview: React.FC<TotalContractsOverviewProps> = ({
+  data,
+}) => {
+  const { statusDistribution, totalContractCount, totalProfit, totalLoss } =
+    data;
 
-  const totalStatusCount = Object.values(statusDistribution).reduce((sum, count) => sum + count, 0);
+  const totalStatusCount = Object.values(statusDistribution).reduce(
+    (sum, count) => sum + count,
+    0,
+  );
 
-  const progressItems = Object.entries(statusDistribution).map(([key, count]) => {
-    const { label, color } = statusMap[key as keyof typeof statusMap];
-    const percentage = totalStatusCount ? (count / totalStatusCount) * 100 : 0;
-    return {
-      label,
-      count,
-      color,
-      percentage: Number(percentage.toFixed(1)),
-    };
-  });
+  const progressItems = Object.entries(statusDistribution).map(
+    ([key, count]) => {
+      const { label, color } = statusMap[key as keyof typeof statusMap];
+      const percentage = totalStatusCount
+        ? (count / totalStatusCount) * 100
+        : 0;
+      return {
+        label,
+        count,
+        color,
+        percentage: Number(percentage.toFixed(1)),
+      };
+    },
+  );
 
   return (
     <div className={styles.wrapper}>

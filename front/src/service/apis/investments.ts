@@ -1,4 +1,8 @@
-import type { InvestmentSummary, InvestmentOverviewResponse, ContractSummaryResponse } from '@/types/pages';
+import type {
+  InvestmentSummary,
+  InvestmentOverviewResponse,
+  ContractSummaryResponse,
+} from '@/types/pages';
 
 const isStaticExport = process.env.STATIC_EXPORT === 'true';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -25,43 +29,47 @@ export const fetchInvestmentSummary = async (): Promise<InvestmentSummary> => {
   return data.summary;
 };
 
-export const fetchInvestmentOverview = async (): Promise<InvestmentOverviewResponse> => {
-  const url = isStaticExport
-    ? `${API_URL}/api/investments/overview`
-    : '/api/investor/overview';
+export const fetchInvestmentOverview =
+  async (): Promise<InvestmentOverviewResponse> => {
+    const url = isStaticExport
+      ? `${API_URL}/api/investments/overview`
+      : '/api/investor/overview';
 
-  const res = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-  });
+    const res = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    const message = errorData.message || '투자 개요 정보를 불러올 수 없습니다.';
-    throw new Error(message);
-  }
+    if (!res.ok) {
+      const errorData = await res.json();
+      const message =
+        errorData.message || '투자 개요 정보를 불러올 수 없습니다.';
+      throw new Error(message);
+    }
 
-  const data = await res.json();
-  return data;
-};
+    const data = await res.json();
+    return data;
+  };
 
-export const fetchContractSummary = async (): Promise<ContractSummaryResponse> => {
-  const url = isStaticExport
-    ? `${API_URL}/api/contracts/summary`
-    : `/api/investor/contracts/summary`;
+export const fetchContractSummary =
+  async (): Promise<ContractSummaryResponse> => {
+    const url = isStaticExport
+      ? `${API_URL}/api/contracts/summary`
+      : `/api/investor/contracts/summary`;
 
-  const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-  });
+    const res = await fetch(url, {
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    });
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    const message = errorData.message || '채권 요약 정보를 불러올 수 없습니다.';
-    throw new Error(message);
-  }
+    if (!res.ok) {
+      const errorData = await res.json();
+      const message =
+        errorData.message || '채권 요약 정보를 불러올 수 없습니다.';
+      throw new Error(message);
+    }
 
-  return res.json();
-};
+    return res.json();
+  };

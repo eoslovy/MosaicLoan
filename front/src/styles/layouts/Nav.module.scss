@@ -7,7 +7,7 @@
   padding: 1rem 1.5rem;
   background-color: $secondary-color;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  
+
   padding-left: clamp(1rem, 6vw, 100px);
   padding-right: clamp(1rem, 6vw, 100px);
   margin-bottom: 0;
@@ -20,7 +20,6 @@
     text-align: center;
   }
 }
-
 
 .nav__logo {
   display: flex;

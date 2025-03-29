@@ -6,21 +6,27 @@ import StatusBadge from '@/components/common/StatusBadge';
 import styles from '@/styles/investors/OverviewTable.module.scss';
 // import type { InvestmentItem, ProfitItem } from '@/types/pages';
 import type { BasicTableRow } from '@/types/components';
-import { fillEmptyRows } from '@/utils/fillEmptyRows';
-import EmptyState from '@/components/empty/investor/EmptyState';
-import { InvestmentOverviewTableProps } from '@/types/pages'
+import fillEmptyRows from '@/utils/fillEmptyRows';
+// import EmptyState from '@/components/empty/investor/EmptyState';
+import { InvestmentOverviewTableProps } from '@/types/pages';
 
 // interface OverviewTableProps {
 //   investlist: InvestmentItem[];
 //   profitHistory: ProfitItem[];
 // }
 
-const OverviewTable: React.FC<InvestmentOverviewTableProps> = ({ investlist, profitHistory }) => {
+const OverviewTable: React.FC<InvestmentOverviewTableProps> = ({
+  investlist,
+  profitHistory,
+}) => {
   const investmentRows: BasicTableRow[] = investlist.map((item, idx) => ({
     key: `investment-${idx}`,
     cells: [
       { key: `name-${idx}`, content: item.투자명 },
-      { key: `amount-${idx}`, content: `₩ ${Number(item.투자금액).toLocaleString()}` },
+      {
+        key: `amount-${idx}`,
+        content: `₩ ${Number(item.투자금액).toLocaleString()}`,
+      },
       { key: `rate-${idx}`, content: `${item.금리} %` },
       { key: `date-${idx}`, content: item.상환일 },
       { key: `status-${idx}`, content: <StatusBadge status={item.상태} /> },
@@ -43,7 +49,9 @@ const OverviewTable: React.FC<InvestmentOverviewTableProps> = ({ investlist, pro
       },
       {
         key: `amount-${idx}`,
-        content: <p className={styles.amount}>{Number(item.금액).toLocaleString()}₩</p>,
+        content: (
+          <p className={styles.amount}>{Number(item.금액).toLocaleString()}₩</p>
+        ),
       },
     ],
   }));

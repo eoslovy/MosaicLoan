@@ -13,7 +13,8 @@
 }
 
 @keyframes floatUpDown {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -22,7 +23,8 @@
 }
 
 @keyframes shadowScale {
-  0%, 100% {
+  0%,
+  100% {
     transform: scaleX(2) scaleY(2);
   }
   50% {
@@ -31,7 +33,7 @@
 }
 
 .hero {
-  background: linear-gradient(to bottom, #F5F5F0, #EDF6F9);
+  background: linear-gradient(to bottom, #f5f5f0, #edf6f9);
   width: 100%;
   min-height: auto;
   padding: 2.5rem 1rem;
@@ -58,7 +60,7 @@
     bottom: -10px;
     width: 140px;
     height: 30px;
-    background: #D2E5EB;
+    background: #d2e5eb;
     border-radius: 50%;
     filter: blur(6px);
     z-index: 1;

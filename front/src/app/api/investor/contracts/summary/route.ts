@@ -1,6 +1,7 @@
+/* eslint-disable import/prefer-default-export */
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export const GET = async () => {
   return NextResponse.json({
     statusDistribution: {
       completed: 35,
@@ -12,4 +13,4 @@ export async function GET() {
     totalProfit: 1250000000,
     totalLoss: 10000000,
   });
-}
+};

@@ -50,10 +50,10 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.headerRow}>
-        <label htmlFor="selectAll" className={styles.checkboxLabel}>
+        <label htmlFor='selectAll' className={styles.checkboxLabel}>
           <input
-            type="checkbox"
-            id="selectAll"
+            type='checkbox'
+            id='selectAll'
             checked={allSelected}
             onChange={handleSelectAll}
           />
@@ -88,7 +88,7 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
                 <td>
                   <div className={styles.checkboxWrapper}>
                     <input
-                      type="checkbox"
+                      type='checkbox'
                       id={`select-${row.id}`}
                       checked={selectedIds.includes(row.id)}
                       onChange={() => toggleSelection(row.id)}
@@ -99,7 +99,7 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
                       htmlFor={`select-${row.id}`}
                       className={styles.checkboxLabel}
                     >
-                      <span className="sr-only">{row.name} 선택</span>
+                      <span className='sr-only'>{row.name} 선택</span>
                     </label>
                   </div>
                 </td>

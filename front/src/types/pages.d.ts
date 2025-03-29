@@ -24,7 +24,7 @@ export interface InvestmentItem {
 
 export interface ProfitItem {
   수익명: string; // 예: '환급', '원금상환', '이자수익'
-  날짜: string;   // YYYY-MM-DD
+  날짜: string; // YYYY-MM-DD
   금액: string;
 }
 

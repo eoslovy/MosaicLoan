@@ -1,3 +1,5 @@
+/* eslint-disable react/no-array-index-key */
+
 'use client';
 
 import React from 'react';
@@ -6,9 +8,9 @@ import skeleton from '@/styles/components/Skeleton.module.scss';
 
 const InvestorOverviewSkeleton = () => {
   const renderSkeletonRows = (rowCount: number, colCount: number) =>
-    Array.from({ length: rowCount }).map((_, rowIdx) => (
+    Array.from({ length: rowCount }).map((__, rowIdx) => (
       <div key={rowIdx} className={skeleton.row}>
-        {Array.from({ length: colCount }).map((_, colIdx) => (
+        {Array.from({ length: colCount }).map((___, colIdx) => (
           <div key={colIdx} className={skeleton.cell} />
         ))}
       </div>

@@ -6,23 +6,28 @@ import type { BasicTableRow } from '@/types/components';
  * cellCount: 한 행에 들어갈 셀 개수
  * prefix: key 이름 앞에 붙을 문자열 (default: 'empty')
  */
-export const fillEmptyRows = (
+const fillEmptyRows = (
   rows: BasicTableRow[],
   total: number,
   cellCount: number,
-  prefix = 'empty'
+  prefix = 'empty',
 ): BasicTableRow[] => {
   const emptyRowCount = total - rows.length;
 
   if (emptyRowCount <= 0) return rows;
 
-  const emptyRows: BasicTableRow[] = Array.from({ length: emptyRowCount }, (_, i) => ({
-    key: `${prefix}-${i}`,
-    cells: Array.from({ length: cellCount }, (_, j) => ({
-      key: `${prefix}-${i}-${j}`,
-      content: '',
-    })),
-  }));
+  const emptyRows: BasicTableRow[] = Array.from(
+    { length: emptyRowCount },
+    (_, i) => ({
+      key: `${prefix}-${i}`,
+      cells: Array.from({ length: cellCount }, (__, j) => ({
+        key: `${prefix}-${i}-${j}`,
+        content: '',
+      })),
+    }),
+  );
 
   return [...rows, ...emptyRows];
 };
+
+export default fillEmptyRows;

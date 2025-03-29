@@ -20,7 +20,7 @@ const OverviewPage = () => {
   }
 
   if (isError || !data) {
-    return <EmptyState message="투자 개요 정보를 불러올 수 없습니다." />;
+    return <EmptyState message='투자 개요 정보를 불러올 수 없습니다.' />;
   }
 
   return (

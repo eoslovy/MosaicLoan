@@ -16,12 +16,13 @@ const typeOptions = [
   { value: 'defaulted', label: '부실' },
 ];
 
-const customSelectStyles: StylesConfig<{ label: string; value: string }, true> = {
-  container: (base) => ({
-    ...base,
-    minWidth: '160px',
-  }),
-};
+const customSelectStyles: StylesConfig<{ label: string; value: string }, true> =
+  {
+    container: (base) => ({
+      ...base,
+      minWidth: '160px',
+    }),
+  };
 
 const ContractsFilter = () => {
   const today = new Date();
@@ -29,7 +30,8 @@ const ContractsFilter = () => {
 
   const [startDate, setStartDate] = useState<Date | null>(oneYearAgo);
   const [endDate, setEndDate] = useState<Date | null>(today);
-  const [selectedTypes, setSelectedTypes] = useState<MultiValue<{ label: string; value: string }>>(typeOptions);
+  const [selectedTypes, setSelectedTypes] =
+    useState<MultiValue<{ label: string; value: string }>>(typeOptions);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -50,7 +52,9 @@ const ContractsFilter = () => {
     }
   };
 
-  const handleTypeChange = (value: MultiValue<{ label: string; value: string }>) => {
+  const handleTypeChange = (
+    value: MultiValue<{ label: string; value: string }>,
+  ) => {
     setSelectedTypes(value);
   };
 
@@ -73,9 +77,19 @@ const ContractsFilter = () => {
       <div className={styles.row}>
         <div className={styles.filterItem}>
           <span className={styles.label}>거래일</span>
-          <DatePicker selected={startDate} onChange={handleStartDateChange} dateFormat="yyyy-MM-dd" className={styles.dateInput} />
+          <DatePicker
+            selected={startDate}
+            onChange={handleStartDateChange}
+            dateFormat='yyyy-MM-dd'
+            className={styles.dateInput}
+          />
           <span className={styles.tilde}>~</span>
-          <DatePicker selected={endDate} onChange={handleEndDateChange} dateFormat="yyyy-MM-dd" className={styles.dateInput} />
+          <DatePicker
+            selected={endDate}
+            onChange={handleEndDateChange}
+            dateFormat='yyyy-MM-dd'
+            className={styles.dateInput}
+          />
         </div>
 
         <div className={styles.filterItem}>
@@ -92,14 +106,21 @@ const ContractsFilter = () => {
         </div>
 
         <div className={styles.filterItem}>
-          <button type="button" className={styles.toggleButton} onClick={() => setIsOpen((prev) => !prev)}>
-            상세 필터링 설정 {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          <button
+            type='button'
+            className={styles.toggleButton}
+            onClick={() => setIsOpen((prev) => !prev)}
+          >
+            상세 필터링 설정{' '}
+            {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </button>
         </div>
 
         {!isOpen && (
           <div className={styles.buttonWrapper}>
-            <button type="button" className={styles.searchButton}>검색하기</button>
+            <button type='button' className={styles.searchButton}>
+              검색하기
+            </button>
           </div>
         )}
       </div>
@@ -108,26 +129,35 @@ const ContractsFilter = () => {
         <div className={styles.detailBox}>
           <div className={styles.detailInner}>
             <div className={styles.tableWrapper}>
-              <FilterSelectTable data={data} selectedIds={selectedIds} onSelect={setSelectedIds} />
+              <FilterSelectTable
+                data={data}
+                selectedIds={selectedIds}
+                onSelect={setSelectedIds}
+              />
             </div>
 
             <div className={styles.selectedData}>
-              {selectedData.map((row, index) => (
-                <div key={`${row.id}-${index}`} className={styles.selectedItem}>
-                <span
-                  className={row.status === '진행중' ? styles.ongoingBadge : styles.finishedBadge}
-                >
-                  {row.name}
-                  <X size={14} onClick={() => handleRemoveSelected(row.id)} />
-                </span>
-              </div>
-              
+              {selectedData.map((row) => (
+                <div key={`${row.id}`} className={styles.selectedItem}>
+                  <span
+                    className={
+                      row.status === '진행중'
+                        ? styles.ongoingBadge
+                        : styles.finishedBadge
+                    }
+                  >
+                    {row.name}
+                    <X size={14} onClick={() => handleRemoveSelected(row.id)} />
+                  </span>
+                </div>
               ))}
             </div>
           </div>
 
           <div className={styles.buttonWrapper}>
-            <button type="button" className={styles.searchButton}>검색하기</button>
+            <button type='button' className={styles.searchButton}>
+              검색하기
+            </button>
           </div>
         </div>
       )}
