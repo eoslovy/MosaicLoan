@@ -1,4 +1,4 @@
-import type { InvestmentSummary, InvestmentOverviewResponse } from '@/types/pages';
+import type { InvestmentSummary, InvestmentOverviewResponse, ContractSummaryResponse } from '@/types/pages';
 
 const isStaticExport = process.env.STATIC_EXPORT === 'true';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -45,4 +45,23 @@ export const fetchInvestmentOverview = async (): Promise<InvestmentOverviewRespo
 
   const data = await res.json();
   return data;
+};
+
+export const fetchContractSummary = async (): Promise<ContractSummaryResponse> => {
+  const url = isStaticExport
+    ? `${API_URL}/api/contracts/summary`
+    : `/api/investor/contracts/summary`;
+
+  const res = await fetch(url, {
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    const message = errorData.message || '채권 요약 정보를 불러올 수 없습니다.';
+    throw new Error(message);
+  }
+
+  return res.json();
 };

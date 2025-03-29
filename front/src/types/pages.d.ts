@@ -40,3 +40,15 @@ export interface InvestmentOverviewTableProps {
   investlist: InvestmentItem[];
   profitHistory: ProfitItem[];
 }
+
+export interface ContractSummaryResponse {
+  statusDistribution: {
+    completed: number;
+    active: number;
+    default: number;
+    transferred: number;
+  };
+  totalContractCount: number;
+  totalProfit: number;
+  totalLoss: number;
+}
