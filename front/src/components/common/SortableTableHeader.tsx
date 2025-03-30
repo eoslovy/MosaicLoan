@@ -5,8 +5,6 @@ import { ChevronUp, ChevronDown } from 'lucide-react';
 import styles from '@/styles/components/SortableTableHeader.module.scss';
 import { SortableTableHeaderProps } from '@/types/components';
 
-
-
 const SortableTableHeader: React.FC<SortableTableHeaderProps> = ({
   label,
   sortKey,
@@ -18,20 +16,21 @@ const SortableTableHeader: React.FC<SortableTableHeaderProps> = ({
   const isAscending = sortState?.ascending;
 
   return (
-    <div onClick={() => onSort(sortKey)} className={styles.sortableHeader}>
+    <button
+      type='button'
+      onClick={() => onSort(sortKey)}
+      className={styles.sortableHeader}
+    >
       {label}
-      {!isActive && (
-        <ChevronDown size={16} className={styles.inactiveIcon} /> // 디폴트 회색
-      )}
+      {!isActive && <ChevronDown size={16} className={styles.inactiveIcon} />}
       {isActive && isAscending && (
-        <ChevronUp size={16} className={styles.activeIcon} /> // 검정 위쪽화살표표
+        <ChevronUp size={16} className={styles.activeIcon} />
       )}
       {isActive && isAscending === false && (
-        <ChevronDown size={16} className={styles.activeIcon} /> // 검정 , 아래쪽으로 화살표표
+        <ChevronDown size={16} className={styles.activeIcon} />
       )}
-    </div>
+    </button>
   );
 };
-
 
 export default SortableTableHeader;

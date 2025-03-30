@@ -215,4 +215,3 @@ export interface SortableTableHeaderProps {
   sortStates: SortState[];
   onSort: (key: SortKey) => void;
 }
-

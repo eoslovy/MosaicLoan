@@ -229,40 +229,54 @@ const ContractsList = () => {
   const handleSort = (key: SortKey) => {
     setSortStates((prev) => {
       const existing = prev.find((s) => s.key === key);
-  
+
       if (!existing) return [...prev, { key, ascending: true }];
-  
+
       if (existing.ascending) {
         return prev.map((s) =>
-          s.key === key ? { ...s, ascending: false } : s
+          s.key === key ? { ...s, ascending: false } : s,
         );
       }
-      
+
       return prev.filter((s) => s.key !== key);
     });
   };
-  
+
   const sortPriority: SortKey[] = ['product', 'bond', 'transactionDate'];
 
-  const activeSortStates = sortStates.length === 1
-    ? sortStates
-    : sortPriority
-        .map((key) => sortStates.find((s) => s.key === key))
-        .filter((s): s is SortState => !!s);
+  const activeSortStates =
+    sortStates.length === 1
+      ? sortStates
+      : sortPriority
+          .map((key) => sortStates.find((s) => s.key === key))
+          .filter((s): s is SortState => !!s);
 
   const sortedContracts = [...contracts].sort((a, b) => {
-    for (const { key, ascending } of activeSortStates) {
+    let result = 0;
+
+    activeSortStates.some(({ key, ascending }) => {
       const valA = a[key];
       const valB = b[key];
-      if (valA < valB) return ascending ? -1 : 1;
-      if (valA > valB) return ascending ? 1 : -1;
-    }
-    return 0;
+
+      if (valA < valB) {
+        result = ascending ? -1 : 1;
+        return true;
+      }
+
+      if (valA > valB) {
+        result = ascending ? 1 : -1;
+        return true;
+      }
+
+      return false;
+    });
+
+    return result;
   });
 
   const paginatedContracts = sortedContracts.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const rows: BasicTableRow[] = paginatedContracts.map((c, idx) => ({
@@ -274,29 +288,32 @@ const ContractsList = () => {
       { key: `maturity-${idx}`, content: c.bondMaturity },
       { key: `amount-${idx}`, content: c.amount },
       { key: `rate-${idx}`, content: c.interestRate },
-      { key: `type-${idx}`, content: <span className={styles.pill}>{c.type}</span> },
+      {
+        key: `type-${idx}`,
+        content: <span className={styles.pill}>{c.type}</span>,
+      },
     ],
   }));
 
   const columnHeaders = [
     <SortableTableHeader
-      key="product"
-      label="상품명"
-      sortKey="product"
+      key='product'
+      label='상품명'
+      sortKey='product'
       sortStates={sortStates}
       onSort={handleSort}
     />,
     <SortableTableHeader
-      key="bond"
-      label="채권명"
-      sortKey="bond"
+      key='bond'
+      label='채권명'
+      sortKey='bond'
       sortStates={sortStates}
       onSort={handleSort}
     />,
     <SortableTableHeader
-      key="transactionDate"
-      label="거래 날짜"
-      sortKey="transactionDate"
+      key='transactionDate'
+      label='거래 날짜'
+      sortKey='transactionDate'
       sortStates={sortStates}
       onSort={handleSort}
     />,
@@ -308,7 +325,7 @@ const ContractsList = () => {
 
   return (
     <div className={styles.tableContainer}>
-      <BasicTable title="채권 거래 내역" columns={columnHeaders} rows={rows} />
+      <BasicTable title='채권 거래 내역' columns={columnHeaders} rows={rows} />
       <Pagination
         currentPage={currentPage}
         totalPages={Math.ceil(contracts.length / itemsPerPage)}
