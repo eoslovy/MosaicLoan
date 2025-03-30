@@ -1,5 +1,13 @@
+import BorrowerCreditSection from '@/components/borrower/BorrowerCreditSection';
+import LoanSummarySection from '@/components/borrower/LoanSummarySection';
+
 const BorrowerPage = () => {
-  return <h1>여기는 대출 페이지</h1>;
+  return (
+    <>
+      <BorrowerCreditSection />
+      <LoanSummarySection />
+    </>
+  );
 };
 
 export default BorrowerPage;

@@ -1,5 +1,3 @@
-// 3단계: TotalContractsOverview 리팩토링
-
 'use client';
 
 import React from 'react';

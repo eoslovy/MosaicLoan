@@ -53,6 +53,7 @@ export interface StatCardProps {
   icon: 'users' | 'trendingUp' | 'clock';
   value: string;
   label: string;
+  unitOverride?: string;
 }
 
 export interface ServiceInfoCardProps {
@@ -62,7 +63,7 @@ export interface ServiceInfoCardProps {
 }
 
 export interface BasicInfoCardProps {
-  icon: 'creditCard' | 'trendingUp' | 'clock' | 'arrowUpRight';
+  icon: 'creditCard' | 'trendingUp' | 'clock' | 'arrowUpRight' | 'percent';
   value: string;
   label: string;
 }
