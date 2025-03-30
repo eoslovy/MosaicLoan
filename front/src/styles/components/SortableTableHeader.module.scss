@@ -1,0 +1,22 @@
+@use '../variables.scss' as *;
+
+.sortableHeader {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: $text-black;
+
+  svg {
+    transition: all 0.2s;
+  }
+}
+
+.inactiveIcon {
+  color: $text-gray;
+  opacity: 0.2;
+}
+
+.activeIcon {
+  color: $text-black;
+}

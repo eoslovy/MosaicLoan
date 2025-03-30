@@ -27,12 +27,19 @@ const BasicTable: React.FC<BasicTableProps> = ({
       <table className={styles.table}>
         {showHeader && (
           <thead>
-            <tr>
-              {columns.map((col) => (
-                <th key={col}>{col}</th>
-              ))}
-            </tr>
-          </thead>
+          <tr>
+            {columns.map((col, index) => {
+              if (typeof col === 'string') {
+                return <th key={`col-${index}`}>{col}</th>;
+              }
+              if (React.isValidElement(col)) {
+                return <th key={col.key?.toString() || `col-${index}`}>{col}</th>;
+              }
+              return null;
+            })}
+          </tr>
+        </thead>
+        
         )}
 
         <tbody>

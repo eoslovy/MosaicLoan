@@ -24,9 +24,10 @@ const ContractsPage = () => {
 
   return (
     <>
-      <div className='py-10 px-10'>
-        <TotalContractsOverview data={data} />
-      </div>
+      {/* <div className='py-10 px-10'>
+        
+      </div> */}
+      <TotalContractsOverview data={data} />
       <ContractsFilter />
       <ContractsList />
     </>
