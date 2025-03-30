@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import styles from '@/styles/borrowers/LoanList.module.scss';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import type { Loan } from '@/types/pages';
+import Pagination from '@/components/common/Pagination';
 
 const mockLoans: Loan[] = [
   {
@@ -48,8 +49,15 @@ const mockLoans: Loan[] = [
   },
 ];
 
+const itemsPerPage = 10;
+
 const LoanList = () => {
   const [openRowIds, setOpenRowIds] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(mockLoans.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedLoans = mockLoans.slice(startIndex, startIndex + itemsPerPage);
 
   const toggleRow = (id: string) => {
     setOpenRowIds((prev) =>
@@ -72,7 +80,7 @@ const LoanList = () => {
           </tr>
         </thead>
         <tbody>
-          {mockLoans.map((loan) => (
+          {paginatedLoans.map((loan) => (
             <React.Fragment key={loan.id}>
               <tr>
                 <td>{loan.name}</td>
@@ -141,6 +149,12 @@ const LoanList = () => {
           ))}
         </tbody>
       </table>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };
