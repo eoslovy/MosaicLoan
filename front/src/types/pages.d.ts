@@ -60,3 +60,21 @@ export interface ContractRow {
   startDate: string;
   status: '진행중' | '완료';
 }
+
+export interface LoanDetail {
+  date: string;
+  type: string;
+  amount: string;
+  balance: string;
+}
+
+export interface Loan {
+  id: string;
+  name: string;
+  amount: string;
+  startDate: string;
+  endDate: string;
+  rate: string;
+  status: '상환중' | '상환완료' | '부실확정' | '연체';
+  details: LoanDetail[];
+}
