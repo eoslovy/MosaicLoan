@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import MyPageSectionTabNav from '@/components/my/MyPageSectionTabNav';
+import MyInfo from '@/components/my/MyInfo';
 
 const MyPage = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -13,7 +14,7 @@ const MyPage = () => {
   const renderTabContent = () => {
     switch (activeTabIndex) {
       case 0:
-        return <p>계정정보 탭 내용</p>;
+        return <MyInfo />;
       case 1:
         return <p>계좌내역 탭 내용</p>;
       default:
