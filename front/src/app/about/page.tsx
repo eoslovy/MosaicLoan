@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import MyPageSectionTabNav from '@/components/my/MyPageSectionTabNav';
 import MyInfo from '@/components/my/MyInfo';
+import MyAccount from '@/components/my/MyAccount';
 
 const MyPage = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -16,7 +17,7 @@ const MyPage = () => {
       case 0:
         return <MyInfo />;
       case 1:
-        return <p>계좌내역 탭 내용</p>;
+        return <MyAccount />;
       default:
         return null;
     }
