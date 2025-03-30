@@ -2,29 +2,16 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from '@/styles/components/FilterSelectTable.module.scss';
-
-interface ContractRow {
-  id: string;
-  name: string;
-  count: number;
-  startDate: string;
-  status: '진행중' | '완료';
-}
-
-interface FilterSelectTableProps {
-  data: ContractRow[];
-  selectedIds: string[];
-  onSelect: (selected: string[]) => void;
-}
+import { FilterSelectTableProps } from '@/types/components';
 
 const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
   data = [],
   selectedIds = [],
   onSelect,
+  columns,
 }) => {
   const [allSelected, setAllSelected] = useState(false);
 
-  // 개별 선택 토글
   const toggleSelection = (id: string) => {
     if (selectedIds.includes(id)) {
       onSelect(selectedIds.filter((item) => item !== id));
@@ -33,7 +20,6 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
     }
   };
 
-  // 전체 선택/해제
   const handleSelectAll = () => {
     if (allSelected) {
       onSelect([]);
@@ -42,7 +28,6 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
     }
   };
 
-  // selectedIds 변경 시 전체 선택 상태 업데이트
   useEffect(() => {
     setAllSelected(selectedIds.length === data.length && data.length > 0);
   }, [selectedIds, data]);
@@ -68,18 +53,10 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>
-                선택
-                {/* <input
-                  type="checkbox"
-                  checked={allSelected}
-                  onChange={handleSelectAll}
-                />
-                전체선택 */}
-              </th>
-              <th>투자명</th>
-              <th>거래 건수</th>
-              <th>투자 시작일</th>
+              <th>선택</th>
+              {columns.map((col) => (
+                <th key={col}>{col}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -104,19 +81,40 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
                   </div>
                 </td>
 
-                <td>
-                  <span
-                    className={
-                      row.status === '완료'
-                        ? styles.finishedBadge
-                        : styles.ongoingBadge
-                    }
-                  >
-                    {row.name}
-                  </span>
-                </td>
-                <td>{row.count}건</td>
-                <td>{row.startDate}</td>
+                {/* 컬럼 순서대로 동적 렌더링 */}
+                {columns.map((col) => {
+                  if (col.includes('명')) {
+                    return (
+                      <td key={`${row.id}-${col}`}>
+                        <span
+                          className={
+                            row.status === '완료' || row.status === '상환완료'
+                              ? styles.finishedBadge
+                              : styles.ongoingBadge
+                          }
+                        >
+                          {row.name}
+                        </span>
+                      </td>
+                    );
+                  }
+
+                  if (col.includes('거래') || col.includes('건수')) {
+                    return <td key={`${row.id}-${col}`}>{row.count ?? '-'}</td>;
+                  }
+
+                  if (col.includes('시작')) {
+                    return <td key={`${row.id}-${col}`}>{row.startDate}</td>;
+                  }
+
+                  if (col.includes('만기') || col.includes('종료')) {
+                    return (
+                      <td key={`${row.id}-${col}`}>{row.endDate ?? '-'}</td>
+                    );
+                  }
+
+                  return <td key={`${row.id}-${col}`}>-</td>;
+                })}
               </tr>
             ))}
           </tbody>

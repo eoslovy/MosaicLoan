@@ -216,3 +216,19 @@ export interface SortableTableHeaderProps {
   sortStates: SortState[];
   onSort: (key: SortKey) => void;
 }
+
+export interface ContractRow {
+  id: string;
+  name: string;
+  count?: number;
+  startDate: string;
+  endDate?: string;
+  status: '진행중' | '완료' | '상환중' | '상환완료' | '부실확정' | '연체';
+}
+
+export interface FilterSelectTableProps {
+  data: ContractRow[];
+  selectedIds: string[];
+  onSelect: (selected: string[]) => void;
+  columns: string[];
+}
