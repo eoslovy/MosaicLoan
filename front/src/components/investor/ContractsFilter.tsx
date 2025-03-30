@@ -133,6 +133,7 @@ const ContractsFilter = () => {
                 data={data}
                 selectedIds={selectedIds}
                 onSelect={setSelectedIds}
+                columns={['투자명', '거래 건수', '투자 시작일']}
               />
             </div>
 
