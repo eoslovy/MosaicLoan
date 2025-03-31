@@ -1,6 +1,6 @@
 --- # Kafka Deployment 정의
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: kafka
   namespace: mosaic
@@ -37,6 +37,7 @@ metadata:
   name: kafka
   namespace: mosaic
 spec:
+  clusterIP: None # Headless
   selector:
     app: kafka
   ports:

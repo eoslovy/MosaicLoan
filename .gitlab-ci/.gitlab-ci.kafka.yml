@@ -4,9 +4,9 @@ build_kafka:
     BUILD_CONTEXT: ./infra/kafka
     K8S_PATH: ./infra/k8s/infras/kafka.yml
   extends: .backend-default-build
-  rules: 
-    - changes: 
-      - infra/kafka/**/*
+  rules:
+    - changes:
+        - infra/kafka/**/*
 
 push_kafka:
   variables:
@@ -15,14 +15,16 @@ push_kafka:
     K8S_PATH: ./infra/k8s/infras/kafka.yml
   extends: .backend-default-push
   needs: [build_kafka]
-  rules: 
+  rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - infra/kafka/**/*
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - infra/kafka/**/*
       when: manual
     - when: never
-    - changes: 
-      - infra/kafka/**/*
 
 deploy_kafka:
   variables:
@@ -31,14 +33,16 @@ deploy_kafka:
     K8S_PATH: ./infra/k8s/infras/kafka.yml
   extends: .backend-default-deploy
   needs: [push_kafka]
-  rules: 
+  rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - infra/kafka/**/*
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - infra/kafka/**/*
       when: manual
     - when: never
-    - changes: 
-      - infra/kafka/**/*
 #test_include_trigger:
 # tags:
 #  - $GITLAB_USER_EMAIL

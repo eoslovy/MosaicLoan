@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: redis
   namespace: mosaic
@@ -31,6 +31,7 @@ metadata:
   name: redis
   namespace: mosaic
 spec:
+  clusterIP: None
   selector:
     app: redis
   ports:
