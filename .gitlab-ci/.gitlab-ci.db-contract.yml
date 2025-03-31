@@ -1,0 +1,30 @@
+build_contract-db:
+  variables:
+    SERVICE_NAME: contract-db
+    BUILD_CONTEXT: ./infra/rdbms/contract
+    K8S_PATH: ./infra/k8s/databases/db-contract.yml
+  extends: .backend-default-build
+  rules: [{ changes: [infra/rdbms/contract/**/*] }]
+
+push_contract-db:
+  variables:
+    SERVICE_NAME: contract-db
+    BUILD_CONTEXT: ./infra/rdbms/contract
+    K8S_PATH: ./infra/k8s/databases/db-contract.yml
+  extends: .backend-default-push
+  needs: [build_contract-db]
+  rules: [{ changes: [infra/rdbms/contract/**/*] }]
+
+deploy_contract-db:
+  variables:
+    SERVICE_NAME: contract-db
+    BUILD_CONTEXT: ./infra/rdbms/contract
+    K8S_PATH: ./infra/k8s/databases/db-contract.yml
+  extends: .backend-default-deploy
+  needs: [push_contract-db]
+  rules: [{ changes: [infra/rdbms/contract/**/*] }]
+#test_include_trigger:
+# tags:
+#  - $GITLAB_USER_EMAIL
+#script:
+#  - echo "CI 정상 작동 여부 확인"

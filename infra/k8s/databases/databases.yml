@@ -1,0 +1,53 @@
+{{- range $svc := list "member" "account" "contract" "credit" "mydata" }}
+
+--- # {{ $svc }} DB Pod 정의 시작 (개발/테스트용)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $svc }}-db
+  namespace: mosaic
+spec:
+  selector:
+    matchLabels:
+      app: {{ $svc }}-db
+  serviceName: {{ $svc }}-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ $svc }}-db 
+    spec:
+      {{- if or (eq $svc "mydata") (eq $svc "member") }}  # ✅ mydata와 member를 control 노드
+      nodeSelector:
+        disktype: control
+      {{- else }}
+      nodeSelector:
+        disktype: worker
+      {{- end}}
+    spec:
+      containers:
+        - name: mysql
+          image: mosaic/{{ $svc }}-db:deploy
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_DATABASE
+              value: mosaic_{{ $svc }}
+            - name: MYSQL_USER
+              value: {{ $svc }}
+            - name: MYSQL_PASSWORD
+              value: "608"
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 30Gi
+{{- end }}

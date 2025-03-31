@@ -1,0 +1,36 @@
+build_account_service:
+  variables:
+    SERVICE_NAME: account-service
+    BUILD_CONTEXT: ./back/account-service
+    K8S_PATH: ./infra/k8s/apis/api-account.yml
+  extends: .backend-default-build
+  rules:
+    - changes:
+        - back/account-service/**/*
+
+push_account_service:
+  variables:
+    SERVICE_NAME: account-service
+    BUILD_CONTEXT: ./back/account-service
+    K8S_PATH: ./infra/k8s/apis/api-account.yml
+  extends: .backend-default-push
+  needs: [build_account_service]
+  rules:
+    - changes:
+        - back/account-service/**/*
+
+deploy_account_service:
+  variables:
+    SERVICE_NAME: account-service
+    BUILD_CONTEXT: ./back/account-service
+    K8S_PATH: ./infra/k8s/apis/api-account.yml
+  extends: .backend-default-deploy
+  needs: [push_account_service]
+  rules:
+    - changes:
+        - back/account-service/**/*
+#test_include_trigger:
+# tags:
+#  - $GITLAB_USER_EMAIL
+#script:
+#  - echo "CI 정상 작동 여부 확인"

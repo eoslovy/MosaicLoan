@@ -1,0 +1,30 @@
+build_zookeeper:
+  variables:
+    SERVICE_NAME: zookeeper
+    BUILD_CONTEXT: ./infra/zookeeper
+    K8S_PATH: ./infra/k8s/infras/zookeeper.yml
+  extends: .backend-default-build
+  rules: [{ changes: [infra/zookeeper/**/*] }]
+
+push_zookeeper:
+  variables:
+    SERVICE_NAME: zookeeper
+    BUILD_CONTEXT: ./infra/zookeeper
+    K8S_PATH: ./infra/k8s/infras/zookeeper.yml
+  extends: .backend-default-push
+  needs: [build_zookeeper]
+  rules: [{ changes: [infra/zookeeper/**/*] }]
+
+deploy_zookeeper:
+  variables:
+    SERVICE_NAME: zookeeper
+    BUILD_CONTEXT: ./infra/zookeeper
+    K8S_PATH: ./infra/k8s/infras/zookeeper.yml
+  extends: .backend-default-deploy
+  needs: [push_zookeeper]
+  rules: [{ changes: [infra/zookeeper/**/*] }]
+#test_include_trigger:
+# tags:
+#  - $GITLAB_USER_EMAIL
+#script:
+#  - echo "CI 정상 작동 여부 확인"

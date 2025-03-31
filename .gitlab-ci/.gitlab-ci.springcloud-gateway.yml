@@ -1,0 +1,30 @@
+variables:
+  SERVICE_NAME: springcloud-gateway
+  BUILD_CONTEXT: ./infra/springcloud-gateway
+  K8S_PATH: ./infra/k8s/infras/gateway.yml
+build_springcloud-gateway:
+  extends: .backend-default-build
+  rules: [{ changes: [infra/springcloud-gateway/**/*] }]
+
+push_springcloud-gateway:
+  variables:
+    SERVICE_NAME: springcloud-gateway
+    BUILD_CONTEXT: ./infra/springcloud-gateway
+    K8S_PATH: ./infra/k8s/infras/gateway.yml
+  extends: .backend-default-push
+  needs: [build_springcloud-gateway]
+  rules: [{ changes: [infra/springcloud-gateway/**/*] }]
+
+deploy_springcloud-gateway:
+  variables:
+    SERVICE_NAME: springcloud-gateway
+    BUILD_CONTEXT: ./infra/springcloud-gateway
+    K8S_PATH: ./infra/k8s/infras/gateway.yml
+  extends: .backend-default-deploy
+  needs: [push_springcloud-gateway]
+  rules: [{ changes: [infra/springcloud-gateway/**/*] }]
+#test_include_trigger:
+# tags:
+#  - $GITLAB_USER_EMAIL
+#script:
+#  - echo "CI 정상 작동 여부 확인" sda

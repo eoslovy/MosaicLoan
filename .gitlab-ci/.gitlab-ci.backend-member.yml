@@ -1,0 +1,28 @@
+build_member_service:
+  variables:
+    SERVICE_NAME: member-service
+    BUILD_CONTEXT: ./back/member-service
+    K8S_PATH: ./infra/k8s/apis/api-member.yml
+  extends: .backend-default-build
+  rules:
+    - changes:
+        - back/member-service/**/*
+        - back/member-service/*
+
+push_member_service:
+  variables:
+    SERVICE_NAME: member-service
+    BUILD_CONTEXT: ./back/member-service
+    K8S_PATH: ./infra/k8s/apis/api-member.yml
+  extends: .backend-default-push
+  needs: [build_member_service]
+  rules: [{ changes: [back/member-service/**/*] }]
+
+deploy_member_service:
+  variables:
+    SERVICE_NAME: member-service
+    BUILD_CONTEXT: ./back/member-service
+    K8S_PATH: ./infra/k8s/apis/api-member.yml
+  extends: .backend-default-deploy
+  needs: [push_member_service]
+  rules: [{ changes: [back/member-service/**/*] }]

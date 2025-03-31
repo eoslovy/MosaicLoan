@@ -1,0 +1,30 @@
+build_kafka:
+  variables:
+    SERVICE_NAME: kafka
+    BUILD_CONTEXT: ./infra/kafka
+    K8S_PATH: ./infra/k8s/infras/kafka.yml
+  extends: .backend-default-build
+  rules: [{ changes: [infra/kafka/**/*] }]
+
+push_kafka:
+  variables:
+    SERVICE_NAME: kafka
+    BUILD_CONTEXT: ./infra/kafka
+    K8S_PATH: ./infra/k8s/infras/kafka.yml
+  extends: .backend-default-push
+  needs: [build_kafka]
+  rules: [{ changes: [infra/kafka/**/*] }]
+
+deploy_kafka:
+  variables:
+    SERVICE_NAME: kafka
+    BUILD_CONTEXT: ./infra/kafka
+    K8S_PATH: ./infra/k8s/infras/kafka.yml
+  extends: .backend-default-deploy
+  needs: [push_kafka]
+  rules: [{ changes: [infra/kafka/**/*] }]
+#test_include_trigger:
+# tags:
+#  - $GITLAB_USER_EMAIL
+#script:
+#  - echo "CI 정상 작동 여부 확인"

@@ -1,0 +1,23 @@
+server:
+    port: 8080
+##
+spring:
+    application:
+        name: credit-service
+    datasource:
+        url: jdbc:mysql://credit-db:3306/mosaic_credit
+        username: credit
+        password: 608
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+        properties:
+            hibernate:
+                format_sql: true
+    kafka:
+        bootstrap-servers: kafka:9092
+    data:
+        redis:
+            port: 6379
+            host: redis

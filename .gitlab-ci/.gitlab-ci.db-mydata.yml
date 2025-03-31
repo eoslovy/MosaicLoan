@@ -1,0 +1,30 @@
+build_mydata-db:
+  variables:
+    SERVICE_NAME: mydata-db
+    BUILD_CONTEXT: ./infra/rdbms/mydata
+    K8S_PATH: ./infra/k8s/databases/db-mydata.yml
+  extends: .backend-default-build
+  rules: [{ changes: [infra/rdbms/mydata/**/*] }]
+
+push_mydata-db:
+  variables:
+    SERVICE_NAME: mydata-db
+    BUILD_CONTEXT: ./infra/rdbms/mydata
+    K8S_PATH: ./infra/k8s/databases/db-mydata.yml
+  extends: .backend-default-push
+  needs: [build_mydata-db]
+  rules: [{ changes: [infra/rdbms/mydata/**/*] }]
+
+deploy_mydata-db:
+  variables:
+    SERVICE_NAME: mydata-db
+    BUILD_CONTEXT: ./infra/rdbms/mydata
+    K8S_PATH: ./infra/k8s/databases/db-mydata.yml
+  extends: .backend-default-deploy
+  needs: [push_mydata-db]
+  rules: [{ changes: [infra/rdbms/mydata/**/*] }]
+#test_include_trigger:
+# tags:
+#  - $GITLAB_USER_EMAIL
+#script:
+#  - echo "CI 정상 작동 여부 확인"

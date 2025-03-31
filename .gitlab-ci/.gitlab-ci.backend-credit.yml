@@ -1,0 +1,31 @@
+build_credit_service:
+  variables:
+    SERVICE_NAME: credit-service
+    BUILD_CONTEXT: ./back/credit-service
+    K8S_PATH: ./infra/k8s/apis/api-credit.yml
+  extends: .backend-default-build
+  rules:
+    - changes:
+        - back/credit-service/**/*
+
+push_credit_service:
+  variables:
+    SERVICE_NAME: credit-service
+    BUILD_CONTEXT: ./back/credit-service
+    K8S_PATH: ./infra/k8s/apis/api-credit.yml
+  extends: .backend-default-push
+  needs: [build_credit_service]
+  rules:
+    - changes:
+        - back/credit-service/**/*
+
+deploy_credit_service:
+  variables:
+    SERVICE_NAME: credit-service
+    BUILD_CONTEXT: ./back/credit-service
+    K8S_PATH: ./infra/k8s/apis/api-credit.yml
+  extends: .backend-default-deploy
+  needs: [push_credit_service]
+  rules:
+    - changes:
+        - back/credit-service/**/*

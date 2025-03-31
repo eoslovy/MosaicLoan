@@ -1,0 +1,30 @@
+build_member-db:
+  variables:
+    SERVICE_NAME: member-db
+    BUILD_CONTEXT: ./infra/rdbms/member
+    K8S_PATH: ./infra/k8s/databases/db-member.yml
+  extends: .backend-default-build
+  rules: [{ changes: [infra/rdbms/member/**/*] }]
+
+push_member-db:
+  variables:
+    SERVICE_NAME: member-db
+    BUILD_CONTEXT: ./infra/rdbms/member
+    K8S_PATH: ./infra/k8s/databases/db-member.yml
+  extends: .backend-default-push
+  needs: [build_member-db]
+  rules: [{ changes: [infra/rdbms/member/**/*] }]
+
+deploy_member-db:
+  variables:
+    SERVICE_NAME: member-db
+    BUILD_CONTEXT: ./infra/rdbms/member
+    K8S_PATH: ./infra/k8s/databases/db-member.yml
+  extends: .backend-default-deploy
+  needs: [push_member-db]
+  rules: [{ changes: [infra/rdbms/member/**/*] }]
+#test_include_trigger:
+# tags:
+#  - $GITLAB_USER_EMAIL
+#script:
+#  - echo "CI 정상 작동 여부 확인"

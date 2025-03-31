@@ -1,0 +1,57 @@
+variables:
+  SERVICE_NAME: front-service
+  BUILD_CONTEXT: ./front/
+  K8S_PATH: ./infra/k8s/apis/api-front.yml
+build_front:
+  variables:
+    SERVICE_NAME: front-service
+    BUILD_CONTEXT: ./front/
+    K8S_PATH: ./infra/k8s/apis/api-front.yml
+  rules: 
+    - changes: 
+        - front/**/*
+        - front/*
+  stage: build
+  tags:
+    - $GITLAB_USER_EMAIL
+  script:
+    - echo "🔨 Docker 이미지 빌드 및 테스트 중..."
+    - docker build -t mosaic/frontend:deploy ${BUILD_CONTEXT}
+    #- echo "✅ 빌드 완료: $IMAGE_NAME:$IMAGE_TAG
+build_nginx:
+  variables:
+    SERVICE_NAME: frontend-nginx
+    BUILD_CONTEXT: ./infra/nginx
+    K8S_PATH: ./infra/k8s/infras/nginx-frontend.yml
+  rules: [{ changes: [front/**/*] }]
+  needs: [build_front]
+  stage: build
+  tags:
+    - $GITLAB_USER_EMAIL
+  script:
+    - echo "🔨 Docker 이미지 빌드 및 테스트 중..."
+    - docker build -t ${DOCKERHUB_USERNAME:-default}/$REGISTRY_PATH-${SERVICE_NAME}:$IMAGE_TAG ${BUILD_CONTEXT}
+    #- echo "✅ 빌드 완료: $IMAGE_NAME:$IMAGE_TAG
+
+push_front:
+  variables:
+      SERVICE_NAME: frontend-nginx
+      BUILD_CONTEXT: ./infra/nginx
+      K8S_PATH: infra/k8s/infras/nginx-frontend.yml
+  extends: .backend-default-push
+  needs: [build_nginx]
+  rules: [{ changes: [front/**/*] }]
+
+deploy_front:
+  variables:
+      SERVICE_NAME: frontend-nginx
+      BUILD_CONTEXT: ./infra/nginx
+      K8S_PATH: infra/k8s/infras/nginx-frontend.yml
+  extends: .backend-default-deploy
+  needs: [push_front]
+  rules: [{ changes: [front/**/*] }]
+#test_include_trigger:
+# tags:
+#  - $GITLAB_USER_EMAIL
+#script:
+#  - echo "CI 정상 작동 여부 확인"

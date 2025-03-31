@@ -1,0 +1,30 @@
+build_account-db:
+  variables:
+    SERVICE_NAME: account-db
+    BUILD_CONTEXT: ./infra/rdbms/account
+    K8S_PATH: infra/k8s/databases/db-account.yml
+  extends: .backend-default-build
+  rules: [{ changes: [infra/rdbms/account/**/*] }]
+
+push_account-db:
+  variables:
+    SERVICE_NAME: account-db
+    BUILD_CONTEXT: ./infra/rdbms/account
+    K8S_PATH: infra/k8s/databases/db-account.yml
+  extends: .backend-default-push
+  needs: [build_account-db]
+  rules: [{ changes: [infra/rdbms/account/**/*] }]
+
+deploy_account-db:
+  variables:
+    SERVICE_NAME: account-db
+    BUILD_CONTEXT: ./infra/rdbms/account
+    K8S_PATH: infra/k8s/databases/db-account.yml
+  extends: .backend-default-deploy
+  needs: [push_account-db]
+  rules: [{ changes: [infra/rdbms/account/**/*] }]
+#test_include_trigger:
+# tags:
+#  - $GITLAB_USER_EMAIL
+#script:
+#  - echo "CI 정상 작동 여부 확인"

@@ -1,0 +1,31 @@
+build_contract_service:
+  variables:
+    SERVICE_NAME: contract-service
+    BUILD_CONTEXT: ./back/contract-service
+    K8S_PATH: ./infra/k8s/apis/api-contract.yml
+  extends: .backend-default-build
+  rules:
+    - changes:
+        - back/contract-service/**/*
+
+push_contract_service:
+  variables:
+    SERVICE_NAME: contract-service
+    BUILD_CONTEXT: ./back/contract-service
+    K8S_PATH: ./infra/k8s/apis/api-contract.yml
+  extends: .backend-default-push
+  needs: [build_contract_service]
+  rules:
+    - changes:
+        - back/contract-service/**/*
+
+deploy_contract_service:
+  variables:
+    SERVICE_NAME: contract-service
+    BUILD_CONTEXT: ./back/contract-service
+    K8S_PATH: ./infra/k8s/apis/api-contract.yml
+  extends: .backend-default-deploy
+  needs: [push_contract_service]
+  rules:
+    - changes:
+        - back/contract-service/**/*

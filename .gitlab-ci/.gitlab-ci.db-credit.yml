@@ -1,0 +1,30 @@
+build_credit-db:
+  variables:
+    SERVICE_NAME: credit-db
+    BUILD_CONTEXT: ./infra/rdbms/credit
+    K8S_PATH: ./infra/k8s/databases/db-credit.yml
+  extends: .backend-default-build
+  rules: [{ changes: [infra/rdbms/credit/**/*] }]
+
+push_credit-db:
+  variables:
+    SERVICE_NAME: credit-db
+    BUILD_CONTEXT: ./infra/rdbms/credit
+    K8S_PATH: ./infra/k8s/databases/db-credit.yml
+  extends: .backend-default-push
+  needs: [build_credit-db]
+  rules: [{ changes: [infra/rdbms/credit/**/*] }]
+
+deploy_credit-db:
+  variables:
+    SERVICE_NAME: credit-db
+    BUILD_CONTEXT: ./infra/rdbms/credit
+    K8S_PATH: ./infra/k8s/databases/db-credit.yml
+  extends: .backend-default-deploy
+  needs: [push_credit-db]
+  rules: [{ changes: [infra/rdbms/credit/**/*] }]
+#test_include_trigger:
+# tags:
+#  - $GITLAB_USER_EMAIL
+#script:
+#  - echo "CI 정상 작동 여부 확인"
