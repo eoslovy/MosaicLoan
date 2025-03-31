@@ -1,6 +1,5 @@
-# Build stage
 FROM gradle:7.4-jdk17 AS build
-#
+
 WORKDIR /app
 COPY . .
 
