@@ -20,6 +20,9 @@ spec:
           image: ${DOCKERHUB_USERNAME}/mosaic-redis:${IMAGE_TAG}
           ports:
             - containerPort: 6379 # Redis 기본 포트
+          envFrom:
+            - configMapRef:
+                name: common-env
 
 --- # Redis Service 정의
 apiVersion: v1

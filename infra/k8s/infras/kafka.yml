@@ -19,6 +19,9 @@ spec:
       containers:
         - name: kafka
           image: ${DOCKERHUB_USERNAME}/mosaic-kafka:${IMAGE_TAG}
+          envFrom:
+            - configMapRef:
+                name: common-env
           env:
             - name: KAFKA_CFG_ZOOKEEPER_CONNECT
               value: zookeeper:2181 # Zookeeper 연결 설정

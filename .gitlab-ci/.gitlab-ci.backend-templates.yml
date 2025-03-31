@@ -55,7 +55,8 @@
 
     # 📦 공용 환경변수 ConfigMap 생성
     - echo "📦 공용 .env 기반 ConfigMap 생성 중..."
-    - kubectl create configmap common-env --from-env-file=.env --dry-run=client -o yaml > configmap.yml
+    - kubectl delete configmap common-env -n mosaic --ignore-not-found=true
+    - kubectl create configmap common-env --from-env-file=.env -n mosaic -o yaml > configmap.yml
 
     # 📦 YAML 템플릿 변수 치환
     - echo "📦 배포 파일 변수 치환 중..."
