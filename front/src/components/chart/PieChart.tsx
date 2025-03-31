@@ -2,6 +2,7 @@ import React from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { PieChartProps } from '@/types/components';
+import type { TooltipItem } from 'chart.js';
 import styles from '@/styles/charts/PieChart.module.scss';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -35,10 +36,13 @@ const PieChart: React.FC<PieChartProps> = ({
       },
       tooltip: {
         callbacks: {
-          label(tooltipItem: any) {
+          label(tooltipItem: TooltipItem<'pie'>) {
             const value = tooltipItem.raw;
             const total = data.reduce((acc, val) => acc + val, 0);
-            const percentage = ((value / total) * 100).toFixed(1);
+            const percentage =
+              typeof value === 'number' && total > 0
+                ? ((value / total) * 100).toFixed(1)
+                : '0';
             return `${tooltipItem.label}: ${value} (${percentage}%)`;
           },
         },

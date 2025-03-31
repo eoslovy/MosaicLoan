@@ -3,6 +3,7 @@ import { Noto_Sans_KR } from 'next/font/google';
 import React from 'react';
 import './globals.css';
 import Nav from '@/components/layout/Nav';
+import Providers from './providers';
 
 const notoSansKR = Noto_Sans_KR({
   subsets: ['latin'],
@@ -23,8 +24,10 @@ const RootLayout = ({
 }>) => (
   <html lang='ko'>
     <body className={`${notoSansKR.variable} antialiased`}>
-      <Nav />
-      <main>{children}</main>
+      <Providers>
+        <Nav />
+        <main>{children}</main>
+      </Providers>
     </body>
   </html>
 );

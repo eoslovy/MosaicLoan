@@ -1,5 +1,5 @@
-const InvestorPage = () => {
-  return <h1>여기는 투자 페이지</h1>;
-};
+import { redirect } from 'next/navigation';
 
-export default InvestorPage;
+export default function InvestorPage() {
+  redirect('/investor/overview');
+}

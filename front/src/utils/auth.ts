@@ -1,11 +1,14 @@
-// 카카오 로그인 URL 리다이렉트
-export const handleKakaoLogin = () => {
-  window.location.href = 'http://localhost:8080/auth/kakao/login';
+import { useUserStore } from '@/stores/userStore';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+export const handleKakaoLogin = (redirectTo?: string) => {
+  const encoded = encodeURIComponent(redirectTo || window.location.pathname);
+  window.location.href = `${API_URL}/auth/kakao/login?redirectTo=${encoded}`;
 };
 
-// 내 정보 가져오기
 export const fetchUser = async () => {
-  const res = await fetch('http://localhost:8080/me', {
+  const res = await fetch(`${API_URL}/me`, {
     credentials: 'include',
   });
 
@@ -14,10 +17,12 @@ export const fetchUser = async () => {
   return json.data;
 };
 
-// 로그아웃
 export const handleLogout = async () => {
-  await fetch('http://localhost:8080/logout', {
+  await fetch(`${API_URL}/logout`, {
     method: 'POST',
     credentials: 'include',
   });
+
+  const { setUser } = useUserStore.getState();
+  setUser(null);
 };

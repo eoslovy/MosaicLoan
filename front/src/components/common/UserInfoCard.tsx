@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserInfoCardProps } from '@/types/components';
+import { UserInfoCardProps, TextColor } from '@/types/components';
 import styles from '@/styles/components/UserInfoCard.module.scss';
 import { Clock, TriangleAlert } from 'lucide-react';
 import Text from '@/components/common/Text';
@@ -18,32 +18,39 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({
   changeRate,
 }) => {
   const IconComponent = iconMap[icon];
-  const changeRateColor = changeRate.text.startsWith('+')
-    ? 'text-ascendRed'
-    : changeRate.text.startsWith('-')
-      ? 'text-descentBlue'
-      : 'gray';
+
+  // ✅ 명시적으로 TextColor 타입 지정
+  let changeRateColor: TextColor = 'gray';
+  if (typeof changeRate.text === 'string') {
+    if (changeRate.text.startsWith('+')) changeRateColor = 'text-ascendRed';
+    else if (changeRate.text.startsWith('-'))
+      changeRateColor = 'text-descentBlue';
+  }
 
   const iconColor = icon === 'triangleAlert' ? '#F15454' : '#145DA0';
   const backgroundColor = icon === 'triangleAlert' ? '#FDE8E8' : '#EDF6FA';
 
-  const categoryValueMatch = categoryValue.text.match(/^(\d+)(\D*)$/);
-  const formattedCategoryValue =
-    categoryValueMatch && categoryValueMatch[1].length > 3
-      ? `999+ ${categoryValueMatch[2]}`
-      : categoryValue.text;
+  // categoryValue formatting
+  let formattedCategoryValue = categoryValue.text;
+  if (typeof categoryValue.text === 'string') {
+    const match = categoryValue.text.match(/^(\d+)(\D*)$/);
+    if (match && match[1].length > 3) {
+      formattedCategoryValue = `999+ ${match[2]}`;
+    }
+  }
 
-  const totalCountMatch = totalCount.text.match(/^(\d+)(\D*)$/);
+  // totalCount formatting
   let formattedTotalCount = totalCount.text;
-
-  if (totalCountMatch) {
-    const numericValue = parseInt(totalCountMatch[1], 10); // 숫자 부분 변환
-    const unit = totalCountMatch[2]; // 단위 부분 유지
-
-    if (numericValue >= 10000) {
-      formattedTotalCount = `9,999+ ${unit}`; // 10,000 이상이면 `9,999+`
-    } else {
-      formattedTotalCount = `${numericValue.toLocaleString()}${unit}`; // 1,000 단위마다 `,` 추가
+  if (typeof totalCount.text === 'string') {
+    const match = totalCount.text.match(/^(\d+)(\D*)$/);
+    if (match) {
+      const num = parseInt(match[1], 10);
+      const unit = match[2];
+      if (num >= 10000) {
+        formattedTotalCount = `9,999+ ${unit}`;
+      } else {
+        formattedTotalCount = `${num.toLocaleString()}${unit}`;
+      }
     }
   }
 

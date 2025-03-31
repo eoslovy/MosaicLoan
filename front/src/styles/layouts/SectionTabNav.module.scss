@@ -1,0 +1,74 @@
+@use '../variables.scss' as *;
+
+.container {
+  width: 100%;
+  padding: 1rem 5rem;
+  background-color: $white;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-sizing: border-box;
+  border-bottom: 1px solid $card-radius;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-size: $text-3xl;
+  font-weight: 700;
+  color: $text-blue;
+}
+
+.description {
+  font-size: $text-md;
+  color: $text-gray;
+  white-space: pre-line;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.tab {
+  padding: 0.5rem 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+
+  span {
+    font-size: $text-md;
+    color: $text-gray;
+    font-weight: 400;
+  }
+
+  &:hover span {
+    color: $text-blue;
+  }
+}
+
+.active {
+  span {
+    color: $text-blue;
+    font-weight: 600;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background-color: $text-blue;
+  }
+}

@@ -1,0 +1,18 @@
+@use '../variables.scss' as *;
+
+.wrapper {
+  padding: 2rem 1rem;
+}
+
+.cardWrapper {
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 1rem;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+
+  justify-items: center;
+}

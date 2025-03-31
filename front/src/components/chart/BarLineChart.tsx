@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { Chart } from 'react-chartjs-2';
+import type { TooltipItem } from 'chart.js';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -115,11 +116,13 @@ const BarLineChart: React.FC<BarLineChartProps> = ({
         mode: 'index' as const,
         intersect: false,
         callbacks: {
-          title: (tooltipItems: any) => tooltipItems[0].label,
-          label: (tooltipItem: any) => {
+          title: (tooltipItems: TooltipItem<'bar' | 'line'>[]) =>
+            tooltipItems[0].label,
+          label: (tooltipItem: TooltipItem<'bar' | 'line'>) => {
             const { datasetIndex } = tooltipItem;
             const dataset = data.datasets[datasetIndex];
 
+            // bar 타입인 경우
             if (dataset.type === 'bar') {
               const datasetValues = dataset.data as number[];
               const totalValue = datasetValues.reduce(
@@ -129,11 +132,15 @@ const BarLineChart: React.FC<BarLineChartProps> = ({
               const value = datasetValues[tooltipItem.dataIndex];
               const percentage =
                 totalValue > 0 ? ((value / totalValue) * 100).toFixed(1) : '0';
-              return `${dataset.label}: ${value} (${percentage}%)`;
+              return `${dataset.label}: ${value.toLocaleString()} (${percentage}%)`;
             }
 
+            // line 타입인 경우
             if (dataset.type === 'line') {
-              return `${dataset.label}: ${tooltipItem.raw}`;
+              const { raw } = tooltipItem;
+              if (typeof raw === 'number') {
+                return `${dataset.label}: ${raw.toLocaleString()} 원`;
+              }
             }
 
             return '';

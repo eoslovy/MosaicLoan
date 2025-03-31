@@ -1,13 +1,20 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { BasicInfoCardProps } from '@/types/components';
 import styles from '@/styles/components/BasicInfoCard.module.scss';
-import { CreditCard, TrendingUp, Clock, ArrowUpRight } from 'lucide-react';
+import {
+  CreditCard,
+  TrendingUp,
+  Clock,
+  ArrowUpRight,
+  Percent,
+} from 'lucide-react';
 
 const iconMap = {
   creditCard: CreditCard,
   trendingUp: TrendingUp,
   clock: Clock,
   arrowUpRight: ArrowUpRight,
+  percent: Percent,
 };
 
 const MAX_WIDTH = 200;

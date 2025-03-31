@@ -1,0 +1,75 @@
+@use '../variables.scss' as *;
+
+.sliderWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.tableWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 500px;
+}
+
+.arrow {
+  cursor: pointer;
+  color: #145da0;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: white;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.badge {
+  background-color: #e0f3ff;
+  color: #0073e6;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.375rem;
+  margin-left: 0.5rem;
+}
+
+.buttonWrapper {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .tableWrapper {
+    flex-direction: row;
+  }
+
+  .arrow {
+    display: block;
+  }
+}
