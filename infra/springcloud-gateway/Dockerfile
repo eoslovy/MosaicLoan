@@ -1,5 +1,3 @@
-# Build stage
-
 FROM amazoncorretto:17 AS builder
 
 WORKDIR /app
@@ -10,7 +8,6 @@ RUN chmod +x ./gradlew
 
 RUN ./gradlew clean build -x test
 
-# Run stage 
 
 FROM amazoncorretto:17
 
