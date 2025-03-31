@@ -4,9 +4,9 @@ build_zookeeper:
     BUILD_CONTEXT: ./infra/zookeeper
     K8S_PATH: ./infra/k8s/infras/zookeeper.yml
   extends: .backend-default-build
-  rules: 
-    - changes: 
-      - infra/zookeeper/**/*
+  rules:
+    - changes:
+        - infra/zookeeper/**/*
 
 push_zookeeper:
   variables:
@@ -15,14 +15,16 @@ push_zookeeper:
     K8S_PATH: ./infra/k8s/infras/zookeeper.yml
   extends: .backend-default-push
   needs: [build_zookeeper]
-  rules: 
+  rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - infra/zookeeper/**/*
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - infra/zookeeper/**/*
       when: manual
     - when: never
-    - changes: 
-      - infra/zookeeper/**/*
 
 deploy_zookeeper:
   variables:
@@ -31,14 +33,16 @@ deploy_zookeeper:
     K8S_PATH: ./infra/k8s/infras/zookeeper.yml
   extends: .backend-default-deploy
   needs: [push_zookeeper]
-  rules: 
+  rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - infra/zookeeper/**/*
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - infra/zookeeper/**/*
       when: manual
     - when: never
-    - changes: 
-      - infra/zookeeper/**/*
 #test_include_trigger:
 # tags:
 #  - $GITLAB_USER_EMAIL

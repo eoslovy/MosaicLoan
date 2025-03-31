@@ -17,12 +17,14 @@ push_account_service:
   needs: [build_account_service]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - back/account-service/**/*
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - back/account-service/**/*
       when: manual
     - when: never
-    - changes:
-        - back/account-service/**/*
 
 deploy_account_service:
   variables:
@@ -33,12 +35,14 @@ deploy_account_service:
   needs: [push_account_service]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - back/account-service/**/*
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - back/account-service/**/*
       when: manual
     - when: never
-    - changes:
-        - back/account-service/**/*
 #test_include_trigger:
 # tags:
 #  - $GITLAB_USER_EMAIL

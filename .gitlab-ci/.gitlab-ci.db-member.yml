@@ -4,9 +4,9 @@ build_member-db:
     BUILD_CONTEXT: ./infra/rdbms/member
     K8S_PATH: ./infra/k8s/databases/db-member.yml
   extends: .backend-default-build
-  rules: 
-    - changes: 
-      - infra/rdbms/member/**/*
+  rules:
+    - changes:
+        - infra/rdbms/member/**/*
 
 push_member-db:
   variables:
@@ -15,14 +15,16 @@ push_member-db:
     K8S_PATH: ./infra/k8s/databases/db-member.yml
   extends: .backend-default-push
   needs: [build_member-db]
-  rules: 
+  rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - infra/rdbms/member/**/*
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - infra/rdbms/member/**/*
       when: manual
     - when: never
-    - changes: 
-      - infra/rdbms/member/**/*
 
 deploy_member-db:
   variables:
@@ -31,14 +33,16 @@ deploy_member-db:
     K8S_PATH: ./infra/k8s/databases/db-member.yml
   extends: .backend-default-deploy
   needs: [push_member-db]
-  rules: 
+  rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - infra/rdbms/member/**/*
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - infra/rdbms/member/**/*
       when: manual
     - when: never
-    - changes: 
-      - infra/rdbms/member/**/*
 #test_include_trigger:
 # tags:
 #  - $GITLAB_USER_EMAIL

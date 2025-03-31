@@ -33,10 +33,12 @@ deploy_member_service:
   extends: .backend-default-deploy
   needs: [push_member_service]
   rules:
-    - changes:
-        - back/member-service/**/*
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - back/member-service/**/*
       when: always
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - back/member-service/**/*
       when: manual
     - when: never

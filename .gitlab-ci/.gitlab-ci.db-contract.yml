@@ -4,9 +4,9 @@ build_contract-db:
     BUILD_CONTEXT: ./infra/rdbms/contract
     K8S_PATH: ./infra/k8s/databases/db-contract.yml
   extends: .backend-default-build
-  rules: 
-    - changes: 
-      - infra/rdbms/contract/**/*
+  rules:
+    - changes:
+        - infra/rdbms/contract/**/*
 
 push_contract-db:
   variables:
@@ -15,14 +15,16 @@ push_contract-db:
     K8S_PATH: ./infra/k8s/databases/db-contract.yml
   extends: .backend-default-push
   needs: [build_contract-db]
-  rules: 
+  rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - infra/rdbms/contract/**/*
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - infra/rdbms/contract/**/*
       when: manual
     - when: never
-    - changes: 
-      - infra/rdbms/contract/**/*
 
 deploy_contract-db:
   variables:
@@ -31,14 +33,16 @@ deploy_contract-db:
     K8S_PATH: ./infra/k8s/databases/db-contract.yml
   extends: .backend-default-deploy
   needs: [push_contract-db]
-  rules: 
+  rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - infra/rdbms/contract/**/*
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - infra/rdbms/contract/**/*
       when: manual
     - when: never
-    - changes: 
-      - infra/rdbms/contract/**/*
 #test_include_trigger:
 # tags:
 #  - $GITLAB_USER_EMAIL

@@ -4,9 +4,9 @@ build_account-db:
     BUILD_CONTEXT: ./infra/rdbms/account
     K8S_PATH: infra/k8s/databases/db-account.yml
   extends: .backend-default-build
-  rules: 
-    - changes: 
-      - infra/rdbms/account/**/*
+  rules:
+    - changes:
+        - infra/rdbms/account/**/*
 
 push_account-db:
   variables:
@@ -15,14 +15,16 @@ push_account-db:
     K8S_PATH: infra/k8s/databases/db-account.yml
   extends: .backend-default-push
   needs: [build_account-db]
-  rules: 
+  rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - infra/rdbms/account/**/*
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - infra/rdbms/account/**/*
       when: manual
     - when: never
-    - changes: 
-      - infra/rdbms/account/**/*
 
 deploy_account-db:
   variables:
@@ -31,14 +33,16 @@ deploy_account-db:
     K8S_PATH: infra/k8s/databases/db-account.yml
   extends: .backend-default-deploy
   needs: [push_account-db]
-  rules: 
+  rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - infra/rdbms/account/**/*
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - infra/rdbms/account/**/*
       when: manual
     - when: never
-    - changes: 
-      - infra/rdbms/account/**/*
 #test_include_trigger:
 # tags:
 #  - $GITLAB_USER_EMAIL
