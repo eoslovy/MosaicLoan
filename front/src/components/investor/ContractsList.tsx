@@ -6,6 +6,7 @@ import BasicTable from '@/components/common/BasicTable';
 import SortableTableHeader from '@/components/common/SortableTableHeader';
 import Pagination from '@/components/common/Pagination';
 import type { BasicTableRow, SortState, SortKey } from '@/types/components';
+import Pill, { PillVariant } from '@/components/common/Pill';
 
 interface Contract {
   id: string;
@@ -221,6 +222,21 @@ const contracts: Contract[] = [
   },
 ];
 
+const getTypeVariant = (type: string): PillVariant => {
+  switch (type) {
+    case '원금 상환':
+      return 'principal-repayment';
+    case '이자상환':
+      return 'interest-repayment';
+    case '대출':
+      return 'loan';
+    case '환급':
+      return 'refund';
+    default:
+      return 'principal-repayment';
+  }
+};
+
 const ContractsList = () => {
   const [sortStates, setSortStates] = useState<SortState[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -290,7 +306,7 @@ const ContractsList = () => {
       { key: `rate-${idx}`, content: c.interestRate },
       {
         key: `type-${idx}`,
-        content: <span className={styles.pill}>{c.type}</span>,
+        content: <Pill variant={getTypeVariant(c.type)}>{c.type}</Pill>,
       },
     ],
   }));

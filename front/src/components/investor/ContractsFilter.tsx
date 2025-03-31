@@ -9,6 +9,7 @@ import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 import FilterSelectTable from '@/components/common/FilterSelectTable';
 import type { ContractRow } from '@/types/pages';
 import { subYears, isBefore } from 'date-fns';
+import Pill, { PillVariant } from '@/components/common/Pill';
 
 const typeOptions = [
   { value: 'repayment', label: '상환' },
@@ -23,6 +24,18 @@ const customSelectStyles: StylesConfig<{ label: string; value: string }, true> =
       minWidth: '160px',
     }),
   };
+
+const getStatusVariant = (status: string): PillVariant => {
+  switch (status) {
+    case '완료':
+    case '상환완료':
+      return 'repayment-complete';
+    case '진행중':
+      return 'repayment-in-progress';
+    default:
+      return 'repayment-in-progress';
+  }
+};
 
 const ContractsFilter = () => {
   const today = new Date();
@@ -140,16 +153,10 @@ const ContractsFilter = () => {
             <div className={styles.selectedData}>
               {selectedData.map((row) => (
                 <div key={`${row.id}`} className={styles.selectedItem}>
-                  <span
-                    className={
-                      row.status === '진행중'
-                        ? styles.ongoingBadge
-                        : styles.finishedBadge
-                    }
-                  >
+                  <Pill variant={getStatusVariant(row.status)}>
                     {row.name}
                     <X size={14} onClick={() => handleRemoveSelected(row.id)} />
-                  </span>
+                  </Pill>
                 </div>
               ))}
             </div>

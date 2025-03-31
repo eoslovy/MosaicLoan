@@ -2,18 +2,24 @@
 
 import React from 'react';
 import BasicTable from '@/components/common/BasicTable';
-import StatusBadge from '@/components/common/StatusBadge';
 import styles from '@/styles/investors/OverviewTable.module.scss';
-// import type { InvestmentItem, ProfitItem } from '@/types/pages';
 import type { BasicTableRow } from '@/types/components';
 import fillEmptyRows from '@/utils/fillEmptyRows';
-// import EmptyState from '@/components/empty/investor/EmptyState';
 import { InvestmentOverviewTableProps } from '@/types/pages';
+import Pill, { PillVariant } from '@/components/common/Pill';
 
-// interface OverviewTableProps {
-//   investlist: InvestmentItem[];
-//   profitHistory: ProfitItem[];
-// }
+const getStatusVariant = (status: string): PillVariant => {
+  switch (status) {
+    case '상환완료':
+      return 'repayment-complete';
+    case '상환중':
+      return 'repayment-in-progress';
+    case '부실':
+      return 'defaulted';
+    default:
+      return 'repayment-in-progress';
+  }
+};
 
 const OverviewTable: React.FC<InvestmentOverviewTableProps> = ({
   investlist,
@@ -29,7 +35,7 @@ const OverviewTable: React.FC<InvestmentOverviewTableProps> = ({
       },
       { key: `rate-${idx}`, content: `${item.금리} %` },
       { key: `date-${idx}`, content: item.상환일 },
-      { key: `status-${idx}`, content: <StatusBadge status={item.상태} /> },
+      { key: `status-${idx}`, content: <Pill variant={getStatusVariant(item.상태)}>{item.상태}</Pill> },
     ],
   }));
 

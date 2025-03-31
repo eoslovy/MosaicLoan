@@ -8,6 +8,7 @@ import type { BasicTableRow } from '@/types/components';
 import styles from '@/styles/my/MyAccountTransactionList.module.scss';
 // import AccountTransactionFilter from '@/components/my/AccountTransactionFilter';
 import clsx from 'clsx';
+import Pill, { PillVariant } from '@/components/common/Pill';
 
 const getTypeLabel = (type: string) => {
   switch (type) {
@@ -35,6 +36,25 @@ const getPaginatedTransactions = (
 ): AccountTransaction[] => {
   const start = (page - 1) * pageSize;
   return data.slice(start, start + pageSize);
+};
+
+const getTypeVariant = (type: string): PillVariant => {
+  switch (type) {
+    case 'INVESTMENT_IN':
+      return 'investment-refund';
+    case 'INVESTMENT_OUT':
+      return 'investment-deposit';
+    case 'LOAN_IN':
+      return 'loan-deposit';
+    case 'LOAN_OUT':
+      return 'loan-repayment';
+    case 'EXTERNAL_IN':
+      return 'deposit';
+    case 'EXTERNAL_OUT':
+      return 'withdraw';
+    default:
+      return 'deposit';
+  }
 };
 
 const MyAccountTransactionList = () => {
@@ -134,15 +154,9 @@ const MyAccountTransactionList = () => {
             {
               key: `type-${idx}`,
               content: (
-                <span
-                  className={clsx(
-                    styles.pill,
-                    styles[tx.type],
-                    styles.cellWrap,
-                  )}
-                >
+                <Pill variant={getTypeVariant(tx.type)} className={styles.cellWrap}>
                   {getTypeLabel(tx.type)}
-                </span>
+                </Pill>
               ),
             },
             {

@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import Overview from '@/components/investor/Overview';
 import OverviewTable from '@/components/investor/OverviewTable';
 import OverviewInvestSimulation from '@/components/investor/OverviewInvestSimulation';
+import InvestButton from '@/components/investor/InvestButton';
 import EmptyState from '@/components/empty/investor/EmptyState';
 import { fetchInvestmentOverview } from '@/service/apis/investments';
 import InvestorOverviewSkeleton from '@/components/loading/InvestorOverviewSkeleton';
@@ -25,6 +26,7 @@ const OverviewPage = () => {
 
   return (
     <>
+      <InvestButton />
       <Overview />
       <OverviewTable
         investlist={data.investlist}

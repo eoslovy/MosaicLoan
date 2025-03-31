@@ -1,0 +1,98 @@
+@use '../variables.scss' as *;
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  white-space: nowrap;
+  transition: all 0.2s ease-in-out;
+
+  // 입금/출금 관련
+  &.deposit {
+    background-color: #DEF7EC;
+    color: #03543F;
+  }
+
+  &.withdraw {
+    background-color: #FDE8E8;
+    color: #9B1C1C;
+  }
+
+  &.investment-deposit {
+    background-color: #FEF9C3;
+    color: #854D0E;
+  }
+
+  &.investment-refund {
+    background-color: #DBEAFE;
+    color: #3554B9;
+  }
+
+  &.loan-deposit {
+    background-color: #F3F4F6;
+    color: #1F2937;
+  }
+
+  &.loan-repayment {
+    background-color: #F3F4F6;
+    color: #1F2937;
+  }
+
+  // 투자 상태
+  &.investing {
+    background-color: #DEF7EC;
+    color: #606975;
+  }
+
+  &.completed {
+    background-color: #FDE8E8;
+    color: #606975;
+  }
+
+  // 상환 관련
+  &.principal-repayment {
+    background-color: #DEF7EC;
+    color: #03543F;
+  }
+
+  &.loan {
+    background-color: #EDF6FA;
+    color: #03543F;
+  }
+
+  &.interest-repayment {
+    background-color: #DEF7EC;
+    color: #03543F;
+  }
+
+  &.refund {
+    background-color: #FEF9C3;
+    color: #854D0E;
+  }
+
+  // 대출 상태
+  &.repayment-complete {
+    background-color: #DEF7EC;
+    color: #03543F;
+  }
+
+  &.repayment-in-progress {
+    background-color: #DBEAFE;
+    color: #3554B9;
+  }
+
+  &.defaulted {
+    background-color: #FDE8E8;
+    color: #9B1C1C;
+  }
+
+  &.overdue {
+    background-color: #FEF9C3;
+    color: #854D0E;
+  }
+} 

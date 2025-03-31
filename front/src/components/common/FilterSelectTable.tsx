@@ -3,6 +3,19 @@
 import React, { useEffect, useState } from 'react';
 import styles from '@/styles/components/FilterSelectTable.module.scss';
 import { FilterSelectTableProps } from '@/types/components';
+import Pill, { PillVariant } from '@/components/common/Pill';
+
+const getStatusVariant = (status: string): PillVariant => {
+  switch (status) {
+    case '완료':
+    case '상환완료':
+      return 'repayment-complete';
+    case '진행중':
+      return 'repayment-in-progress';
+    default:
+      return 'repayment-in-progress';
+  }
+};
 
 const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
   data = [],
@@ -53,7 +66,17 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>선택</th>
+              <th className={styles.checkboxCell}>
+                <input
+                  type='checkbox'
+                  checked={selectedIds.length === data.length}
+                  onChange={(e) =>
+                    onSelect(
+                      e.target.checked ? data.map((row) => row.id) : [],
+                    )
+                  }
+                />
+              </th>
               {columns.map((col) => (
                 <th key={col}>{col}</th>
               ))}
@@ -62,39 +85,26 @@ const FilterSelectTable: React.FC<FilterSelectTableProps> = ({
           <tbody>
             {data.map((row) => (
               <tr key={row.id}>
-                <td>
-                  <div className={styles.checkboxWrapper}>
-                    <input
-                      type='checkbox'
-                      id={`select-${row.id}`}
-                      checked={selectedIds.includes(row.id)}
-                      onChange={() => toggleSelection(row.id)}
-                      aria-labelledby={`label-${row.id}`}
-                    />
-                    <label
-                      id={`label-${row.id}`}
-                      htmlFor={`select-${row.id}`}
-                      className={styles.checkboxLabel}
-                    >
-                      <span className='sr-only'>{row.name} 선택</span>
-                    </label>
-                  </div>
+                <td className={styles.checkboxCell}>
+                  <input
+                    type='checkbox'
+                    checked={selectedIds.includes(row.id)}
+                    onChange={(e) =>
+                      onSelect(
+                        e.target.checked
+                          ? [...selectedIds, row.id]
+                          : selectedIds.filter((id) => id !== row.id),
+                      )
+                    }
+                  />
                 </td>
-
-                {/* 컬럼 순서대로 동적 렌더링 */}
                 {columns.map((col) => {
                   if (col.includes('명')) {
                     return (
                       <td key={`${row.id}-${col}`}>
-                        <span
-                          className={
-                            row.status === '완료' || row.status === '상환완료'
-                              ? styles.finishedBadge
-                              : styles.ongoingBadge
-                          }
-                        >
+                        <Pill variant={getStatusVariant(row.status)}>
                           {row.name}
-                        </span>
+                        </Pill>
                       </td>
                     );
                   }
