@@ -10,7 +10,7 @@ shutdown_timeout = 0
   url = "https://lab.ssafy.com"
   id = 1119
   token = "glrt-t3_hvNsFxsYnzvA3MzDR45j"
-  token_obtained_at = 2025-03-30T09:32:54Z
+  token_obtained_at = 2025-03-31T00:12:15Z
   token_expires_at = 0001-01-01T00:00:00Z
   executor = "docker"
   [runners.cache]
