@@ -16,14 +16,15 @@ push_member_service:
     K8S_PATH: ./infra/k8s/apis/api-member.yml
   extends: .backend-default-push
   needs: [build_member_service]
-  rules: 
+  rules:
+    - changes:
+        - back/member-service/**/*
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
       when: manual
     - when: never
-    - changes: 
-      - back/member-service/**/*
+
 deploy_member_service:
   variables:
     SERVICE_NAME: member-service
@@ -31,11 +32,11 @@ deploy_member_service:
     K8S_PATH: ./infra/k8s/apis/api-member.yml
   extends: .backend-default-deploy
   needs: [push_member_service]
-  rules: 
+  rules:
+    - changes:
+        - back/member-service/**/*
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
       when: manual
     - when: never
-    - changes: 
-      - back/member-service/**/*
