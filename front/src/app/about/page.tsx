@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import MyPageSectionTabNav from '@/components/my/MyPageSectionTabNav';
 import MyInfo from '@/components/my/MyInfo';
 import MyAccount from '@/components/my/MyAccount';
+import MyAccountTransactionList from '@/components/my/MyAccountTransactionList';
 
 const MyPage = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -17,7 +18,12 @@ const MyPage = () => {
       case 0:
         return <MyInfo />;
       case 1:
-        return <MyAccount />;
+        return (
+          <>
+            <MyAccount />
+            <MyAccountTransactionList />
+          </>
+        );
       default:
         return null;
     }
