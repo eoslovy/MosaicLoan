@@ -37,6 +37,7 @@ metadata:
   name: kafka
   namespace: mosaic
 spec:
+  clusterIP: None # Headless
   selector:
     app: kafka
   ports:
