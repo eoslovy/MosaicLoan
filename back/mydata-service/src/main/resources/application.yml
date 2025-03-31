@@ -5,9 +5,9 @@ spring:
   application:
     name: mydata-service
   datasource:
-    url: jdbc:mysql://mydata-db:3306/mosaic_mydata
-    username: mydata
-    password: 608
+    url: ${MYDATA_DATASOURCE_URL}
+    username: ${MYDATA_DATASOURCE_USERNAME}
+    password: ${MYDATA_DATASOURCE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,9 +15,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  kafka:
-    bootstrap-servers: kafka:9092
   data:
     redis:
-      port: 6379
-      host: redis
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
+  kafka:
+    bootstrap-servers: kafka:9092

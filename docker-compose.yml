@@ -5,6 +5,8 @@ services:
       context: ./back/member-service
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-api:${IMAGE_TAG:-local}
+    env_file:
+      - .env
     ports:
       - "18081:8080"
 
@@ -13,6 +15,8 @@ services:
       context: ./back/account-service
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-account-api:${IMAGE_TAG:-local}
+    env_file:
+      - .env
     ports:
       - "18082:8080"
 
@@ -21,6 +25,8 @@ services:
       context: ./back/contract-service
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-contract-api:${IMAGE_TAG:-local}
+    env_file:
+      - .env
     ports:
       - "18083:8080"
   credit-api:
@@ -28,6 +34,8 @@ services:
       context: ./back/credit-service
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-credit-api:${IMAGE_TAG:-local}
+    env_file:
+      - .env
     ports:
       - "18084:8080"
   mydata-api:
@@ -35,6 +43,8 @@ services:
       context: ./back/mydata-service
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-mydata-api:${IMAGE_TAG:-local}
+    env_file:
+      - .env
     ports:
       - "18085:8080"
 
@@ -43,6 +53,8 @@ services:
       context: ./front
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-frontend:${IMAGE_TAG:-local}
+    env_file:
+      - .env
     profiles:
       - build-only
     ports:
@@ -55,6 +67,8 @@ services:
       context: ./infra/springcloud-gateway
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-springcloud-gateway:${IMAGE_TAG:-local}
+    env_file:
+      - .env
     ports:
       - "8080:8080"
 
