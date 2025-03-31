@@ -17,8 +17,12 @@ push_credit_service:
   needs: [build_credit_service]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - back/credit-service/**/*
       when: always
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - back/credit-service/**/*
       when: manual
     - when: never
 
