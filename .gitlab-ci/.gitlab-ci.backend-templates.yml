@@ -17,6 +17,8 @@
     #- echo "✅ 빌드 완료: $IMAGE_NAME:$IMAGE_TAG
 
 .backend-default-push:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
   tags:
     - $GITLAB_USER_EMAIL
   stage: push
@@ -26,6 +28,8 @@
     - docker push ${DOCKERHUB_USERNAME:-default}/$REGISTRY_PATH-${SERVICE_NAME}:$IMAGE_TAG
 
 .backend-default-deploy:
+  rulse:
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
   tags:
     - $GITLAB_USER_EMAIL
   stage: deploy
