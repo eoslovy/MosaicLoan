@@ -28,7 +28,7 @@
     - docker push ${DOCKERHUB_USERNAME:-default}/$REGISTRY_PATH-${SERVICE_NAME}:$IMAGE_TAG
 
 .backend-default-deploy:
-  rulse:
+  rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
   tags:
     - $GITLAB_USER_EMAIL
