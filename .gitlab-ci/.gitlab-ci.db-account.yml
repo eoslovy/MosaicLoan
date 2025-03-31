@@ -16,13 +16,13 @@ push_account-db:
   extends: .backend-default-push
   needs: [build_account-db]
   rules: 
-    - changes: 
-      - infra/rdbms/account/**/*
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       when: always
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
       when: manual
     - when: never
+    - changes: 
+      - infra/rdbms/account/**/*
 
 deploy_account-db:
   variables:
@@ -32,13 +32,13 @@ deploy_account-db:
   extends: .backend-default-deploy
   needs: [push_account-db]
   rules: 
-    - changes: 
-      - infra/rdbms/account/**/*
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       when: always
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
       when: manual
     - when: never
+    - changes: 
+      - infra/rdbms/account/**/*
 #test_include_trigger:
 # tags:
 #  - $GITLAB_USER_EMAIL

@@ -43,13 +43,13 @@ push_front:
   extends: .backend-default-push
   needs: [build_nginx]
   rules: 
-    - changes: 
-      - front/**/*
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       when: always
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
       when: manual
     - when: never
+    - changes: 
+      - front/**/*
 
 deploy_front:
   variables:
@@ -59,13 +59,13 @@ deploy_front:
   extends: .backend-default-deploy
   needs: [push_front]
   rules: 
-    - changes: 
-      - front/**/*
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       when: always
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
       when: manual
     - when: never
+    - changes: 
+      - front/**/*
 #test_include_trigger:
 # tags:
 #  - $GITLAB_USER_EMAIL

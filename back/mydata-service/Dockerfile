@@ -16,7 +16,6 @@ COPY --from=build /app .
 
 RUN ./gradlew test
 
-# Run stage
 FROM gradle:7.4-jdk17 AS run
 
 WORKDIR /app
