@@ -24,7 +24,7 @@ spec:
           envFrom:
             - configMapRef:
                 name: common-env
-                    env:
+          env:
             - name: MYSQL_ROOT_PASSWORD
               value: root
             - name: MYSQL_DATABASE
