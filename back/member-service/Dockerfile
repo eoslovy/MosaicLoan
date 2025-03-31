@@ -20,5 +20,5 @@ FROM amazoncorretto:17-alpine AS run
 WORKDIR /app
 
 COPY --from=build /app/build/libs/*.jar app.jar
-
+#
 ENTRYPOINT ["java", "-jar", "-Xms512m", "-Xmx512m", "app.jar"]
