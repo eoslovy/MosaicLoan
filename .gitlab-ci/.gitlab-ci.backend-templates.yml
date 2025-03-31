@@ -51,7 +51,7 @@
     # 📄 파일 존재 여부 확인
     - '[ -f "$NAMESPACE_PATH" ] || { echo "❌ NAMESPACE_PATH 파일 없음: $NAMESPACE_PATH"; exit 1; }'
     - '[ -f "$K8S_PATH" ] || { echo "❌ K8S_PATH 파일 없음: $K8S_PATH"; exit 1; }'
-    - '[ -f "$ENV_FILE_CONTENT" ] || { echo "❌ .env 파일 없음"; exit 1; }'
+    - '[ -z "$ENV_FILE_CONTENT" ] && { echo "❌ ENV_FILE_CONTENT 비어있음"; exit 1; }'
 
     - echo "$ENV_FILE_CONTENT" > temp.env
 
