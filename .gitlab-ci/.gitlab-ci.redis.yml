@@ -4,7 +4,9 @@ build_redis:
     BUILD_CONTEXT: ./infra/redis
     K8S_PATH: ./infra/k8s/infras/redis.yml
   extends: .backend-default-build
-  rules: [{ changes: [infra/redis/**/*] }]
+  rules: 
+    - changes: 
+      - infra/redis/**/*
 
 push_redis:
   variables:
@@ -13,7 +15,14 @@ push_redis:
     K8S_PATH: ./infra/k8s/infras/redis.yml
   extends: .backend-default-push
   needs: [build_redis]
-  rules: [{ changes: [infra/redis/**/*] }]
+  rules: 
+    - changes: 
+      - infra/redis/**/*
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+      when: manual
+    - when: never
 
 deploy_redis:
   variables:
@@ -22,7 +31,14 @@ deploy_redis:
     K8S_PATH: ./infra/k8s/infras/redis.yml
   extends: .backend-default-deploy
   needs: [push_redis]
-  rules: [{ changes: [infra/redis/**/*] }]
+  rules: 
+    - changes: 
+      - infra/redis/**/*
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+      when: manual
+    - when: never
 #test_include_trigger:
 # tags:
 #  - $GITLAB_USER_EMAIL

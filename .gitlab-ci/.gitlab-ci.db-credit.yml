@@ -4,7 +4,8 @@ build_credit-db:
     BUILD_CONTEXT: ./infra/rdbms/credit
     K8S_PATH: ./infra/k8s/databases/db-credit.yml
   extends: .backend-default-build
-  rules: [{ changes: [infra/rdbms/credit/**/*] }]
+  rules: 
+    - changes: infra/rdbms/credit/**/*
 
 push_credit-db:
   variables:
@@ -13,7 +14,13 @@ push_credit-db:
     K8S_PATH: ./infra/k8s/databases/db-credit.yml
   extends: .backend-default-push
   needs: [build_credit-db]
-  rules: [{ changes: [infra/rdbms/credit/**/*] }]
+  rules: 
+    - changes: infra/rdbms/credit/**/*
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+      when: manual
+    - when: never
 
 deploy_credit-db:
   variables:
@@ -22,7 +29,13 @@ deploy_credit-db:
     K8S_PATH: ./infra/k8s/databases/db-credit.yml
   extends: .backend-default-deploy
   needs: [push_credit-db]
-  rules: [{ changes: [infra/rdbms/credit/**/*] }]
+  rules: 
+    - changes: infra/rdbms/credit/**/*
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+      when: manual
+    - when: never
 #test_include_trigger:
 # tags:
 #  - $GITLAB_USER_EMAIL
