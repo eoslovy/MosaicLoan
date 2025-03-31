@@ -111,13 +111,3 @@ export interface AccountTransactionResponse {
   data: AccountTransaction[];
   pagination: PaginationInfo;
 }
-
-export interface AccountTransactionFilterProps {
-  startDate: Date | null;
-  endDate: Date | null;
-  selectedTypes: string[];
-  onStartDateChange: (date: Date) => void;
-  onEndDateChange: (date: Date) => void;
-  onTypesChange: (types: string[]) => void;
-  onSearch: () => void;
-}

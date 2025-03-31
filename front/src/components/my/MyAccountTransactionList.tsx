@@ -93,37 +93,8 @@ const MyAccountTransactionList = () => {
   // 거래 내역 컬럼
   const tableColumns = ['거래일', '금액', '잔액', '내용', '유형', ''];
 
-  // 목데이터를 테이블에 맞게 변환하기
-  const tableRows: BasicTableRow[] = transactions.map((tx, idx) => ({
-    key: `tx-${idx}`,
-    cells: [
-      { key: `date-${idx}`, content: tx.createdAt },
-      { key: `amount-${idx}`, content: `${tx.amount.toLocaleString()} ₩` },
-      { key: `cash-${idx}`, content: `${tx.cash.toLocaleString()} ₩` },
-      { key: `content-${idx}`, content: tx.content },
-      { key: `type-${idx}`, content: tx.type },
-      {
-        key: `action-${idx}`,
-        content: <button type='button'>상세</button>, // 나중에 라우팅하거나 모달 연결하자
-      },
-    ],
-  }));
-
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-
-  const filteredTransactions = transactions.filter((tx) => {
-    const txDate = new Date(tx.createdAt);
-    const matchesDate =
-      (!startDate || txDate >= startDate) && (!endDate || txDate <= endDate);
-    const matchesType =
-      selectedTypes.length === 0 || selectedTypes.includes(tx.type);
-    return matchesDate && matchesType;
-  });
-
   const pagedTransactions = getPaginatedTransactions(
-    filteredTransactions,
+    transactions,
     pagination.page,
     pagination.pageSize,
   );
