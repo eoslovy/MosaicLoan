@@ -77,6 +77,8 @@ services:
       context: ./infra/nginx
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-nginx:${IMAGE_TAG:-local}
+    env_file:
+      - .env
     ports:
       - "80:80"
     depends_on:
@@ -85,6 +87,8 @@ services:
     build:
       context: ./infra/redis
       dockerfile: Dockerfile
+    env_file:
+      - .env
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-redis:${IMAGE_TAG:-local}
     ports:
       - "6379:6379"
@@ -93,6 +97,8 @@ services:
     build:
       context: ./infra/zookeeper
       dockerfile: Dockerfile
+    env_file:
+      - .env
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-zookeeper:${IMAGE_TAG:-local}
     ports:
       - "2181:2181"
@@ -101,6 +107,8 @@ services:
     build:
       context: ./infra/kafka
       dockerfile: Dockerfile
+    env_file:
+      - .env
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-kafka:${IMAGE_TAG:-local}
     ports:
       - "9092:9092"
@@ -112,6 +120,14 @@ services:
       context: ./infra/rdbms/member
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-db:${IMAGE_TAG:-local}
+    env_file:
+      - .env    
+    environment:
+      DATABASE_URL: ${MEMBER_DATABASE_URL}
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: ${MEMBER_DATABASE_URL}
+      MYSQL_PASSWORD: ${MEMBER_DATABASE_URL}
+      #ENV MYSQL_DATABASE=mosaic_account
     ports:
       - "3307:3306"
 
@@ -119,6 +135,13 @@ services:
     build:
       context: ./infra/rdbms/account
       dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${ACCOUNT_DATABASE_URL}
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: ${ACCOUNT_DATABASE_URL}
+      MYSQL_PASSWORD: ${ACCOUNT_DATABASE_URL}    
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-account-db:${IMAGE_TAG:-local}
     ports:
       - "3308:3306"
@@ -127,6 +150,13 @@ services:
     build:
       context: ./infra/rdbms/contract
       dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${CONTRACT_DATABASE_URL}
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: ${CONTRACT_DATABASE_URL}
+      MYSQL_PASSWORD: ${CONTRACT_DATABASE_URL}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-contract-db:${IMAGE_TAG:-local}
     ports:
       - "3309:3306"
@@ -135,6 +165,13 @@ services:
     build:
       context: ./infra/rdbms/mydata
       dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${MYDATA_DATABASE_URL}
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: ${MYDATA_DATABASE_URL}
+      MYSQL_PASSWORD: ${MYDATA_DATABASE_URL}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-mydata-db:${IMAGE_TAG:-local}
     ports:
       - "3310:3306"
@@ -142,6 +179,13 @@ services:
     build:
       context: ./infra/rdbms/credit
       dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: ${CREDIT_DATABASE_URL}
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: ${CREDIT_DATABASE_URL}
+      MYSQL_PASSWORD: ${CREDIT_DATABASE_URL}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-credit-db:${IMAGE_TAG:-local}
     ports:
       - "3311:3306"
