@@ -1,4 +1,3 @@
-# 공식 Redis 이미지를 기반으로 사용
 FROM redis:7.2.0
 
 VOLUME ["/data"]
