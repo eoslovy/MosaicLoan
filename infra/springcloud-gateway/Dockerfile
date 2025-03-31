@@ -1,4 +1,5 @@
-FROM amazoncorretto:17 AS builder
+# Build stage
+FROM gradle:7.4-jdk17 AS build
 
 WORKDIR /app
 
@@ -8,12 +9,20 @@ RUN chmod +x ./gradlew
 
 RUN ./gradlew clean build -x test
 
-
-FROM amazoncorretto:17
-
+FROM gradle:7.4-jdk17 AS test
 
 WORKDIR /app
 
-# builder에서 JAR 파일 복사
-COPY --from=builder /app/build/libs/*.jar app.jar
+COPY --from=build /app .
+
+RUN ./gradlew test
+
+FROM amazoncorretto:17-alpine AS run
+
+WORKDIR /app
+
+# builder에서 빌드된 JAR 파일 복사
+COPY --from=build /app/build/libs/*.jar app.jar
+
+# 앱 실행
 ENTRYPOINT ["java", "-jar", "-Xms512m", "-Xmx512m", "app.jar"]
