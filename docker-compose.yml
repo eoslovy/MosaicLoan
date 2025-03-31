@@ -1,0 +1,133 @@
+version: '3.8'
+services:
+  member-api:
+    build:
+      context: ./back/member-service
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-api:${IMAGE_TAG:-local}
+    ports:
+      - "18081:8080"
+
+  account-api:
+    build:
+      context: ./back/account-service
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-account-api:${IMAGE_TAG:-local}
+    ports:
+      - "18082:8080"
+
+  contract-api:
+    build:
+      context: ./back/contract-service
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-contract-api:${IMAGE_TAG:-local}
+    ports:
+      - "18083:8080"
+  credit-api:
+    build:
+      context: ./back/credit-service
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-credit-api:${IMAGE_TAG:-local}
+    ports:
+      - "18084:8080"
+  mydata-api:
+    build:
+      context: ./back/mydata-service
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-mydata-api:${IMAGE_TAG:-local}
+    ports:
+      - "18085:8080"
+
+  frontend-react:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-frontend:${IMAGE_TAG:-local}
+    profiles:
+      - build-only
+    ports:
+      - "80:80"
+    depends_on:
+      - springcloud-gateway
+
+  springcloud-gateway:
+    build:
+      context: ./infra/springcloud-gateway
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-springcloud-gateway:${IMAGE_TAG:-local}
+    ports:
+      - "8080:8080"
+
+  nginx:
+    build:
+      context: ./infra/nginx
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-nginx:${IMAGE_TAG:-local}
+    ports:
+      - "80:80"
+    depends_on:
+      - springcloud-gateway
+  redis:
+    build:
+      context: ./infra/redis
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-redis:${IMAGE_TAG:-local}
+    ports:
+      - "6379:6379"
+
+  zookeeper:
+    build:
+      context: ./infra/zookeeper
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-zookeeper:${IMAGE_TAG:-local}
+    ports:
+      - "2181:2181"
+
+  kafka:
+    build:
+      context: ./infra/kafka
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-kafka:${IMAGE_TAG:-local}
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+
+  member-db:
+    build:
+      context: ./infra/rdbms/member
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-db:${IMAGE_TAG:-local}
+    ports:
+      - "3307:3306"
+
+  account-db:
+    build:
+      context: ./infra/rdbms/account
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-account-db:${IMAGE_TAG:-local}
+    ports:
+      - "3308:3306"
+
+  contract-db:
+    build:
+      context: ./infra/rdbms/contract
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-contract-db:${IMAGE_TAG:-local}
+    ports:
+      - "3309:3306"
+
+  mydata-db:
+    build:
+      context: ./infra/rdbms/mydata
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-mydata-db:${IMAGE_TAG:-local}
+    ports:
+      - "3310:3306"
+  credit-db:
+    build:
+      context: ./infra/rdbms/credit
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-credit-db:${IMAGE_TAG:-local}
+    ports:
+      - "3311:3306"

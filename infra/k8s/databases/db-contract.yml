@@ -1,0 +1,58 @@
+--- # contract DB Pod 정의 시작 (개발/테스트용)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: contract-db
+  namespace: mosaic
+spec:
+  selector:
+    matchLabels:
+      app: contract-db
+  serviceName: contract-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: contract-db 
+    spec:
+      nodeSelector:
+        disktype: worker
+    spec:
+      containers:
+        - name: mysql
+          image: ${DOCKERHUB_USERNAME}/mosaic-contract-db:${IMAGE_TAG}
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_DATABASE
+              value: mosaic_contract
+            - name: MYSQL_USER
+              value: contract
+            - name: MYSQL_PASSWORD
+              value: "608"
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 30Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: contract-db
+  namespace: mosaic
+spec:
+  clusterIP: None  # Headless Service (StatefulSet에서 권장)
+  selector:
+    app: contract-db
+  ports:
+    - port: 3306
+      targetPort: 3306

@@ -1,0 +1,23 @@
+server:
+    port: 8080
+##
+spring:
+    application:
+        name: account-service
+    datasource:
+        url: jdbc:mysql://account-db:3306/mosaic_account
+        username: account
+        password: 608
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+        properties:
+            hibernate:
+                format_sql: true
+    kafka:
+        bootstrap-servers: kafka:9092
+    data:
+        redis:
+            port: 6379
+            host: redis
