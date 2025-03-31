@@ -4,7 +4,9 @@ build_mydata-db:
     BUILD_CONTEXT: ./infra/rdbms/mydata
     K8S_PATH: ./infra/k8s/databases/db-mydata.yml
   extends: .backend-default-build
-  rules: [{ changes: [infra/rdbms/mydata/**/*] }]
+  rules: 
+    - changes: 
+      - infra/rdbms/mydata/**/*
 
 push_mydata-db:
   variables:
@@ -13,7 +15,14 @@ push_mydata-db:
     K8S_PATH: ./infra/k8s/databases/db-mydata.yml
   extends: .backend-default-push
   needs: [build_mydata-db]
-  rules: [{ changes: [infra/rdbms/mydata/**/*] }]
+  rules: 
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+      when: manual
+    - when: never
+    - changes: 
+      - infra/rdbms/mydata/**/*
 
 deploy_mydata-db:
   variables:
@@ -22,7 +31,14 @@ deploy_mydata-db:
     K8S_PATH: ./infra/k8s/databases/db-mydata.yml
   extends: .backend-default-deploy
   needs: [push_mydata-db]
-  rules: [{ changes: [infra/rdbms/mydata/**/*] }]
+  rules: 
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+      when: manual
+    - when: never
+    - changes: 
+      - infra/rdbms/mydata/**/*
 #test_include_trigger:
 # tags:
 #  - $GITLAB_USER_EMAIL

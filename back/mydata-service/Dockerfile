@@ -12,13 +12,10 @@ FROM gradle:7.4-jdk17 AS test
 
 WORKDIR /app
 
-# builder에서 빌드된 파일 복사
 COPY --from=build /app .
 
-# Gradle 테스트 실행
 RUN ./gradlew test
 
-# Run stage
 FROM gradle:7.4-jdk17 AS run
 
 WORKDIR /app

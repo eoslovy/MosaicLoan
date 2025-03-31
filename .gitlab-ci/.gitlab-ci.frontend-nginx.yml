@@ -23,7 +23,9 @@ build_nginx:
     SERVICE_NAME: frontend-nginx
     BUILD_CONTEXT: ./infra/nginx
     K8S_PATH: ./infra/k8s/infras/nginx-frontend.yml
-  rules: [{ changes: [front/**/*] }]
+  rules: 
+    - changes: 
+      - front/**/*
   needs: [build_front]
   stage: build
   tags:
@@ -40,7 +42,14 @@ push_front:
       K8S_PATH: infra/k8s/infras/nginx-frontend.yml
   extends: .backend-default-push
   needs: [build_nginx]
-  rules: [{ changes: [front/**/*] }]
+  rules: 
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+      when: manual
+    - when: never
+    - changes: 
+      - front/**/*
 
 deploy_front:
   variables:
@@ -49,7 +58,14 @@ deploy_front:
       K8S_PATH: infra/k8s/infras/nginx-frontend.yml
   extends: .backend-default-deploy
   needs: [push_front]
-  rules: [{ changes: [front/**/*] }]
+  rules: 
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
+      when: manual
+    - when: never
+    - changes: 
+      - front/**/*
 #test_include_trigger:
 # tags:
 #  - $GITLAB_USER_EMAIL

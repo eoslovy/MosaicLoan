@@ -15,5 +15,5 @@ public class Ping {
         this.id = id;
     }
 
-    // getter/setter 생략 가능 합니다 초ㄴㅇsㄴ
+    // getter/setter 생략 가능 합니다 초ㄴㅇs
 }

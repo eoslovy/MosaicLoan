@@ -4,9 +4,7 @@ build_mydata_service:
     BUILD_CONTEXT: ./back/mydata-service
     K8S_PATH: ./infra/k8s/apis/api-mydata.yml
   extends: .backend-default-build
-  rules: 
-    - changes: 
-      - back/mydata-service/**/*
+  rules: [{ changes: [modeling/mydata-service/**/*] }]
 
 push_mydata_service:
   variables:
@@ -15,14 +13,13 @@ push_mydata_service:
     K8S_PATH: ./infra/k8s/apis/api-mydata.yml
   extends: .backend-default-push
   needs: [build_mydata_service]
-  rules: 
+  rules: [{ changes: [modeling/mydata-service/**/*] }]
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       when: always
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
       when: manual
     - when: never
-    - changes: 
-      - back/mydata-service/**/*
+
 deploy_mydata_service:
   variables:
     SERVICE_NAME: mydata-service
@@ -30,11 +27,9 @@ deploy_mydata_service:
     K8S_PATH: ./infra/k8s/apis/api-mydata.yml
   extends: .backend-default-deploy
   needs: [push_mydata_service]
-  rules: 
+  rules: [{ changes: [modeling/mydata-service/**/*] }]
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       when: always
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
       when: manual
     - when: never
-    - changes: 
-      - back/mydata-service/**/*
