@@ -5,7 +5,8 @@ build_kafka:
     K8S_PATH: ./infra/k8s/infras/kafka.yml
   extends: .backend-default-build
   rules: 
-    - changes: infra/kafka/**/*
+    - changes: 
+      - infra/kafka/**/*
 
 push_kafka:
   variables:
@@ -15,7 +16,8 @@ push_kafka:
   extends: .backend-default-push
   needs: [build_kafka]
   rules: 
-    - changes: infra/kafka/**/*
+    - changes: 
+      - infra/kafka/**/*
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       when: always
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면
@@ -30,7 +32,8 @@ deploy_kafka:
   extends: .backend-default-deploy
   needs: [push_kafka]
   rules: 
-    - changes: infra/kafka/**/*
+    - changes: 
+      - infra/kafka/**/*
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       when: always
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'     # 수동 실행도 허용하려면

@@ -14,7 +14,6 @@ WORKDIR /app
 
 COPY --from=build /app .
 
-# Gradle 테스트 실행
 RUN ./gradlew test
 
 # Run stage
