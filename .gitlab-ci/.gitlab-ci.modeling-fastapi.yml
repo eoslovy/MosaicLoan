@@ -1,0 +1,25 @@
+build_mydata_service:
+  variables:
+    SERVICE_NAME: mydata-service
+    BUILD_CONTEXT: ./back/mydata-service
+    K8S_PATH: ./infra/k8s/apis/api-mydata.yml
+  extends: .backend-default-build
+  rules: [{ changes: [back/mydata-service/**/*] }]
+
+push_mydata_service:
+  variables:
+    SERVICE_NAME: mydata-service
+    BUILD_CONTEXT: ./back/mydata-service
+    K8S_PATH: ./infra/k8s/apis/api-mydata.yml
+  extends: .backend-default-push
+  needs: [build_mydata_service]
+  rules: [{ changes: [back/mydata-service/**/*] }]
+
+deploy_mydata_service:
+  variables:
+    SERVICE_NAME: mydata-service
+    BUILD_CONTEXT: ./back/mydata-service
+    K8S_PATH: ./infra/k8s/apis/api-mydata.yml
+  extends: .backend-default-deploy
+  needs: [push_mydata_service]
+  rules: [{ changes: [back/mydata-service/**/*] }]
