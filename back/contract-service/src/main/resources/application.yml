@@ -5,9 +5,9 @@ spring:
     application:
         name: contract-service
     datasource:
-        url: jdbc:mysql://contract-db:3306/mosaic_contract
-        username: contract
-        password: 608
+        url: ${CONTRACT_DATASOURCE_URL}
+        username: ${CONTRACT_DATASOURCE_USERNAME}
+        password: ${CONTRACT_DATASOURCE_PASSWORD}
     jpa:
         hibernate:
             ddl-auto: update
@@ -15,9 +15,10 @@ spring:
         properties:
             hibernate:
                 format_sql: true
-    kafka:
-        bootstrap-servers: kafka:9092
     data:
         redis:
-            port: 6379
-            host: redis
+            host: ${REDIS_HOST}
+            port: ${REDIS_PORT}
+
+    kafka:
+        bootstrap-servers: kafka:9092

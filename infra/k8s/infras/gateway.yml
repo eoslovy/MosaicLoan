@@ -20,6 +20,9 @@ spec:
           image: ${DOCKERHUB_USERNAME}/mosaic-springcloud-gateway:${IMAGE_TAG}
           ports:
             - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: common-env
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: k8s

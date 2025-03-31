@@ -21,13 +21,9 @@ spec:
           image: ${DOCKERHUB_USERNAME}/mosaic-${SERVICE_NAME}:${IMAGE_TAG} # 사용할 이미지
           ports:
             - containerPort: 8080 # Spring Boot 기본 포트
-          env: # 환경 변수로 DB 접속 설정
-            - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://mydata-db:3306/mosaic_mydata # DB URL
-            - name: SPRING_DATASOURCE_USERNAME
-              value: mydata # DB 사용자명
-            - name: SPRING_DATASOURCE_PASSWORD
-              value: "608" # DB 비밀번호
+          envFrom:
+            - configMapRef:
+                name: common-env
 
 --- # mydata API Service 정의 시작
 apiVersion: v1

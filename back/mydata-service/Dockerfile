@@ -16,7 +16,7 @@ COPY --from=build /app .
 
 RUN ./gradlew test
 
-FROM gradle:7.4-jdk17 AS run
+FROM amazoncorretto:17-alpine AS run
 
 WORKDIR /app
 

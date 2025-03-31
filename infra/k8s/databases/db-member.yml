@@ -22,15 +22,27 @@ spec:
       containers:
         - name: mysql
           image: ${DOCKERHUB_USERNAME}/mosaic-member-db:${IMAGE_TAG}
+          envFrom:
+            - configMapRef:
+                name: common-env
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: root
             - name: MYSQL_DATABASE
-              value: mosaic_member
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env
+                  key: MEMBER_DATASOURCE_URL
             - name: MYSQL_USER
-              value: member
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env
+                  key: MEMBER_DATASOURCE_USERNAME
             - name: MYSQL_PASSWORD
-              value: "608"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env
+                  key: MEMBER_DATASOURCE_PASSWORD
           ports:
             - containerPort: 3306
           volumeMounts:
