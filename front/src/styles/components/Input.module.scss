@@ -1,0 +1,38 @@
+@use '../variables.scss' as *;
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.prefix {
+  position: absolute;
+  left: 0.75rem;
+  color: $text-gray;
+  font-size: 0.9rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  padding-left: 2rem;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: $text-black;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+
+  &[type='number'] {
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}

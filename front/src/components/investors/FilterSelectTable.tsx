@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from '@/styles/components/FilterSelectTable.module.scss';
-import type { FilterSelectTableProps, PillVariant } from '@/types/components';
+import { FilterSelectTableProps, PillVariant } from '@/types/components';
 import Pill from '@/components/common/Pill';
 
 const getStatusVariant = (status: string | undefined): PillVariant => {
@@ -47,7 +47,7 @@ const FilterSelectTable = ({
             checked={allSelected}
             onChange={handleSelectAll}
           />
-          <span>전체선택</span>
+          <span className='sr-only'>전체 선택</span>
         </label>
         <span className={styles.count}>
           총 {data.length}건 중 {selectedIds.length}건
@@ -73,7 +73,7 @@ const FilterSelectTable = ({
                       )
                     }
                   />
-                  <span className={styles.srOnly}>테이블 전체 선택</span>
+                  <span className='sr-only'>테이블 전체 선택</span>
                 </label>
               </th>
               {columns.map((col) => (
@@ -101,7 +101,7 @@ const FilterSelectTable = ({
                         )
                       }
                     />
-                    <span className={styles.srOnly}>{`${row.name} 선택`}</span>
+                    <span className='sr-only'>{`${row.name} 선택`}</span>
                   </label>
                 </td>
                 {columns.map((col) => {

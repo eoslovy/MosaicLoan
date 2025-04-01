@@ -8,6 +8,7 @@ import Select, { MultiValue, StylesConfig } from 'react-select';
 import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 import FilterSelectTable from '@/components/common/FilterSelectTable';
 import { subYears, isBefore } from 'date-fns';
+import Pill from '@/components/common/Pill';
 
 import { ContractRow } from '@/types/components';
 
@@ -135,21 +136,33 @@ const LoanFilter = () => {
                 onSelect={setSelectedIds}
                 columns={['대출명', '대출 시작일', '대출 만기일']}
               />
+              <div className={styles.legend}>
+                <div className={styles.legendItem}>
+                  <Pill variant='repayment-complete' size='small'>
+                    상환 완료
+                  </Pill>
+                </div>
+                <div className={styles.legendItem}>
+                  <Pill variant='repayment-in-progress' size='small'>
+                    상환중
+                  </Pill>
+                </div>
+              </div>
             </div>
 
             <div className={styles.selectedData}>
               {selectedData.map((row) => (
                 <div key={row.id} className={styles.selectedItem}>
-                  <span
-                    className={
+                  <Pill
+                    variant={
                       row.status === '상환중'
-                        ? styles.ongoingBadge
-                        : styles.finishedBadge
+                        ? 'repayment-in-progress'
+                        : 'repayment-complete'
                     }
+                    onClose={() => handleRemoveSelected(row.id)}
                   >
                     {row.name}
-                    <X size={14} onClick={() => handleRemoveSelected(row.id)} />
-                  </span>
+                  </Pill>
                 </div>
               ))}
             </div>

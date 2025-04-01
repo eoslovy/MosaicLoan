@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 import styles from '@/styles/borrowers/LoanList.module.scss';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import type { Loan } from '@/types/pages';
+import type { PillVariant } from '@/types/components';
 import Pagination from '@/components/common/Pagination';
+import Pill from '@/components/common/Pill';
 
 const mockLoans: Loan[] = [
   {
@@ -51,6 +53,22 @@ const mockLoans: Loan[] = [
 
 const itemsPerPage = 10;
 
+const getStatusVariant = (status: string): PillVariant => {
+  switch (status) {
+    case '상환완료':
+      return 'repayment-complete';
+    case '상환중':
+      return 'repayment-in-progress';
+    case '부실':
+    case '부실확정':
+      return 'defaulted';
+    case '연체':
+      return 'overdue';
+    default:
+      return 'repayment-in-progress';
+  }
+};
+
 const LoanList = () => {
   const [openRowIds, setOpenRowIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -90,7 +108,9 @@ const LoanList = () => {
                 <td>{loan.rate}</td>
                 <td>
                   <div className={styles.statusWrapper}>
-                    <span className={styles.pill}>{loan.status}</span>
+                    <Pill variant={getStatusVariant(loan.status)}>
+                      {loan.status}
+                    </Pill>
                     {loan.status === '상환중' && (
                       <button
                         type='button'

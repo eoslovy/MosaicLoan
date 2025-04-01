@@ -5,29 +5,23 @@ import styles from '@/styles/uis/InvestmentInputPanel.module.scss';
 import Text from '@/components/common/Text';
 import Slider from '@/components/common/Slider';
 
-interface InvestmentInputPanelProps {
+interface LoanInputPanelProps {
   amount: number;
   setAmount: (value: number) => void;
   rate: number;
   setRate: (value: number) => void;
-  duration?: number;
-  setDuration?: (value: number) => void;
-  minRate?: number;
-  maxRate?: number;
-  step?: number;
+  duration: number;
+  setDuration: (value: number) => void;
 }
 
-const InvestmentInputPanel = ({
+const LoanInputPanel = ({
   amount,
   setAmount,
   rate,
   setRate,
   duration,
   setDuration,
-  minRate,
-  maxRate,
-  step,
-}: InvestmentInputPanelProps) => {
+}: LoanInputPanelProps) => {
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('ko-KR').format(value);
   };
@@ -36,7 +30,7 @@ const InvestmentInputPanel = ({
     <div className={styles.container}>
       <div className={styles.inputGroup}>
         <div className={styles.labelWrapper}>
-          <Text text='투자 금액' size='lg' weight='bold' color='primary-blue' />
+          <Text text='대출 금액' size='lg' weight='bold' color='primary-blue' />
           {/* <Text
             text={`${amount.toLocaleString()}원`}
             size='xl'
@@ -57,7 +51,7 @@ const InvestmentInputPanel = ({
               value={amount}
               onChange={setAmount}
               min={100000}
-              max={5000000}
+              max={50000000}
               step={100000}
               labelLeft='10만원'
               labelRight='5천만원'
@@ -68,12 +62,39 @@ const InvestmentInputPanel = ({
 
       <div className={styles.inputGroup}>
         <div className={styles.labelWrapper}>
-          <Text
-            text='기대 수익률'
-            size='lg'
+          <Text text='대출 기간' size='lg' weight='bold' color='primary-blue' />
+          {/* <Text
+            text={`${duration}개월`}
+            size='xl'
             weight='bold'
             color='primary-blue'
+          /> */}
+        </div>
+        <div className={styles.contentWrapper}>
+          <Text
+            text={`${duration} 개월`}
+            size='text-3xl'
+            weight='bold'
+            color='primary-blue'
+            className={styles.selectedValue}
           />
+          <div className={styles.sliderWrapper}>
+            <Slider
+              value={duration}
+              onChange={setDuration}
+              min={1}
+              max={36}
+              step={1}
+              labelLeft='1개월'
+              labelRight='3년'
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.inputGroup}>
+        <div className={styles.labelWrapper}>
+          <Text text='연 이자율' size='lg' weight='bold' color='primary-blue' />
           {/* <Text
             text={`${rate}%`}
             size='xl'
@@ -93,11 +114,11 @@ const InvestmentInputPanel = ({
             <Slider
               value={rate}
               onChange={setRate}
-              min={minRate ?? 0}
-              max={maxRate ?? 30}
-              step={step ?? 1}
-              labelLeft={`${minRate ?? 0}%`}
-              labelRight={`${maxRate ?? 30}%`}
+              min={0}
+              max={30}
+              step={0.1}
+              labelLeft='0%'
+              labelRight='30%'
             />
           </div>
         </div>
@@ -106,12 +127,4 @@ const InvestmentInputPanel = ({
   );
 };
 
-InvestmentInputPanel.defaultProps = {
-  minRate: 0,
-  maxRate: 30,
-  step: 1,
-  duration: 12,
-  setDuration: () => {},
-} as Partial<InvestmentInputPanelProps>;
-
-export default InvestmentInputPanel;
+export default LoanInputPanel;
