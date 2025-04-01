@@ -39,19 +39,54 @@ const getPaginatedTransactions = (
 const getTypeVariant = (type: string): PillVariant => {
   switch (type) {
     case 'INVESTMENT_IN':
-      return 'investment-in';
+      return 'investment-refund';
     case 'INVESTMENT_OUT':
-      return 'investment-out';
+      return 'investment-deposit';
     case 'LOAN_IN':
-      return 'loan-in';
+      return 'loan-deposit';
     case 'LOAN_OUT':
-      return 'loan-out';
+      return 'loan-repayment';
     case 'EXTERNAL_IN':
-      return 'external-in';
+      return 'deposit';
     case 'EXTERNAL_OUT':
-      return 'external-out';
+      return 'withdraw';
     default:
-      return 'external-in';
+      return 'deposit';
+  }
+};
+
+const getActionButton = (type: string, targetId: number) => {
+  switch (type) {
+    case 'INVESTMENT_IN':
+    case 'INVESTMENT_OUT':
+      return (
+        <button
+          type='button'
+          className={styles.detailButton}
+          onClick={() => {
+            // TODO: 투자상품 상세 페이지로 이동
+            console.log(`Navigate to investment detail: ${targetId}`);
+          }}
+        >
+          투자상품 상세
+        </button>
+      );
+    case 'LOAN_IN':
+    case 'LOAN_OUT':
+      return (
+        <button
+          type='button'
+          className={styles.detailButton}
+          onClick={() => {
+            // TODO: 대출정보 상세 페이지로 이동
+            console.log(`Navigate to loan detail: ${targetId}`);
+          }}
+        >
+          대출정보 상세
+        </button>
+      );
+    default:
+      return null;
   }
 };
 
@@ -163,9 +198,9 @@ const MyAccountTransactionList = () => {
             {
               key: `action-${idx}`,
               content: (
-                <button type='button' className={styles.cellWrap}>
-                  상세
-                </button>
+                <div className={styles.cellWrap}>
+                  {getActionButton(tx.type, tx.targetId)}
+                </div>
               ),
             },
           ],
