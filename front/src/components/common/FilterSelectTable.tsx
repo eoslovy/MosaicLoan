@@ -73,7 +73,7 @@ const FilterSelectTable = ({
                       )
                     }
                   />
-                  <span className='visually-hidden'>전체 항목 선택</span>
+                  <span className={styles.srOnly}>테이블 전체 선택</span>
                 </label>
               </th>
               {columns.map((col) => (
@@ -101,7 +101,7 @@ const FilterSelectTable = ({
                         )
                       }
                     />
-                    <span className='visually-hidden'>{`${row.name} 선택`}</span>
+                    <span className={styles.srOnly}>{`${row.name} 선택`}</span>
                   </label>
                 </td>
                 {columns.map((col) => {
