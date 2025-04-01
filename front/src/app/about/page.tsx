@@ -1,5 +1,7 @@
-const AboutPage = () => {
-  return <h1>여기는 서비스 소개 페이지</h1>;
+import { redirect } from 'next/navigation';
+
+const Page = () => {
+  redirect('/about/myInfo');
 };
 
-export default AboutPage;
+export default Page;

@@ -78,3 +78,36 @@ export interface Loan {
   status: '상환중' | '상환완료' | '부실확정' | '연체';
   details: LoanDetail[];
 }
+
+// 거래 타입 정의
+export type AccountTransactionType =
+  | 'INVESTMENT_IN' // 투자금 입금
+  | 'INVESTMENT_OUT' // 투자금 출금
+  | 'LOAN_IN' // 대출금 입금
+  | 'LOAN_OUT' // 대출금 출금
+  | 'EXTERNAL_IN' // 외부 입금
+  | 'EXTERNAL_OUT'; // 외부 출금
+
+// 단일 거래 항목
+export interface AccountTransaction {
+  amount: number; // 거래금액
+  cash: number; // 거래 후 잔액
+  type: AccountTransactionType;
+  content: string;
+  createdAt: string;
+  targetId: number;
+}
+
+// 응답 페이징 정보
+export interface PaginationInfo {
+  page: number;
+  pageSize: number;
+  totalPage: number;
+  totalItemCount: number;
+}
+
+// 전체 응답 타입
+export interface AccountTransactionResponse {
+  data: AccountTransaction[];
+  pagination: PaginationInfo;
+}

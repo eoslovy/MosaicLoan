@@ -1,0 +1,54 @@
+@use '../variables.scss' as *;
+
+.container {
+  margin: 0 10vw;
+}
+
+.pill {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: clamp(0.7rem, 1vw, 0.875rem);
+  font-weight: 500;
+  color: $white;
+  white-space: nowrap;
+  background-color: $primary-color;
+
+  &.INVESTMENT_IN {
+    background-color: #def7ec;
+    color: #03543f;
+  }
+
+  &.INVESTMENT_OUT {
+    background-color: #fde8e8;
+    color: #9b1c1c;
+  }
+
+  &.LOAN_IN {
+    background-color: #f3f4f6;
+    color: #1f2937;
+  }
+
+  &.LOAN_OUT {
+    background-color: #f3f4f6;
+    color: #1f2937;
+  }
+
+  &.EXTERNAL_IN {
+    background-color: #dbeafe;
+    color: #3554b9;
+  }
+
+  &.EXTERNAL_OUT {
+    background-color: #fef9c3;
+    color: #854d0e;
+  }
+}
+
+.cellWrap {
+  font-size: clamp(0.75rem, 1vw, 0.875rem);
+  white-space: normal;
+  word-break: keep-all;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
