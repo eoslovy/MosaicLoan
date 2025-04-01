@@ -1,4 +1,4 @@
-package com.mosaic.model;
+package com.mosaic.core.model;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -12,11 +12,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "contract", schema = "mosaic_contract")
 public class Contract {
