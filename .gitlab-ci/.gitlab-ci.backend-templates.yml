@@ -1,0 +1,96 @@
+####
+#test_template_trigger:
+#tags:
+# - $GITLAB_USER_EMAIL
+#script:
+# - echo "CI 정상 작동 여부 확인"
+# - echo "🔍 변경된 파일 목록:"
+# - git diff --name-only $CI_COMMIT_BEFORE_SHA $CI_COMMIT_SHA
+
+.backend-default-build:
+  stage: build
+  tags:
+    - $GITLAB_USER_EMAIL
+  script:
+    - echo "🔨 Docker 이미지 빌드 및 테스트 중..."
+    - docker build -t ${DOCKERHUB_USERNAME:-default}/$REGISTRY_PATH-${SERVICE_NAME}:$IMAGE_TAG ${BUILD_CONTEXT}
+    #- echo "✅ 빌드 완료: $IMAGE_NAME:$IMAGE_TAG
+
+.backend-default-push:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      when: manual
+    - when: never
+  tags:
+    - $GITLAB_USER_EMAIL
+  stage: push
+  script:
+    - docker images
+    - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_TOKEN"
+    - docker push ${DOCKERHUB_USERNAME:-default}/$REGISTRY_PATH-${SERVICE_NAME}:$IMAGE_TAG
+
+.backend-default-deploy:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      when: manual
+    - when: never
+  tags:
+    - $GITLAB_USER_EMAIL
+  stage: deploy
+  before_script:
+    - apk add --no-cache openssh gettext
+  script:
+    # 🔐 bastion key 복원
+    - echo "$BASTION_PRIVATE_KEY_B64" | base64 -d > bastion.pem
+    - chmod 600 bastion.pem
+
+    # 📄 파일 존재 여부 확인
+    - '[ -f "$NAMESPACE_PATH" ] || { echo "❌ NAMESPACE_PATH 파일 없음: $NAMESPACE_PATH"; exit 1; }'
+    - '[ -f "$K8S_PATH" ] || { echo "❌ K8S_PATH 파일 없음: $K8S_PATH"; exit 1; }'
+    - '[ -z "$ENV_FILE_CONTENT" ] && { echo "❌ ENV_FILE_CONTENT 비어있음"; exit 1; }'
+
+    # 📦 YAML 템플릿 변수 치환
+    - echo "📦 배포 파일 변수 치환 중..."
+    - export IMAGE_TAG="${CI_COMMIT_SHORT_SHA}"
+    - export DOCKERHUB_USERNAME="${DOCKERHUB_USERNAME}"
+    - export REGISTRY_PATH="${REGISTRY_PATH}"
+    - export SERVICE_NAME="${SERVICE_NAME}"
+    - envsubst '${DOCKERHUB_USERNAME} ${REGISTRY_PATH} ${SERVICE_NAME} ${IMAGE_TAG}' < "$K8S_PATH" > deploy.rendered.yml
+    - echo "🔍 치환된 배포 파일 내용:"
+    - cat deploy.rendered.yml
+
+    # 🔧 remote 배포 스크립트 생성
+    - |
+      cat << 'EOF' > deploy.sh
+      #!/bin/bash
+      set -e
+      echo "📦 .env 복원 중..."
+      echo "$ENV_FILE_CONTENT" > /tmp/.env
+
+      echo "📦 ConfigMap 생성 중..."
+      kubectl delete configmap common-env -n mosaic --ignore-not-found
+      kubectl create configmap common-env --from-env-file=/tmp/.env -n mosaic
+      echo "📦 네임스페이스 적용 중..."
+      kubectl apply -f /tmp/namespace.yml || { echo "❌ namespace apply 실패"; exit 1; }
+
+      echo "📦 배포 적용 중..."
+      kubectl apply -f /tmp/deploy.yml || { echo "❌ deploy apply 실패"; exit 1; }
+
+      echo "✅ 배포 완료"
+      EOF
+
+    - chmod +x deploy.sh
+
+    # 📤 Bastion으로 파일 전송
+    - scp -i bastion.pem -o StrictHostKeyChecking=no "$NAMESPACE_PATH" ubuntu@"$BASTION_HOST":/tmp/namespace.yml
+    - scp -i bastion.pem -o StrictHostKeyChecking=no deploy.rendered.yml ubuntu@"$BASTION_HOST":/tmp/deploy.yml
+    - scp -i bastion.pem -o StrictHostKeyChecking=no deploy.sh ubuntu@"$BASTION_HOST":/tmp/deploy.sh
+    # 🚀 Bastion에서 실행 (ENV_FILE_CONTENT 직접 전달)
+    - ssh -i bastion.pem -o StrictHostKeyChecking=no ubuntu@"$BASTION_HOST" \
+      "ENV_FILE_CONTENT='${ENV_FILE_CONTENT}' bash /tmp/deploy.sh"
+
+    - rm -f bastion.pem deploy.sh deploy.rendered.yml

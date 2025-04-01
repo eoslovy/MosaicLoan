@@ -51,10 +51,35 @@ cmake-build-*/
 .idea/**/mongoSettings.xml
 
 # File-based project format
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
 *.iws
 
 # IntelliJ
+*.iml
+*.ipr
 out/
+!**/src/main/**/out/
+!**/src/test/**/out/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -117,6 +142,12 @@ fabric.properties
 ### Java ###
 # Compiled class file
 *.class
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
 
 # Log file
 *.log
