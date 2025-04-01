@@ -1,0 +1,13 @@
+# kind-cluster.yaml: 1 control-plane (also worker) + 1 dedicated worker node
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraPortMappings:
+    - containerPort: 80    # 컨테이너(노드 내부) 포트
+      hostPort: 80         # 로컬 머신에서 접근할 포트
+      protocol: TCP
+    - containerPort: 443
+      hostPort: 443
+      protocol: TCP
+  - role: worker

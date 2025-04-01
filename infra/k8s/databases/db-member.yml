@@ -1,0 +1,71 @@
+--- # member DB Pod 정의 시작 (개발/테스트용)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: member-db
+  namespace: mosaic
+spec:
+  selector:
+    matchLabels:
+      app: member-db
+  serviceName: member-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: member-db 
+    spec:
+      nodeSelector:
+        disktype: worker
+
+    spec:
+      containers:
+        - name: mysql
+          image: ${DOCKERHUB_USERNAME}/mosaic-member-db:${IMAGE_TAG}
+          envFrom:
+            - configMapRef:
+                name: common-env
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env
+                  key: MEMBER_DATASOURCE_URL
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env
+                  key: MEMBER_DATASOURCE_USERNAME
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env
+                  key: MEMBER_DATASOURCE_PASSWORD
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 30Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: member-db
+  namespace: mosaic
+spec:
+  clusterIP: None  # Headless Service (StatefulSet에서 권장)
+  selector:
+    app: member-db
+  ports:
+    - port: 3306
+      targetPort: 3306
