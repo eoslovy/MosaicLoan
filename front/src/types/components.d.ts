@@ -53,6 +53,7 @@ export interface StatCardProps {
   icon: 'users' | 'trendingUp' | 'clock';
   value: string;
   label: string;
+  unitOverride?: string;
 }
 
 export interface ServiceInfoCardProps {
@@ -62,7 +63,7 @@ export interface ServiceInfoCardProps {
 }
 
 export interface BasicInfoCardProps {
-  icon: 'creditCard' | 'trendingUp' | 'clock' | 'arrowUpRight';
+  icon: 'creditCard' | 'trendingUp' | 'clock' | 'arrowUpRight' | 'percent';
   value: string;
   label: string;
 }
@@ -214,4 +215,20 @@ export interface SortableTableHeaderProps {
   sortKey: SortKey;
   sortStates: SortState[];
   onSort: (key: SortKey) => void;
+}
+
+export interface ContractRow {
+  id: string;
+  name: string;
+  count?: number;
+  startDate: string;
+  endDate?: string;
+  status: '진행중' | '완료' | '상환중' | '상환완료' | '부실확정' | '연체';
+}
+
+export interface FilterSelectTableProps {
+  data: ContractRow[];
+  selectedIds: string[];
+  onSelect: (selected: string[]) => void;
+  columns: string[];
 }

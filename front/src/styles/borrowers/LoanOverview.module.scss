@@ -1,0 +1,25 @@
+@use '../variables.scss' as *;
+
+.wrapper {
+  width: 100%;
+  padding: 2rem 10vw;
+  // background-color: $light-blue;
+  display: flex;
+  justify-content: center;
+}
+
+.cardWrapper {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  width: 100%;
+  max-width: 1200px;
+
+  @media (max-width: 1000px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}

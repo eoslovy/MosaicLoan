@@ -1,19 +1,21 @@
 'use client';
 
 import React, { useState } from 'react';
-import styles from '@/styles/investors/ContractsFilter.module.scss';
+import styles from '@/styles/borrowers/LoanFilter.module.scss';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Select, { MultiValue, StylesConfig } from 'react-select';
 import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 import FilterSelectTable from '@/components/common/FilterSelectTable';
-import type { ContractRow } from '@/types/pages';
 import { subYears, isBefore } from 'date-fns';
 
+import { ContractRow } from '@/types/components';
+
 const typeOptions = [
-  { value: 'repayment', label: '상환' },
+  { value: 'repaid', label: '상환완료' },
+  { value: 'inProgress', label: '상환중' },
+  { value: 'defaulted', label: '부실확정' },
   { value: 'delayed', label: '연체' },
-  { value: 'defaulted', label: '부실' },
 ];
 
 const customSelectStyles: StylesConfig<{ label: string; value: string }, true> =
@@ -24,7 +26,7 @@ const customSelectStyles: StylesConfig<{ label: string; value: string }, true> =
     }),
   };
 
-const ContractsFilter = () => {
+const LoanFilter = () => {
   const today = new Date();
   const oneYearAgo = subYears(today, 1);
 
@@ -62,12 +64,12 @@ const ContractsFilter = () => {
     setSelectedIds((prev) => prev.filter((selectedId) => selectedId !== id));
   };
 
-  const data: ContractRow[] = Array.from({ length: 14 }, (_, idx) => ({
-    id: `mock-${idx + 1}`,
-    name: idx % 2 === 0 ? '투자 A' : '투자 B',
-    count: idx % 2 === 0 ? 5 : 10,
-    startDate: idx % 2 === 0 ? '2024-01-01' : '2024-02-01',
-    status: idx % 2 === 0 ? '진행중' : '완료',
+  const data: ContractRow[] = Array.from({ length: 10 }, (_, idx) => ({
+    id: `loan-${idx + 1}`,
+    name: `대출 ${idx + 1}`,
+    startDate: `2024-0${(idx % 9) + 1}-01`,
+    endDate: `2025-0${(idx % 9) + 1}-01`,
+    status: idx % 2 === 0 ? '상환중' : '상환완료',
   }));
 
   const selectedData = data.filter((row) => selectedIds.includes(row.id));
@@ -105,7 +107,7 @@ const ContractsFilter = () => {
           />
         </div>
 
-        <div className={styles.filterItem}>
+        <div className={styles.rightButtons}>
           <button
             type='button'
             className={styles.toggleButton}
@@ -114,15 +116,13 @@ const ContractsFilter = () => {
             상세 필터링 설정{' '}
             {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </button>
-        </div>
 
-        {!isOpen && (
-          <div className={styles.buttonWrapper}>
+          {!isOpen && (
             <button type='button' className={styles.searchButton}>
               검색하기
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {isOpen && (
@@ -133,16 +133,16 @@ const ContractsFilter = () => {
                 data={data}
                 selectedIds={selectedIds}
                 onSelect={setSelectedIds}
-                columns={['투자명', '거래 건수', '투자 시작일']}
+                columns={['대출명', '대출 시작일', '대출 만기일']}
               />
             </div>
 
             <div className={styles.selectedData}>
               {selectedData.map((row) => (
-                <div key={`${row.id}`} className={styles.selectedItem}>
+                <div key={row.id} className={styles.selectedItem}>
                   <span
                     className={
-                      row.status === '진행중'
+                      row.status === '상환중'
                         ? styles.ongoingBadge
                         : styles.finishedBadge
                     }
@@ -166,4 +166,4 @@ const ContractsFilter = () => {
   );
 };
 
-export default ContractsFilter;
+export default LoanFilter;
