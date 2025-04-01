@@ -9,7 +9,8 @@ import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 import FilterSelectTable from '@/components/common/FilterSelectTable';
 import type { ContractRow } from '@/types/pages';
 import { subYears, isBefore } from 'date-fns';
-import Pill, { PillVariant } from '@/components/common/Pill';
+import type { PillVariant } from '@/types/components';
+import Pill from '@/components/common/Pill';
 
 const typeOptions = [
   { value: 'repayment', label: '상환' },

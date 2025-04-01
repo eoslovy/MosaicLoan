@@ -5,8 +5,13 @@ import styles from '@/styles/investors/ContractsList.module.scss';
 import BasicTable from '@/components/common/BasicTable';
 import SortableTableHeader from '@/components/common/SortableTableHeader';
 import Pagination from '@/components/common/Pagination';
-import type { BasicTableRow, SortState, SortKey } from '@/types/components';
-import Pill, { PillVariant } from '@/components/common/Pill';
+import type {
+  BasicTableRow,
+  SortState,
+  SortKey,
+  PillVariant,
+} from '@/types/components';
+import Pill from '@/components/common/Pill';
 
 interface Contract {
   id: string;

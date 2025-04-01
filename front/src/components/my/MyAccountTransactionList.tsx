@@ -4,11 +4,9 @@ import { useState, useEffect } from 'react';
 import { AccountTransaction, PaginationInfo } from '@/types/pages';
 import BasicTable from '@/components/common/BasicTable';
 import Pagination from '@/components/common/Pagination';
-import type { BasicTableRow } from '@/types/components';
+import type { PillVariant } from '@/types/components';
 import styles from '@/styles/my/MyAccountTransactionList.module.scss';
-// import AccountTransactionFilter from '@/components/my/AccountTransactionFilter';
-import clsx from 'clsx';
-import Pill, { PillVariant } from '@/components/common/Pill';
+import Pill from '@/components/common/Pill';
 
 const getTypeLabel = (type: string) => {
   switch (type) {
@@ -41,19 +39,19 @@ const getPaginatedTransactions = (
 const getTypeVariant = (type: string): PillVariant => {
   switch (type) {
     case 'INVESTMENT_IN':
-      return 'investment-refund';
+      return 'investment-in';
     case 'INVESTMENT_OUT':
-      return 'investment-deposit';
+      return 'investment-out';
     case 'LOAN_IN':
-      return 'loan-deposit';
+      return 'loan-in';
     case 'LOAN_OUT':
-      return 'loan-repayment';
+      return 'loan-out';
     case 'EXTERNAL_IN':
-      return 'deposit';
+      return 'external-in';
     case 'EXTERNAL_OUT':
-      return 'withdraw';
+      return 'external-out';
     default:
-      return 'deposit';
+      return 'external-in';
   }
 };
 
@@ -154,7 +152,10 @@ const MyAccountTransactionList = () => {
             {
               key: `type-${idx}`,
               content: (
-                <Pill variant={getTypeVariant(tx.type)} className={styles.cellWrap}>
+                <Pill
+                  variant={getTypeVariant(tx.type)}
+                  className={styles.cellWrap}
+                >
                   {getTypeLabel(tx.type)}
                 </Pill>
               ),

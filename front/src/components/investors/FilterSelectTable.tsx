@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from '@/styles/components/FilterSelectTable.module.scss';
-import type { FilterSelectTableProps, PillVariant } from '@/types/components';
+import { FilterSelectTableProps, PillVariant } from '@/types/components';
 import Pill from '@/components/common/Pill';
 
 const getStatusVariant = (status: string | undefined): PillVariant => {

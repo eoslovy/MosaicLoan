@@ -14,85 +14,85 @@
 
   // 입금/출금 관련
   &.deposit {
-    background-color: #DEF7EC;
-    color: #03543F;
+    background-color: #def7ec;
+    color: #03543f;
   }
 
   &.withdraw {
-    background-color: #FDE8E8;
-    color: #9B1C1C;
+    background-color: #fde8e8;
+    color: #9b1c1c;
   }
 
   &.investment-deposit {
-    background-color: #FEF9C3;
-    color: #854D0E;
+    background-color: #fef9c3;
+    color: #854d0e;
   }
 
   &.investment-refund {
-    background-color: #DBEAFE;
-    color: #3554B9;
+    background-color: #dbeafe;
+    color: #3554b9;
   }
 
   &.loan-deposit {
-    background-color: #F3F4F6;
-    color: #1F2937;
+    background-color: #f3f4f6;
+    color: #1f2937;
   }
 
   &.loan-repayment {
-    background-color: #F3F4F6;
-    color: #1F2937;
+    background-color: #f3f4f6;
+    color: #1f2937;
   }
 
   // 투자 상태
   &.investing {
-    background-color: #DEF7EC;
+    background-color: #def7ec;
     color: #606975;
   }
 
   &.completed {
-    background-color: #FDE8E8;
+    background-color: #fde8e8;
     color: #606975;
   }
 
   // 상환 관련
   &.principal-repayment {
-    background-color: #DEF7EC;
-    color: #03543F;
+    background-color: #def7ec;
+    color: #03543f;
   }
 
   &.loan {
-    background-color: #EDF6FA;
-    color: #03543F;
+    background-color: #edf6fa;
+    color: #03543f;
   }
 
   &.interest-repayment {
-    background-color: #DEF7EC;
-    color: #03543F;
+    background-color: #def7ec;
+    color: #03543f;
   }
 
   &.refund {
-    background-color: #FEF9C3;
-    color: #854D0E;
+    background-color: #fef9c3;
+    color: #854d0e;
   }
 
   // 대출 상태
   &.repayment-complete {
-    background-color: #DEF7EC;
-    color: #03543F;
+    background-color: #def7ec;
+    color: #03543f;
   }
 
   &.repayment-in-progress {
-    background-color: #DBEAFE;
-    color: #3554B9;
+    background-color: #dbeafe;
+    color: #3554b9;
   }
 
   &.defaulted {
-    background-color: #FDE8E8;
-    color: #9B1C1C;
+    background-color: #fde8e8;
+    color: #9b1c1c;
   }
 
   &.overdue {
-    background-color: #FEF9C3;
-    color: #854D0E;
+    background-color: #fef9c3;
+    color: #854d0e;
   }
-} 
+}

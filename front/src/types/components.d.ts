@@ -141,8 +141,7 @@ export interface SliderGroupItemProps {
 
 export interface InvestmentResultPanelProps {
   amount: number; // 투자 금액
-  duration: number; // 투자 기간_개월월
-  rate: number; // 연ㄴ수익률 (%)
+  rate: number; // 연수익률 (%)
 }
 
 export interface InvestmentInputPanelProps {
@@ -227,8 +226,37 @@ export interface ContractRow {
 }
 
 export interface FilterSelectTableProps {
-  data: ContractRow[];
+  data: {
+    id: string;
+    name?: string;
+    count?: number;
+    startDate?: string;
+    endDate?: string;
+    status?: string;
+  }[];
   selectedIds: string[];
-  onSelect: (selected: string[]) => void;
+  onSelect: (ids: string[]) => void;
   columns: string[];
 }
+
+export type PillVariant =
+  | 'default'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'info'
+  | 'neutral'
+  | 'investment-in'
+  | 'investment-out'
+  | 'loan-in'
+  | 'loan-out'
+  | 'external-in'
+  | 'external-out'
+  | 'repayment-complete'
+  | 'repayment-in-progress'
+  | 'principal-repayment'
+  | 'interest-repayment'
+  | 'loan'
+  | 'refund'
+  | 'defaulted'
+  | 'overdue';

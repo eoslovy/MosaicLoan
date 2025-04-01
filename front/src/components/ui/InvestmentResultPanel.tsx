@@ -1,17 +1,27 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import styles from '@/styles/uis/InvestmentResultPanel.module.scss';
 import Text from '@/components/common/Text';
+import Button from '@/components/common/Button';
 import { Calculator } from 'lucide-react';
-import { InvestmentResultPanelProps } from '@/types/components';
+import InvestmentModal from './InvestmentModal';
+
+interface InvestmentResultPanelProps {
+  amount: number;
+  rate: number;
+  setAmount: (amount: number) => void;
+  setRate: (rate: number) => void;
+}
 
 const InvestmentResultPanel: React.FC<InvestmentResultPanelProps> = ({
   amount,
-  duration,
   rate,
+  setAmount,
+  setRate,
 }) => {
-  const interest = Math.floor((amount * (rate / 100) * duration) / 12);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const interest = Math.floor(amount * (rate / 100));
   const total = amount + interest;
 
   return (
@@ -39,6 +49,24 @@ const InvestmentResultPanel: React.FC<InvestmentResultPanelProps> = ({
         size='md'
         color='gray'
         weight='regular'
+      />
+
+      <div style={{ marginTop: '2rem' }}>
+        <Button
+          label={{ text: '바로 투자하기', size: 'sm', color: 'blue' }}
+          variant='outlined'
+          size='normal'
+          onClick={() => setIsModalOpen(true)}
+        />
+      </div>
+
+      <InvestmentModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        initialAmount={amount}
+        initialRate={rate}
+        setAmount={setAmount}
+        setRate={setRate}
       />
     </div>
   );

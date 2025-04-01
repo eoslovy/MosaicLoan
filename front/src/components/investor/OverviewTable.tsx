@@ -3,10 +3,10 @@
 import React from 'react';
 import BasicTable from '@/components/common/BasicTable';
 import styles from '@/styles/investors/OverviewTable.module.scss';
-import type { BasicTableRow } from '@/types/components';
+import type { BasicTableRow, PillVariant } from '@/types/components';
 import fillEmptyRows from '@/utils/fillEmptyRows';
 import { InvestmentOverviewTableProps } from '@/types/pages';
-import Pill, { PillVariant } from '@/components/common/Pill';
+import Pill from '@/components/common/Pill';
 
 const getStatusVariant = (status: string): PillVariant => {
   switch (status) {
@@ -35,7 +35,10 @@ const OverviewTable: React.FC<InvestmentOverviewTableProps> = ({
       },
       { key: `rate-${idx}`, content: `${item.금리} %` },
       { key: `date-${idx}`, content: item.상환일 },
-      { key: `status-${idx}`, content: <Pill variant={getStatusVariant(item.상태)}>{item.상태}</Pill> },
+      {
+        key: `status-${idx}`,
+        content: <Pill variant={getStatusVariant(item.상태)}>{item.상태}</Pill>,
+      },
     ],
   }));
 

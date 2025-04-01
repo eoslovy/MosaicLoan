@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import styles from '@/styles/borrowers/LoanList.module.scss';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import type { Loan } from '@/types/pages';
+import type { PillVariant } from '@/types/components';
 import Pagination from '@/components/common/Pagination';
-import Pill, { PillVariant } from '@/components/common/Pill';
+import Pill from '@/components/common/Pill';
 
 const mockLoans: Loan[] = [
   {
