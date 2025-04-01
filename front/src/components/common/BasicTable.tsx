@@ -28,9 +28,19 @@ const BasicTable: React.FC<BasicTableProps> = ({
         {showHeader && (
           <thead>
             <tr>
-              {columns.map((col) => (
-                <th key={col}>{col}</th>
-              ))}
+              {columns.map((col) => {
+                if (typeof col === 'string') {
+                  return <th key={col}>{col}</th>;
+                }
+
+                if (React.isValidElement(col)) {
+                  return (
+                    <th key={col.key?.toString() || 'col-fallback'}>{col}</th>
+                  );
+                }
+
+                return null;
+              })}
             </tr>
           </thead>
         )}

@@ -9,19 +9,17 @@ const useUser = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch('http://localhost:8080/me', {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        const res = await fetch(`${apiUrl}/me`, {
           credentials: 'include',
         });
 
         if (!res.ok) throw new Error();
         const data = await res.json();
-        // console.log('[useUser] /me 응답:', data);
 
         if (data && data.username) {
-          // console.log('[useUser] setUser 실행');
           setUser(data);
         } else {
-          // console.log('[useUser] 응답에 data 없음, setUser(null)');
           setUser(null);
         }
       } catch {
