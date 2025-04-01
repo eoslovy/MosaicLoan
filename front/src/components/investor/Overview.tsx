@@ -1,29 +1,22 @@
 'use client';
 
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
 import BasicInfoCard from '@/components/common/BasicInfoCard';
 import styles from '@/styles/investors/Overview.module.scss';
-// import type { InvestmentSummary } from '@/types/pages';
 import EmptyState from '@/components/empty/investor/EmptyState';
-import { fetchInvestmentSummary } from '@/service/apis/investments';
+import { mockInvestorOverview } from '@/data/mockData';
 
 const Overview = () => {
-  const { data, isError } = useQuery({
-    // , isLoading,
-    queryKey: ['investmentOverviewSummary'],
-    queryFn: fetchInvestmentSummary,
-  });
+  const { summary } = mockInvestorOverview;
+  const { 총투자금액, 누적수익금, 평균수익률, 투자건수 } = summary;
 
-  // if (isLoading) return <div className={styles.wrapper}>Loading...</div>;
-  if (isError || !data || Object.values(data).every((v) => !v)) {
+  if (!summary || Object.values(summary).every((v) => !v)) {
     return (
       <section className={styles.wrapper}>
         <EmptyState message='투자 요약 정보가 아직 없습니다.' />
       </section>
     );
   }
-  const { 총투자금액, 누적수익금, 평균수익률, 투자건수 } = data;
 
   return (
     <section className={styles.wrapper}>
