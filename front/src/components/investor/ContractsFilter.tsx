@@ -149,14 +149,28 @@ const ContractsFilter = () => {
                 onSelect={setSelectedIds}
                 columns={['투자명', '거래 건수', '투자 시작일']}
               />
+              <div className={styles.legend}>
+                <div className={styles.legendItem}>
+                  <Pill variant='repayment-complete' size='small'>
+                    거래 완료
+                  </Pill>
+                </div>
+                <div className={styles.legendItem}>
+                  <Pill variant='repayment-in-progress' size='small'>
+                    거래중
+                  </Pill>
+                </div>
+              </div>
             </div>
 
             <div className={styles.selectedData}>
               {selectedData.map((row) => (
                 <div key={`${row.id}`} className={styles.selectedItem}>
-                  <Pill variant={getStatusVariant(row.status)}>
+                  <Pill
+                    variant={getStatusVariant(row.status)}
+                    onClose={() => handleRemoveSelected(row.id)}
+                  >
                     {row.name}
-                    <X size={14} onClick={() => handleRemoveSelected(row.id)} />
                   </Pill>
                 </div>
               ))}
