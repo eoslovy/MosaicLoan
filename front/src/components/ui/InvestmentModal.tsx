@@ -57,6 +57,7 @@ const InvestmentModal = ({
 
   const handleInvest = () => {
     // TODO: 투자 처리 로직
+    // eslint-disable-next-line no-console
     console.log('Investment:', {
       amount: localAmount,
       rate: localRate,

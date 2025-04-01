@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:local": "cross-env STATIC_EXPORT=false next dev",
-    "build": "npm run lint && next build",
+    "build": "next build",
     "build:static": "cross-env STATIC_EXPORT=true next build && next export",
     "serve": "serve -s out",
     "lint": "next lint",

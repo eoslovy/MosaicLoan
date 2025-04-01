@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   LineChart,
   Line,
@@ -20,6 +20,8 @@ const ProfitDistributionChart: React.FC<ProfitDistributionChartProps> = ({
   data,
   expectedRate,
 }) => {
+  const [_expectedRate, setExpectedRate] = useState<number>(0);
+
   // 데이터를 빈도수로 변환
   const frequencyData = data.reduce((acc: { [key: number]: number }, curr) => {
     const rounded = Math.round(curr * 100) / 100;
