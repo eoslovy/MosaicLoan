@@ -1,0 +1,316 @@
+@use '../variables.scss' as *;
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 3rem;
+}
+
+.myButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: darken($primary-color, 5%);
+  }
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 5rem;
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: $text-black;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1.25rem;
+    color: $text-gray;
+    margin-bottom: 2rem;
+  }
+}
+
+.serviceName {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(
+    135deg,
+    rgba($primary-color, 0.1) 0%,
+    rgba($primary-color, 0.05) 100%
+  );
+  border-radius: 16px;
+  animation: float 3s ease-in-out infinite;
+
+  .emoji {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+    color: $primary-color;
+    font-weight: 700;
+    margin: 0;
+  }
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 5rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feature {
+  padding: 2rem;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+    color: $text-black;
+  }
+
+  p {
+    color: $text-gray;
+    line-height: 1.6;
+  }
+}
+
+.iconWrapper {
+  width: 64px;
+  height: 64px;
+  background-color: rgba($primary-color, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  color: $primary-color;
+}
+
+.process {
+  text-align: center;
+  margin-bottom: 5rem;
+
+  h2 {
+    font-size: 2rem;
+    color: $text-black;
+    margin-bottom: 3rem;
+  }
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.step {
+  position: relative;
+  padding: 2rem;
+
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 2.5rem;
+    right: -1rem;
+    width: 2rem;
+    height: 2px;
+    background-color: #eee;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    color: $text-black;
+    margin: 1rem 0;
+  }
+
+  p {
+    color: $text-gray;
+  }
+}
+
+.stepNumber {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  background-color: $primary-color;
+  color: white;
+  border-radius: 50%;
+  font-weight: 600;
+}
+
+.developers {
+  padding: 4rem 0;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.teamInfo {
+  text-align: center;
+  margin-bottom: 4rem;
+
+  h2 {
+    font-size: 2.5rem;
+    color: $text-black;
+    margin-bottom: 1rem;
+  }
+}
+
+.teamName {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  span {
+    font-size: 1.2rem;
+    color: $text-gray;
+  }
+
+  strong {
+    font-size: 1.5rem;
+    color: $primary-color;
+    font-weight: 700;
+  }
+}
+
+.projectInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  .ssafyLogo {
+    height: 30px;
+    width: auto;
+  }
+
+  p {
+    color: $text-gray;
+    font-size: 1rem;
+  }
+}
+
+.developerGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 3rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.developer {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    color: $text-black;
+    margin: 1rem 0 0.5rem;
+  }
+
+  p {
+    color: $text-gray;
+    font-size: 0.9rem;
+  }
+}
+
+.developerIcon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(
+    135deg,
+    rgba($primary-color, 0.1) 0%,
+    rgba($primary-color, 0.2) 100%
+  );
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  color: $primary-color;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
