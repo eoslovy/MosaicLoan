@@ -7,7 +7,7 @@
     "dev": "next dev",
     "dev:local": "cross-env STATIC_EXPORT=false next dev",
     "build": "next build",
-    "build:static": "cross-env STATIC_EXPORT=true next build && next export",
+    "build:static": "cross-env STATIC_EXPORT=true NEXT_PUBLIC_API_MOCKING=disabled next build && next export",
     "serve": "serve -s out",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
