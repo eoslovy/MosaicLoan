@@ -4,13 +4,11 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import com.mosaic.core.exception.InternalSystemException;
 import com.mosaic.core.model.Investment;
 import com.mosaic.core.util.InternalApiClient;
-import com.mosaic.core.util.InternalApiTarget;
 import com.mosaic.core.util.TimeUtil;
-import com.mosaic.investment.dto.GetAccountResponseDto;
 import com.mosaic.investment.dto.StartInvestRequestDto;
 import com.mosaic.investment.repository.InvestmentRepository;
 
@@ -24,28 +22,18 @@ public class InvestmentServiceImpl implements InvestmentService {
 	InternalApiClient internalApiClient;
 
 	@Override
-	public void createInvestment(StartInvestRequestDto requestDto) {
+	public void publishInvestment(StartInvestRequestDto requestDto) throws InternalSystemException {
 		//TODO 계좌 잔고 확인
-		try {
-			internalApiClient.sendInvestmentRequest(
-				requestDto, InternalApiTarget.ACCOUNT, InternalApiTarget.AccountUri.GET_ACCOUNT.getPath(),
-				GetAccountResponseDto.class);
-		}  catch (WebClientResponseException e) {
-			log.warn("[투자 실패] 계좌 서비스 호출 실패 - status: {}, uri: {}, message: {}, body: {}",
-				e.getStatusCode(),
-				InternalApiTarget.AccountUri.GET_ACCOUNT.getPath(),
-				e.getMessage(),
-				e.getResponseBodyAsString(),
-				e
-			);
-		} catch (Exception e) {
-			// 기타 네트워크 오류 등
-			log.error("[투자 실패] 계좌 서비스 통신 예외 - uri: {}, message: {}",
-				InternalApiTarget.AccountUri.GET_ACCOUNT.getPath(),
-				e.getMessage(),
-				e
-			);
-		}
+		// pub : 투자 생성 Event 발행
+		// sub : check money exist Listener
+		// 동기 : create Investment
+
+		//계좌에 돈이 없는 경우
+
+
+	}
+	@Override
+	public void createInvestment(StartInvestRequestDto requestDto) throws InternalSystemException {
 		investmentRepository.save(
 			Investment.builder()
 				.targetRate(requestDto.targetRate())
