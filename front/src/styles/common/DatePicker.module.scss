@@ -1,0 +1,93 @@
+@use '../variables.scss' as *;
+
+.datePicker {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  font-size: $text-md;
+  transition: border-color 0.2s;
+  background-color: $white;
+
+  &:focus {
+    border-color: $primary-color;
+    outline: none;
+  }
+
+  &::placeholder {
+    color: $text-gray;
+  }
+}
+
+.datePickerWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.calendarWrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  :global(.react-datepicker) {
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    font-family: inherit;
+  }
+
+  :global(.react-datepicker__header) {
+    background-color: $white;
+    border-bottom: 1px solid $border-color;
+  }
+
+  :global(.react-datepicker__current-month) {
+    color: $text-gray;
+    font-weight: 600;
+  }
+
+  :global(.react-datepicker__day-name) {
+    color: $text-gray;
+  }
+
+  :global(.react-datepicker__day) {
+    color: $text-gray;
+
+    &:hover {
+      background-color: $light-blue;
+    }
+  }
+
+  :global(.react-datepicker__day--selected) {
+    background-color: $primary-color;
+    color: $white;
+
+    &:hover {
+      background-color: darken($primary-color, 5%);
+    }
+  }
+}
+
+.dateInput {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: monospace;
+  // color: $text-gray;
+  text-align: center;
+  letter-spacing: 1px;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+  }
+
+  &::placeholder {
+    color: $text-gray;
+    letter-spacing: 1px;
+  }
+}
