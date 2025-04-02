@@ -1,6 +1,5 @@
 FROM mysql:8.0
-#
-# 환경 변수 설정 (Kubernetes Secret 또는 ConfigMap과 호환
+COPY init.sql /docker-entrypoint-initdb.d/
 EXPOSE 3306
 # 데이터 지속성 유지
 VOLUME ["/var/lib/mysql"]

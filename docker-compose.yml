@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   member-api:
+    container_name: member-api
     build:
       context: ./back/member-service
       dockerfile: Dockerfile
@@ -11,6 +12,7 @@ services:
       - "18081:8080"
 
   account-api:
+    container_name: account-api
     build:
       context: ./back/account-service
       dockerfile: Dockerfile
@@ -21,6 +23,7 @@ services:
       - "18082:8080"
 
   contract-api:
+    container_name: contract-api
     build:
       context: ./back/contract-service
       dockerfile: Dockerfile
@@ -30,6 +33,7 @@ services:
     ports:
       - "18083:8080"
   credit-api:
+    container_name: credit-api
     build:
       context: ./back/credit-service
       dockerfile: Dockerfile
@@ -39,6 +43,7 @@ services:
     ports:
       - "18084:8080"
   mydata-api:
+    container_name: mydata-api
     build:
       context: ./back/mydata-service
       dockerfile: Dockerfile
@@ -63,6 +68,7 @@ services:
       - springcloud-gateway
 
   springcloud-gateway:
+    container_name: springcloud-gateway
     build:
       context: ./infra/springcloud-gateway
       dockerfile: Dockerfile
@@ -73,6 +79,7 @@ services:
       - "8080:8080"
 
   nginx:
+    container_name: nginx
     build:
       context: ./infra/nginx
       dockerfile: Dockerfile
@@ -84,6 +91,7 @@ services:
     depends_on:
       - springcloud-gateway
   redis:
+    container_name: redis
     build:
       context: ./infra/redis
       dockerfile: Dockerfile
@@ -94,6 +102,7 @@ services:
       - "6379:6379"
 
   zookeeper:
+    container_name: zookeeper
     build:
       context: ./infra/zookeeper
       dockerfile: Dockerfile
@@ -104,6 +113,7 @@ services:
       - "2181:2181"
 
   kafka:
+    container_name: kafka
     build:
       context: ./infra/kafka
       dockerfile: Dockerfile
@@ -116,9 +126,14 @@ services:
       - zookeeper
 
   member-db:
+    container_name: member-db
     build:
       context: ./infra/rdbms/member
       dockerfile: Dockerfile
+      args:
+        MEMBER_DATASOURCE_URL: ${MEMBER_SCHEMA}
+        MEMBER_DATASOURCE_USERNAME: ${MEMBER_DATASOURCE_USERNAME}
+        MEMBER_DATASOURCE_PASSWORD: ${MEMBER_DATASOURCE_PASSWORD}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-db:${IMAGE_TAG:-local}
     env_file:
       - .env    
@@ -132,9 +147,14 @@ services:
       - "3307:3306"
 
   account-db:
+    container_name: account-db
     build:
       context: ./infra/rdbms/account
       dockerfile: Dockerfile
+      args:
+        ACCOUNT_DATASOURCE_URL: ${ACCOUNT_SCHEMA}
+        ACCOUNT_DATASOURCE_USERNAME: ${ACCOUNT_DATASOURCE_USERNAME}
+        ACCOUNT_DATASOURCE_PASSWORD: ${ACCOUNT_DATASOURCE_PASSWORD}
     env_file:
       - .env
     environment:
@@ -147,9 +167,14 @@ services:
       - "3308:3306"
 
   contract-db:
+    container_name: contract-db
     build:
       context: ./infra/rdbms/contract
       dockerfile: Dockerfile
+      args:
+        CONTRACT_DATASOURCE_URL: ${CONTRACT_SCHEMA}
+        CONTRACT_DATASOURCE_USERNAME: ${CONTRACT_DATASOURCE_USERNAME}
+        CONTRACT_DATASOURCE_PASSWORD: ${CONTRACT_DATASOURCE_PASSWORD}
     env_file:
       - .env
     environment:
@@ -162,9 +187,14 @@ services:
       - "3309:3306"
 
   mydata-db:
+    container_name: mydata-db
     build:
       context: ./infra/rdbms/mydata
       dockerfile: Dockerfile
+      args:
+        MYDATA_DATASOURCE_URL: ${MYDATA_SCHEMA}
+        MYDATA_DATASOURCE_USERNAME: ${MYDATA_DATASOURCE_USERNAME}
+        MYDATA_DATASOURCE_PASSWORD: ${MYDATA_DATASOURCE_PASSWORD}
     env_file:
       - .env
     environment:
@@ -176,9 +206,14 @@ services:
     ports:
       - "3310:3306"
   credit-db:
+    container_name: credit-db
     build:
       context: ./infra/rdbms/credit
       dockerfile: Dockerfile
+      args:
+        CREDIT_DATASOURCE_URL: ${CREDIT_SCHEMA}
+        CREDIT_DATASOURCE_USERNAME: ${CREDIT_DATASOURCE_USERNAME}
+        CREDIT_DATASOURCE_PASSWORD: ${CREDIT_DATASOURCE_PASSWORD}
     env_file:
       - .env
     environment:
