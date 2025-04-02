@@ -8,14 +8,27 @@ export const httpClient = axios.create({
   },
 });
 
+// 요청 인터셉터
+httpClient.interceptors.request.use(
+  (config) => config,
+  (error) => Promise.reject(error),
+);
+
 // 응답 인터셉터
 httpClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // 인증 에러 처리 -> 에러 메시지 띄우거나 하자..
-      window.location.href = '/';
+    const status = error.response?.status;
+    const message = error.response?.data?.message;
+
+    if (status === 401) {
+      if (message === 'Token expired') {
+        window.dispatchEvent(new CustomEvent('tokenExpired'));
+      } else {
+        window.dispatchEvent(new CustomEvent('unauthorized'));
+      }
     }
+
     return Promise.reject(error);
   }
 );
