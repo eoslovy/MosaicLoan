@@ -1,4 +1,4 @@
-package com.mosaic.investment.event.message;
+package com.mosaic.loan.event.message;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

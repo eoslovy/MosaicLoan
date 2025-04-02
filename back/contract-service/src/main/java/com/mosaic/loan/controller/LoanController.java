@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mosaic.loan.dto.CreateLoanRequestDto;
 import com.mosaic.loan.service.LoanService;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -21,12 +22,18 @@ public class LoanController {
 	//TODO 돈 빌리기
 	//api : 신용평가 api
 	//pub : 대출신청 발행
+
+	@Transactional
 	//sub : 빌려줄 돈 모금 로직
-	//approve : 모금이 완료되면 검증
-	//append: 데이터베이스에 해당 사항 반영
+	//approve : 모금이 가능한지 검증
+	//execute: 데이터베이스에 해당 사항 반영
 	//pub : 대출 모금 금액 계좌로 인출
+
+
+	//TODO 빌린돈 인출하기
 	//status: 대출 상태 실행으로 변경
 	//sub : 인출 확인 트랜젝션
+	//pub : 완료 ACK 발행
 	@PostMapping("")
 	public String createLoan(CreateLoanRequestDto request) {
 		loanService.createLoan(request);

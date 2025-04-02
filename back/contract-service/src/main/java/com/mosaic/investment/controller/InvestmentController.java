@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mosaic.investment.dto.StartInvestRequestDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mosaic.investment.dto.RequestInvestmentDto;
 import com.mosaic.investment.service.InvestmentService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class InvestmentController {
 
 	//TODO 투자하기
 	@PostMapping("")
-	public ResponseEntity<Void> requestInvestment(StartInvestRequestDto requestDto) {
+	public ResponseEntity<Void> requestInvestment(RequestInvestmentDto requestDto) throws JsonProcessingException {
 		investmentService.publishInvestment(requestDto);
 		return ResponseEntity.accepted().build();
 	}
@@ -39,7 +40,7 @@ public class InvestmentController {
 
 	//TODO 내 개별 투자의 거래내역 확인
 	@GetMapping("")
-	public ResponseEntity<?> getInvestmentTransactions(){
+	public ResponseEntity<?> getInvestmentTransactions() {
 		return null;
 	}
 	//TODO 종료하고 계좌로 환급하기

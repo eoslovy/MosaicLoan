@@ -5,11 +5,14 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.core.exception.InternalSystemException;
 import com.mosaic.core.model.Investment;
-import com.mosaic.core.util.InternalApiClient;
 import com.mosaic.core.util.TimeUtil;
-import com.mosaic.investment.dto.StartInvestRequestDto;
+import com.mosaic.investment.dto.ApprovedInvestmentDto;
+import com.mosaic.investment.dto.RequestInvestmentDto;
+import com.mosaic.investment.event.message.InvestRequestEvent;
+import com.mosaic.investment.event.producer.InvestmentKafkaProducer;
 import com.mosaic.investment.repository.InvestmentRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,29 +22,33 @@ import lombok.extern.slf4j.Slf4j;
 public class InvestmentServiceImpl implements InvestmentService {
 
 	InvestmentRepository investmentRepository;
-	InternalApiClient internalApiClient;
+	InvestmentKafkaProducer investmentProducer;
 
 	@Override
-	public void publishInvestment(StartInvestRequestDto requestDto) throws InternalSystemException {
-		//TODO 계좌 잔고 확인
+	public void publishInvestment(RequestInvestmentDto requestDto) throws
+		InternalSystemException,
+		JsonProcessingException {
+		//TODO 멱등성 : 시간기준 UUID 및 요청별 request막는 ttl 발행
+		Integer idempotencyKey = requestDto.hashCode();
+		Investment newInvestment = Investment.builder()
+			.targetRate(requestDto.targetRate())
+			.currentRate(0)
+			.dueDate(TimeUtil.dueDate(TimeUtil.nowKst(), requestDto.targetMonth()))
+			.accountId(requestDto.id())
+			.principal(requestDto.principal())
+			.amount(requestDto.principal())
+			.createdAt(TimeUtil.nowKst())
+			.build();
+		investmentRepository.save(newInvestment);
+		InvestRequestEvent requestEvent = InvestRequestEvent.buildInvest(newInvestment);
 		// pub : 투자 생성 Event 발행
 		// sub : check money exist Listener
 		// 동기 : create Investment
-
-		//계좌에 돈이 없는 경우
-
+		investmentProducer.sendLoanCreatedEvent(requestEvent);
 	}
 
 	@Override
-	public void createInvestment(StartInvestRequestDto requestDto) throws InternalSystemException {
-		investmentRepository.save(
-			Investment.builder()
-				.targetRate(requestDto.targetRate())
-				.principal(requestDto.principal())
-				.amount(requestDto.principal())
-				.dueDate(TimeUtil.nowKst())
-				.createdAt(Instant.from(LocalDateTime.now()))
-				.build()
-		);
+	public void createInvestment(ApprovedInvestmentDto requestDto) throws InternalSystemException {
+
 	}
 }
