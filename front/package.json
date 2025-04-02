@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.70.0",
+    "axios": "^1.8.4",
     "chart.js": "^4.4.8",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

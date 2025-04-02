@@ -6,37 +6,19 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/common/Button';
 import Text from '@/components/common/Text';
 import styles from '@/styles/layouts/Nav.module.scss';
-import { handleKakaoLogin } from '@/utils/auth';
+import { handleKakaoLogin, handleLogout as logout, handleProtectedRoute } from '@/utils/auth';
 import useUser from '@/hooks/useUser';
-import { useUserStore } from '@/stores/userStore';
 
 const Nav = () => {
-  const user = useUser();
-  const setUser = useUserStore((state) => state.setUser);
+  const { user } = useUser();
   const router = useRouter();
 
   const handleLogout = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logout`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      if (res.ok) {
-        setUser(null); // 상태 초기화
-      }
+      await logout();
     } catch (err) {
-      console.error('Logout error:', err);
+      console.error('Logout failed:', err);
     }
-  };
-
-  const handleProtectedRoute = (path: string) => {
-    // if (user) {
-    //   router.push(path); // 로그인 상태니까 페이지 정상 이동
-    // } else {
-    //   handleKakaoLogin(path); //  로그인한 다음 해당 페이지로 리다이렉트시키기(백 같이 고치기)
-    // }
-    router.push(path);
   };
 
   return (
@@ -56,28 +38,46 @@ const Nav = () => {
 
       {/* 가운데 메뉴 */}
       <div className={styles.nav__center}>
-        <button
+        {/* <button
           type='button'
-          onClick={() => handleProtectedRoute('/investor')}
+          onClick={() => handleProtectedRoute(user, '/investor', router)}
           className={styles['nav__center-link']}
         >
           <Text text='투자' size='sm' color='light-blue' />
         </button>
         <button
           type='button'
-          onClick={() => handleProtectedRoute('/borrower')}
+          onClick={() => handleProtectedRoute(user, '/borrower', router)}
           className={styles['nav__center-link']}
         >
           <Text text='대출' size='sm' color='light-blue' />
         </button>
+        <Link href='/about' className={styles['nav__center-link']}>
+          <Text text='서비스 소개' size='sm' color='light-blue' />
+        </Link>
+      </div> */}
 
-        {/* 소개는 로그인 여부와 상관없이 Link 유지 */}
+        {/* 일단 로그인 protectedRoute 대신 직접 라우팅 */}
+        <button
+          type='button'
+          onClick={() => router.push('/investor')}
+          className={styles['nav__center-link']}
+        >
+          <Text text='투자' size='sm' color='light-blue' />
+        </button>
+        <button
+          type='button'
+          onClick={() => router.push('/borrower')}
+          className={styles['nav__center-link']}
+        >
+          <Text text='대출' size='sm' color='light-blue' />
+        </button>
         <Link href='/about' className={styles['nav__center-link']}>
           <Text text='서비스 소개' size='sm' color='light-blue' />
         </Link>
       </div>
 
-      {/* 우측 로그인/로그아웃 버튼 */}
+      {/* 우측 로그인/로그아웃 */}
       <div className={styles.nav__right}>
         {user ? (
           <>
