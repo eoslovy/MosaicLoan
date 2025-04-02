@@ -72,7 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private void setAuthentication(Integer memberId) {
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new InvalidTokenException(ErrorCode.TOKEN_NOT_FOUND));
-		MemberPrincipal memberPrincipal = new MemberPrincipal(member.getId(), member.getName());
+		MemberPrincipal memberPrincipal = new MemberPrincipal(member.getId(), member.getName(), member.getOauthProvider());
 		UsernamePasswordAuthenticationToken authentication =
 			new UsernamePasswordAuthenticationToken(memberPrincipal, null, null);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
