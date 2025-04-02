@@ -1,5 +1,7 @@
 package com.mosaic.loan.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,5 +38,20 @@ public class LoanController {
 	//pub: 계좌기준으로 kafka 이벤트 발행
 	//sub: 계좌에 돈 입금 확인
 	//transaction: 이자 및 금액 분배
+	@PostMapping("")
+	public ResponseEntity<?> repayLoan(){
+		return null;
+	}
 
+	//TODO 내 대출내역 확인
+	@GetMapping("")
+	public ResponseEntity<?> getLoans() {
+		return null;
+	}
+
+	//TODO 내 개별 투자의 거래내역 확인
+	@GetMapping("")
+	public ResponseEntity<?> getLoanTransactions(){
+		return null;
+	}
 }

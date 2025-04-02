@@ -1,5 +1,6 @@
 package com.mosaic.investment.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,9 +20,9 @@ public class InvestmentController {
 
 	//TODO 투자하기
 	@PostMapping("")
-	public String startInvestment(StartInvestRequestDto requestDto) {
-		investmentService.createInvestment(requestDto);
-		return null;
+	public ResponseEntity<Void> requestInvestment(StartInvestRequestDto requestDto) {
+		investmentService.publishInvestment(requestDto);
+		return ResponseEntity.accepted().build();
 	}
 
 	//TODO 빌려줄 수 있는지 여부 확인
@@ -30,6 +31,17 @@ public class InvestmentController {
 		return null;
 	}
 
+	//TODO 내 투자내역 확인
+	@GetMapping("")
+	public ResponseEntity<?> getInvestments() {
+		return null;
+	}
+
+	//TODO 내 개별 투자의 거래내역 확인
+	@GetMapping("")
+	public ResponseEntity<?> getInvestmentTransactions(){
+		return null;
+	}
 	//TODO 종료하고 계좌로 환급하기
 	//TODO 돈 환급(스케쥴러)
 	//scheduele: 돈 환급 계약 만료
