@@ -1,5 +1,7 @@
 package com.mosaic.core.util;
 
+import org.springframework.http.HttpMethod;
+
 import lombok.Getter;
 
 @Getter
@@ -24,13 +26,14 @@ public enum InternalApiTarget {
 	}
 
 	public enum MemberUri implements InternalApiUri {
-		BASE("/api/members"),
-		DETAIL("/api/members/{id}");
+		BASE("/members", HttpMethod.GET),
+		DETAIL("/members/{id}", HttpMethod.GET);
 
 		private final String path;
-
-		MemberUri(String path) {
+		private final HttpMethod method;
+		MemberUri(String path, HttpMethod method) {
 			this.path = path;
+			this.method = method;
 		}
 
 		@Override
@@ -40,14 +43,17 @@ public enum InternalApiTarget {
 	}
 
 	public enum AccountUri implements InternalApiUri {
-		BASE("/api/accounts"),
-		GET_ACCOUNT("/api/accounts/{id}"),
-		DETAIL("/api/accounts/{id}");
+		BASE("/accounts", HttpMethod.GET),
+		GET_ACCOUNT("/accounts/{id}", HttpMethod.GET),
+		DO_INVESTMENT("/accounts/{id}/investment", HttpMethod.GET),
+		DETAIL("/accounts/{id}", HttpMethod.GET);
 
 		private final String path;
+		private final HttpMethod method;
 
-		AccountUri(String path) {
+		AccountUri(String path, HttpMethod method) {
 			this.path = path;
+			this.method = method;
 		}
 
 		@Override
@@ -57,12 +63,13 @@ public enum InternalApiTarget {
 	}
 
 	public enum ContractUri implements InternalApiUri {
-		INVEST("/api/investments");
+		INVEST("/investments", HttpMethod.GET);
 
 		private final String path;
-
-		ContractUri(String path) {
+		private final HttpMethod method;
+		ContractUri(String path, HttpMethod method) {
 			this.path = path;
+			this.method = method;
 		}
 
 		@Override
@@ -72,12 +79,13 @@ public enum InternalApiTarget {
 	}
 
 	public enum CreditUri implements InternalApiUri {
-		BASE("/api/credits");
+		BASE("/credits", HttpMethod.GET);
 
 		private final String path;
-
-		CreditUri(String path) {
+		private final HttpMethod method;
+		CreditUri(String path, HttpMethod method) {
 			this.path = path;
+			this.method = method;
 		}
 
 		@Override
@@ -87,12 +95,13 @@ public enum InternalApiTarget {
 	}
 
 	public enum MyDataUri implements InternalApiUri {
-		BASE("/api/mydata");
+		BASE("/mydata", HttpMethod.GET);
 
 		private final String path;
-
-		MyDataUri(String path) {
+		private final HttpMethod method;
+		MyDataUri(String path, HttpMethod method) {
 			this.path = path;
+			this.method = method;
 		}
 
 		@Override
