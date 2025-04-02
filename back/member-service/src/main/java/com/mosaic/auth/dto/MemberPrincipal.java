@@ -13,10 +13,12 @@ import lombok.Getter;
 public class MemberPrincipal implements UserDetails {
 	private final Integer id;
 	private final String name;
+	private final String oauthProvider;
 
-	public MemberPrincipal(Integer id, String name) {
+	public MemberPrincipal(Integer id, String name, String oauthProvider) {
 		this.id = id;
 		this.name = name;
+		this.oauthProvider = oauthProvider;
 	}
 
 	@Override
