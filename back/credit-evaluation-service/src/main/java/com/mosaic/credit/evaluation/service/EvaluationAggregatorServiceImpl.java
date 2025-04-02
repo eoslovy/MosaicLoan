@@ -50,8 +50,14 @@ public class EvaluationAggregatorServiceImpl implements EvaluationAggregatorServ
 				// 데이터 집계
 				Map<String, Object> mergedPayload = dataService.collectAllPayloads(caseId, EXPECTED_SOURCES);
 
-				// 모델링 서버 호출
+				// 모델링 서버 호출 시간 측정
+				long startTime = System.currentTimeMillis();
 				double probability = modelingClientService.getRepaymentProbability(mergedPayload);
+				long endTime = System.currentTimeMillis();
+				long duration = endTime - startTime;
+				
+				log.info("모델링 서버 호출 시간: caseId={}, memberId={}, duration={}ms", 
+					caseId, memberId, duration);
 
 				// 계산 및 저장
 				calculationService.evaluateCredit(Integer.valueOf(caseId), Integer.valueOf(memberId), probability);
@@ -63,6 +69,8 @@ public class EvaluationAggregatorServiceImpl implements EvaluationAggregatorServ
 				dataService.cleanup(caseId, EXPECTED_SOURCES);
 			}
 		} catch (Exception e) {
+			log.error("평가 처리 중 오류 발생: caseId={}, memberId={}, source={}, error={}",
+				caseId, memberId, source, e.getMessage());
 			throw new EvaluationException(ErrorCode.PROCESSING_ERROR);
 		}
 	}
