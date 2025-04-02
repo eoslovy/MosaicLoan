@@ -123,10 +123,10 @@ services:
     env_file:
       - .env    
     environment:
-      DATABASE_URL: ${MEMBER_DATABASE_URL}
+      DATABASE_URL: ${MEMBER_DATASOURCE_URL}
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: ${MEMBER_DATABASE_URL}
-      MYSQL_PASSWORD: ${MEMBER_DATABASE_URL}
+      MYSQL_USER: ${MEMBER_DATASOURCE_USERNAME}
+      MYSQL_PASSWORD: ${MEMBER_DATASOURCE_PASSWORD}
       #ENV MYSQL_DATABASE=mosaic_account
     ports:
       - "3307:3306"
@@ -138,10 +138,10 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: ${ACCOUNT_DATABASE_URL}
+      DATABASE_URL: ${ACCOUNT_DATASOURCE_URL}
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: ${ACCOUNT_DATABASE_URL}
-      MYSQL_PASSWORD: ${ACCOUNT_DATABASE_URL}    
+      MYSQL_USER: ${ACCOUNT_DATASOURCE_USERNAME}
+      MYSQL_PASSWORD: ${ACCOUNT_DATASOURCE_PASSWORD}    
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-account-db:${IMAGE_TAG:-local}
     ports:
       - "3308:3306"
@@ -153,10 +153,10 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: ${CONTRACT_DATABASE_URL}
+      DATABASE_URL: ${CONTRACT_DATASOURCE_URL}
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: ${CONTRACT_DATABASE_URL}
-      MYSQL_PASSWORD: ${CONTRACT_DATABASE_URL}
+      MYSQL_USER: ${CONTRACT_DATASOURCE_USERNAME}
+      MYSQL_PASSWORD: ${CONTRACT_DATASOURCE_PASSWORD}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-contract-db:${IMAGE_TAG:-local}
     ports:
       - "3309:3306"
@@ -168,10 +168,10 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: ${MYDATA_DATABASE_URL}
+      DATABASE_URL: ${MYDATA_DATASOURCE_URL}
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: ${MYDATA_DATABASE_URL}
-      MYSQL_PASSWORD: ${MYDATA_DATABASE_URL}
+      MYSQL_USER: ${MYDATA_DATASOURCE_USERNAME}
+      MYSQL_PASSWORD: ${MYDATA_DATASOURCE_PASSWORD}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-mydata-db:${IMAGE_TAG:-local}
     ports:
       - "3310:3306"
@@ -182,10 +182,10 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: ${CREDIT_DATABASE_URL}
+      DATABASE_URL: ${CREDIT_DATASOURCE_URL}
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: ${CREDIT_DATABASE_URL}
-      MYSQL_PASSWORD: ${CREDIT_DATABASE_URL}
+      MYSQL_USER: ${CREDIT_DATASOURCE_USERNAME}
+      MYSQL_PASSWORD: ${CREDIT_DATASOURCE_PASSWORD}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-credit-db:${IMAGE_TAG:-local}
     ports:
       - "3311:3306"
