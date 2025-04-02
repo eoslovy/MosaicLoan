@@ -10,12 +10,14 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MemberResponse {
 	private final Integer id;
-	private final String username;
+	private final String name;
+	private final String oauthProvider;
 
 	public static MemberResponse from(MemberPrincipal member) {
 		return builder()
 			.id(member.getId())
-			.username(member.getUsername())
+			.name(member.getName())
+			.oauthProvider(member.getOauthProvider())
 			.build();
 	}
 } 

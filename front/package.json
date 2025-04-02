@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.70.0",
-    "@types/recharts": "^1.8.29",
     "chart.js": "^4.4.8",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -55,6 +54,7 @@
     "@types/react-datepicker": "^7.0.0",
     "@types/react-dom": "^19",
     "@types/react-select": "^5.0.1",
+    "@types/recharts": "^1.8.29",
     "@typescript-eslint/eslint-plugin": "^8.28.0",
     "@typescript-eslint/parser": "^8.28.0",
     "@vitest/browser": "^3.0.8",
