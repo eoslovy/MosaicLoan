@@ -1,8 +1,8 @@
 package com.mosaic.investment.event.message;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import scala.math.BigDecimal;
 
 public record LoanCreatedEvent(
 	String loanId,
