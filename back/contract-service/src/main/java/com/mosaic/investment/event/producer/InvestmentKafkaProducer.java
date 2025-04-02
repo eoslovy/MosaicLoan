@@ -15,13 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InvestmentKafkaProducer {
 
+	private static final String TOPIC = "loan.created";
 	private final KafkaTemplate<String, String> kafkaTemplate;
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
-	private static final String TOPIC = "loan.created";
-
 	public void sendLoanCreatedEvent(LoanCreatedEvent event) throws JsonProcessingException {
-			kafkaTemplate.send("loan.created", event.loanId(), getString(event));
+		kafkaTemplate.send("loan.created", event.loanId(), getString(event));
 	}
 
 	private <R> String getString(R event) throws JsonProcessingException {

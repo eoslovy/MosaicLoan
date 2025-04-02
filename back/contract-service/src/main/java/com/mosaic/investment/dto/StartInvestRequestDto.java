@@ -7,4 +7,5 @@ public record StartInvestRequestDto(
 	BigDecimal principal,
 	Integer targetRate,
 	Integer targetMonth
-) {}
+) {
+}

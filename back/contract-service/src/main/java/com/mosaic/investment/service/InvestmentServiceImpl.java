@@ -30,8 +30,8 @@ public class InvestmentServiceImpl implements InvestmentService {
 
 		//계좌에 돈이 없는 경우
 
-
 	}
+
 	@Override
 	public void createInvestment(StartInvestRequestDto requestDto) throws InternalSystemException {
 		investmentRepository.save(

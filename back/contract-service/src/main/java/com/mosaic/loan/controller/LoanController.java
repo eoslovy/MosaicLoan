@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class LoanController {
 
 	LoanService loanService;
+
 	//TODO 돈 빌리기
 	//api : 신용평가 api
 	//pub : 대출신청 발행

@@ -21,16 +21,13 @@ public enum InternalApiTarget {
 		this.uriEnum = uriEnum;
 	}
 
-	public interface InternalApiUri {
-		String getPath();
-	}
-
 	public enum MemberUri implements InternalApiUri {
 		BASE("/members", HttpMethod.GET),
 		DETAIL("/members/{id}", HttpMethod.GET);
 
 		private final String path;
 		private final HttpMethod method;
+
 		MemberUri(String path, HttpMethod method) {
 			this.path = path;
 			this.method = method;
@@ -67,6 +64,7 @@ public enum InternalApiTarget {
 
 		private final String path;
 		private final HttpMethod method;
+
 		ContractUri(String path, HttpMethod method) {
 			this.path = path;
 			this.method = method;
@@ -83,6 +81,7 @@ public enum InternalApiTarget {
 
 		private final String path;
 		private final HttpMethod method;
+
 		CreditUri(String path, HttpMethod method) {
 			this.path = path;
 			this.method = method;
@@ -99,6 +98,7 @@ public enum InternalApiTarget {
 
 		private final String path;
 		private final HttpMethod method;
+
 		MyDataUri(String path, HttpMethod method) {
 			this.path = path;
 			this.method = method;
@@ -108,5 +108,9 @@ public enum InternalApiTarget {
 		public String getPath() {
 			return path;
 		}
+	}
+
+	public interface InternalApiUri {
+		String getPath();
 	}
 }

@@ -30,8 +30,6 @@ public class InvestmentController {
 		return null;
 	}
 
-
-	
 	//TODO 종료하고 계좌로 환급하기
 	//TODO 돈 환급(스케쥴러)
 	//scheduele: 돈 환급 계약 만료

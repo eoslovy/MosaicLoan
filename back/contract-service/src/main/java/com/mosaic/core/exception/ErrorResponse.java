@@ -2,7 +2,6 @@ package com.mosaic.core.exception;
 
 import java.time.LocalDateTime;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 import lombok.AllArgsConstructor;

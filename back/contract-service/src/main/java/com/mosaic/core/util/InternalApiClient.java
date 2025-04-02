@@ -9,8 +9,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import com.mosaic.core.exception.InternalApiException;
 import com.mosaic.core.exception.InternalSystemException;
-import com.mosaic.investment.dto.GetAccountResponseDto;
-import com.mosaic.investment.dto.StartInvestRequestDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +23,8 @@ public class InternalApiClient {
 			.build();
 	}
 
-	public <Req, Res> Res sendInvestmentRequest(Req request, InternalApiTarget serviceDNS, InternalApiTarget internalApiUri, Class<Res> responseType) throws
+	public <Req, Res> Res sendInvestmentRequest(Req request, InternalApiTarget serviceDNS,
+		InternalApiTarget internalApiUri, Class<Res> responseType) throws
 		InternalSystemException {
 		try {
 			return getWebClient(serviceDNS)
@@ -36,7 +35,7 @@ public class InternalApiClient {
 				.bodyToMono(responseType)
 				.block();
 		} catch (WebClientResponseException e) {
-			throw new InternalApiException( e, "서버문제로 계좌 조회 실패"); // 도메인화된 예외
+			throw new InternalApiException(e, "서버문제로 계좌 조회 실패"); // 도메인화된 예외
 		} catch (Exception e) {
 			throw new InternalSystemException("기타에러 발생", e);
 		}
