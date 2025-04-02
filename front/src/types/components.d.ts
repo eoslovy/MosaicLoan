@@ -53,6 +53,7 @@ export interface StatCardProps {
   icon: 'users' | 'trendingUp' | 'clock';
   value: string;
   label: string;
+  unitOverride?: string;
 }
 
 export interface ServiceInfoCardProps {
@@ -62,7 +63,7 @@ export interface ServiceInfoCardProps {
 }
 
 export interface BasicInfoCardProps {
-  icon: 'creditCard' | 'trendingUp' | 'clock' | 'arrowUpRight';
+  icon: 'creditCard' | 'trendingUp' | 'clock' | 'arrowUpRight' | 'percent';
   value: string;
   label: string;
 }
@@ -179,7 +180,7 @@ export interface BasicTableRow {
 
 export interface BasicTableProps {
   title?: string;
-  columns: string[];
+  columns: (string | React.ReactNode)[];
   rows: BasicTableRow[];
   className?: string;
   viewAllLink?: string;
@@ -196,4 +197,38 @@ export interface ProgressItem {
 export interface ProgressGroupProps {
   title?: string;
   items: ProgressItem[];
+}
+
+export interface StatusBadgeProps {
+  status: '상환완료' | '상환중' | '부실';
+}
+
+export type SortKey = 'product' | 'bond' | 'transactionDate';
+
+export interface SortState {
+  key: SortKey;
+  ascending: boolean;
+}
+
+export interface SortableTableHeaderProps {
+  label: string;
+  sortKey: SortKey;
+  sortStates: SortState[];
+  onSort: (key: SortKey) => void;
+}
+
+export interface ContractRow {
+  id: string;
+  name: string;
+  count?: number;
+  startDate: string;
+  endDate?: string;
+  status: '진행중' | '완료' | '상환중' | '상환완료' | '부실확정' | '연체';
+}
+
+export interface FilterSelectTableProps {
+  data: ContractRow[];
+  selectedIds: string[];
+  onSelect: (selected: string[]) => void;
+  columns: string[];
 }

@@ -18,9 +18,14 @@ const unitMap = {
   clock: '%',
 };
 
-const StatCard: React.FC<StatCardProps> = ({ icon, value, label }) => {
+const StatCard: React.FC<StatCardProps> = ({
+  icon,
+  value,
+  label,
+  unitOverride,
+}) => {
   const IconComponent = iconMap[icon];
-  const unit = unitMap[icon];
+  const unit = unitOverride ?? unitMap[icon];
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number | null>(null);
@@ -78,21 +83,16 @@ const StatCard: React.FC<StatCardProps> = ({ icon, value, label }) => {
       </div>
 
       <div className={styles.value}>
-        {icon === 'trendingUp' ? (
-          <Text
-            text={`₩${count.toLocaleString()}${unit}`}
-            size='text-3xl'
-            color='blue'
-            weight='bold'
-          />
-        ) : (
-          <Text
-            text={`${count.toLocaleString()} ${unit}`}
-            size='text-3xl'
-            color='blue'
-            weight='bold'
-          />
-        )}
+        <Text
+          text={
+            unit === '원'
+              ? `₩${count.toLocaleString()}${unit}`
+              : `${count.toLocaleString()} ${unit}`
+          }
+          size='text-3xl'
+          color='blue'
+          weight='bold'
+        />
       </div>
 
       <div className={styles.label}>

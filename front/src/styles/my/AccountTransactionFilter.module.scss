@@ -1,0 +1,81 @@
+// @use '../variables.scss' as *;
+
+// .filterContainer {
+//   background-color: $white;
+//   padding: 1.5rem 2rem;
+//   border-radius: 8px;
+//   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+//   margin: 2rem 10vw;
+//   display: flex;
+//   flex-direction: column;
+//   gap: 1.5rem;
+//   color: $text-black;
+// }
+
+// .row {
+//   display: flex;
+//   align-items: center;
+//   flex-wrap: wrap;
+//   gap: 1.5rem;
+// }
+
+// .filterItem {
+//   display: flex;
+//   // flex-direction: row;
+//   align-items: center;
+//   gap: 0.5rem;
+//   // min-width: 220px;
+// }
+
+// .label {
+//   font-size: 0.95rem;
+//   font-weight: 600;
+//   color: $text-black;
+// }
+
+// .dateRange {
+//   display: flex;
+//   align-items: center;
+// }
+
+// .dateInput {
+//   padding: 0.5rem 0.75rem;
+//   border: 1px solid #ccc;
+//   border-radius: 4px;
+//   font-size: 0.9rem;
+//   width: 140px;
+//   color: $text-black;
+// }
+
+// .tilde {
+//   margin: 0 0.5rem;
+//   font-weight: bold;
+//   color: $text-black;
+// }
+
+// .typeOptions {
+//   display: flex;
+//   flex-wrap: wrap;
+//   gap: 0.5rem;
+// }
+
+// .typeButton {
+//   padding: 6px 12px;
+//   border: 1px solid #ccc;
+//   background-color: #f9f9f9;
+//   border-radius: 4px;
+//   font-size: 0.85rem;
+//   cursor: pointer;
+//   color: $text-black;
+//   transition: all 0.2s ease;
+
+//   &:hover {
+//     background-color: #eee;
+//   }
+
+//   &.active {
+//     background-color: $primary-color;
+//     color: $white;
+//     border-color: $primary-color;
+//   }
+// }

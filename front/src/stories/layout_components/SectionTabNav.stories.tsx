@@ -1,8 +1,8 @@
 'use client';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import SectionTabNav from '@/components/layout/SectionTabNav';
 import { TextProps, TextSize, TextColor } from '@/types/components';
+import SectionTabNav from '@/components/ui/SectionTabNav';
 
 const meta: Meta<typeof SectionTabNav> = {
   title: 'Layout/SectionTabNav',
