@@ -12,7 +12,7 @@ RUN apt-get update && \
 WORKDIR /app
 
 # 필요한 패키지 직접 설치
-RUN pip install fastapi uvicorn pyspark==3.5.5 pydantic python-dotenv numpy
+RUN pip install fastapi uvicorn pyspark==3.5.5 pydantic python-dotenv numpy tensorflow pandas
 
 # 애플리케이션 코드 복사
 COPY . .
@@ -24,7 +24,6 @@ RUN chmod +x /app/scripts/entrypoint.sh
 EXPOSE 8001
 
 # 환경 변수 설정
-ENV MODEL_PATH=/app/models/gbt_model
 ENV PYTHONPATH=/app
 
 # 실행
