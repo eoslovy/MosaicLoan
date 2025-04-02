@@ -27,7 +27,6 @@ public class InvestmentController {
 	//TODO 빌려줄 수 있는지 여부 확인
 	@GetMapping("balances/total")
 	public String getTotalBalance() {
-
 		return null;
 	}
 }
