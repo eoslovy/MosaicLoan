@@ -10,6 +10,11 @@ export default {
 
 export const Default = () => (
   <div style={{ maxWidth: 400 }}>
-    <InvestmentResultPanel amount={1000000} duration={12} rate={8.8} />
+    <InvestmentResultPanel
+      amount={1000000}
+      rate={8.8}
+      setAmount={() => {}}
+      setRate={() => {}}
+    />
   </div>
 );

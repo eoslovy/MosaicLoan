@@ -3,6 +3,7 @@ import type React, { JSX } from 'react';
 export type ButtonType = 'filled' | 'outlined' | 'non-selected';
 export type ButtonSize = 'normal' | 'large';
 export type TextColor =
+  | 'primary-blue'
   | 'white'
   | 'gray'
   | 'light-blue'
@@ -33,7 +34,7 @@ export type TextWeight =
   | 'black'; // 900
 
 export interface TextProps {
-  text: string;
+  text: string | React.ReactNode;
   size?: TextSize;
   color?: TextColor;
   weight?: TextWeight;
@@ -52,6 +53,7 @@ export interface StatCardProps {
   icon: 'users' | 'trendingUp' | 'clock';
   value: string;
   label: string;
+  unitOverride?: string;
 }
 
 export interface ServiceInfoCardProps {
@@ -61,7 +63,7 @@ export interface ServiceInfoCardProps {
 }
 
 export interface BasicInfoCardProps {
-  icon: 'creditCard' | 'trendingUp' | 'clock' | 'arrowUpRight';
+  icon: 'creditCard' | 'trendingUp' | 'clock' | 'arrowUpRight' | 'percent';
   value: string;
   label: string;
 }
@@ -119,7 +121,7 @@ export interface SliderProps {
   min: number;
   max: number;
   step?: number;
-  // onChange: (value: number) => void;
+  onChange: (value: number) => void;
   labelLeft?: string;
   labelRight?: string;
 }
@@ -133,14 +135,13 @@ export interface SliderGroupItemProps {
   step?: number;
   labelLeft?: string;
   labelRight?: string;
-  // onChange: (value: number) => void;
+  onChange: (value: number) => void;
   bgColor?: 'light-blue' | 'none';
 }
 
 export interface InvestmentResultPanelProps {
   amount: number; // 투자 금액
-  duration: number; // 투자 기간_개월월
-  rate: number; // 연ㄴ수익률 (%)
+  rate: number; // 연수익률 (%)
 }
 
 export interface InvestmentInputPanelProps {
@@ -151,3 +152,113 @@ export interface InvestmentInputPanelProps {
   rate: number;
   setRate: React.Dispatch<React.SetStateAction<number>>;
 }
+
+export interface SectionTab {
+  label: TextProps;
+  href: string;
+}
+
+export interface SectionTabNavProps {
+  title: TextProps;
+  description: TextProps;
+  tabs: SectionTab[];
+  activeIndex: number;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onTabClick: (_index: number) => void;
+}
+
+export interface BasicTableCell {
+  key: string;
+  content: string | number | React.ReactNode;
+}
+
+export interface BasicTableRow {
+  key: string;
+  cells: BasicTableCell[];
+}
+
+export interface BasicTableProps {
+  title?: string;
+  columns: (string | React.ReactNode)[];
+  rows: BasicTableRow[];
+  className?: string;
+  viewAllLink?: string;
+  showHeader?: boolean;
+}
+
+export interface ProgressItem {
+  label: string;
+  count: number;
+  percentage: number;
+  color: string;
+}
+
+export interface ProgressGroupProps {
+  title?: string;
+  items: ProgressItem[];
+}
+
+export interface StatusBadgeProps {
+  status: '상환완료' | '상환중' | '부실';
+}
+
+export type SortKey = 'product' | 'bond' | 'transactionDate';
+
+export interface SortState {
+  key: SortKey;
+  ascending: boolean;
+}
+
+export interface SortableTableHeaderProps {
+  label: string;
+  sortKey: SortKey;
+  sortStates: SortState[];
+  onSort: (key: SortKey) => void;
+}
+
+export interface ContractRow {
+  id: string;
+  name: string;
+  count?: number;
+  startDate: string;
+  endDate?: string;
+  status: '진행중' | '완료' | '상환중' | '상환완료' | '부실확정' | '연체';
+}
+
+export interface FilterSelectTableProps {
+  data: {
+    id: string;
+    name?: string;
+    count?: number;
+    startDate?: string;
+    endDate?: string;
+    status?: string;
+  }[];
+  selectedIds: string[];
+  onSelect: (ids: string[]) => void;
+  columns: string[];
+}
+
+export type PillVariant =
+  | 'default'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'info'
+  | 'neutral'
+  | 'deposit'
+  | 'withdraw'
+  | 'investment-deposit'
+  | 'investment-refund'
+  | 'loan-deposit'
+  | 'loan-repayment'
+  | 'investing'
+  | 'completed'
+  | 'repayment-complete'
+  | 'repayment-in-progress'
+  | 'principal-repayment'
+  | 'interest-repayment'
+  | 'loan'
+  | 'refund'
+  | 'defaulted'
+  | 'overdue';

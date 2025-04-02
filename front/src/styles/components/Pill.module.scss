@@ -1,0 +1,118 @@
+@use '../variables.scss' as *;
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 999px;
+  font-weight: 500;
+  white-space: nowrap;
+
+  &.medium {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  &.small {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+  }
+}
+
+.closeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 2px;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+// Status variants
+.repayment-complete {
+  background-color: #e6f4ec;
+  color: #287d3c;
+}
+
+.repayment-in-progress {
+  background-color: #edf6fa;
+  color: #145da0;
+}
+
+.defaulted {
+  background-color: #faeaea;
+  color: #d93025;
+}
+
+.overdue {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.deposit {
+  background-color: #e6f4ec;
+  color: #287d3c;
+}
+
+.withdraw {
+  background-color: #faeaea;
+  color: #d93025;
+}
+
+.investment-deposit {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.investment-refund {
+  background-color: #edf6fa;
+  color: #145da0;
+}
+
+.loan-deposit {
+  background-color: #f5f5f5;
+  color: #666666;
+}
+
+.loan-repayment {
+  background-color: #f5f5f5;
+  color: #666666;
+}
+
+.investing {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.completed {
+  background-color: #e6f4ec;
+  color: #287d3c;
+}
+
+.principal-repayment {
+  background-color: #edf6fa;
+  color: #145da0;
+}
+
+.interest-repayment {
+  background-color: #edf6fa;
+  color: #145da0;
+}
+
+.loan {
+  background-color: #f5f5f5;
+  color: #666666;
+}
+
+.refund {
+  background-color: #edf6fa;
+  color: #145da0;
+}

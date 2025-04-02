@@ -4,6 +4,10 @@
   display: inline-block;
 
   // 색상
+  &--color-primary-blue {
+    color: $primary-color;
+  }
+
   &--color-white {
     color: $text-white;
   }

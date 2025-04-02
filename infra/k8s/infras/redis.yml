@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: mosaic
+spec:
+  replicas: 1 # 파드 개수
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      nodeSelector:
+        disktype: worker
+      containers:
+        - name: redis
+          image: ${DOCKERHUB_USERNAME}/mosaic-redis:${IMAGE_TAG}
+          ports:
+            - containerPort: 6379 # Redis 기본 포트
+          envFrom:
+            - configMapRef:
+                name: common-env
+
+--- # Redis Service 정의
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: mosaic
+spec:
+  clusterIP: None
+  selector:
+    app: redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379

@@ -1,0 +1,11 @@
+node_modules
+.git
+.next
+dist
+.vscode
+*.log
+*.tsbuildinfo
+.cache
+pnpm-lock.yaml
+Dockerfile
+docker-compose.yml

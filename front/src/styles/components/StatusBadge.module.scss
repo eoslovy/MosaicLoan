@@ -1,0 +1,25 @@
+@use '../variables.scss' as *;
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  font-size: $text-sm;
+  font-weight: 500;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.success {
+  background-color: $success-bg;
+  color: $success-text;
+}
+
+.warning {
+  background-color: $warning-bg;
+  color: $warning-text;
+}
+
+.danger {
+  background-color: $danger-bg;
+  color: $danger-text;
+}

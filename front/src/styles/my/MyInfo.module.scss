@@ -1,0 +1,45 @@
+@use '../variables.scss' as *;
+
+.container {
+  padding: 2rem 5rem;
+  background-color: $secondary-color;
+  min-height: 100%;
+  margin: 2vw 10vw;
+}
+
+.heading {
+  font-size: $text-xl;
+  font-weight: 700;
+  color: $text-blue;
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  background-color: $white;
+  border-radius: $card-radius;
+  padding: 2rem;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.row {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.label {
+  min-width: 80px;
+  font-weight: 600;
+  color: $text-blue;
+  white-space: nowrap;
+}
+
+.value {
+  color: $text-gray;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
