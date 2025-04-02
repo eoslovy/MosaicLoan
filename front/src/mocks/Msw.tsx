@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 import dynamic from 'next/dynamic';
 
-// MswClient를 동적 임포트
+// MswClient는 CSR 전용으로 동적 import
 const MswClient = dynamic(() => import('./MswClient'), {
   ssr: false,
 });

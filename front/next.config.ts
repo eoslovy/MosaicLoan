@@ -4,6 +4,7 @@ const isExport = process.env.STATIC_EXPORT === 'true';
 
 const nextConfig: NextConfig = {
   output: 'export',
+  transpilePackages: ['msw'],
 };
 
 export default nextConfig;

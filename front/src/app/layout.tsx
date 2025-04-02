@@ -4,8 +4,9 @@ import { Noto_Sans_KR } from 'next/font/google';
 import React, { useEffect } from 'react';
 import './globals.css';
 import Nav from '@/components/layout/Nav';
-import Providers from './providers';
+// import Providers from './providers';
 import { useRouter } from 'next/navigation';
+import Msw from '@/mocks/Msw';
 
 const notoSansKR = Noto_Sans_KR({
   subsets: ['latin'],
@@ -29,11 +30,13 @@ const RootLayout = ({
 
   return (
     <html lang='ko'>
-      <body className={`${notoSansKR.variable} antialiased bg-white text-black`}>
-        <Providers>
+      <body
+        className={`${notoSansKR.variable} antialiased bg-white text-black`}
+      >
+        <Msw>
           <Nav />
-          <main id="main">{children}</main>
-        </Providers>
+          <main id='main'>{children}</main>
+        </Msw>
       </body>
     </html>
   );

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/common/Button';
 import Text from '@/components/common/Text';
 import styles from '@/styles/layouts/Nav.module.scss';
-import { handleKakaoLogin, handleLogout as logout, handleProtectedRoute } from '@/utils/auth';
+import { handleKakaoLogin, handleLogout as logout } from '@/utils/auth';
 import useUser from '@/hooks/useUser';
 
 const Nav = () => {
@@ -16,6 +16,7 @@ const Nav = () => {
   const handleLogout = async () => {
     try {
       await logout();
+      router.push('/');
     } catch (err) {
       console.error('Logout failed:', err);
     }
