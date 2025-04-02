@@ -1,5 +1,6 @@
 FROM mysql:8.0
-
+# MySQL 초기화 스크립트를 컨테이너에 복사
+COPY init.sql /docker-entrypoint-initdb.d/
 EXPOSE 3306
 
 VOLUME ["/var/lib/mysql"]
