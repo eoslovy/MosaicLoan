@@ -4,7 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 import MyPageSectionTabNav from '@/components/my/MyPageSectionTabNav';
 
-const tabPaths = ['/about/myInfo', '/about/myAccount'];
+const tabPaths = ['/my/myInfo', '/my/myAccount'];
 
 const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -17,10 +17,10 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <main className='bg-[#fafaf8]'>
-      {/* <MyPageSectionTabNav
+      <MyPageSectionTabNav
         activeIndex={activeIndex}
         onTabClick={handleTabClick}
-      /> */}
+      />
       <section className='mt-6'>{children}</section>
     </main>
   );

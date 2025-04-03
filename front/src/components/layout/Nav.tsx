@@ -25,6 +25,14 @@ const Nav = () => {
     }
   };
 
+  const handleProtectedRoute = (path: string) => {
+    if (user) {
+      router.push(path);
+    } else {
+      handleKakaoLogin();
+    }
+  };
+
   return (
     <nav className={styles.nav}>
       <div className={styles.nav__logo}>
@@ -42,14 +50,14 @@ const Nav = () => {
       <div className={styles.nav__center}>
         <button
           type='button'
-          onClick={() => router.push('/investor')}
+          onClick={() => handleProtectedRoute('/investor')}
           className={styles['nav__center-link']}
         >
           <Text text='투자' size='sm' color='light-blue' />
         </button>
         <button
           type='button'
-          onClick={() => router.push('/borrower')}
+          onClick={() => handleProtectedRoute('/borrower')}
           className={styles['nav__center-link']}
         >
           <Text text='대출' size='sm' color='light-blue' />
@@ -66,7 +74,7 @@ const Nav = () => {
               label={{ text: `${user.username}님`, size: 'sm', color: 'blue' }}
               variant='outlined'
               size='normal'
-              onClick={() => {}}
+              onClick={() => handleProtectedRoute('/my')}
             />
             <Button
               label={{ text: '로그아웃', size: 'sm', color: 'blue' }}

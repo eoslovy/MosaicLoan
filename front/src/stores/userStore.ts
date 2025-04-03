@@ -19,7 +19,12 @@ export const useUserStore = create(
     }),
     {
       name: 'user-store',
-      partialize: (state) => state,
-    }
-  )
+      partialize: (state): UserStore => ({
+        user: null,
+        isFetched: state.isFetched,
+        setUser: () => {},
+        setIsFetched: () => {},
+      }),
+    },
+  ),
 );
