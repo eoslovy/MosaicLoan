@@ -33,11 +33,7 @@ build_nginx:
     - $GITLAB_USER_EMAIL
   script:
     - echo "🔨 Docker 이미지 빌드 및 테스트 중..."
-    - >
-      docker build
-      --build-arg FRONTEND_IMAGE=$FRONTEND_IMAGE
-      -t ${DOCKERHUB_USERNAME:-default}/$REGISTRY_PATH-${SERVICE_NAME}:$IMAGE_TAG
-      ${BUILD_CONTEXT}
+    - docker build --build-arg FRONTEND_IMAGE=$FRONTEND_IMAGE -t ${DOCKERHUB_USERNAME:-default}/$REGISTRY_PATH-${SERVICE_NAME}:$IMAGE_TAG ${BUILD_CONTEXT}}
     #- echo "✅ 빌드 완료: $IMAGE_NAME:$IMAGE_TAG
 
 push_front:
