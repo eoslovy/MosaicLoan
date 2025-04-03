@@ -1,5 +1,6 @@
 package com.mosaic.investment.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("investment")
+@Slf4j
 public class InvestmentController {
 
 	private final InvestmentService investmentService;
@@ -24,14 +26,9 @@ public class InvestmentController {
 	@PostMapping("")
 	public ResponseEntity<Void> requestInvestment(@RequestBody RequestInvestmentDto requestDto) throws
 		JsonProcessingException {
-		investmentService.publishInvestment(requestDto);
+		log.info("{}의 투자신청 요청 실행", requestDto.id());
+		investmentService.publishInvestmentRequest(requestDto);
 		return ResponseEntity.accepted().build();
-	}
-
-	//TODO 빌려줄 수 있는지 여부 확인
-	@GetMapping("balances/total")
-	public String getTotalBalance() {
-		return null;
 	}
 
 	//TODO 내 투자내역 확인

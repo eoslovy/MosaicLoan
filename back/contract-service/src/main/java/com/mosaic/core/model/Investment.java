@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.mosaic.core.util.TimeUtil;
+import com.mosaic.investment.dto.RequestInvestmentDto;
+import com.mosaic.investment.event.message.AccountTransactionPayload;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -48,4 +51,21 @@ public class Investment {
 
 	@Column(name = "principal", precision = 18, scale = 5)
 	private BigDecimal principal;
+
+	public void completeRequest(AccountTransactionPayload transactionPayload){
+		this.amount = transactionPayload.amount();
+		this.principal = transactionPayload.amount();
+	}
+
+	public static Investment requestOnlyFormInvestment(RequestInvestmentDto requestDto) {
+        return Investment.builder()
+				.targetRate(requestDto.targetRate())
+				.currentRate(0)
+				.dueDate(TimeUtil.dueDate(TimeUtil.nowDate(), requestDto.targetMonth()))
+				.accountId(requestDto.id())
+				.principal(BigDecimal.valueOf(0))
+				.amount(BigDecimal.valueOf(0))
+				.createdAt(TimeUtil.now())
+				.build();
+	}
 }

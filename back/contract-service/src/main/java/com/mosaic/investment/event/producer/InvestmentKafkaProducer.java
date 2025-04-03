@@ -14,9 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 public class InvestmentKafkaProducer {
 
 	private static final String INVEST_CREATE = "investment.deposit.request";
-	private final KafkaTemplate<String, AccountTransactionPayload> kafkaTemplate;
+	private static final String INVEST_CONFIRM = "investment.deposit.confirm";
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 
-	public void sendLoanCreatedEvent(AccountTransactionPayload event) {
+	public void sendInvestmentCreatedEvent(AccountTransactionPayload event) {
 		kafkaTemplate.send(INVEST_CREATE, event);
 	}
+	public void sendInvestmentConfirmedEvent(AccountTransactionPayload event) { kafkaTemplate.send(INVEST_CONFIRM, event); }
 }

@@ -23,18 +23,18 @@ public class KafkaConfig {
 	@Bean
 	public ObjectMapper kafkaObjectMapper() {
 		return new ObjectMapper()
-			.registerModule(new JavaTimeModule())
-			.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+				.registerModule(new JavaTimeModule())
+				.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 	}
 
 	@Bean
-	public KafkaTemplate<String, AccountTransactionPayload> kafkaTemplate(
-		ProducerFactory<String, AccountTransactionPayload> producerFactory) {
+	public KafkaTemplate<String, Object> kafkaTemplate(
+			ProducerFactory<String, Object> producerFactory) {
 		return new KafkaTemplate<>(producerFactory);
 	}
 
 	@Bean
-	public ProducerFactory<String, AccountTransactionPayload> producerFactory(ObjectMapper objectMapper) {
+	public ProducerFactory<String, Object> producerFactory(ObjectMapper objectMapper) {
 		Map<String, Object> props = new HashMap<>();
 		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
 		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
