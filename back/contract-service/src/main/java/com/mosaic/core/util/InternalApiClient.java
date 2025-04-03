@@ -1,5 +1,6 @@
 package com.mosaic.core.util;
 
+import com.mosaic.loan.dto.CreateLoanRequestDto;
 import com.mosaic.loan.dto.CreditEvaluationResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -18,10 +19,10 @@ public class InternalApiClient {
                 .build();
     }
 
-    public CreditEvaluationResponseDto getMemberDetail(Long memberId) {
+    public CreditEvaluationResponseDto getMemberCreditEvaluation(CreateLoanRequestDto creditLoanRequestDto) {
         return getWebClient(InternalApiTarget.MEMBER)
                 .get()
-                .uri("/{id}/latest", memberId)
+                .uri("/{id}/latest")
                 .retrieve()
                 .bodyToMono(CreditEvaluationResponseDto.class)
                 .block();
