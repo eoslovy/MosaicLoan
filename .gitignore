@@ -3,4 +3,3 @@
 .idea
 # GitLab Runner config 무시
 gitlab-runner/config/
-.json

@@ -34,7 +34,7 @@ public class Investment {
 	@Column(name = "current_rate")
 	private Integer currentRate;
 
-	@Column(name = "amount", precision = 10)
+	@Column(name = "amount", precision = 18, scale = 5)
 	private BigDecimal amount;
 
 	@Column(name = "due_date")
@@ -43,6 +43,6 @@ public class Investment {
 	@Column(name = "created_at")
 	private Instant createdAt;
 
-	@Column(name = "principal", precision = 10)
+	@Column(name = "principal", precision = 18, scale = 5)
 	private BigDecimal principal;
 }

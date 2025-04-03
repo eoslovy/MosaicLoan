@@ -32,10 +32,10 @@ public class Loan {
 	@Column(name = "evaluation_id", nullable = false)
 	private Integer evaluationId;
 
-	@Column(name = "request_amount", precision = 10)
+	@Column(name = "request_amount", precision = 18, scale = 5)
 	private BigDecimal requestAmount;
 
-	@Column(name = "amount", precision = 10)
+	@Column(name = "amount", precision = 18, scale = 5)
 	private BigDecimal amount;
 
 	@Column(name = "due_date")

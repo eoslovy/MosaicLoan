@@ -41,13 +41,13 @@ public class Contract {
 	@Column(name = "status")
 	private String status;
 
-	@Column(name = "amount", precision = 10)
+	@Column(name = "amount", precision = 18, scale = 5)
 	private BigDecimal amount;
 
-	@Column(name = "outstanding_amount", precision = 10)
+	@Column(name = "outstanding_amount", precision = 18, scale = 5)
 	private BigDecimal outstandingAmount;
 
-	@Column(name = "paid_amount", precision = 10)
+	@Column(name = "paid_amount", precision = 18, scale = 5)
 	private BigDecimal paidAmount;
 
 	@Column(name = "delinquency_margin_rate")
