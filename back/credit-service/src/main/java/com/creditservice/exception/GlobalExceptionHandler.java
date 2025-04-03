@@ -58,6 +58,13 @@ public class GlobalExceptionHandler {
         return createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage(), ErrorCode.INVALID_DATA, request);
     }
 
+    @ExceptionHandler(EvaluationNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEvaluationNotFoundException(
+            EvaluationNotFoundException e, HttpServletRequest request) {
+        log.error("EvaluationNotFoundException: {}", e.getMessage());
+        return createErrorResponse(HttpStatus.NOT_FOUND, e.getMessage(), e.getErrorCode(), request);
+    }
+
     private ResponseEntity<ErrorResponse> createErrorResponse(
             HttpStatus status, String message, ErrorCode errorCode, HttpServletRequest request) {
         ErrorResponse errorResponse = ErrorResponse.builder()

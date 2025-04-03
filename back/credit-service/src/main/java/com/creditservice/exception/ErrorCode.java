@@ -28,7 +28,12 @@ public enum ErrorCode {
     // Redis 관련 에러
     REDIS_SAVE_ERROR("REDIS_001", "Redis 데이터 저장 실패"),
     REDIS_READ_ERROR("REDIS_002", "Redis 데이터 조회 실패"),
-    REDIS_DELETE_ERROR("REDIS_003", "Redis 데이터 삭제 실패");
+    REDIS_DELETE_ERROR("REDIS_003", "Redis 데이터 삭제 실패"),
+
+    // 평가 결과 관련 에러
+    EVALUATION_NOT_FOUND("EVAL_001", "해당 회원의 신용평가 내역이 존재하지 않습니다."),
+    LATEST_EVALUATION_NOT_FOUND("EVAL_002", "해당 회원의 최신 신용평가 내역이 존재하지 않습니다."),
+    EVALUATION_EXPIRED("EVAL_003", "평가 결과가 만료되었습니다. 24시간이 경과했습니다.");
 
     private final String code;
     private final String defaultMessage;
