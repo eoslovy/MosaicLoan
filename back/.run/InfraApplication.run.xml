@@ -1,0 +1,30 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="InfraApplication" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
+    <deployment type="docker-compose.yml">
+      <settings>
+        <option name="envFilePath" value="" />
+        <option name="commandLineOptions" value="--build" />
+        <option name="services">
+          <list>
+            <option value="account-db" />
+            <option value="contract-db" />
+            <option value="credit-db" />
+            <option value="kafka" />
+            <option value="member-db" />
+            <option value="mydata-db" />
+            <option value="redis" />
+            <option value="nginx" />
+            <option value="springcloud-gateway" />
+            <option value="zookeeper" />
+          </list>
+        </option>
+        <option name="sourceFilePath" value="docker-compose.yml" />
+        <option name="upAttachDependencies" value="true" />
+        <option name="upDetach" value="false" />
+      </settings>
+    </deployment>
+    <method v="2">
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Unnamed" run_configuration_type="docker-deploy" />
+    </method>
+  </configuration>
+</component>
