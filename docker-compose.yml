@@ -8,6 +8,8 @@ services:
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-api:${IMAGE_TAG:-local}
     env_file:
       - .env
+    depends_on:
+      - member-db
     ports:
       - "18081:8080"
 
@@ -19,6 +21,8 @@ services:
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-account-api:${IMAGE_TAG:-local}
     env_file:
       - .env
+    depends_on:
+      - account-db
     ports:
       - "18082:8080"
 
@@ -30,6 +34,8 @@ services:
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-contract-api:${IMAGE_TAG:-local}
     env_file:
       - .env
+    depends_on:
+      - contract-db
     ports:
       - "18083:8080"
   credit-api:
@@ -40,6 +46,8 @@ services:
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-credit-api:${IMAGE_TAG:-local}
     env_file:
       - .env
+    depends_on:
+      - credit-db
     ports:
       - "18084:8080"
   mydata-api:
@@ -50,6 +58,8 @@ services:
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-mydata-api:${IMAGE_TAG:-local}
     env_file:
       - .env
+    depends_on:
+      - mydata-db
     ports:
       - "18085:8080"
 
@@ -83,6 +93,9 @@ services:
     build:
       context: ./infra/nginx
       dockerfile: Dockerfile
+      args:
+        FRONTEND_IMAGE: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-frontend:${IMAGE_TAG:-local}
+        NGINX: nginx.conf
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-nginx:${IMAGE_TAG:-local}
     env_file:
       - .env
@@ -119,6 +132,13 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092   # 여기 중요!!
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-kafka:${IMAGE_TAG:-local}
     ports:
       - "9092:9092"

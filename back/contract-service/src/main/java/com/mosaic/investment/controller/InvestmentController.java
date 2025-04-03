@@ -1,0 +1,52 @@
+package com.mosaic.investment.controller;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import com.mosaic.investment.dto.RequestInvestmentDto;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mosaic.investment.service.InvestmentService;
+
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("investment")
+public class InvestmentController {
+
+	InvestmentService investmentService;
+
+	//TODO 투자하기
+	@PostMapping("")
+	public ResponseEntity<Void> requestInvestment(@RequestBody RequestInvestmentDto requestDto) throws JsonProcessingException {
+		investmentService.publishInvestment(requestDto);
+		return ResponseEntity.accepted().build();
+	}
+
+	//TODO 빌려줄 수 있는지 여부 확인
+	@GetMapping("balances/total")
+	public String getTotalBalance() {
+		return null;
+	}
+
+	//TODO 내 투자내역 확인
+	@GetMapping("")
+	public ResponseEntity<?> getInvestments() {
+		return null;
+	}
+
+	//TODO 내 개별 투자의 거래내역 확인
+	@GetMapping("transaction")
+	public ResponseEntity<?> getInvestmentTransactions() {
+		return null;
+	}
+	//TODO 종료하고 계좌로 환급하기
+	//TODO 돈 환급(스케쥴러)
+	//scheduele: 돈 환급 계약 만료
+	//approve: 계약이 완료되었는지 확인
+	//error: 미상환 계약 여부 확인 및 자동 이전처리
+	//pub: 계좌기준으로 kafka 이벤트 발행
+
+	//sub: 계좌에 돈 입금 처리 완료 확인
+	//approve: 계약 status 종료
+}
