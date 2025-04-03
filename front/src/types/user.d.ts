@@ -1,10 +1,15 @@
 export interface User {
   id: number;
   username: string;
+  oauthProvider: string;
 }
 
 export interface UserResponse {
-  data: User | null;
+  data: {
+    id: number;
+    name: string;
+    oauthProvider: string;
+  } | null;
 }
 
 export interface UserInfoType {

@@ -6,9 +6,10 @@ import ContractsFilter from '@/components/investor/ContractsFilter';
 import ContractsList from '@/components/investor/ContractsList';
 import { fetchContractSummary } from '@/service/apis/investments';
 import EmptyState from '@/components/empty/investor/EmptyState';
+import type { ContractSummaryResponse } from '@/types/pages';
 
 const ContractsPage = () => {
-  const [data, setData] = useState<any | null>(null);
+  const [data, setData] = useState<ContractSummaryResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 

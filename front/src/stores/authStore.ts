@@ -1,7 +1,7 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import { UserInfoType } from "@/types/user";
-import request from "@/service/apis/request";
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { UserInfoType } from '@/types/user';
+import request from '@/service/apis/request';
 
 interface AuthStore {
   user: UserInfoType | null;
@@ -19,7 +19,7 @@ const useAuthStore = create<AuthStore>()(
       fetchUserInfo: async () => {
         try {
           const response = await request.GET<UserInfoType>('/member/me');
-          
+
           if (response) {
             set({ user: response, isAuthenticated: true });
           } else {
@@ -35,10 +35,10 @@ const useAuthStore = create<AuthStore>()(
       },
     }),
     {
-      name: "auth-storage",
+      name: 'auth-storage',
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );
 
-export default useAuthStore; 
+export default useAuthStore;

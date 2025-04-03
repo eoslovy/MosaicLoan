@@ -7,6 +7,7 @@ import Button from '@/components/common/Button';
 import Text from '@/components/common/Text';
 import styles from '@/styles/layouts/Nav.module.scss';
 import { handleKakaoLogin, handleLogout as logout } from '@/utils/auth';
+import { useUserStore } from '@/stores/userStore';
 import useUser from '@/hooks/useUser';
 
 const Nav = () => {
@@ -16,6 +17,8 @@ const Nav = () => {
   const handleLogout = async () => {
     try {
       await logout();
+      useUserStore.getState().setUser(null);
+      useUserStore.getState().setIsFetched(false);
       router.push('/');
     } catch (err) {
       console.error('Logout failed:', err);
@@ -24,7 +27,6 @@ const Nav = () => {
 
   return (
     <nav className={styles.nav}>
-      {/* 로고 */}
       <div className={styles.nav__logo}>
         <Link href='/'>
           <Image
@@ -37,28 +39,7 @@ const Nav = () => {
         </Link>
       </div>
 
-      {/* 가운데 메뉴 */}
       <div className={styles.nav__center}>
-        {/* <button
-          type='button'
-          onClick={() => handleProtectedRoute(user, '/investor', router)}
-          className={styles['nav__center-link']}
-        >
-          <Text text='투자' size='sm' color='light-blue' />
-        </button>
-        <button
-          type='button'
-          onClick={() => handleProtectedRoute(user, '/borrower', router)}
-          className={styles['nav__center-link']}
-        >
-          <Text text='대출' size='sm' color='light-blue' />
-        </button>
-        <Link href='/about' className={styles['nav__center-link']}>
-          <Text text='서비스 소개' size='sm' color='light-blue' />
-        </Link>
-      </div> */}
-
-        {/* 일단 로그인 protectedRoute 대신 직접 라우팅 */}
         <button
           type='button'
           onClick={() => router.push('/investor')}
@@ -78,7 +59,6 @@ const Nav = () => {
         </Link>
       </div>
 
-      {/* 우측 로그인/로그아웃 */}
       <div className={styles.nav__right}>
         {user ? (
           <>
