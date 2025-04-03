@@ -7,7 +7,7 @@ export const handleKakaoLogin = () => {
 };
 
 export const handleLogout = async () => {
-  await request.POST('/member/auth/logout');
+  await request.POST('/member/logout');
   const { setUser, setIsFetched } = useUserStore.getState();
   setUser(null);
   setIsFetched(false);
