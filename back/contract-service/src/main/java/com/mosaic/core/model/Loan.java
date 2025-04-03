@@ -1,5 +1,9 @@
 package com.mosaic.core.model;
 
+import com.mosaic.core.model.status.LoanStatus;
+import com.mosaic.core.util.TimeUtil;
+import com.mosaic.loan.dto.CreateLoanRequestDto;
+import com.mosaic.loan.dto.CreditEvaluationResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,11 +38,23 @@ public class Loan {
     @Column(name = "due_date")
     private LocalDate dueDate;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private LoanStatus status;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    public static Loan requestOnlyFormLoan(CreateLoanRequestDto request, CreditEvaluationResponseDto creditEvaluationResponseDto) {
+        return Loan.builder()
+                .accountId(request.id())
+                .amount(BigDecimal.valueOf(0))
+                .createdAt(TimeUtil.now())
+                .dueDate(request.due_date())
+                .evaluationId(creditEvaluationResponseDto.getId())
+                .requestAmount(request.requestAmount())
+                .status(LoanStatus.PENDING)
+                .build();
+    }
 }
