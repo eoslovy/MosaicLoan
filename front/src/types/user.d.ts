@@ -6,3 +6,9 @@ export interface User {
 export interface UserResponse {
   data: User | null;
 }
+
+export interface UserInfoType {
+  name: string;
+  createdAt: string;
+  oauthProvider: string;
+}
