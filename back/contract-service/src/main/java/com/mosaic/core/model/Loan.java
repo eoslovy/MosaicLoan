@@ -3,6 +3,7 @@ package com.mosaic.core.model;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -49,6 +50,6 @@ public class Loan {
 	private String status;
 
 	@Column(name = "created_at")
-	private Instant createdAt;
+	private LocalDateTime createdAt;
 
 }

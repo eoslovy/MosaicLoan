@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LoanKafkaProducer {
 
 	private static final String INVEST_CREATE = "invest.created";
-	private final KafkaTemplate<String, AccountTransactionPayload> kafkaTemplate;
+	private final KafkaTemplate<String, Object> kafkaTemplate;
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	//public void sendLoanCreatedEvent(LoanCreatedEvent event) throws JsonProcessingException {

@@ -1,6 +1,7 @@
 package com.mosaic.core.model;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,6 +43,6 @@ public class ContractTransaction {
 	private String type;
 
 	@Column(name = "created_at")
-	private Instant createdAt;
+	private LocalDateTime createdAt;
 
 }
