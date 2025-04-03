@@ -1,5 +1,5 @@
 .env
 /out
 .idea
-
-gitlab-runner/config/*
+# GitLab Runner config 무시
+gitlab-runner/config/

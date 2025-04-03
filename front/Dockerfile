@@ -5,6 +5,7 @@ RUN npm install -g pnpm
 
 COPY . .
 RUN pnpm install
+RUN pnpm format
 RUN pnpm lint
 RUN pnpm build || (echo "❌ React build failed" && exit 1)
 FROM alpine AS react-static
