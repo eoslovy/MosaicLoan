@@ -1,17 +1,6 @@
 package com.mosaic.investment.repository;
 
-import com.mosaic.core.model.Investment;
-import com.mosaic.core.model.QInvestment;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
-
+/*
 @Repository
 @RequiredArgsConstructor
 public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository {
@@ -36,4 +25,7 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
                 .orderBy(investment.amount.desc())
                 .fetch();
     }
+
+
 }
+*/

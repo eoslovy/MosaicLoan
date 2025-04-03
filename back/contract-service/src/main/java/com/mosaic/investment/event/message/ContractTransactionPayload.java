@@ -6,7 +6,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public record ContractTransactionPayload(Integer accountId, Integer targetId, BigDecimal amount, Integer rate, LocalDate dueDate,
+public record ContractTransactionPayload(Integer accountId, Integer targetId, BigDecimal amount, Integer rate,
+                                         LocalDate dueDate,
                                          LocalDateTime createdAt) {
     public static ContractTransactionPayload buildInvest(Loan loan, Integer rate) {
         return new ContractTransactionPayload(

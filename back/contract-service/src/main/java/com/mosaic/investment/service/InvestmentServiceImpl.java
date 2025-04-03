@@ -49,7 +49,7 @@ public class InvestmentServiceImpl implements InvestmentService {
     public void searchLoanAptInvestor(ContractTransactionPayload loanTransactionReq) throws Exception {
         //Todo 해당 대출 계좌 검색 Exception처리
         Optional<Loan> targetLoan = loanRepository.findById(loanTransactionReq.targetId());
-        if(targetLoan.isEmpty()) throw new Exception("구현예정");
+        if (targetLoan.isEmpty()) throw new Exception("구현예정");
 
         //Todo 목표수익률 미만, 투자 잔액 특정금액(MAX(최소기준금액, 본인원금분산비율) 이상 대상계좌 검색 (잔액이 미달량이 클수록)
 

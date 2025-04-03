@@ -1,5 +1,6 @@
 package com.mosaic.loan.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.loan.dto.CreateLoanRequestDto;
 import com.mosaic.loan.service.LoanService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class LoanController {
 
     //TODO 돈 빌리기
     @PostMapping("")
-    public ResponseEntity<Void> requestLoan(CreateLoanRequestDto createLoanRequestDto) {
+    public ResponseEntity<Void> requestLoan(CreateLoanRequestDto createLoanRequestDto) throws JsonProcessingException {
         loanService.createLoan(createLoanRequestDto);
         return ResponseEntity.accepted().build();
     }
