@@ -1,4 +1,4 @@
-package com.mosaic.accountservice.domain;
+package com.mosaic.accountservice.account.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

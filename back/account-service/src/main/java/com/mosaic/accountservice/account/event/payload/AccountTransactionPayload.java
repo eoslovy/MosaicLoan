@@ -1,4 +1,4 @@
-package com.mosaic.accountservice.event.model;
+package com.mosaic.accountservice.account.event.payload;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

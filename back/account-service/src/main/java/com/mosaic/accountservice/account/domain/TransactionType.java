@@ -1,4 +1,4 @@
-package com.mosaic.accountservice.domain;
+package com.mosaic.accountservice.account.domain;
 
 public enum TransactionType {
 	INVESTMENT_IN,

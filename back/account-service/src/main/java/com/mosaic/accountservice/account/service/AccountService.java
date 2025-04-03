@@ -1,4 +1,4 @@
-package com.mosaic.accountservice.service;
+package com.mosaic.accountservice.account.service;
 
 public interface AccountService {
 

@@ -1,10 +1,11 @@
-package com.mosaic.accountservice.domain;
+package com.mosaic.accountservice.account.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.mosaic.accountservice.util.TimestampUtil;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -31,9 +32,12 @@ public class AccountTransaction {
 
 	// TransactionType 에 따라 달라지는 상대방 table 의 PK
 	private Integer targetId;
+
+	@Column(precision = 18, scale = 4)
 	private BigDecimal amount;
 	private String content;
 	private LocalDateTime createdAt;
+	@Column(precision = 18, scale = 4)
 	private BigDecimal cash;
 
 	private AccountTransaction(Integer accountId, TransactionType type, Integer targetId,

@@ -1,9 +1,9 @@
-package com.mosaic.accountservice.service;
+package com.mosaic.accountservice.account.service;
 
 import org.springframework.stereotype.Service;
 
-import com.mosaic.accountservice.domain.Account;
-import com.mosaic.accountservice.repository.AccountRepository;
+import com.mosaic.accountservice.account.domain.Account;
+import com.mosaic.accountservice.account.repository.AccountRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

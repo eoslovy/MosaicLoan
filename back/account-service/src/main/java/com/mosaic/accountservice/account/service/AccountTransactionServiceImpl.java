@@ -1,14 +1,14 @@
-package com.mosaic.accountservice.service;
+package com.mosaic.accountservice.account.service;
 
 import java.math.BigDecimal;
 
 import org.springframework.stereotype.Service;
 
-import com.mosaic.accountservice.domain.Account;
-import com.mosaic.accountservice.domain.AccountTransaction;
-import com.mosaic.accountservice.domain.TransactionType;
-import com.mosaic.accountservice.repository.AccountRepository;
-import com.mosaic.accountservice.repository.AccountTransactionRepository;
+import com.mosaic.accountservice.account.domain.Account;
+import com.mosaic.accountservice.account.domain.AccountTransaction;
+import com.mosaic.accountservice.account.domain.TransactionType;
+import com.mosaic.accountservice.account.repository.AccountRepository;
+import com.mosaic.accountservice.account.repository.AccountTransactionRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

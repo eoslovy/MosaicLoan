@@ -1,4 +1,4 @@
-package com.mosaic.accountservice.controller;
+package com.mosaic.accountservice.account.controller;
 
 import java.math.BigDecimal;
 
