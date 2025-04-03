@@ -1,9 +1,12 @@
-import type { Metadata } from 'next';
+'use client';
+
 import { Noto_Sans_KR } from 'next/font/google';
-import React from 'react';
+import React, { useEffect } from 'react';
 import './globals.css';
 import Nav from '@/components/layout/Nav';
-import Providers from './providers';
+import { useRouter } from 'next/navigation';
+import Msw from '@/mocks/Msw';
+import useUser from '@/hooks/useUser'; // ✅ 추가!
 
 const notoSansKR = Noto_Sans_KR({
   subsets: ['latin'],
@@ -12,24 +15,32 @@ const notoSansKR = Noto_Sans_KR({
   display: 'swap',
 });
 
-export const metadata: Metadata = {
-  title: 'P2P 금융 플랫폼',
-  description: '투자와 대출을 간편하게',
-};
-
 const RootLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) => (
-  <html lang='ko'>
-    <body className={`${notoSansKR.variable} antialiased`}>
-      <Providers>
-        <Nav />
-        <main>{children}</main>
-      </Providers>
-    </body>
-  </html>
-);
+}>) => {
+  const router = useRouter();
+  useUser(); // ✅ 전역에서 로그인 상태 확인
+
+  useEffect(() => {
+    const onUnauthorized = () => router.replace('/');
+    window.addEventListener('unauthorized', onUnauthorized);
+    return () => window.removeEventListener('unauthorized', onUnauthorized);
+  }, [router]);
+
+  return (
+    <html lang='ko'>
+      <body
+        className={`${notoSansKR.variable} antialiased bg-white text-black`}
+      >
+        <Msw>
+          <Nav />
+          <main id='main'>{children}</main>
+        </Msw>
+      </body>
+    </html>
+  );
+};
 
 export default RootLayout;

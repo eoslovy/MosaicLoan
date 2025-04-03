@@ -35,11 +35,11 @@ const MyPageSectionTabNav: React.FC<MyPageSectionTabNavProps> = ({
   const tabs: SectionTab[] = [
     {
       label: { text: '계정정보', size: 'sm', color: 'gray' },
-      href: '/mypage/account',
+      href: '/my/MyInfo',
     },
     {
       label: { text: '계좌내역', size: 'sm', color: 'gray' },
-      href: '/mypage/history',
+      href: '/my/MyAccount',
     },
   ];
 

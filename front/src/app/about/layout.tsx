@@ -17,10 +17,10 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <main className='bg-[#fafaf8]'>
-      <MyPageSectionTabNav
+      {/* <MyPageSectionTabNav
         activeIndex={activeIndex}
         onTabClick={handleTabClick}
-      />
+      /> */}
       <section className='mt-6'>{children}</section>
     </main>
   );

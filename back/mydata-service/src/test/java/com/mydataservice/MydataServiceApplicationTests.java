@@ -1,4 +1,4 @@
-package com.mydataservice;
+package com.mydataservice.;
 
 
 import org.junit.jupiter.api.Test;
