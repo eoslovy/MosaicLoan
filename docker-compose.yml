@@ -127,24 +127,25 @@ services:
 
   kafka:
     container_name: kafka
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-kafka:${IMAGE_TAG:-local}
     build:
       context: ./infra/kafka
       dockerfile: Dockerfile
+    ports:
+      - "9092:9092"      # 내부용 (다른 컨테이너용)
+      - "29092:29092"    # 외부용 (GUI용)
     env_file:
       - .env
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092   # 여기 중요!!
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-kafka:${IMAGE_TAG:-local}
-    ports:
-      - "9092:9092"
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:29092
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka:9092,EXTERNAL://host.docker.internal:29092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
-
   member-db:
     container_name: member-db
     build:

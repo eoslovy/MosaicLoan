@@ -1,11 +1,13 @@
 package com.mosaic.core.model;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -23,6 +25,7 @@ import lombok.NoArgsConstructor;
 public class Investment {
 	@Id
 	@Column(name = "id", nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
 	@Column(name = "account_id", nullable = false)
@@ -41,7 +44,7 @@ public class Investment {
 	private LocalDate dueDate;
 
 	@Column(name = "created_at")
-	private Instant createdAt;
+	private LocalDateTime createdAt;
 
 	@Column(name = "principal", precision = 18, scale = 5)
 	private BigDecimal principal;

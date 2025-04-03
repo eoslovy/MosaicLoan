@@ -1,10 +1,14 @@
 package com.mosaic.investment.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import com.mosaic.investment.dto.RequestInvestmentDto;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mosaic.investment.dto.RequestInvestmentDto;
 import com.mosaic.investment.service.InvestmentService;
 
 import lombok.RequiredArgsConstructor;
@@ -14,11 +18,12 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("investment")
 public class InvestmentController {
 
-	InvestmentService investmentService;
+	private final InvestmentService investmentService;
 
 	//TODO 투자하기
 	@PostMapping("")
-	public ResponseEntity<Void> requestInvestment(@RequestBody RequestInvestmentDto requestDto) throws JsonProcessingException {
+	public ResponseEntity<Void> requestInvestment(@RequestBody RequestInvestmentDto requestDto) throws
+		JsonProcessingException {
 		investmentService.publishInvestment(requestDto);
 		return ResponseEntity.accepted().build();
 	}
