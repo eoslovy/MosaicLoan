@@ -17,6 +17,7 @@ build_front:
   script:
     - echo "🔨 Docker 이미지 빌드 및 테스트 중..."
     - docker build -t ${DOCKERHUB_USERNAME:-default}/$REGISTRY_PATH-${SERVICE_NAME}:$IMAGE_TAG ${BUILD_CONTEXT}
+    - docker images
     #- echo "✅ 빌드 완료: $IMAGE_NAME:$IMAGE_TAG
 build_nginx:
   variables:
