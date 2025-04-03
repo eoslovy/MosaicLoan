@@ -8,7 +8,6 @@ import com.mosaic.investment.service.InvestmentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +18,6 @@ public class InvestmentKafkaConsumer {
     private static final String INVEST_CREATE_COMPLETE = "investment.deposit.request";
     private static final String INVEST_CREATE_FAIL = "investment.deposit.fail";
     private static final String LOAN_EXECUTE_REQUEST = "loan.execute.request";
-    private final KafkaTemplate<String, Object> kafkaTemplate;
     private final InvestmentService investmentService;
     private final ObjectMapper objectMapper;
 
@@ -39,9 +37,10 @@ public class InvestmentKafkaConsumer {
     }
 
     @KafkaListener(topics = LOAN_EXECUTE_REQUEST, groupId = "loan.investor.consumer")
-    public void executeInvestmentToLoan(@Payload String payload) throws JsonProcessingException {
+    public void executeInvestmentToLoan(@Payload String payload) throws Exception {
         ContractTransactionPayload accountTransaction = objectMapper.readValue(payload, ContractTransactionPayload.class);
         //TODO 웹소켓을 통한 투자 시작 메세지 전달
         log.info("{}의 {}상품 대출 적합자 검색이 시작되었습니다", accountTransaction.accountId(), accountTransaction.rate());
+        investmentService.searchLoanAptInvestor(accountTransaction);
     }
 }
