@@ -42,7 +42,6 @@ public class Loan {
     @Column(name = "status")
     private LoanStatus status;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
