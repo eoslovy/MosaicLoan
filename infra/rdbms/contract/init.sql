@@ -1,7 +1,3 @@
--- 데이터베이스 생성
-CREATE DATABASE IF NOT EXISTS mosaic_contract;
--- 사용자 생성 및 권한 부여
-GRANT ALL PRIVILEGES ON mosaic_contract.* TO 'contract'@'%';
-
--- 권한 적용
-FLUSH PRIVILEGES;
+version https://git-lfs.github.com/spec/v1
+oid sha256:d0417f05f27a54b87d28697e6b9063ec619f30f9863f97f0bfada3804d08b4a1
+size 4048
