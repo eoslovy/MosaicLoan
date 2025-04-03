@@ -1,10 +1,11 @@
 package com.mosaic.loan.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record CreateLoanRequestDto(
-        long id,
-        int requestAmount,
+        Integer id,
+        BigDecimal requestAmount,
         LocalDate due_date
 ) {
 }
