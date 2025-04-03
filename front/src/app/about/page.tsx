@@ -10,7 +10,7 @@ const Page = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
+      {/* <div className={styles.header}>
         <button
           type='button'
           className={styles.myButton}
@@ -18,7 +18,7 @@ const Page = () => {
         >
           My 페이지 <ArrowRight size={16} />
         </button>
-      </div>
+      </div> */}
       <InfoPage />
     </div>
   );
