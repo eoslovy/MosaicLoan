@@ -1,6 +1,5 @@
 package com.mosaic.investment.util;
 
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -8,8 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class RedisUtil {
-
-	public final RedisTemplate<String, Integer> redisIdempotenceTemplate;
+	//public final RedisTemplate<String, Integer> redisIdempotenceTemplate;
 	private final static String IDEMPOTENT_KEY = "INVESTMENT_REQUEST";
 
 	public Boolean handleRequestInvestmentIdempotency(Integer IdempotencyKey) {

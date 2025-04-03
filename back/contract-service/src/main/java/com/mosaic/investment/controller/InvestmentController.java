@@ -36,7 +36,7 @@ public class InvestmentController {
 	}
 
 	//TODO 내 개별 투자의 거래내역 확인
-	@GetMapping("")
+	@GetMapping("transaction")
 	public ResponseEntity<?> getInvestmentTransactions() {
 		return null;
 	}

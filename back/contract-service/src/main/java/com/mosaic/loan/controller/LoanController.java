@@ -34,7 +34,7 @@ public class LoanController {
 	//status: 대출 상태 실행으로 변경
 	//sub : 인출 확인 트랜젝션
 	//pub : 완료 ACK 발행
-	@PostMapping("")
+	@PostMapping("A")
 	public String createLoan(CreateLoanRequestDto request) {
 		loanService.createLoan(request);
 		return null;
@@ -45,19 +45,19 @@ public class LoanController {
 	//pub: 계좌기준으로 kafka 이벤트 발행
 	//sub: 계좌에 돈 입금 확인
 	//transaction: 이자 및 금액 분배
-	@PostMapping("")
+	@PostMapping("B")
 	public ResponseEntity<?> repayLoan(){
 		return null;
 	}
 
 	//TODO 내 대출내역 확인
-	@GetMapping("")
+	@GetMapping("C")
 	public ResponseEntity<?> getLoans() {
 		return null;
 	}
 
 	//TODO 내 개별 투자의 거래내역 확인
-	@GetMapping("")
+	@GetMapping("D")
 	public ResponseEntity<?> getLoanTransactions(){
 		return null;
 	}

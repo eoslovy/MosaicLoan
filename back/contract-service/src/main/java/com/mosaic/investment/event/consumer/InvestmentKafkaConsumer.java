@@ -20,12 +20,12 @@ public class InvestmentKafkaConsumer {
 	private final KafkaTemplate<String, String> kafkaTemplate;
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
-	@KafkaListener(topics = INVEST_CREATE_EXECUTE)
+	@KafkaListener(topics = INVEST_CREATE_EXECUTE, groupId = "invest.created")
 	public void executeInvestmentRequested(InvestRequestEvent event) throws JsonProcessingException {
 
 	}
 
-	@KafkaListener(topics = INVEST_CREATE_REJECT)
+	@KafkaListener(topics = INVEST_CREATE_REJECT, groupId = "invest.created")
 	public void rollbackInvestmentRequested(InvestRequestEvent event) throws JsonProcessingException {
 
 	}
