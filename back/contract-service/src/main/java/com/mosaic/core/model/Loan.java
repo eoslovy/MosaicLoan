@@ -1,22 +1,11 @@
 package com.mosaic.core.model;
 
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,31 +14,31 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "loan", schema = "mosaic_contract")
 public class Loan {
-	@Id
-	@Column(name = "id", nullable = false)
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+    @Id
+    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-	@Column(name = "account_id", nullable = false)
-	private Integer accountId;
+    @Column(name = "account_id", nullable = false)
+    private Integer accountId;
 
-	@Column(name = "evaluation_id", nullable = false)
-	private Integer evaluationId;
+    @Column(name = "evaluation_id", nullable = false)
+    private Integer evaluationId;
 
-	@Column(name = "request_amount", precision = 18, scale = 5)
-	private BigDecimal requestAmount;
+    @Column(name = "request_amount", precision = 18, scale = 5)
+    private BigDecimal requestAmount;
 
-	@Column(name = "amount", precision = 18, scale = 5)
-	private BigDecimal amount;
+    @Column(name = "amount", precision = 18, scale = 5)
+    private BigDecimal amount;
 
-	@Column(name = "due_date")
-	private LocalDate dueDate;
+    @Column(name = "due_date")
+    private LocalDate dueDate;
 
-	@Lob
-	@Column(name = "status")
-	private String status;
+    @Lob
+    @Column(name = "status")
+    private String status;
 
-	@Column(name = "created_at")
-	private LocalDateTime createdAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
 }

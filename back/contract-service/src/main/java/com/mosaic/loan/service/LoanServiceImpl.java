@@ -1,27 +1,29 @@
 package com.mosaic.loan.service;
 
-import com.mosaic.loan.event.producer.LoanKafkaProducer;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
+import com.mosaic.core.util.InternalApiClient;
 import com.mosaic.loan.dto.CreateLoanRequestDto;
+import com.mosaic.loan.event.producer.LoanKafkaProducer;
 import com.mosaic.loan.repository.LoanRepository;
+import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.InternalApi;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class LoanServiceImpl implements LoanService {
 
-	private final LoanKafkaProducer loanKafkaProducer;
-	private final LoanRepository loanRepository;
+    private final LoanKafkaProducer loanKafkaProducer;
+    private final LoanRepository loanRepository;
+    private final InternalApiClient internalApiClient;
 
-	@Override
-	public void createLoan(CreateLoanRequestDto request) {
-		//Todo 내부 신용평가 확인후 예외처리(없음, 시간지남 등등)
+    @Override
+    public void createLoan(CreateLoanRequestDto request) {
+        //Todo 내부 신용평가 확인후 예외처리(없음, 시간지남 등등)
+        //internalApiClient.sendInvestmentRequest()
+        //Todo 내부 신용평가 검증 후 빈깡통계좌 개설 및 발행 -> investConsumer에서 수신
+    }
 
-		//Todo 내부 신용평가 검증 후 빈깡통계좌 개설 및 발행 -> investConsumer에서 수신
-	}
-
-	public void completeLoan(){
-		//Todo loanConumser에서 완료 수신 후 loan증가
-	}
+    public void completeLoan() {
+        //Todo loanConumser에서 완료 수신 후 loan증가
+    }
 }

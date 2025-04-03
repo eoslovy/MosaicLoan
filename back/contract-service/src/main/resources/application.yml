@@ -1,34 +1,34 @@
 server:
-    port: 8080
+  port: 8080
 
 ---
 spring:
-    config:
-        activate:
-            on-profile: default
+  config:
+    activate:
+      on-profile: default
 
-    application:
-        name: contract-service
+  application:
+    name: contract-service
 
-    datasource:
-        url: jdbc:mysql://host.docker.internal:3309/mosaic_contract
-        username: contract
-        password: 608
+  datasource:
+    url: jdbc:mysql://host.docker.internal:3309/mosaic_contract
+    username: contract
+    password: 608
 
-    jpa:
-        hibernate:
-            ddl-auto: create
-        show-sql: true
-        properties:
-            hibernate:
-                format_sql: true
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
 
-    data:
-        redis:
-            host: localhost
-            port: 6379
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
-    kafka:
-        bootstrap-servers: localhost:9092
+  kafka:
+    bootstrap-servers: localhost:9092
 
 ---

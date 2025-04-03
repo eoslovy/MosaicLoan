@@ -2,7 +2,6 @@ package com.mosaic.investment.service;
 
 import com.mosaic.core.exception.InternalSystemException;
 import com.mosaic.core.model.Investment;
-import com.mosaic.core.util.TimeUtil;
 import com.mosaic.investment.dto.RequestInvestmentDto;
 import com.mosaic.investment.event.message.AccountTransactionPayload;
 import com.mosaic.investment.event.producer.InvestmentKafkaProducer;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 @Slf4j
@@ -32,7 +30,6 @@ public class InvestmentServiceImpl implements InvestmentService {
         AccountTransactionPayload requestEvent = AccountTransactionPayload.buildInvest(newInvestment);
         investmentProducer.sendInvestmentCreatedEvent(requestEvent);
     }
-
 
 
     @Override
