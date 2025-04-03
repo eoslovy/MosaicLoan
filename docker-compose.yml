@@ -95,7 +95,7 @@ services:
       dockerfile: Dockerfile
       args:
         FRONTEND_IMAGE: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-frontend:${IMAGE_TAG:-local}
-        NGINX: local_nginx.conf
+        NGINX: nginx.conf
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-nginx:${IMAGE_TAG:-local}
     env_file:
       - .env
