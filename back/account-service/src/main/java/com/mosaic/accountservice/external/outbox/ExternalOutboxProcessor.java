@@ -1,4 +1,4 @@
-package com.mosaic.accountservice.account.outbox;
+package com.mosaic.accountservice.external.outbox;
 
 import java.util.List;
 
@@ -12,19 +12,19 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class OutboxProcessor {
+public class ExternalOutboxProcessor {
 
-	private final OutboxEventRepository outboxRepository;
-	private final OutboxJdbcRepository outboxJdbcRepository;
+	private final ExternalOutboxEventRepository outboxRepository;
 	private final KafkaTemplate<String, String> kafkaTemplate;
 
 	private static final int BATCH_SIZE = 100;
 
 	@Scheduled(fixedDelay = 1000)
 	public void publishPendingEvents() {
-		List<OutboxEvent> events = outboxRepository.findTop100ByStatusOrderByCreatedAt(EventStatus.PENDING);
+		List<ExternalOutboxEvent> events = outboxRepository.findTop100ByStatusOrderByCreatedAt(EventStatus.PENDING);
+		log.debug("[ExternalOutbox] publishing 시작 events 개수: {}", events.size());
 
-		for (OutboxEvent event : events) {
+		for (ExternalOutboxEvent event : events) {
 			try {
 				kafkaTemplate.send(event.getTopic(), event.getPartitioningKey(), event.getPayload());
 				event.markAsSent();
@@ -35,6 +35,6 @@ public class OutboxProcessor {
 			}
 		}
 
-		outboxJdbcRepository.batchInsert(events); // 일괄 저장
+		outboxRepository.saveAll(events); // 일괄 저장
 	}
 }

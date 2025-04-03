@@ -1,4 +1,4 @@
-package com.mosaic.accountservice.account.outbox;
+package com.mosaic.accountservice.external.outbox;
 
 import java.time.LocalDateTime;
 
@@ -18,10 +18,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "outbox_event")
+@Table(name = "external_outbox_event")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OutboxEvent {
+public class ExternalOutboxEvent {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -37,9 +37,9 @@ public class OutboxEvent {
 	private LocalDateTime sentAt;
 
 	@Builder
-	public static OutboxEvent create(String topic, String key,
+	public static ExternalOutboxEvent create(String topic, String key,
 		String payload) {
-		OutboxEvent event = new OutboxEvent();
+		ExternalOutboxEvent event = new ExternalOutboxEvent();
 		event.topic = topic;
 		event.partitioningKey = key;
 		event.payload = payload;
