@@ -5,7 +5,6 @@ import com.mosaic.loan.dto.CreateLoanRequestDto;
 import com.mosaic.loan.event.producer.LoanKafkaProducer;
 import com.mosaic.loan.repository.LoanRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.util.InternalApi;
 import org.springframework.stereotype.Service;
 
 @Service

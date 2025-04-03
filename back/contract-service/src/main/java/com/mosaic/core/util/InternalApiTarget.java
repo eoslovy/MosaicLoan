@@ -1,7 +1,6 @@
 package com.mosaic.core.util;
 
 import lombok.Getter;
-import org.springframework.http.HttpMethod;
 
 @Getter
 public enum InternalApiTarget {
