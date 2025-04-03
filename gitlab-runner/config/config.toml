@@ -8,9 +8,9 @@ shutdown_timeout = 0
 [[runners]]
   name = "alpine-runner"
   url = "https://lab.ssafy.com"
-  id = 1119
-  token = "glrt-t3_hvNsFxsYnzvA3MzDR45j"
-  token_obtained_at = 2025-03-31T00:12:15Z
+  id = 1137
+  token = "glrt-t3_13UyY_hg3B_ecgr1Mb4V"
+  token_obtained_at = 2025-04-03T01:08:27Z
   token_expires_at = 0001-01-01T00:00:00Z
   executor = "docker"
   [runners.cache]
