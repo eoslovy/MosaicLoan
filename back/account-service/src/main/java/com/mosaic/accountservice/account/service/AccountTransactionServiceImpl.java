@@ -53,6 +53,32 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
 		}
 	}
 
+	@Override
+	public void handleInvestmentDeposit(AccountTransactionPayload payload) throws JsonProcessingException {
+		try {
+			processTransaction(payload.accountId(), payload.amount(), TransactionType.INVESTMENT_OUT, "투자 계좌 입금",
+				payload.targetId());
+			outboxEventService.createOutboxEvent("investment.deposit.completed", payload);
+		} catch (Exception exception) {
+			outboxEventService.createOutboxEvent("investment.deposit.failed", payload);
+			log.error("투자 계좌 입금 트랜잭션 처리 중 오류가 발생했습니다. message: {}", exception.getMessage(), exception);
+			throw exception;
+		}
+	}
+
+	@Override
+	public void handleInvestmentWithdrawal(AccountTransactionPayload payload) throws JsonProcessingException {
+		try {
+			processTransaction(payload.accountId(), payload.amount(), TransactionType.INVESTMENT_IN, "투자 계좌 출금",
+				payload.targetId());
+			outboxEventService.createOutboxEvent("investment.deposit.completed", payload);
+		} catch (Exception exception) {
+			outboxEventService.createOutboxEvent("investment.deposit.failed", payload);
+			log.error("투자 계좌 출금 트랜잭션 처리 중 오류가 발생했습니다. message: {}", exception.getMessage(), exception);
+			throw exception;
+		}
+	}
+
 	private void processTransaction(Integer accountId, BigDecimal amount, TransactionType type,
 		String content, Integer targetId) {
 		Account account = accountRepository.findById(accountId)

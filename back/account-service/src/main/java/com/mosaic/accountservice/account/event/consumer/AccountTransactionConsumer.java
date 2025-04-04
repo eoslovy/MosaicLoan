@@ -30,4 +30,16 @@ public class AccountTransactionConsumer {
 		service.handleExternalWithdrawal(payload);
 	}
 
+	@KafkaListener(topics = "investment.deposit.requested", groupId = "account.investment-deposit-requested.consumer")
+	public void handleInvestmentDepositRequest(String message) throws JsonProcessingException {
+		AccountTransactionPayload payload = objectMapper.readValue(message, AccountTransactionPayload.class);
+		service.handleInvestmentDeposit(payload);
+	}
+
+	@KafkaListener(topics = "investment.withdrawal.requested", groupId = "account.investment-withdrawal-requested.consumer")
+	public void handleInvestmentWithdrawalRequest(String message) throws JsonProcessingException {
+		AccountTransactionPayload payload = objectMapper.readValue(message, AccountTransactionPayload.class);
+		service.handleInvestmentWithdrawal(payload);
+	}
+
 }
