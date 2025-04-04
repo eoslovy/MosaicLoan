@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
-public class OutboxJdbcRepository {
+public class OutboxEventRepositoryImpl {
 
 	private final JdbcTemplate jdbcTemplate;
 

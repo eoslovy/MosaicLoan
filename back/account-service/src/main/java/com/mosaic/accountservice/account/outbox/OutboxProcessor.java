@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 public class OutboxProcessor {
 
 	private final OutboxEventRepository outboxRepository;
-	private final OutboxJdbcRepository outboxJdbcRepository;
 	private final KafkaTemplate<String, String> kafkaTemplate;
 
 	private static final int BATCH_SIZE = 100;
@@ -35,6 +34,6 @@ public class OutboxProcessor {
 			}
 		}
 
-		outboxJdbcRepository.batchInsert(events); // 일괄 저장
+		outboxRepository.batchInsert(events); // 일괄 저장
 	}
 }

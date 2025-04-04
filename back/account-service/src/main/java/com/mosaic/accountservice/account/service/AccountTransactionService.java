@@ -1,10 +1,10 @@
 package com.mosaic.accountservice.account.service;
 
-import java.math.BigDecimal;
-
-import com.mosaic.accountservice.account.domain.TransactionType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mosaic.accountservice.account.event.payload.AccountTransactionPayload;
 
 public interface AccountTransactionService {
-	void processTransaction(Integer accountId, BigDecimal amount, TransactionType type,
-		String content, Integer targetId);
+	void handleExternalDeposit(AccountTransactionPayload payload) throws JsonProcessingException;
+
+	void handleExternalWithdrawal(AccountTransactionPayload payload) throws JsonProcessingException;
 }
