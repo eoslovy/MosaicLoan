@@ -21,12 +21,12 @@ public class KakaoPayClient {
 	@Value("${KAKAO_PAY_CALLBACK_BASE_URL}")
 	String kakaoPayCallbackBaseUrl;
 
-	@Value("${KAKAO_PAY_CLIENT_ID}")
-	String clientId;
+	@Value("${KAKAO_PAY_CID}")
+	String cid;
 
 	public KakaoPayReadyJsonResponse requestReady(Integer memberId, String orderId, Integer amount) {
 		KakaoPayReadyJsonRequest request = KakaoPayReadyJsonRequest.builder()
-			.cid(clientId)
+			.cid(cid)
 			.partner_order_id(orderId)
 			.partner_user_id(memberId.toString())
 			.item_name("모자익론 입금")
@@ -48,7 +48,7 @@ public class KakaoPayClient {
 
 	public KakaoPayApproveResponse requestApprove(Integer memberId, String orderId, String pgToken, String tid) {
 		var request = KakaoPayApproveJsonRequest.builder()
-			.cid(clientId)
+			.cid(cid)
 			.tid(tid)
 			.partner_order_id(orderId)
 			.partner_user_id(memberId.toString())
