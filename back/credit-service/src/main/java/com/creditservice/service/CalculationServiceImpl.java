@@ -49,7 +49,7 @@ public class CalculationServiceImpl implements CalculationService {
 			(riskFreeRate + (probability * lossGivenDefault)) * 10000);
 
 		// 3. DSR 기반 대출 한도 계산
-		// Redis에서 데이터 가져오기
+		// Redis에서 데이터 가져오기rm
 		String caseIdStr = String.valueOf(caseId);
 		Optional<EvaluationResultDto> demographicData = evaluationRedisService.getPayload(caseIdStr, "demographic");
 		Optional<EvaluationResultDto> creditData = evaluationRedisService.getPayload(caseIdStr, "credit");

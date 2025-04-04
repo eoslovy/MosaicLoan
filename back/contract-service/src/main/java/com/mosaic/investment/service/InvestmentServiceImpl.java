@@ -38,6 +38,7 @@ public class InvestmentServiceImpl implements InvestmentService {
 
     @Override
     public void completeInvestmentRequest(AccountTransactionPayload completeInvestmentRequest) throws Exception {
+        Thread.sleep(2000);
         Optional<Investment> getNewInvestment = investmentRepository.findById(completeInvestmentRequest.targetId());
         if (getNewInvestment.isEmpty()) throw new Exception("해당하는 투자계좌 없음 에러");
         Investment newInvestment = getNewInvestment.get();

@@ -11,15 +11,15 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class InvestmentKafkaProducer {
 
-    private static final String INVEST_CREATE = "investment.deposit.request";
-    private static final String INVEST_CONFIRM = "investment.deposit.confirm";
+    private static final String INVEST_CREATE = "investment.deposit.requested";
+    private static final String INVEST_CONFIRM = "investment.deposit.failed";
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void sendInvestmentCreatedEvent(AccountTransactionPayload event) {
         kafkaTemplate.send(INVEST_CREATE, event);
     }
 
-    public void sendInvestmentConfirmedEvent(AccountTransactionPayload event) {
+    public void sendInvestmentRollBackEvent(AccountTransactionPayload event) {
         kafkaTemplate.send(INVEST_CONFIRM, event);
     }
 }

@@ -47,7 +47,7 @@ public class Investment {
         return Investment.builder()
                 .targetRate(requestDto.targetRate())
                 .currentRate(0)
-                .dueDate(TimeUtil.dueDate(TimeUtil.nowDate(), requestDto.targetMonth()))
+                .dueDate(TimeUtil.dueDate(TimeUtil.nowDate(), requestDto.targetWeeks()))
                 .accountId(requestDto.id())
                 .principal(BigDecimal.valueOf(0))
                 .amount(BigDecimal.valueOf(0))
