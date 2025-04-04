@@ -17,22 +17,16 @@ public class OutboxEventRepositoryImpl {
 
 	private final JdbcTemplate jdbcTemplate;
 
-	public void batchInsert(List<OutboxEvent> events) {
-		String sql = """
-			INSERT INTO outbox_event
-			(topic, partitioning_key, payload, status, created_at)
-			VALUES (?, ?, ?, ?, ?)
-			""";
+	public void batchUpdate(List<OutboxEvent> events) {
+		String sql = "UPDATE outbox_event SET status = ?, sent_at = ? WHERE id = ?";
 
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				OutboxEvent event = events.get(i);
-				ps.setString(1, event.getTopic());
-				ps.setString(2, event.getPartitioningKey());
-				ps.setString(3, event.getPayload());
-				ps.setString(4, event.getStatus().name());
-				ps.setTimestamp(5, Timestamp.valueOf(event.getCreatedAt()));
+				ps.setString(1, event.getStatus().name());
+				ps.setTimestamp(2, Timestamp.valueOf(event.getSentAt()));
+				ps.setLong(3, event.getId());
 			}
 
 			@Override

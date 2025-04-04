@@ -34,6 +34,6 @@ public class OutboxProcessor {
 			}
 		}
 
-		outboxRepository.batchInsert(events); // 일괄 저장
+		outboxRepository.batchUpdate(events); // 일괄 저장
 	}
 }

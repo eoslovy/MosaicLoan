@@ -1,4 +1,4 @@
-package com.mosaic.accountservice.account.event.payload;
+package com.mosaic.payload;
 
 import java.time.LocalDateTime;
 

@@ -5,17 +5,19 @@ import java.math.BigDecimal;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-import com.mosaic.accountservice.account.event.payload.AccountCreateRequestedPayload;
-import com.mosaic.accountservice.account.event.payload.AccountTransactionPayload;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mosaic.accountservice.util.TimestampUtil;
+import com.mosaic.payload.AccountCreateRequestedPayload;
+import com.mosaic.payload.AccountTransactionPayload;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class TestKafkaPublisher {
+	private final ObjectMapper objectMapper;
 
-	private final KafkaTemplate<String, Object> kafkaTemplate;
+	private final KafkaTemplate<String, String> kafkaTemplate;
 
 	public void publishExternalDeposit(int accountId, BigDecimal amount) {
 		var payload = new AccountTransactionPayload(accountId, 9999, amount, TimestampUtil.getTimeStamp());
@@ -34,7 +36,7 @@ public class TestKafkaPublisher {
 
 	private void send(String topic, Object payloadObject) {
 		try {
-			kafkaTemplate.send(topic, payloadObject);
+			kafkaTemplate.send(topic, objectMapper.writeValueAsString(payloadObject));
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to send kafka message", e);
 		}

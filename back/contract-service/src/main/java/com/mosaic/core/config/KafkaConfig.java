@@ -1,47 +1,43 @@
 package com.mosaic.core.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.listener.DefaultErrorHandler;
+import org.springframework.util.backoff.FixedBackOff;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Configuration
 public class KafkaConfig {
+	@Bean
+	public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
+		ConsumerFactory<String, Object> consumerFactory,
+		DefaultErrorHandler errorHandler
+	) {
+		var factory = new ConcurrentKafkaListenerContainerFactory<String, Object>();
+		factory.setConsumerFactory(consumerFactory);
+		factory.setCommonErrorHandler(errorHandler);
+		return factory;
+	}
 
-    @Bean
-    public ObjectMapper kafkaObjectMapper() {
-        return new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-    }
+	@Bean
+	public DefaultErrorHandler kafkaErrorHandler() {
+		FixedBackOff backOff = new FixedBackOff(1000L, 2);
 
-    @Bean
-    public KafkaTemplate<String, Object> kafkaTemplate(
-            ProducerFactory<String, Object> producerFactory) {
-        return new KafkaTemplate<>(producerFactory);
-    }
+		DefaultErrorHandler errorHandler = new DefaultErrorHandler(
+			(record, ex) -> {
+				log.error("❌ Kafka message failed. Skipping. Record: {}, Error: {}", record, ex.getMessage(), ex);
+			},
+			backOff
+		);
 
-    @Bean
-    public ProducerFactory<String, Object> producerFactory(ObjectMapper objectMapper) {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(props, new StringSerializer(), new JsonSerializer<>(objectMapper));
-    }
+		errorHandler.addNotRetryableExceptions(JsonProcessingException.class);
 
-    @Bean
-    public JsonSerializer<Object> jsonSerializer(ObjectMapper kafkaObjectMapper) {
-        return new JsonSerializer<>(kafkaObjectMapper);
-    }
+		return errorHandler;
+	}
 }

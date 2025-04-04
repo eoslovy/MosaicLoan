@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mosaic.accountservice.account.event.payload.AccountTransactionPayload;
+import com.mosaic.payload.AccountTransactionPayload;
 
 import lombok.RequiredArgsConstructor;
 

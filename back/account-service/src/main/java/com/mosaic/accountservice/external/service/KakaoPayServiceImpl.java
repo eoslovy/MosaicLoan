@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mosaic.accountservice.account.event.payload.AccountTransactionPayload;
 import com.mosaic.accountservice.external.client.KakaoPayClient;
 import com.mosaic.accountservice.external.dto.KakaoPayReadyJsonResponse;
 import com.mosaic.accountservice.external.dto.KakaoPayReadyResponse;
@@ -17,10 +16,13 @@ import com.mosaic.accountservice.external.outbox.ExternalOutboxEvent;
 import com.mosaic.accountservice.external.outbox.ExternalOutboxEventRepository;
 import com.mosaic.accountservice.external.repository.ExternalDepositTransactionRepository;
 import com.mosaic.accountservice.util.TimestampUtil;
+import com.mosaic.payload.AccountTransactionPayload;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class KakaoPayServiceImpl implements KakaoPayService {
@@ -54,6 +56,7 @@ public class KakaoPayServiceImpl implements KakaoPayService {
 		String orderId = (String)redisTemplate.opsForHash().get(redisKey, "orderId");
 
 		if (tid == null || orderId == null) {
+			log.error("tid: {} orderId: {}", tid, orderId);
 			throw new IllegalStateException("결제 정보가 유실되었습니다");
 		}
 

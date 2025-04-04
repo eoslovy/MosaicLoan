@@ -9,10 +9,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.accountservice.account.domain.Account;
 import com.mosaic.accountservice.account.domain.AccountTransaction;
 import com.mosaic.accountservice.account.domain.TransactionType;
-import com.mosaic.accountservice.account.event.payload.AccountTransactionPayload;
 import com.mosaic.accountservice.account.outbox.OutboxEventService;
 import com.mosaic.accountservice.account.repository.AccountRepository;
 import com.mosaic.accountservice.account.repository.AccountTransactionRepository;
+import com.mosaic.payload.AccountTransactionPayload;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +60,7 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
 				payload.targetId());
 			outboxEventService.createOutboxEvent("investment.deposit.completed", payload);
 		} catch (Exception exception) {
-			outboxEventService.createOutboxEvent("investment.deposit.failed", payload);
+			outboxEventService.createOutboxEvent("investment.deposit.rejected", payload);
 			log.error("투자 계좌 입금 트랜잭션 처리 중 오류가 발생했습니다. message: {}", exception.getMessage(), exception);
 			throw exception;
 		}
@@ -73,7 +73,7 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
 				payload.targetId());
 			outboxEventService.createOutboxEvent("investment.deposit.completed", payload);
 		} catch (Exception exception) {
-			outboxEventService.createOutboxEvent("investment.deposit.failed", payload);
+			outboxEventService.createOutboxEvent("investment.deposit.rejected", payload);
 			log.error("투자 계좌 출금 트랜잭션 처리 중 오류가 발생했습니다. message: {}", exception.getMessage(), exception);
 			throw exception;
 		}
@@ -86,6 +86,7 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
 
 		BigDecimal currentCash = account.getCash();
 		BigDecimal updatedCash;
+		log.info("currentCash: {}, amount: {}", currentCash, amount);
 
 		if (type == TransactionType.INVESTMENT_OUT || type == TransactionType.LOAN_OUT
 			|| type == TransactionType.EXTERNAL_OUT) {
