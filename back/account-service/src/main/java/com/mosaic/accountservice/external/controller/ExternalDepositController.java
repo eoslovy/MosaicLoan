@@ -24,7 +24,7 @@ public class ExternalDepositController {
 	@PostMapping("/ready")
 	public ResponseEntity<KakaoPayReadyResponse> getReady(@RequestBody CreatePaymentRequest request,
 		@RequestParam Integer memberId) {
-		KakaoPayReadyResponse response = kakaoPayService.getReady(request.totalAmount(), memberId);
+		KakaoPayReadyResponse response = kakaoPayService.getReady(request.amount(), memberId);
 		return ResponseEntity.ok(response);
 	}
 
