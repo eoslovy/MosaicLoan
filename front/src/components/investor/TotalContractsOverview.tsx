@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '@/styles/investors/TotalContractsOverview.module.scss';
 import ProgressGroup from '@/components/common/ProgressGroup';
 import BasicCard from '@/components/common/BasicInfoCard';
 import type { ContractSummaryResponse } from '@/types/pages';
+import request from '@/service/apis/request';
 
 interface TotalContractsOverviewProps {
   data: ContractSummaryResponse;
@@ -17,11 +18,38 @@ const statusMap = {
   transferred: { label: '소유권 이전', color: '#2E2E2E' },
 };
 
-const TotalContractsOverview: React.FC<TotalContractsOverviewProps> = ({
-  data,
-}) => {
-  const { statusDistribution, totalContractCount, totalProfit, totalLoss } =
-    data;
+const TotalContractsOverview: React.FC = () => {
+  const [data, setData] = useState<ContractSummaryResponse | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchContractSummary = async () => {
+      try {
+        setIsLoading(true);
+        // request.GET을 사용하여 API 요청
+        const summaryData = await request.GET<ContractSummaryResponse>('/api/contract/contracts/summary');
+        setData(summaryData);
+      } catch (err) {
+        console.error('계약 요약 데이터를 불러오는 중 오류 발생:', err);
+        setError('데이터를 불러오는 중 오류가 발생했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchContractSummary();
+  }, []);
+
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
+
+  if (!data) {
+    return <div>데이터가 없습니다.</div>;
+  }
+
+  const { statusDistribution, totalContractCount, totalProfit, totalLoss } = data;
 
   const totalStatusCount = Object.values(statusDistribution).reduce(
     (sum, count) => sum + count,
@@ -64,7 +92,7 @@ const TotalContractsOverview: React.FC<TotalContractsOverviewProps> = ({
           value={`₩ ${totalProfit.toLocaleString()}`}
         />
         <BasicCard
-          icon='arrowUpRight'
+          icon='triangleAlert'
           label='손실액'
           value={`₩ ${totalLoss.toLocaleString()}`}
         />

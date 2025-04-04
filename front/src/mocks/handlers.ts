@@ -108,6 +108,22 @@ const handlers = [
       }),
     );
   }),
+  rest.get('/api/contract/contracts/summary', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        statusDistribution: {
+          completed: 42,
+          active: 78,
+          default: 12,
+          transferred: 5
+        },
+        totalContractCount: 137,
+        totalProfit: 28750000,
+        totalLoss: 3400000
+      }),
+    );
+  }),
 ];
 
 export default handlers;

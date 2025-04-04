@@ -39,7 +39,7 @@ const ContractsPage = () => {
 
   return (
     <>
-      <TotalContractsOverview data={data} />
+      <TotalContractsOverview />
       <ContractsFilter />
       <ContractsList />
     </>
