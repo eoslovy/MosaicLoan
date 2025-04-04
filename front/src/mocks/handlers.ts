@@ -6,8 +6,8 @@ const handlers = [
       ctx.status(200),
       ctx.json({
         id: 1,
-        username: 'testuser',
-        email: 'test@example.com',
+        name: '김싸피',
+        oauthProvider: 'KAKAO',
       }),
     );
   }),
