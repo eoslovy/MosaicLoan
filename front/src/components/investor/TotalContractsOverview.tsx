@@ -28,7 +28,9 @@ const TotalContractsOverview: React.FC = () => {
       try {
         setIsLoading(true);
         // request.GET을 사용하여 API 요청
-        const summaryData = await request.GET<ContractSummaryResponse>('/api/contract/contracts/summary');
+        const summaryData = await request.GET<ContractSummaryResponse>(
+          '/api/contract/contracts/summary',
+        );
         setData(summaryData);
       } catch (err) {
         console.error('계약 요약 데이터를 불러오는 중 오류 발생:', err);
@@ -42,14 +44,15 @@ const TotalContractsOverview: React.FC = () => {
   }, []);
 
   if (error) {
-    return <div className="error-message">{error}</div>;
+    return <div className='error-message'>{error}</div>;
   }
 
   if (!data) {
     return <div>데이터가 없습니다.</div>;
   }
 
-  const { statusDistribution, totalContractCount, totalProfit, totalLoss } = data;
+  const { statusDistribution, totalContractCount, totalProfit, totalLoss } =
+    data;
 
   const totalStatusCount = Object.values(statusDistribution).reduce(
     (sum, count) => sum + count,

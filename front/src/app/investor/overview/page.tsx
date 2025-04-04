@@ -18,7 +18,9 @@ const OverviewPage = () => {
   useEffect(() => {
     const fetchOverview = async () => {
       try {
-        const result = await request.GET<InvestmentOverviewResponse>('/api/contract/investments/overview');
+        const result = await request.GET<InvestmentOverviewResponse>(
+          '/api/contract/investments/overview',
+        );
         setData(result);
       } catch (e: unknown) {
         if (process.env.NODE_ENV === 'development') {
