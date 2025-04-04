@@ -51,7 +51,7 @@ const useUser = () => {
     };
 
     const timeout = setTimeout(() => {
-      console.error('[useUser] 기다리는 중');
+      console.info('[useUser] 기다리는 중');
       fetchUser();
     }, 1000);
 
