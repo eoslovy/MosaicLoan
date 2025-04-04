@@ -13,6 +13,18 @@ const BorrowerCreditSection: React.FC = () => {
         label='나의 신용점수'
         unitOverride='점'
       />
+      <StatCard
+        icon='trendingUp'
+        value='1250000000'
+        label='대출한도'
+        unitOverride='원'
+      />
+      <StatCard
+        icon='trendingUp'
+        value='8.5'
+        label='적용금리'
+        unitOverride='%'
+      />
     </div>
   );
 };

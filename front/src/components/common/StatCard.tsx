@@ -35,7 +35,7 @@ const StatCard: React.FC<StatCardProps> = ({
     if (!target) return undefined;
 
     const animateCount = () => {
-      const end = parseInt(value.replace(/[^0-9]/g, ''), 10);
+      const end = parseFloat(value.replace(/[^0-9.]/g, ''));
       if (Number.isNaN(end) || end === 0) return;
 
       const duration = 2000;
@@ -44,7 +44,11 @@ const StatCard: React.FC<StatCardProps> = ({
       const step = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        const newValue = Math.floor(progress * end);
+        const decimals = value.includes('.') ? (value.split('.')[1] || '').length : 0;
+        // 소수점 유지
+        const newValue = decimals > 0
+          ? parseFloat((progress * end).toFixed(decimals))
+          : Math.floor(progress * end);
 
         setCount(newValue);
 
@@ -86,7 +90,7 @@ const StatCard: React.FC<StatCardProps> = ({
         <Text
           text={
             unit === '원'
-              ? `₩${count.toLocaleString()}${unit}`
+              ? `₩ ${count.toLocaleString()}` 
               : `${count.toLocaleString()} ${unit}`
           }
           size='text-3xl'
