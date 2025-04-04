@@ -1,49 +1,60 @@
 package com.mosaic.investment.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.core.exception.InternalSystemException;
 import com.mosaic.core.model.Investment;
-import com.mosaic.core.util.TimeUtil;
-import com.mosaic.investment.dto.ApprovedInvestmentDto;
+import com.mosaic.core.model.Loan;
 import com.mosaic.investment.dto.RequestInvestmentDto;
-import com.mosaic.investment.event.message.InvestRequestEvent;
+import com.mosaic.investment.event.message.AccountTransactionPayload;
+import com.mosaic.investment.event.message.ContractTransactionPayload;
 import com.mosaic.investment.event.producer.InvestmentKafkaProducer;
 import com.mosaic.investment.repository.InvestmentRepository;
+import com.mosaic.loan.repository.LoanRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class InvestmentServiceImpl implements InvestmentService {
 
-    InvestmentRepository investmentRepository;
-    InvestmentKafkaProducer investmentProducer;
+    private final InvestmentRepository investmentRepository;
+    private final LoanRepository loanRepository;
+    private final InvestmentKafkaProducer investmentProducer;
 
     @Override
-    public void publishInvestment(RequestInvestmentDto requestDto) throws
-            InternalSystemException,
-            JsonProcessingException {
+    public void publishInvestmentRequest(RequestInvestmentDto requestDto) throws
+            InternalSystemException {
         //TODO 멱등성 : 시간기준 UUID 및 요청별 request막는 ttl 발행
         Integer idempotencyKey = requestDto.hashCode();
-        Investment newInvestment = Investment.builder()
-                .targetRate(requestDto.targetRate())
-                .currentRate(0)
-                .dueDate(TimeUtil.dueDate(TimeUtil.nowDate(), requestDto.targetMonth()))
-                .accountId(requestDto.id())
-                .principal(requestDto.principal())
-                .amount(requestDto.principal())
-                .createdAt(TimeUtil.now())
-                .build();
+        Investment newInvestment = Investment.requestOnlyFormInvestment(requestDto);
         investmentRepository.save(newInvestment);
-        InvestRequestEvent requestEvent = InvestRequestEvent.buildInvest(newInvestment);
-        // pub : 투자 생성 Event 발행
-        // sub : check money exist Listener
-        // 동기 : create Investment
-        investmentProducer.sendLoanCreatedEvent(requestEvent);
+        AccountTransactionPayload requestEvent = AccountTransactionPayload.buildInvest(newInvestment);
+        investmentProducer.sendInvestmentCreatedEvent(requestEvent);
+    }
+
+
+    @Override
+    public void completeInvestmentRequest(AccountTransactionPayload completeInvestmentRequest) throws Exception {
+        Optional<Investment> getNewInvestment = investmentRepository.findById(completeInvestmentRequest.targetId());
+        if (getNewInvestment.isEmpty()) throw new Exception("해당하는 투자계좌 없음 에러");
+        Investment newInvestment = getNewInvestment.get();
+        newInvestment.completeRequest(completeInvestmentRequest);
+        investmentProducer.sendInvestmentConfirmedEvent(completeInvestmentRequest);
     }
 
     @Override
-    public void createInvestment(ApprovedInvestmentDto requestDto) throws InternalSystemException {
+    public void searchLoanAptInvestor(ContractTransactionPayload loanTransactionReq) throws Exception {
+        //Todo 해당 대출 계좌 검색 Exception처리
+        Optional<Loan> targetLoan = loanRepository.findById(loanTransactionReq.targetId());
+        if (targetLoan.isEmpty()) throw new Exception("구현예정");
 
+        //Todo 목표수익률 미만, 투자 잔액 특정금액(MAX(최소기준금액, 본인원금분산비율) 이상 대상계좌 검색 (잔액이 미달량이 클수록)
+
+        //Todo Stream으로 투자금액을 관리하는 Wrapper Dto를 만들어주면 될듯?
+
+        //투자금액이 모이면 Transaction Start;
     }
 }
