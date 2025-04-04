@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import styles from '@/styles/borrowers/LoanDetailSlider.module.scss';
 import Text from '@/components/common/Text';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import Button from '@/components/common/Button';
 
 const loanItems = [
   {
@@ -79,14 +78,6 @@ const LoanDetailSlider = () => {
         </table>
 
         <ChevronRight className={styles.arrow} onClick={handleNext} />
-      </div>
-
-      <div className={styles.buttonWrapper}>
-        <Button
-          label={{ text: '상환하기', size: 'md', color: 'white' }}
-          variant='filled'
-          size='large'
-        />
       </div>
     </div>
   );
