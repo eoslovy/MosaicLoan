@@ -8,7 +8,6 @@ import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.util.backoff.FixedBackOff;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mosaic.accountservice.dto.KafkaEnvelope;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,11 +32,11 @@ public class KafkaConfig {
 	}
 
 	@Bean
-	public ConcurrentKafkaListenerContainerFactory<String, KafkaEnvelope> kafkaListenerContainerFactory(
-		ConsumerFactory<String, KafkaEnvelope> consumerFactory,
+	public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
+		ConsumerFactory<String, Object> consumerFactory,
 		DefaultErrorHandler errorHandler
 	) {
-		var factory = new ConcurrentKafkaListenerContainerFactory<String, KafkaEnvelope>();
+		var factory = new ConcurrentKafkaListenerContainerFactory<String, Object>();
 		factory.setConsumerFactory(consumerFactory);
 		factory.setCommonErrorHandler(errorHandler);
 		return factory;

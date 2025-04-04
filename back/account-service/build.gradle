@@ -26,6 +26,8 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
@@ -34,6 +36,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+bootRun {
+    jvmArgs = ['-Duser.timezone=Asia/Seoul']
 }
 
 tasks.named('test') {
