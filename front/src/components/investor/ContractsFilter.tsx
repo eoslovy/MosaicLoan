@@ -7,10 +7,27 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Select, { MultiValue, StylesConfig } from 'react-select';
 import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 import FilterSelectTable from '@/components/common/FilterSelectTable';
-import type { ContractRow } from '@/types/pages';
 import { subYears, isBefore } from 'date-fns';
 import type { PillVariant } from '@/types/components';
 import Pill from '@/components/common/Pill';
+import request from '@/service/apis/request';
+
+interface Investment {
+  investmentId: number;
+  createdAt: string;
+  investStatus: 'COMPLETED' | 'IN_PROGRESS';
+  totalContractCount: number;
+  statusDistribution: {
+    completed: number;
+    active: number;
+    default: number;
+    transferred: number;
+  };
+}
+
+interface ApiResponse {
+  investments: Investment[];
+}
 
 const typeOptions = [
   { value: 'repayment', label: '상환' },
@@ -30,8 +47,10 @@ const getStatusVariant = (status: string): PillVariant => {
   switch (status) {
     case '완료':
     case '상환완료':
+    case 'COMPLETED':
       return 'repayment-complete';
     case '진행중':
+    case 'IN_PROGRESS':
       return 'repayment-in-progress';
     default:
       return 'repayment-in-progress';
@@ -48,6 +67,45 @@ const ContractsFilter = () => {
     useState<MultiValue<{ label: string; value: string }>>(typeOptions);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+
+  const [investmentData, setInvestmentData] = useState<Investment[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchContrackData = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await request.GET<ApiResponse>(
+        '/api/contract/investments',
+      );
+
+      if (
+        response &&
+        response.investments &&
+        Array.isArray(response.investments)
+      ) {
+        setInvestmentData(response.investments);
+      } else {
+        throw new Error('올바른 형식의 데이터를 받지 못했습니다.');
+      }
+    } catch (err) {
+      console.error('데이터 로딩 중 오류가 발생했습니다:', err);
+      setError('데이터를 불러오는데 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleToggleDetails = async () => {
+    const newIsOpen = !isOpen;
+    setIsOpen(newIsOpen);
+
+    if (newIsOpen && investmentData.length === 0) {
+      fetchContrackData();
+    }
+  };
 
   const handleStartDateChange = (date: Date | null) => {
     if (!date) return;
@@ -76,15 +134,10 @@ const ContractsFilter = () => {
     setSelectedIds((prev) => prev.filter((selectedId) => selectedId !== id));
   };
 
-  const data: ContractRow[] = Array.from({ length: 14 }, (_, idx) => ({
-    id: `mock-${idx + 1}`,
-    name: idx % 2 === 0 ? '투자 A' : '투자 B',
-    count: idx % 2 === 0 ? 5 : 10,
-    startDate: idx % 2 === 0 ? '2024-01-01' : '2024-02-01',
-    status: idx % 2 === 0 ? '진행중' : '완료',
-  }));
-
-  const selectedData = data.filter((row) => selectedIds.includes(row.id));
+  const data = investmentData.length > 0 ? investmentData : [];
+  const selectedData = data.filter((item) =>
+    selectedIds.includes(item.investmentId.toString()),
+  );
 
   return (
     <div className={styles.filterContainer}>
@@ -123,7 +176,7 @@ const ContractsFilter = () => {
           <button
             type='button'
             className={styles.toggleButton}
-            onClick={() => setIsOpen((prev) => !prev)}
+            onClick={handleToggleDetails}
           >
             상세 필터링 설정{' '}
             {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -164,13 +217,18 @@ const ContractsFilter = () => {
             </div>
 
             <div className={styles.selectedData}>
-              {selectedData.map((row) => (
-                <div key={`${row.id}`} className={styles.selectedItem}>
+              {selectedData.map((item) => (
+                <div
+                  key={`${item.investmentId}`}
+                  className={styles.selectedItem}
+                >
                   <Pill
-                    variant={getStatusVariant(row.status)}
-                    onClose={() => handleRemoveSelected(row.id)}
+                    variant={getStatusVariant(item.investStatus)}
+                    onClose={() =>
+                      handleRemoveSelected(item.investmentId.toString())
+                    }
                   >
-                    {row.name}
+                    {`INVESR - ${item.investmentId}`}
                   </Pill>
                 </div>
               ))}

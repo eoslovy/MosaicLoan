@@ -1,5 +1,19 @@
 @use '../variables.scss' as *;
 
+.sliderfooter {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  width: 100%;
+  padding-right: 3rem;
+}
+
+.noLoanMessage {
+  padding: 2rem;
+  text-align: center;
+  width: 100%;
+}
+
 .sliderWrapper {
   width: 100%;
   display: flex;

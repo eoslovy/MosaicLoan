@@ -1,0 +1,152 @@
+@use '../variables.scss' as *;
+
+.modalContent {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.inputWithUnit {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .input {
+    width: 100%;
+    font-size: $text-md;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+  }
+
+  .unit {
+    position: absolute;
+    right: 1rem;
+    font-size: $text-md;
+    color: $text-gray;
+  }
+}
+
+.weeksControl {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  button {
+    width: 2rem;
+    height: 2rem;
+    font-size: $text-lg;
+    background-color: $primary-color;
+    color: white;
+    // border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: darken($primary-color, 5%);
+    }
+  }
+
+  span {
+    font-size: $text-md;
+    font-weight: 500;
+    min-width: 4rem;
+    text-align: center;
+  }
+}
+
+.error {
+  color: red;
+  font-size: $text-sm;
+  font-weight: 500;
+}
+
+.globalErrorToast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background-color: #ff4444;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: $text-sm;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation:
+    slideIn 0.3s ease-out,
+    disappear 0.5s ease-out 3s forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes disappear {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.weeksControl {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem; // 간격 최소화
+
+  button {
+    width: 2rem;
+    height: 2rem;
+    font-size: $text-lg;
+    background-color: $primary-color;
+    color: white;
+    // border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: darken($primary-color, 5%);
+    }
+  }
+
+  .weeksInput {
+    width: 3rem;
+    text-align: center;
+    font-size: $text-md;
+    padding: 0;
+    // border: none;
+    background: transparent;
+    font-weight: 600;
+    color: $text-gray;
+  }
+
+  span {
+    font-size: $text-md;
+    font-weight: 500;
+  }
+}
+
+.dueDate {
+  text-align: center;
+  font-size: $text-sm;
+  color: $text-gray;
+}

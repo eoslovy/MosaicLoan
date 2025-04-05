@@ -6,9 +6,9 @@ import OverviewTable from '@/components/investor/OverviewTable';
 import OverviewInvestSimulation from '@/components/investor/OverviewInvestSimulation';
 import InvestButton from '@/components/investor/InvestButton';
 import EmptyState from '@/components/empty/investor/EmptyState';
-import { fetchInvestmentOverview } from '@/service/apis/investments';
 import InvestorOverviewSkeleton from '@/components/loading/InvestorOverviewSkeleton';
 import type { InvestmentOverviewResponse } from '@/types/pages';
+import request from '@/service/apis/request';
 
 const OverviewPage = () => {
   const [data, setData] = useState<InvestmentOverviewResponse | null>(null);
@@ -18,7 +18,9 @@ const OverviewPage = () => {
   useEffect(() => {
     const fetchOverview = async () => {
       try {
-        const result = await fetchInvestmentOverview();
+        const result = await request.GET<InvestmentOverviewResponse>(
+          '/api/contract/investments/overview',
+        );
         setData(result);
       } catch (e: unknown) {
         if (process.env.NODE_ENV === 'development') {
@@ -48,7 +50,7 @@ const OverviewPage = () => {
   return (
     <>
       <InvestButton />
-      <Overview />
+      <Overview summary={data.summary} />
       <OverviewTable
         investlist={data.investlist}
         profitHistory={data.profitHistory}

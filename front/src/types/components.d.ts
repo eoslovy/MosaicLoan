@@ -63,7 +63,13 @@ export interface ServiceInfoCardProps {
 }
 
 export interface BasicInfoCardProps {
-  icon: 'creditCard' | 'trendingUp' | 'clock' | 'arrowUpRight' | 'percent';
+  icon:
+    | 'creditCard'
+    | 'trendingUp'
+    | 'clock'
+    | 'arrowUpRight'
+    | 'percent'
+    | 'triangleAlert';
   value: string;
   label: string;
 }

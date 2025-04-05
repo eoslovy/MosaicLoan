@@ -15,7 +15,8 @@ const useUser = () => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || isFetched) return;
+    // mock service worker실행할 때는 아래꺼 주석처리 하고, 실제로 할때는 주설 풀어야함..
+    // if (typeof window === 'undefined' || isFetched) return;
 
     const fetchUser = async () => {
       try {
@@ -49,7 +50,12 @@ const useUser = () => {
       }
     };
 
-    fetchUser();
+    const timeout = setTimeout(() => {
+      console.info('[useUser] 기다리는 중');
+      fetchUser();
+    }, 1000);
+
+    return () => clearTimeout(timeout);
   }, [isFetched]);
 
   return { user, isFetched, isLoading, error };

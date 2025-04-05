@@ -5,7 +5,6 @@ const mockEnable = async () => {
   await worker.start({
     onUnhandledRequest: 'bypass',
   });
-
   console.log('[MSW] Mock 서비스 워커 활성화됨');
 };
 
