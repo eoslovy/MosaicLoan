@@ -72,23 +72,20 @@ const ContractsFilter = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleToggleDetails = async () => {
-    const newIsOpen = !isOpen;
-    setIsOpen(newIsOpen);
-    
-    if (newIsOpen && investmentData.length === 0) {
-      fetchContrackData();
-    }
-  };
-
   const fetchContrackData = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      const response = await request.GET<ApiResponse>('/api/contract/investments');
-      
-      if (response && response.investments && Array.isArray(response.investments)) {
+      const response = await request.GET<ApiResponse>(
+        '/api/contract/investments',
+      );
+
+      if (
+        response &&
+        response.investments &&
+        Array.isArray(response.investments)
+      ) {
         setInvestmentData(response.investments);
       } else {
         throw new Error('올바른 형식의 데이터를 받지 못했습니다.');
@@ -96,9 +93,17 @@ const ContractsFilter = () => {
     } catch (err) {
       console.error('데이터 로딩 중 오류가 발생했습니다:', err);
       setError('데이터를 불러오는데 실패했습니다.');
-      
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleToggleDetails = async () => {
+    const newIsOpen = !isOpen;
+    setIsOpen(newIsOpen);
+
+    if (newIsOpen && investmentData.length === 0) {
+      fetchContrackData();
     }
   };
 
@@ -130,7 +135,9 @@ const ContractsFilter = () => {
   };
 
   const data = investmentData.length > 0 ? investmentData : [];
-  const selectedData = data.filter((item) => selectedIds.includes(item.investmentId.toString()));
+  const selectedData = data.filter((item) =>
+    selectedIds.includes(item.investmentId.toString()),
+  );
 
   return (
     <div className={styles.filterContainer}>
@@ -211,10 +218,15 @@ const ContractsFilter = () => {
 
             <div className={styles.selectedData}>
               {selectedData.map((item) => (
-                <div key={`${item.investmentId}`} className={styles.selectedItem}>
+                <div
+                  key={`${item.investmentId}`}
+                  className={styles.selectedItem}
+                >
                   <Pill
                     variant={getStatusVariant(item.investStatus)}
-                    onClose={() => handleRemoveSelected(item.investmentId.toString())}
+                    onClose={() =>
+                      handleRemoveSelected(item.investmentId.toString())
+                    }
                   >
                     {`INVESR - ${item.investmentId}`}
                   </Pill>

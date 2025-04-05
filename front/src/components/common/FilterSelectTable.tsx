@@ -91,7 +91,9 @@ const FilterSelectTable = ({
                     checked={selectedIds.length === data.length}
                     onChange={(e) =>
                       onSelect(
-                        e.target.checked ? data.map((item) => item.investmentId.toString()) : [],
+                        e.target.checked
+                          ? data.map((item) => item.investmentId.toString())
+                          : [],
                       )
                     }
                   />
@@ -114,16 +116,22 @@ const FilterSelectTable = ({
                     <input
                       type='checkbox'
                       id={`select-${item.investmentId}`}
-                      checked={selectedIds.includes(item.investmentId.toString())}
+                      checked={selectedIds.includes(
+                        item.investmentId.toString(),
+                      )}
                       onChange={(e) =>
                         onSelect(
                           e.target.checked
                             ? [...selectedIds, item.investmentId.toString()]
-                            : selectedIds.filter((id) => id !== item.investmentId.toString()),
+                            : selectedIds.filter(
+                                (id) => id !== item.investmentId.toString(),
+                              ),
                         )
                       }
                     />
-                    <span className={styles.srOnly}>{`INVEST - ${item.investmentId} 선택`}</span>
+                    <span
+                      className={styles.srOnly}
+                    >{`INVEST - ${item.investmentId} 선택`}</span>
                   </label>
                 </td>
                 {columns.map((col) => {
@@ -138,19 +146,23 @@ const FilterSelectTable = ({
                   }
 
                   if (col.includes('거래') || col.includes('건수')) {
-                    return <td key={`${item.investmentId}-${col}`}>{item.totalContractCount ?? '-'}</td>;
+                    return (
+                      <td key={`${item.investmentId}-${col}`}>
+                        {item.totalContractCount ?? '-'}
+                      </td>
+                    );
                   }
 
                   if (col.includes('시작')) {
-                    return <td key={`${item.investmentId}-${col}`}>
-                      {new Date(item.createdAt).toISOString().split('T')[0]}
-                    </td>;
+                    return (
+                      <td key={`${item.investmentId}-${col}`}>
+                        {new Date(item.createdAt).toISOString().split('T')[0]}
+                      </td>
+                    );
                   }
 
                   if (col.includes('만기') || col.includes('종료')) {
-                    return (
-                      <td key={`${item.investmentId}-${col}`}>-</td>
-                    );
+                    return <td key={`${item.investmentId}-${col}`}>-</td>;
                   }
 
                   return <td key={`${item.investmentId}-${col}`}>-</td>;

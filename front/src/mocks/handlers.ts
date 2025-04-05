@@ -128,22 +128,20 @@ const handlers = [
     const mockData = {
       investments: Array.from({ length: 14 }, (_, idx) => ({
         investmentId: idx + 1,
-        createdAt: idx % 2 === 0 ? '2024-01-01T00:00:00Z' : '2024-02-01T00:00:00Z',
+        createdAt:
+          idx % 2 === 0 ? '2024-01-01T00:00:00Z' : '2024-02-01T00:00:00Z',
         investStatus: idx % 2 === 0 ? 'IN_PROGRESS' : 'COMPLETED',
         totalContractCount: idx % 2 === 0 ? 5 : 10,
         statusDistribution: {
           completed: idx % 3,
           active: idx % 5,
           default: idx % 2,
-          transferred: 0
-        }
-      }))
+          transferred: 0,
+        },
+      })),
     };
-  
-    return res(
-      ctx.status(200),
-      ctx.json(mockData)
-    );
+
+    return res(ctx.status(200), ctx.json(mockData));
   }),
   rest.get('/api/credit/evaluations/recent', (req, res, ctx) => {
     return res(
