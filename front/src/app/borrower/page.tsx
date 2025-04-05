@@ -10,6 +10,7 @@ import { getLoanOverview, LoanOverviewResponse } from '@/service/apis/borrow';
 
 const BorrowerPage = () => {
   const [loanData, setLoanData] = useState<LoanOverviewResponse | null>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchLoanData = async () => {
@@ -18,23 +19,28 @@ const BorrowerPage = () => {
         setLoanData(data);
       } catch (err) {
         console.error('대출 요약 데이터 불러오기 실패:', err);
+        setError(true);
       }
     };
 
     fetchLoanData();
   }, []);
 
-  if (!loanData) return null; // 로딩 처리 추가 가능
+  const recentLoans = loanData?.recentLoans ?? [];
+  const activeLoanCount = loanData?.activeLoanCount ?? 0;
+  const totalCount = loanData?.totalCount ?? 0;
+  const activeLoanAmount = loanData?.activeLoanAmount ?? 0;
+  const averageInterestRate = loanData?.averageInterestRate ?? 0;
 
   return (
     <>
       <BorrowerCreditSection />
-      <LoanSummarySection recentLoans={loanData.recentLoans} />
+      <LoanSummarySection recentLoans={recentLoans} />
       <LoanOverview
-        activeLoanCount={loanData.activeLoanCount}
-        totalCount={loanData.totalCount}
-        activeLoanAmount={loanData.activeLoanAmount}
-        averageInterestRate={loanData.averageInterestRate}
+        activeLoanCount={activeLoanCount}
+        totalCount={totalCount}
+        activeLoanAmount={activeLoanAmount}
+        averageInterestRate={averageInterestRate}
       />
       <LoanFilter />
       <LoanList />

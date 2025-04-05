@@ -11,7 +11,7 @@ export interface LoanOverviewResponse {
   recentLoans: {
     dueDate: string;
     principal: number;
-    interest: number;
+    interestRate: number;
     amount: number;
   }[];
   activeLoanCount: number;

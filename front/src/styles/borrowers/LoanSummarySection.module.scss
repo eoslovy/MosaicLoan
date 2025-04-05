@@ -1,6 +1,7 @@
 @use '../variables.scss' as *;
 
 .wrapper {
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: 2rem 10vw;
@@ -56,5 +57,63 @@
 
   @media (max-width: 768px) {
     margin-top: 1.5rem;
+  }
+}
+
+/* ✅ 기존 스타일 유지 */
+.errorToast {
+  position: absolute;
+  top: 1rem;
+  right: 2rem;
+  background-color: #ffdddd;
+  color: red;
+  padding: 0.75rem 1rem;
+  border: 1px solid red;
+  border-radius: 8px;
+  font-size: $text-sm;
+  font-weight: 500;
+  z-index: 10;
+}
+
+/* ✅ 개선된 글로벌 토스트 스타일 */
+.globalErrorToast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background-color: #ff4444;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: $text-sm;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  /* ✅ 등장 후 3초 머물렀다가 사라지게 설정 */
+  animation:
+    slideIn 0.3s ease-out,
+    disappear 0.5s ease-out 3s forwards;
+}
+
+/* ✅ 애니메이션 정의 */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes disappear {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
   }
 }
