@@ -7,15 +7,23 @@ interface WeekPickerProps {
   selected: number;
   onChange: (weeks: number, endDate: Date) => void;
   maxWeeks?: number;
+  placeholderText?: string;
 }
 
-const WeekPicker = ({ selected, onChange, maxWeeks = 52 }: WeekPickerProps) => {
+const WeekPicker = ({
+  selected,
+  onChange,
+  maxWeeks = 52,
+  placeholderText = '주차를 선택하세요',
+}: WeekPickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedWeeks, setSelectedWeeks] = useState(selected || 1);
+  const [selectedWeeks, setSelectedWeeks] = useState<number | null>(
+    selected || null,
+  );
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setSelectedWeeks(selected || 1);
+    setSelectedWeeks(selected || null);
   }, [selected]);
 
   useEffect(() => {
@@ -29,9 +37,7 @@ const WeekPicker = ({ selected, onChange, maxWeeks = 52 }: WeekPickerProps) => {
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const calculateEndDate = (weeks: number): Date => {
@@ -56,9 +62,7 @@ const WeekPicker = ({ selected, onChange, maxWeeks = 52 }: WeekPickerProps) => {
     return `${year}-${month}-${day}`;
   };
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleDropdown = () => setIsOpen((prev) => !prev);
 
   return (
     <div className={styles.weekPickerWrapper} ref={dropdownRef}>
@@ -74,8 +78,14 @@ const WeekPicker = ({ selected, onChange, maxWeeks = 52 }: WeekPickerProps) => {
         tabIndex={0}
       >
         <div className={styles.weekText}>
-          <span>{selectedWeeks}주</span>
-          <span> ({formatEndDate(selectedWeeks)})</span>
+          {selectedWeeks ? (
+            <>
+              <span>{selectedWeeks}주</span>
+              <span> ({formatEndDate(selectedWeeks)})</span>
+            </>
+          ) : (
+            <span className={styles.placeholder}>{placeholderText}</span>
+          )}
         </div>
         <span className={`${styles.arrowIcon} ${isOpen ? styles.arrowUp : ''}`}>
           ▼
@@ -87,7 +97,9 @@ const WeekPicker = ({ selected, onChange, maxWeeks = 52 }: WeekPickerProps) => {
           {Array.from({ length: maxWeeks }, (_, i) => i + 1).map((weeks) => (
             <div
               key={weeks}
-              className={`${styles.weekOption} ${selectedWeeks === weeks ? styles.selected : ''}`}
+              className={`${styles.weekOption} ${
+                selectedWeeks === weeks ? styles.selected : ''
+              }`}
               onClick={() => handleWeekSelect(weeks)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -108,6 +120,7 @@ const WeekPicker = ({ selected, onChange, maxWeeks = 52 }: WeekPickerProps) => {
 
 WeekPicker.defaultProps = {
   maxWeeks: 52,
+  placeholderText: '주차를 선택하세요',
 };
 
 export default WeekPicker;
