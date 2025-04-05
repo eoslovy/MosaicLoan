@@ -3,18 +3,13 @@ package com.mosaic.auth.jwt;
 import java.io.IOException;
 import java.util.Date;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.mosaic.auth.domain.Member;
-import com.mosaic.auth.dto.MemberPrincipal;
 import com.mosaic.auth.exception.CookieNotFoundException;
 import com.mosaic.auth.exception.ErrorCode;
 import com.mosaic.auth.exception.InvalidTokenException;
 import com.mosaic.auth.exception.TokenNotFoundException;
-import com.mosaic.auth.repository.MemberRepository;
 import com.mosaic.auth.service.RedisService;
 import com.mosaic.auth.util.CookieUtil;
 
@@ -35,17 +30,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
 	private final RedisService redisService;
-	private final MemberRepository memberRepository;
 
-	// 모든 HTTP 요청에 대해 JWT 토큰 검증 및 인증 처리를 수행
 	@Override
 	protected void doFilterInternal(HttpServletRequest request,
 		HttpServletResponse response,
 		FilterChain filterChain)
 		throws ServletException, IOException {
 
+		// 테스트 엔드포인트 제외
+		String path = request.getRequestURI();
+		if (path.startsWith("/simple-test") || path.startsWith("/no-security") || path.startsWith("/test")) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+
 		try {
-			processAuthentication(request, response);
+			String token = extractToken(request);
+			if (token != null) {
+				Integer memberId = jwtProvider.getMemberIdFromToken(token);
+				validateStoredToken(memberId, token);
+				processTokenRefreshIfNeeded(token, memberId, response);
+			}
 		} catch (TokenNotFoundException e) {
 			log.trace("토큰을 찾을 수 없습니다: {}", e.getMessage());
 		} catch (InvalidTokenException e) {
@@ -55,32 +60,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		filterChain.doFilter(request, response);
-	}
-
-	// 실제 인증 처리를 수행하는 메인 메서드
-	private void processAuthentication(HttpServletRequest request, HttpServletResponse response) {
-		String token = extractToken(request);
-		if (token != null && isValidToken(token)) {
-			Integer memberId = jwtProvider.getMemberIdFromToken(token);
-			validateStoredToken(memberId, token);
-			processTokenRefreshIfNeeded(token, memberId, response);
-			setAuthentication(memberId);
-		}
-	}
-
-	// Spring Security 인증 정보 설정
-	private void setAuthentication(Integer memberId) {
-		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> new InvalidTokenException(ErrorCode.TOKEN_NOT_FOUND));
-		MemberPrincipal memberPrincipal = new MemberPrincipal(member.getId(), member.getName(), member.getOauthProvider());
-		UsernamePasswordAuthenticationToken authentication =
-			new UsernamePasswordAuthenticationToken(memberPrincipal, null, null);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-	}
-
-	// JWT 토큰의 유효성을 검사
-	private boolean isValidToken(String token) {
-		return jwtProvider.validateToken(token) && !redisService.isBlacklisted(token);
 	}
 
 	// Redis에 저장된 토큰과 일치하는지 확인

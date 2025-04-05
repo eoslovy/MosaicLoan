@@ -8,6 +8,14 @@ services:
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-api:${IMAGE_TAG:-local}
     env_file:
       - .env
+    environment:
+      - SPRING_DATASOURCE_URL=${MEMBER_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${MEMBER_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${MEMBER_DATASOURCE_PASSWORD}
+      - SPRING_DATASOURCE_DRIVER-CLASS-NAME=com.mysql.cj.jdbc.Driver
+      - SPRING_JPA_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
     depends_on:
       - member-db
     ports:
