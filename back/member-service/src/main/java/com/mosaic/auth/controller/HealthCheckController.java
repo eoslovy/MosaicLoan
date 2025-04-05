@@ -13,27 +13,27 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 public class HealthCheckController {
 
-    @GetMapping("/health")
-    public ResponseEntity<String> healthCheck() {
-        log.info("헬스 체크 요청이 도착했습니다: /health");
-        return ResponseEntity.ok("OK");
-    }
-    
-    @GetMapping("/no-security")
-    public ResponseEntity<String> noSecurity() {
-        log.info("보안 없는 엔드포인트 요청이 도착했습니다: /no-security");
-        return ResponseEntity.ok("NO SECURITY ENDPOINT WORKS!");
-    }
-    
-    @GetMapping("/simple-test")
-    public ResponseEntity<String> simpleTest() {
-        log.info("간단한 테스트 엔드포인트 요청이 도착했습니다: /simple-test");
-        return ResponseEntity.ok("SIMPLE TEST ENDPOINT WORKS!");
-    }
-    
-    @GetMapping("/test/public")
-    public ResponseEntity<String> testPublic() {
-        log.info("공개 테스트 엔드포인트 요청이 도착했습니다: /test/public");
-        return ResponseEntity.ok("PUBLIC TEST ENDPOINT WORKS!");
-    }
+	@GetMapping("/health")
+	public ResponseEntity<String> healthCheck() {
+		log.info("헬스 체크 요청이 도착했습니다: /health");
+		return ResponseEntity.ok("OK");
+	}
+
+	@GetMapping("/no-security")
+	public ResponseEntity<String> noSecurity() {
+		log.info("보안 없는 엔드포인트 요청이 도착했습니다: /no-security");
+		return ResponseEntity.ok("NO SECURITY ENDPOINT WORKS!");
+	}
+
+	@GetMapping("/simple-test")
+	public ResponseEntity<String> simpleTest() {
+		log.info("간단한 테스트 엔드포인트 요청이 도착했습니다: /simple-test");
+		return ResponseEntity.ok("SIMPLE TEST ENDPOINT WORKS!");
+	}
+	// 이거 테스트 컨트롤러에 같은 url 매핑해둔게 있어서 에러 났었음
+	// @GetMapping("/test/public")
+	// public ResponseEntity<String> testPublic() {
+	//     log.info("공개 테스트 엔드포인트 요청이 도착했습니다: /test/public");
+	//     return ResponseEntity.ok("PUBLIC TEST ENDPOINT WORKS!");
+	// }
 } 

@@ -15,22 +15,22 @@ spring:
     properties:
       hibernate:
         format_sql: true
-    data:
-      redis:
-        host: ${REDIS_HOST}
-        port: ${REDIS_PORT}
-  security:
-    enabled: false
-    filter:
-      dispatcher-types: none
-      order: -2147483648
-  main:
-    allow-bean-definition-overriding: true
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
-      - org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+#  security:
+#    enabled: false
+#    filter:
+#      dispatcher-types: none
+#      order: -2147483648
+#  main:
+#    allow-bean-definition-overriding: true
+#  autoconfigure:
+#    exclude:
+#      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+#      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+#      - org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration
 
 jwt:
   secret: ${JWT_SECRET}

@@ -27,49 +27,61 @@ spring:
       default-filters:
         - AddResponseHeader=X-GATEWAY, docker
       routes:
-        - id: health-check
+        #        - id: health-check
+        #          uri: http://member-api:8080
+        #          predicates:
+        #            - Path=/health
+        #          filters:
+        #            - PreserveHostHeader
+        #
+        #        - id: no-security-api
+        #          uri: http://member-api:8080
+        #          predicates:
+        #            - Path=/no-security/**,/simple-test/**,/test/**,/api/test/**,/v3/api-docs/**,/swagger-ui/**
+        #          filters:
+        #            - PreserveHostHeader
+        #
+        #        - id: simple-test-api
+        #          uri: http://member-api:8080
+        #          predicates:
+        #            - Path=/simple-test
+        #
+        #        - id: test-api-public
+        #          uri: http://member-api:8080
+        #          predicates:
+        #            - Path=/api/test/public
+        #            - Path=/api/test/public/**
+        #          filters:
+        #            - StripPrefix=1
+
+        - id: test-public-api
           uri: http://member-api:8080
           predicates:
-            - Path=/health
-          filters:
-            - PreserveHostHeader
-        
-        - id: no-security-api
-          uri: http://member-api:8080
-          predicates:
-            - Path=/no-security/**,/simple-test/**,/test/**,/api/test/**,/v3/api-docs/**,/swagger-ui/**
-          filters:
-            - PreserveHostHeader
-            
-        - id: simple-test-api
-          uri: http://member-api:8080
-          predicates:
-            - Path=/simple-test
-            
-        - id: test-api-public
-          uri: http://member-api:8080
-          predicates:
-            - Path=/api/test/public/**
+            - Path=/api/member/test/public/**
           filters:
             - StripPrefix=2
 
         - id: test-api
           uri: http://member-api:8080
           predicates:
-            - Path=/api/test/**
+            - Path=/api/member/test/**
           filters:
             - StripPrefix=2
             - name: JwtAuthentication
 
-        - id: auth-api
-          uri: http://member-api:8080
-          predicates:
-            - Path=/auth/**
 
-        - id: member-api
+        - id: member-api-auth
           uri: http://member-api:8080
           predicates:
-            - Path=/api/members/**
+            - Path=/api/member/auth/**
+          filters:
+            - PreserveHostHeader
+            - StripPrefix=2
+
+        - id: member-api-need-auth
+          uri: http://member-api:8080
+          predicates:
+            - Path=/api/member/**
           filters:
             - PreserveHostHeader
             - StripPrefix=2
