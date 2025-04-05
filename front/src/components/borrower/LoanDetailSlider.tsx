@@ -5,46 +5,39 @@ import styles from '@/styles/borrowers/LoanDetailSlider.module.scss';
 import Text from '@/components/common/Text';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const loanItems = [
-  {
-    dueDate: '2025-03-08',
-    principal: 15000000,
-    interest: 10000000,
-    total: 25000000,
-    dDay: 600,
-  },
-  {
-    dueDate: '2025-05-10',
-    principal: 12000000,
-    interest: 9000000,
-    total: 21000000,
-    dDay: 450,
-  },
-  {
-    dueDate: '2025-07-15',
-    principal: 18000000,
-    interest: 11000000,
-    total: 29000000,
-    dDay: 320,
-  },
-];
+interface Props {
+  recentLoans: {
+    dueDate: string;
+    principal: number;
+    interest: number;
+    amount: number;
+  }[];
+}
 
-const LoanDetailSlider = () => {
+const LoanDetailSlider = ({ recentLoans }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const currentLoan = loanItems[currentIndex];
+  const currentLoan = recentLoans[currentIndex];
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : loanItems.length - 1));
+    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : recentLoans.length - 1));
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev < loanItems.length - 1 ? prev + 1 : 0));
+    setCurrentIndex((prev) => (prev < recentLoans.length - 1 ? prev + 1 : 0));
+  };
+
+  // 날짜 차이 계산
+  const getDDay = (dueDate: string) => {
+    const now = new Date();
+    const due = new Date(dueDate);
+    const diffTime = due.getTime() - now.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // 일 수
   };
 
   return (
     <div className={styles.sliderWrapper}>
       <Text
-        text={`진행중인 대출 (${loanItems.length}건)`}
+        text={`진행중인 대출 (${recentLoans.length}건)`}
         size='lg'
         weight='bold'
         color='primary-blue'
@@ -52,14 +45,15 @@ const LoanDetailSlider = () => {
 
       <div className={styles.tableWrapper}>
         <ChevronLeft className={styles.arrow} onClick={handlePrev} />
-
         <table className={styles.table}>
           <tbody>
             <tr>
               <td>상환 예정일</td>
               <td colSpan={2}>
                 {currentLoan.dueDate}
-                <span className={styles.badge}>D-{currentLoan.dDay}</span>
+                <span className={styles.badge}>
+                  D-{getDDay(currentLoan.dueDate)}
+                </span>
               </td>
             </tr>
             <tr>
@@ -72,11 +66,14 @@ const LoanDetailSlider = () => {
             </tr>
             <tr>
               <td>총 상환액</td>
-              <td colSpan={2}>{currentLoan.total.toLocaleString()}</td>
+              <td colSpan={2}>
+                {(
+                  currentLoan.principal + currentLoan.interest
+                ).toLocaleString()}
+              </td>
             </tr>
           </tbody>
         </table>
-
         <ChevronRight className={styles.arrow} onClick={handleNext} />
       </div>
     </div>

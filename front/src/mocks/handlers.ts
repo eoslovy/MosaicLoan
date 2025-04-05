@@ -144,6 +144,49 @@ const handlers = [
       }),
     );
   }),
+  rest.get('/api/contract/loans/overview', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        recentLoans: [
+          {
+            dueDate: '2025-05-06',
+            principal: 10000000,
+            interest: 2500000,
+            amount: 12500000,
+          },
+          {
+            dueDate: '2025-06-15',
+            principal: 8000000,
+            interest: 1600000,
+            amount: 9600000,
+          },
+          {
+            dueDate: '2025-07-10',
+            principal: 12000000,
+            interest: 3000000,
+            amount: 15000000,
+          },
+          {
+            dueDate: '2025-08-01',
+            principal: 5000000,
+            interest: 1000000,
+            amount: 6000000,
+          },
+          // {
+          //   dueDate: '2025-08-25',
+          //   principal: 7000000,
+          //   interest: 1400000,
+          //   amount: 8400000,
+          // },
+        ],
+        activeLoanCount: 4,
+        totalCount: 9,
+        activeLoanAmount: 43500000,
+        averageInterestRate: 820, // 8.2%
+      }),
+    );
+  }),
 ];
 
 export default handlers;
