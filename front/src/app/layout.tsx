@@ -21,7 +21,7 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   const router = useRouter();
-  useUser(); // ✅ 전역에서 로그인 상태 확인
+  useUser(); // 전역에서 로그인 상태 확인
 
   useEffect(() => {
     const onUnauthorized = () => router.replace('/');

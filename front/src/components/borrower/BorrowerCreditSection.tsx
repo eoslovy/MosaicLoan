@@ -3,14 +3,12 @@
 import { useEffect, useState } from 'react';
 import StatCard from '@/components/common/StatCard';
 import styles from '@/styles/uis/StatsSection.module.scss';
-import request from '@/service/apis/request';
-import Button from '@/components/common/Button';
-
-interface CreditEvaluation {
-  maxLoanLimit: number;
-  interestRate: number; // 만분율 (예: 850 => 8.5%)
-  creditScore: number;  // 0 ~ 1000
-}
+import {
+  getRecentCreditEvaluation,
+  CreditEvaluation,
+} from '@/service/apis/borrow';
+// import Button from '@/components/common/Button';
+import BorrowButton from '@/components/borrower/BorrowButton';
 
 const BorrowerCreditSection = () => {
   const [data, setData] = useState<CreditEvaluation | null>(null);
@@ -19,9 +17,7 @@ const BorrowerCreditSection = () => {
   useEffect(() => {
     const fetchCredit = async () => {
       try {
-        const result = await request.GET<CreditEvaluation>(
-          '/api/credit/evaluations/recent',
-        );
+        const result = await getRecentCreditEvaluation();
         setData(result);
       } catch (e) {
         console.error('신용 평가 데이터를 불러오지 못했습니다.', e);
@@ -34,14 +30,10 @@ const BorrowerCreditSection = () => {
 
   if (isError) {
     return (
-      <div className={styles.singleCardWrapper}>
-        <Button
-              label={{ text: '신용평가하기', size: 'sm', color: 'white' }}
-              variant='filled'
-              size='normal'
-            />
+      <div className={`${styles.singleCardWrapper} ${styles.errorState}`}>
+        <BorrowButton />
       </div>
-    )
+    );
   }
 
   if (!data) {
@@ -51,22 +43,22 @@ const BorrowerCreditSection = () => {
   return (
     <div className={styles.singleCardWrapper}>
       <StatCard
-        icon="trendingUp"
+        icon='trendingUp'
         value={data.creditScore.toLocaleString()}
-        label="나의 신용점수"
-        unitOverride="점"
+        label='나의 신용점수'
+        unitOverride='점'
       />
       <StatCard
-        icon="trendingUp"
+        icon='trendingUp'
         value={data.maxLoanLimit.toLocaleString()}
-        label="대출한도"
-        unitOverride="원"
+        label='대출한도'
+        unitOverride='원'
       />
       <StatCard
-        icon="trendingUp"
+        icon='trendingUp'
         value={(data.interestRate / 100).toFixed(2)}
-        label="적용금리"
-        unitOverride="%"
+        label='적용금리'
+        unitOverride='%'
       />
     </div>
   );

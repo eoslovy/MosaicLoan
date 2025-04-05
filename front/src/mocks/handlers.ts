@@ -128,9 +128,19 @@ const handlers = [
     return res(
       ctx.status(200),
       ctx.json({
-        maxLoanLimit: 125000,
-        interestRate: 630, // 만분율: 8.5%
-        creditScore: 800, // 신용점수
+        maxLoanLimit: 123000,
+        interestRate: 90,
+        creditScore: 850,
+      }),
+    );
+  }),
+  rest.post('/api/evaluations', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        createdAt: new Date().toISOString(),
+        maxLoanLimit: 1000000,
+        interestRate: 90,
       }),
     );
   }),
