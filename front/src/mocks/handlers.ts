@@ -124,6 +124,16 @@ const handlers = [
       }),
     );
   }),
+  rest.get('/api/credit/evaluations/recent', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        maxLoanLimit: 125000,
+        interestRate: 630, // 만분율: 8.5%
+        creditScore: 800, // 신용점수
+      }),
+    );
+  }),
 ];
 
 export default handlers;
