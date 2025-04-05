@@ -11,4 +11,16 @@ public interface AccountTransactionService {
 	void handleInvestmentDeposit(AccountTransactionPayload payload) throws JsonProcessingException;
 
 	void handleInvestmentWithdrawal(AccountTransactionPayload payload) throws JsonProcessingException;
+
+	void handleLoanDeposit(AccountTransactionPayload payload) throws JsonProcessingException;
+
+	void handleLoanWithdrawal(AccountTransactionPayload payload) throws JsonProcessingException;
+
+	void compensateInvestmentDepositFailure(AccountTransactionPayload payload) throws JsonProcessingException;
+
+	void compensateInvestmentWithdrawalFailure(AccountTransactionPayload payload) throws JsonProcessingException;
+
+	void compensateLoanDepositFailure(AccountTransactionPayload payload) throws JsonProcessingException;
+
+	void compensateLoanWithdrawalFailure(AccountTransactionPayload payload) throws JsonProcessingException;
 }
