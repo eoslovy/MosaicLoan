@@ -7,6 +7,12 @@ export interface CreditEvaluation {
   createdAt?: string;
 }
 
+export interface PostLoanRequestBody {
+  id: number;
+  requestAmount: number;
+  targetWeeks: number;
+}
+
 export interface LoanOverviewResponse {
   recentLoans: {
     dueDate: string;
@@ -30,4 +36,8 @@ export const getRecentCreditEvaluation = async () => {
 
 export const getLoanOverview = async () => {
   return request.GET<LoanOverviewResponse>('/api/contract/loans/overview');
+};
+
+export const postLoanRequest = async (data: PostLoanRequestBody) => {
+  return request.POST('/api/contract/loans/', data);
 };

@@ -187,6 +187,22 @@ const handlers = [
       }),
     );
   }),
+  rest.post('/api/contract/loans/', async (req, res, ctx) => {
+    const { id, requestAmount, targetWeeks } = await req.json();
+    const now = new Date();
+    const dueDate = new Date();
+    dueDate.setDate(now.getDate() + targetWeeks * 7);
+
+    return res(
+      ctx.status(200),
+      ctx.json({
+        id,
+        requestAmount,
+        dueDate: dueDate.toISOString().split('T')[0],
+        createdAt: now.toISOString(),
+      }),
+    );
+  }),
 ];
 
 export default handlers;

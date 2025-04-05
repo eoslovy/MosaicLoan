@@ -6,7 +6,7 @@ import './globals.css';
 import Nav from '@/components/layout/Nav';
 import { useRouter } from 'next/navigation';
 import Msw from '@/mocks/Msw';
-import useUser from '@/hooks/useUser'; // ✅ 추가!
+import useUser from '@/hooks/useUser';
 
 const notoSansKR = Noto_Sans_KR({
   subsets: ['latin'],

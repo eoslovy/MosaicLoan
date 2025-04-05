@@ -10,9 +10,6 @@ import InvestmentCalculator from '@/components/ui/InvestmentCalculator';
 const Home = () => (
   <div className='w-full flex flex-col'>
     {/* 메인 콘텐츠 */}
-    {/* <main className='flex flex-col gap-0 px-6 sm:px-10 pt-0 items-center sm:items-start'>
-    </main> */}
-
     <main>
       <Hero />
       <StatsSection />
