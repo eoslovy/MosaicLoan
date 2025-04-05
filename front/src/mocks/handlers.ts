@@ -124,6 +124,27 @@ const handlers = [
       }),
     );
   }),
+  rest.get('/api/contract/investments', (req, res, ctx) => {
+    const mockData = {
+      investments: Array.from({ length: 14 }, (_, idx) => ({
+        investmentId: idx + 1,
+        createdAt: idx % 2 === 0 ? '2024-01-01T00:00:00Z' : '2024-02-01T00:00:00Z',
+        investStatus: idx % 2 === 0 ? 'IN_PROGRESS' : 'COMPLETED',
+        totalContractCount: idx % 2 === 0 ? 5 : 10,
+        statusDistribution: {
+          completed: idx % 3,
+          active: idx % 5,
+          default: idx % 2,
+          transferred: 0
+        }
+      }))
+    };
+  
+    return res(
+      ctx.status(200),
+      ctx.json(mockData)
+    );
+  }),
 ];
 
 export default handlers;
