@@ -154,7 +154,11 @@ const handlers = [
       }),
     );
   }),
-  rest.post('/api/evaluations', (req, res, ctx) => {
+  rest.post('/api/evaluations', async (req, res, ctx) => {
+    const { appliedAt, memberId } = await req.json();
+
+    console.log(`신용평가 req - memberId: ${memberId}, 날짜: ${appliedAt}`);
+
     return res(
       ctx.status(200),
       ctx.json({
@@ -164,6 +168,7 @@ const handlers = [
       }),
     );
   }),
+
   rest.get('/api/contract/loans/overview', (req, res, ctx) => {
     return res(
       ctx.status(200),

@@ -7,37 +7,43 @@ import {
   getRecentCreditEvaluation,
   CreditEvaluation,
 } from '@/service/apis/borrow';
-// import Button from '@/components/common/Button';
 import BorrowButton from '@/components/borrower/BorrowButton';
 
-const BorrowerCreditSection = () => {
+const BorrowerCreditSection = ({ onComplete }: { onComplete: () => void }) => {
   const [data, setData] = useState<CreditEvaluation | null>(null);
   const [isError, setIsError] = useState(false);
 
-  useEffect(() => {
-    const fetchCredit = async () => {
-      try {
-        const result = await getRecentCreditEvaluation();
-        setData(result);
-      } catch (e) {
-        console.error('신용 평가 데이터를 불러오지 못했습니다.', e);
-        setIsError(true);
-      }
-    };
+  const fetchCredit = async () => {
+    console.log('[DEBUG] BorrowerCreditSection mounted');
+    try {
+      const result = await getRecentCreditEvaluation();
+      setData(result);
+      setIsError(false);
+    } catch (e) {
+      console.error('신용 평가 데이터를 불러오지 못했습니다.', e);
+      setIsError(true);
+    }
+  };
 
+  useEffect(() => {
     fetchCredit();
   }, []);
 
   if (isError) {
     return (
       <div className={`${styles.singleCardWrapper} ${styles.errorState}`}>
-        <BorrowButton />
+        <BorrowButton
+          onComplete={() => {
+            onComplete();
+            fetchCredit();
+          }}
+        />
       </div>
     );
   }
 
   if (!data) {
-    return <div>Loading...</div>; // 혹은 Skeleton 처리
+    return <div>Loading...</div>;
   }
 
   return (
