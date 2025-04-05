@@ -1,18 +1,18 @@
 package com.mosaic.investment.event.util;
 
 public enum KafkaTopic {
-	INVESTMENT_CREATED("invest.created"),
-	INVESTMENT_PAID("invest.paid"),
-	CONTRACT_APPROVED("contract.approved"),
-	LOAN_CREATED("loan.created");
+    INVESTMENT_CREATED("invest.created"),
+    INVESTMENT_PAID("invest.paid"),
+    CONTRACT_APPROVED("contract.approved"),
+    LOAN_CREATED("loan.created");
 
-	private final String topic;
+    private final String topic;
 
-	KafkaTopic(String topic) {
-		this.topic = topic;
-	}
+    KafkaTopic(String topic) {
+        this.topic = topic;
+    }
 
-	public String value() {
-		return topic;
-	}
+    public String value() {
+        return topic;
+    }
 }

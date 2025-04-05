@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mosaic.investment.event.message.InvestRequestEvent;
+import com.mosaic.payload.AccountTransactionPayload;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +15,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InvestmentKafkaProducer {
 
-	private static final String INVEST_CREATE = "invest.create.request";
+	private static final String INVEST_REQUESTED = "investment.deposit.requested";
+	private static final String INVEST_REJECTED = "investment.deposit.failed";
 	private final KafkaTemplate<String, String> kafkaTemplate;
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper kafkaObjectMapper;
 
-	public void sendLoanCreatedEvent(InvestRequestEvent event) throws JsonProcessingException {
-		kafkaTemplate.send(INVEST_CREATE, objectMapper.writeValueAsString(event));
+	public void sendInvestmentCreatedEvent(AccountTransactionPayload payload) throws JsonProcessingException {
+		kafkaTemplate.send(INVEST_REQUESTED, kafkaObjectMapper.writeValueAsString(payload));
+	}
+
+	public void sendInvestmentRejectedEvent(AccountTransactionPayload payload) throws JsonProcessingException {
+		kafkaTemplate.send(INVEST_REJECTED, kafkaObjectMapper.writeValueAsString(payload));
 	}
 }

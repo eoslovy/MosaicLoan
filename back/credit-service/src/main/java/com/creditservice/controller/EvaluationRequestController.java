@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/evaluations")
+@RequestMapping("/evaluations")
 public class EvaluationRequestController {
 
 	private final EvaluationRequestService evaluationRequestService;
