@@ -2,15 +2,37 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from '@/styles/components/FilterSelectTable.module.scss';
-import type { FilterSelectTableProps, PillVariant } from '@/types/components';
+import type { PillVariant } from '@/types/components';
 import Pill from '@/components/common/Pill';
+
+interface Investment {
+  investmentId: number;
+  createdAt: string;
+  investStatus: 'COMPLETED' | 'IN_PROGRESS';
+  totalContractCount: number;
+  statusDistribution: {
+    completed: number;
+    active: number;
+    default: number;
+    transferred: number;
+  };
+}
+
+interface FilterSelectTableProps {
+  data: Investment[];
+  selectedIds: string[];
+  onSelect: (ids: string[]) => void;
+  columns: string[];
+}
 
 const getStatusVariant = (status: string | undefined): PillVariant => {
   switch (status) {
     case '완료':
     case '상환완료':
+    case 'COMPLETED':
       return 'repayment-complete';
     case '진행중':
+    case 'IN_PROGRESS':
       return 'repayment-in-progress';
     default:
       return 'repayment-in-progress';
@@ -29,7 +51,7 @@ const FilterSelectTable = ({
     if (allSelected) {
       onSelect([]);
     } else {
-      onSelect(data.map((row) => row.id));
+      onSelect(data.map((item) => item.investmentId.toString()));
     }
   };
 
@@ -69,7 +91,7 @@ const FilterSelectTable = ({
                     checked={selectedIds.length === data.length}
                     onChange={(e) =>
                       onSelect(
-                        e.target.checked ? data.map((row) => row.id) : [],
+                        e.target.checked ? data.map((item) => item.investmentId.toString()) : [],
                       )
                     }
                   />
@@ -82,54 +104,56 @@ const FilterSelectTable = ({
             </tr>
           </thead>
           <tbody>
-            {data.map((row) => (
-              <tr key={row.id}>
+            {data.map((item) => (
+              <tr key={item.investmentId}>
                 <td className={styles.checkboxCell}>
                   <label
-                    htmlFor={`select-${row.id}`}
+                    htmlFor={`select-${item.investmentId}`}
                     className={styles.checkboxLabel}
                   >
                     <input
                       type='checkbox'
-                      id={`select-${row.id}`}
-                      checked={selectedIds.includes(row.id)}
+                      id={`select-${item.investmentId}`}
+                      checked={selectedIds.includes(item.investmentId.toString())}
                       onChange={(e) =>
                         onSelect(
                           e.target.checked
-                            ? [...selectedIds, row.id]
-                            : selectedIds.filter((id) => id !== row.id),
+                            ? [...selectedIds, item.investmentId.toString()]
+                            : selectedIds.filter((id) => id !== item.investmentId.toString()),
                         )
                       }
                     />
-                    <span className={styles.srOnly}>{`${row.name} 선택`}</span>
+                    <span className={styles.srOnly}>{`INVEST - ${item.investmentId} 선택`}</span>
                   </label>
                 </td>
                 {columns.map((col) => {
                   if (col.includes('명')) {
                     return (
-                      <td key={`${row.id}-${col}`}>
-                        <Pill variant={getStatusVariant(row.status)}>
-                          {row.name}
+                      <td key={`${item.investmentId}-${col}`}>
+                        <Pill variant={getStatusVariant(item.investStatus)}>
+                          {`INVESR - ${item.investmentId}`}
                         </Pill>
                       </td>
                     );
                   }
 
                   if (col.includes('거래') || col.includes('건수')) {
-                    return <td key={`${row.id}-${col}`}>{row.count ?? '-'}</td>;
+                    return <td key={`${item.investmentId}-${col}`}>{item.totalContractCount ?? '-'}</td>;
                   }
 
                   if (col.includes('시작')) {
-                    return <td key={`${row.id}-${col}`}>{row.startDate}</td>;
+                    return <td key={`${item.investmentId}-${col}`}>
+                      {new Date(item.createdAt).toISOString().split('T')[0]}
+                    </td>;
                   }
 
                   if (col.includes('만기') || col.includes('종료')) {
                     return (
-                      <td key={`${row.id}-${col}`}>{row.endDate ?? '-'}</td>
+                      <td key={`${item.investmentId}-${col}`}>-</td>
                     );
                   }
 
-                  return <td key={`${row.id}-${col}`}>-</td>;
+                  return <td key={`${item.investmentId}-${col}`}>-</td>;
                 })}
               </tr>
             ))}
