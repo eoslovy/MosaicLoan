@@ -1,17 +1,20 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Modal from '@/components/common/Modal';
 import Button from '@/components/common/Button';
 import Text from '@/components/common/Text';
 import styles from '@/styles/my/AccountModal.module.scss';
 import useAccountStore from '@/stores/accountStore';
+import request from '@/service/apis/request';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   type: 'charge' | 'withdraw';
   openChargeModal?: () => void;
+  setToast?: (msg: string | null) => void;
 }
 
 const formatBalance = (amount: number): string => {
@@ -29,6 +32,7 @@ const AccountModal = ({
   onClose,
   type,
   openChargeModal = undefined,
+  setToast = undefined,
 }: Props) => {
   const { balance } = useAccountStore();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -37,6 +41,7 @@ const AccountModal = ({
   const [isBlurred, setIsBlurred] = useState(false);
   const [amount, setAmount] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (isOpen) {
@@ -78,10 +83,36 @@ const AccountModal = ({
     amount % 1000 === 0 &&
     (type === 'charge' || amount <= balance);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isValidAmount) return;
 
-    console.log(`[${type}] 요청 금액: ${amount.toLocaleString()}원`);
+    if (type === 'charge') {
+      try {
+        const res = await request.POST<{ redirectUrl: string }>(
+          '/api/account/external/deposit/ready',
+          { amount },
+        );
+
+        if (res?.redirectUrl && res.redirectUrl !== '') {
+          window.location.href = res.redirectUrl;
+        } else {
+          setToast?.('결제 페이지 요청에 실패했습니다.');
+        }
+      } catch (e) {
+        console.error('충전 요청 실패:', e);
+        setToast?.('충전 중 오류가 발생했습니다.');
+      }
+    } else {
+      try {
+        await request.POST('/api/account/external/withdrawal', { amount });
+        // setToast?.('출금이 완료되었습니다.');
+        router.refresh();
+      } catch (e) {
+        console.error('출금 요청 실패:', e);
+        setToast?.('출금 중 오류가 발생했습니다.');
+      }
+    }
+
     onClose();
   };
 
@@ -175,6 +206,7 @@ const AccountModal = ({
 
 AccountModal.defaultProps = {
   openChargeModal: undefined,
+  setToast: undefined,
 };
 
 export default AccountModal;

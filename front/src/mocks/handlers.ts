@@ -237,6 +237,35 @@ const handlers = [
       }),
     );
   }),
+  rest.post('/api/account/external/deposit/ready', async (req, res, ctx) => {
+    const { amount } = await req.json();
+
+    if (!amount || amount < 1000) {
+      return res(
+        ctx.status(400),
+        ctx.json({ message: '금액이 유효하지 않습니다.' }),
+      );
+    }
+
+    return res(
+      ctx.status(200),
+      ctx.json({
+        redirectUrl: '/my/myAccount',
+      }),
+    );
+  }),
+  rest.post('/api/account/external/withdrawal', async (req, res, ctx) => {
+    const { amount } = await req.json();
+
+    if (!amount || amount < 1000) {
+      return res(
+        ctx.status(400),
+        ctx.json({ message: '출금 금액이 유효하지 않습니다.' }),
+      );
+    }
+
+    return res(ctx.status(200), ctx.json({ success: true }));
+  }),
 ];
 
 export default handlers;

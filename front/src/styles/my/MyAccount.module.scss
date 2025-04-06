@@ -20,7 +20,6 @@
   transform-style: preserve-3d;
   transition: transform 0.8s ease;
 
-  // ✅ hover 시 회전
   &:hover {
     transform: rotateY(180deg);
   }
@@ -127,5 +126,44 @@
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+.globalErrorToast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background-color: #ff4444;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation:
+    slideIn 0.3s ease-out,
+    disappear 0.5s ease-out 3s forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes disappear {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
   }
 }

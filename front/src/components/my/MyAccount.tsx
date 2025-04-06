@@ -26,7 +26,16 @@ const MyAccount = () => {
   const [isChargeOpen, setIsChargeOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!toast) return undefined;
+
+    const timer = setTimeout(() => setToast(null), 3000);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
+  // 잔액 조회
   useEffect(() => {
     const fetchBalance = async () => {
       try {
@@ -45,6 +54,8 @@ const MyAccount = () => {
 
   return (
     <>
+      {toast && <div className={styles.globalErrorToast}>{toast}</div>}
+
       <section className={styles.container}>
         <div
           className={`${styles.card} ${isFlipped ? styles.flipped : ''}`}
@@ -95,6 +106,7 @@ const MyAccount = () => {
         isOpen={isChargeOpen}
         onClose={() => setIsChargeOpen(false)}
         type='charge'
+        setToast={setToast}
       />
       <AccountModal
         isOpen={isWithdrawOpen}
@@ -102,8 +114,9 @@ const MyAccount = () => {
         type='withdraw'
         openChargeModal={() => {
           setIsWithdrawOpen(false);
-          setTimeout(() => setIsChargeOpen(true), 300); // 부드러운 전환
+          setTimeout(() => setIsChargeOpen(true), 300);
         }}
+        setToast={setToast}
       />
     </>
   );
