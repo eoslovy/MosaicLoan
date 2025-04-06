@@ -112,7 +112,7 @@ public class LoanServiceImpl implements LoanService {
         if (repaidAmountResidue.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalStateException("받은 돈보다 더 많이 분배했습니다.");
         }
-
+        //TODO 현재투자 수익률 재조정식
         //이자상환
         //Transaction만들기
 
