@@ -10,6 +10,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -44,6 +46,10 @@ public class Investment {
     @Column(name = "principal", precision = 18, scale = 5)
     private BigDecimal principal;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "investment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Contract> contracts = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private InvestmentStatus status;
@@ -72,7 +78,7 @@ public class Investment {
     public void unFinishInvestment() {
         this.status = InvestmentStatus.ACTIVE;
     }
-    public BigDecimal withDrawAll(){
+    public BigDecimal withdrawAll(){
         BigDecimal amount = this.amount;
         this.amount = BigDecimal.ZERO;
         return amount;

@@ -1,9 +1,11 @@
 package com.mosaic.core.model;
 
 import com.mosaic.core.model.status.ContractTransactionType;
+import com.mosaic.core.util.TimeUtil;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -23,7 +25,7 @@ public class ContractTransaction {
     private Contract contract;
 
     @Column(name = "amount")
-    private Integer amount;
+    private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
@@ -32,4 +34,14 @@ public class ContractTransaction {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    public void setContract(Contract contract) {
+        this.contract = contract;
+    }
+
+    public static ContractTransaction buildRepayPrincipalTransaction(Contract contract, BigDecimal repaidAmount) {
+        return ContractTransaction.builder().contract(contract).amount(repaidAmount).createdAt(TimeUtil.now()).type(ContractTransactionType.PRINCIPAL).build();
+    }
+    public static ContractTransaction buildRepayInterestTransaction(Contract contract, BigDecimal repaidAmount) {
+        return ContractTransaction.builder().contract(contract).amount(repaidAmount).createdAt(TimeUtil.now()).type(ContractTransactionType.INTEREST).build();
+    }
 }

@@ -1,6 +1,8 @@
 package com.mosaic.payload;
 
 import com.mosaic.core.model.Investment;
+import com.mosaic.core.model.Loan;
+import com.mosaic.core.util.TimeUtil;
 import com.mosaic.investment.dto.RequestInvestmentDto;
 
 import java.math.BigDecimal;
@@ -22,6 +24,24 @@ public record AccountTransactionPayload(Integer accountId, Integer targetId, Big
 				investment.getId(),
 				amountWithdraw,
 				investment.getCreatedAt()
+		);
+	}
+
+	public static AccountTransactionPayload buildLoanWithdrawal(Loan loan, BigDecimal withdrawnAmount) {
+		return new AccountTransactionPayload(
+				loan.getAccountId(),
+				loan.getId(),
+				withdrawnAmount,
+				TimeUtil.now()
+		);
+	}
+
+	public static AccountTransactionPayload buildLoanRepay(Loan loan, BigDecimal moneyToRepay) {
+		return new AccountTransactionPayload(
+				loan.getAccountId(),
+				loan.getId(),
+				moneyToRepay,
+				TimeUtil.now()
 		);
 	}
 }

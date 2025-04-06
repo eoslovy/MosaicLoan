@@ -7,6 +7,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,6 +29,9 @@ public class Contract {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "investment_id", nullable = false)
     private Investment investment;
+    @Builder.Default
+    @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<ContractTransaction> contractTransactions = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -52,4 +57,21 @@ public class Contract {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    public void addInterestAmountToOutstandingAmount(BigDecimal interest) {
+        this.outstandingAmount = this.outstandingAmount.add(interest);
+    }
+
+    public void updateOutstandingAmountAfterInterestRepaid(BigDecimal calculatedTotalInterest, BigDecimal repaidInterest) {
+        this.outstandingAmount = this.outstandingAmount.add(amount).subtract(repaidInterest);
+    }
+
+    public void putTransaction(ContractTransaction interestTransaction) {
+        interestTransaction.setContract(this);
+        contractTransactions.add(interestTransaction);
+    }
+
+    public void updateOutstandingAmountAfterPrincipalRepaid(ContractTransaction principalTransaction) {
+        this.outstandingAmount = this.outstandingAmount.subtract(principalTransaction.getAmount());
+    }
 }
