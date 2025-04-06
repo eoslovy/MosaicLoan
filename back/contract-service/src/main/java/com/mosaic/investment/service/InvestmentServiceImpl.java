@@ -14,10 +14,10 @@ import com.mosaic.investment.event.producer.InvestmentKafkaProducer;
 import com.mosaic.investment.exception.InvestmentNotFoundException;
 import com.mosaic.investment.repository.InvestmentQueryRepository;
 import com.mosaic.investment.repository.InvestmentRepository;
+import com.mosaic.loan.event.message.LoanCreateTransactionPayload;
 import com.mosaic.loan.exception.LoanNotFoundException;
 import com.mosaic.loan.repository.LoanRepository;
 import com.mosaic.payload.AccountTransactionPayload;
-import com.mosaic.payload.ContractTransactionPayload;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -92,10 +92,10 @@ public class InvestmentServiceImpl implements InvestmentService {
 
 	@Override
 	@Transactional
-	public void searchLoanAptInvestor(ContractTransactionPayload loanTransactionReq) {
+	public void searchLoanAptInvestor(LoanCreateTransactionPayload loanTransactionReq) {
 		// 1. 대출 조회
-		Loan loan = loanRepository.findByIdAndStatus(loanTransactionReq.targetId(), LoanStatus.PENDING)
-				.orElseThrow(() -> new LoanNotFoundException(loanTransactionReq.targetId()));
+		Loan loan = loanRepository.findByIdAndStatus(loanTransactionReq.loanId(), LoanStatus.PENDING)
+				.orElseThrow(() -> new LoanNotFoundException(loanTransactionReq.loanId()));
 
 		BigDecimal requestAmount = loan.getRequestAmount();
 		BigDecimal alreadyRaised = loan.getAmount();
@@ -132,7 +132,7 @@ public class InvestmentServiceImpl implements InvestmentService {
 					loan,
 					investment,
 					allocated,
-					loanTransactionReq.rate(),
+					loanTransactionReq.interestRate(),
 					250,
 					TimeUtil.now()
 			);
@@ -153,6 +153,7 @@ public class InvestmentServiceImpl implements InvestmentService {
 
 		loan.startLoan(accumulated);
 
-		loanRepository.save(loan); // 하위 엔티티까지 전부 저장
+		//loanRepository.save(loan); // 하위 엔티티까지 전부 저장
+		log.info("{} 대출 진행에 성공했습니다",loan.getId());
 	}
 }

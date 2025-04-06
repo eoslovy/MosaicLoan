@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("loans")
 public class LoanController {
 
-    LoanService loanService;
+    private final LoanService loanService;
 
     //TODO 돈 빌리기
-    @PostMapping("")
+    @PostMapping("request/test")
     public ResponseEntity<Void> requestLoan(@RequestBody CreateLoanRequestDto createLoanRequestDto) throws JsonProcessingException {
         loanService.createLoan(createLoanRequestDto);
         return ResponseEntity.accepted().build();

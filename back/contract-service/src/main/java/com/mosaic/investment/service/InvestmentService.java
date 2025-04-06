@@ -5,8 +5,8 @@ import com.mosaic.core.exception.InternalSystemException;
 import com.mosaic.core.model.Investment;
 import com.mosaic.investment.dto.RequestInvestmentDto;
 import com.mosaic.investment.dto.WithdrawalInvestmentDto;
+import com.mosaic.loan.event.message.LoanCreateTransactionPayload;
 import com.mosaic.payload.AccountTransactionPayload;
-import com.mosaic.payload.ContractTransactionPayload;
 
 public interface InvestmentService {
 	void publishInvestmentRequest(RequestInvestmentDto requestDto) throws
@@ -21,5 +21,5 @@ public interface InvestmentService {
 
     void rollbackInvestmentWithdrawal(AccountTransactionPayload payload);
 
-    void searchLoanAptInvestor(ContractTransactionPayload loanTransactionReq) throws Exception;
+    void searchLoanAptInvestor(LoanCreateTransactionPayload loanTransactionReq) throws Exception;
 }

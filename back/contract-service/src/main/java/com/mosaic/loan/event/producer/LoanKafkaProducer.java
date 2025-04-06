@@ -14,21 +14,22 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class LoanKafkaProducer {
 
-    private static final String INVEST_CREATE = "invest.created";
+    private static final String INVEST_CREATE = "loan.created.requested";
     private static final String LOAN_WITHDRAWAL_REQUEST = "loan.withdrawal.requested";
     private static final String LOAN_REPAY_REQUEST = "loan.repay.requested";
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     public void sendLoanCreatedEvent(LoanCreateTransactionPayload payload) throws JsonProcessingException {
-        kafkaTemplate.send(INVEST_CREATE, payload);
+        log.info(objectMapper.writeValueAsString(payload));
+        kafkaTemplate.send(INVEST_CREATE, objectMapper.writeValueAsString(payload));
     }
 
-    public void sendLoanWithdrawalEvent(AccountTransactionPayload withdrawalEventPayload) {
-        kafkaTemplate.send(LOAN_WITHDRAWAL_REQUEST, withdrawalEventPayload);
+    public void sendLoanWithdrawalEvent(AccountTransactionPayload withdrawalEventPayload) throws JsonProcessingException {
+        kafkaTemplate.send(LOAN_WITHDRAWAL_REQUEST, objectMapper.writeValueAsString(withdrawalEventPayload));
     }
 
-    public void sendLoanRepayRequestEvent(AccountTransactionPayload repayEventPayload) {
-        kafkaTemplate.send(LOAN_REPAY_REQUEST, repayEventPayload);
+    public void sendLoanRepayRequestEvent(AccountTransactionPayload repayEventPayload) throws JsonProcessingException {
+        kafkaTemplate.send(LOAN_REPAY_REQUEST, objectMapper.writeValueAsString(repayEventPayload));
     }
 }

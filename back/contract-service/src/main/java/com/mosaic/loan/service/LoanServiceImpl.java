@@ -17,6 +17,7 @@ import com.mosaic.loan.exception.LoanNotFoundException;
 import com.mosaic.loan.repository.LoanRepository;
 import com.mosaic.payload.AccountTransactionPayload;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,6 +27,7 @@ import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LoanServiceImpl implements LoanService {
 
     private final LoanKafkaProducer loanKafkaProducer;
@@ -36,11 +38,15 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public void createLoan(CreateLoanRequestDto request) throws JsonProcessingException {
         //Todo 내부 신용평가 확인후 예외처리(없음, 시간지남 등등)
-        CreditEvaluationResponseDto creditEvaluationResponseDto = internalApiClient.getMemberCreditEvaluation(request);
-        if (!evaluateLoanRequest(creditEvaluationResponseDto)) return;
+        //CreditEvaluationResponseDto creditEvaluationResponseDto = internalApiClient.getMemberCreditEvaluation(request);
+        //예시용
+        CreditEvaluationResponseDto creditEvaluationResponseDto = CreditEvaluationResponseDto.builder().id(request.id()).interestRate(800).defaultRate(80).build();
+        //if (!evaluateLoanRequest(creditEvaluationResponseDto)) return;
         Loan newLoan = Loan.requestOnlyFormLoan(request, creditEvaluationResponseDto);
         loanRepository.save(newLoan);
-        loanKafkaProducer.sendLoanCreatedEvent(LoanCreateTransactionPayload.buildLoan(newLoan, creditEvaluationResponseDto));
+        LoanCreateTransactionPayload payload = LoanCreateTransactionPayload.buildLoan(newLoan, creditEvaluationResponseDto);
+        log.info("Create loan: {}", payload);
+        loanKafkaProducer.sendLoanCreatedEvent(payload);
     }
 
     //상환입금
