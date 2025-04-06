@@ -5,7 +5,9 @@ import styles from '@/styles/my/MyAccountTransactionFilter.module.scss';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Select from 'react-select';
-import { subMonths, isBefore, isAfter } from 'date-fns';
+import { subMonths, isBefore, isAfter, format } from 'date-fns';
+import useAccountTransactionStore from '@/stores/useAccountTransactionStore';
+import type { AccountTransactionType } from '@/types/pages';
 
 const transactionTypeOptions = [
   { value: 'EXTERNAL_OUT', label: '출금' },
@@ -25,6 +27,10 @@ const MyAccountTransactionFilter = () => {
   const [selectedTypes, setSelectedTypes] = useState<
     { value: string; label: string }[]
   >(transactionTypeOptions);
+
+  const fetchTransactions = useAccountTransactionStore(
+    (state) => state.fetchTransactions,
+  );
 
   useEffect(() => {
     const calculatedMax =
@@ -49,13 +55,24 @@ const MyAccountTransactionFilter = () => {
 
   const handleEndDateChange = (selected: Date | null) => {
     if (!selected) return;
-
     const safeEnd = isAfter(selected, today) ? today : selected;
     setEndDate(safeEnd);
 
     if (startDate && isAfter(startDate, safeEnd)) {
       setStartDate(subMonths(safeEnd, 1));
     }
+  };
+
+  const handleSearch = () => {
+    if (!startDate || !endDate) return;
+
+    fetchTransactions({
+      startDate: format(startDate, 'yyyy-MM-dd'),
+      endDate: format(endDate, 'yyyy-MM-dd'),
+      types: selectedTypes.map((t) => t.value as AccountTransactionType),
+      page: 1,
+      pageSize: 10,
+    });
   };
 
   return (
@@ -99,7 +116,11 @@ const MyAccountTransactionFilter = () => {
         </div>
 
         {/* 검색 버튼 */}
-        <button type='button' className={styles.searchButton}>
+        <button
+          type='button'
+          className={styles.searchButton}
+          onClick={handleSearch}
+        >
           검색하기
         </button>
       </div>

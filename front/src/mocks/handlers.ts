@@ -1,4 +1,6 @@
 import { rest } from 'msw';
+import { format, differenceInDays, subDays } from 'date-fns';
+import type { AccountTransaction } from '@/types/pages';
 
 const handlers = [
   rest.get('/member/me', (req, res, ctx) => {
@@ -266,6 +268,59 @@ const handlers = [
 
     return res(ctx.status(200), ctx.json({ success: true }));
   }),
+  rest.post(
+    '/api/account/accounts/transactions/search',
+    async (req, res, ctx) => {
+      const { startDate, endDate, types, page, pageSize } = await req.json();
+
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const totalDays = Math.max(1, differenceInDays(end, start) + 1);
+
+      const allTransactions: AccountTransaction[] = [];
+
+      for (let d = 0; d < totalDays; d += 1) {
+        const date = format(subDays(end, d), 'yyyy-MM-dd');
+
+        // 하루에 2건씩 mock 생성
+        for (let i = 0; i < 2; i += 1) {
+          const index = d * 2 + i;
+
+          allTransactions.push({
+            amount: 10000 + index * 1000,
+            cash: 1000000 - index * 3000,
+            type: types[index % types.length],
+            content: `(${date}) 모의 거래 ${index + 1}`,
+            createdAt: date,
+            targetId: 1000 + index,
+          });
+        }
+      }
+
+      // 최신순 정렬
+      const sorted = allTransactions.sort((a, b) =>
+        a.createdAt < b.createdAt ? 1 : -1,
+      );
+
+      const totalItemCount = sorted.length;
+      const totalPage = Math.ceil(totalItemCount / pageSize);
+      const startIdx = (page - 1) * pageSize;
+      const paged = sorted.slice(startIdx, startIdx + pageSize);
+
+      return res(
+        ctx.status(200),
+        ctx.json({
+          transactions: paged,
+          pagination: {
+            page,
+            pageSize,
+            totalPage,
+            totalItemCount,
+          },
+        }),
+      );
+    },
+  ),
 ];
 
 export default handlers;
