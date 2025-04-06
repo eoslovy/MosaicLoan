@@ -15,17 +15,18 @@
 
 .card {
   position: relative;
-  width: clamp(260px, 40vw, 420px); // 뷰포트 기준 크기
+  width: clamp(260px, 40vw, 420px);
   height: clamp(140px, 22vw, 240px);
   transform-style: preserve-3d;
   transition: transform 0.8s ease;
+
+  // ✅ hover 시 회전
+  &:hover {
+    transform: rotateY(180deg);
+  }
 }
 
-.cardContainer:hover .card {
-  transform: rotateY(180deg);
-}
-
-// 공통: 앞면/뒷면
+// 공통
 .cardFront,
 .cardBack {
   position: absolute;
@@ -73,6 +74,7 @@
     font-weight: 500;
   }
 }
+
 .backLabel {
   font-size: $text-sm;
   color: rgba(255, 255, 255, 0.85);

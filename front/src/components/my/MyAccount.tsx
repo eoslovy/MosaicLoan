@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import styles from '@/styles/my/MyAccount.module.scss';
 import request from '@/service/apis/request';
 import useUser from '@/hooks/useUser';
+import useAccountStore from '@/stores/accountStore';
+import AccountModal from './AccountModal';
 
 const formatBalance = (amount: number): string => {
   if (amount >= 1_0000_0000_0000) {
@@ -20,7 +22,10 @@ const formatBalance = (amount: number): string => {
 
 const MyAccount = () => {
   const { user } = useUser();
-  const [balance, setBalance] = useState(0);
+  const { balance, setBalance } = useAccountStore();
+  const [isChargeOpen, setIsChargeOpen] = useState(false);
+  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
     const fetchBalance = async () => {
@@ -36,12 +41,22 @@ const MyAccount = () => {
     };
 
     fetchBalance();
-  }, []);
+  }, [setBalance]);
 
   return (
-    <section className={styles.container}>
-      <div className={styles.cardContainer}>
-        <div className={styles.card}>
+    <>
+      <section className={styles.container}>
+        <div
+          className={`${styles.card} ${isFlipped ? styles.flipped : ''}`}
+          onClick={() => setIsFlipped((prev) => !prev)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              setIsFlipped((prev) => !prev);
+            }
+          }}
+          role='button'
+          tabIndex={0}
+        >
           {/* 앞면 */}
           <div className={styles.cardFront}>
             <p className={styles.label}>모자익론 머니</p>
@@ -56,17 +71,41 @@ const MyAccount = () => {
             <p className={styles.username}>{user?.username ?? '-'}</p>
           </div>
         </div>
-      </div>
 
-      <div className={styles.buttonGroup}>
-        <button type='button' className={styles.chargeBtn}>
-          충전하기
-        </button>
-        <button type='button' className={styles.withdrawBtn}>
-          출금하기
-        </button>
-      </div>
-    </section>
+        <div className={styles.buttonGroup}>
+          <button
+            type='button'
+            onClick={() => setIsChargeOpen(true)}
+            className={styles.chargeBtn}
+          >
+            충전하기
+          </button>
+          <button
+            type='button'
+            onClick={() => setIsWithdrawOpen(true)}
+            className={styles.withdrawBtn}
+          >
+            출금하기
+          </button>
+        </div>
+      </section>
+
+      {/* 모달 */}
+      <AccountModal
+        isOpen={isChargeOpen}
+        onClose={() => setIsChargeOpen(false)}
+        type='charge'
+      />
+      <AccountModal
+        isOpen={isWithdrawOpen}
+        onClose={() => setIsWithdrawOpen(false)}
+        type='withdraw'
+        openChargeModal={() => {
+          setIsWithdrawOpen(false);
+          setTimeout(() => setIsChargeOpen(true), 300); // 부드러운 전환
+        }}
+      />
+    </>
   );
 };
 
