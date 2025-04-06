@@ -28,7 +28,8 @@ public class InvestmentServiceImpl implements InvestmentService {
 	private final InvestmentRepository investmentRepository;
 	private final LoanRepository loanRepository;
 	private final InvestmentKafkaProducer investmentProducer;
-
+	
+	//입금
 	@Override
 	@Transactional
 	public void publishInvestmentRequest(RequestInvestmentDto requestDto) throws
@@ -53,17 +54,19 @@ public class InvestmentServiceImpl implements InvestmentService {
 		Investment investment = optionalInvestment.get();
 		investment.completeRequest(completeInvestmentRequest);
 	}
-
+	//투자 종료
 	@Override
 	public void finishActiveInvestment(Investment investment) {
 	}
-
+	
+	
+	//출금
 	@Override
 	public void publishInvestmentWithdrawal(WithdrawalInvestmentDto requestDto) throws JsonProcessingException {
 		Investment investment = investmentRepository.findById(requestDto.id())
 				.orElseThrow(() -> new InvestmentNotFoundException(requestDto.id()));
 
-		BigDecimal withdrawnAmount = investment.withDrawAll();
+		BigDecimal withdrawnAmount = investment.withdrawAll();
 		investment.finishInvestment();
 		AccountTransactionPayload investWithdrawalPayload = AccountTransactionPayload.buildInvestWithdrawal(investment, withdrawnAmount);
 
