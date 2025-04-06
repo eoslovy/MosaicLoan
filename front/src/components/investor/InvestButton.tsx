@@ -1,11 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '@/styles/investors/InvestButton.module.scss';
 import InvestmentModal from '@/components/ui/InvestmentModal';
 
 const InvestButton = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+
+    return undefined;
+  }, [toast]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -24,8 +34,12 @@ const InvestButton = () => {
       >
         투자하기
       </button>
-
-      <InvestmentModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      {toast && <div className={styles.globalErrorToast}>{toast}</div>}
+      <InvestmentModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        setToast={setToast}
+      />
     </div>
   );
 };

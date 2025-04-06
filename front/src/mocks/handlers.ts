@@ -808,6 +808,22 @@ const handlers = [
       );
     },
   ),
+  rest.post('/api/contract/investments/', async (req, res, ctx) => {
+    const { principal, targetRate, targetWeeks } = await req.json();
+
+    // 예시: 최소 금액 미만일 때 400 에러
+    if (principal < 10000) {
+      return res(
+        ctx.status(400),
+        ctx.json({ message: '최소 투자금액은 1만원입니다.' }),
+      );
+    }
+
+    return res(
+      ctx.status(200),
+      ctx.json({ message: '투자 신청이 완료되었습니다.' }),
+    );
+  }),
 ];
 
 export default handlers;
