@@ -8,6 +8,7 @@ const handlers = [
         id: 1,
         name: '김싸피',
         oauthProvider: 'KAKAO',
+        createdAt: '2025-05-10T00:00:00Z',
       }),
     );
   }),

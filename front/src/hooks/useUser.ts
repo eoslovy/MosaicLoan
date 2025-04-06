@@ -28,6 +28,7 @@ const useUser = () => {
             id: response.id,
             username: response.name,
             oauthProvider: response.oauthProvider,
+            createdAt: response.createdAt,
           };
           console.log('[useUser] 저장할 유저:', convertedUser);
           setUser(convertedUser);

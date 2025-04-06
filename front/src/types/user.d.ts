@@ -2,6 +2,7 @@ export interface User {
   id: number;
   username: string;
   oauthProvider: string;
+  createdAt: string;
 }
 
 export interface UserResponse {
@@ -9,6 +10,7 @@ export interface UserResponse {
     id: number;
     name: string;
     oauthProvider: string;
+    createdAt: string;
   } | null;
 }
 
