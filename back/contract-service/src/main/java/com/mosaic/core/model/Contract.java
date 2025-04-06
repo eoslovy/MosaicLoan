@@ -1,5 +1,6 @@
 package com.mosaic.core.model;
 
+import com.mosaic.core.model.status.ContractStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,9 +28,9 @@ public class Contract {
     @JoinColumn(name = "investment_id", nullable = false)
     private Investment investment;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private ContractStatus status;
 
     @Column(name = "amount", precision = 18, scale = 5)
     private BigDecimal amount;

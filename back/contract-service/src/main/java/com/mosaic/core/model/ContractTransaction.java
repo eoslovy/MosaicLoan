@@ -1,5 +1,6 @@
 package com.mosaic.core.model;
 
+import com.mosaic.core.model.status.ContractTransactionType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,9 +25,9 @@ public class ContractTransaction {
     @Column(name = "amount")
     private Integer amount;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    private String type;
+    private ContractTransactionType type;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
