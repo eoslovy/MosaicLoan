@@ -66,12 +66,37 @@ public class Contract {
         this.outstandingAmount = this.outstandingAmount.add(amount).subtract(repaidInterest);
     }
 
-    public void putTransaction(ContractTransaction interestTransaction) {
-        interestTransaction.setContract(this);
-        contractTransactions.add(interestTransaction);
+    public void putTransaction(ContractTransaction transaction) {
+        transaction.setContract(this);
+        contractTransactions.add(transaction);
     }
 
     public void updateOutstandingAmountAfterPrincipalRepaid(ContractTransaction principalTransaction) {
         this.outstandingAmount = this.outstandingAmount.subtract(principalTransaction.getAmount());
+    }
+
+    public void setLoan(Loan loan) {
+        this.loan = loan;
+    }
+    public static Contract create(
+            Loan loan,
+            Investment investment,
+            BigDecimal allocatedAmount,
+            int interestRate,
+            int delinquencyMarginRate,
+            LocalDateTime now
+    ) {
+        return Contract.builder()
+                .loan(loan)
+                .investment(investment)
+                .amount(allocatedAmount)
+                .outstandingAmount(allocatedAmount)
+                .paidAmount(BigDecimal.ZERO)
+                .interestRate(interestRate)
+                .delinquencyMarginRate(delinquencyMarginRate)
+                .status(ContractStatus.IN_PROGRESS)
+                .dueDate(loan.getDueDate())
+                .createdAt(now)
+                .build();
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.core.model.Contract;
 import com.mosaic.core.model.ContractTransaction;
 import com.mosaic.core.model.Loan;
+import com.mosaic.core.model.status.LoanStatus;
 import com.mosaic.core.util.InternalApiClient;
 import com.mosaic.investment.dto.RequestInvestmentDto;
 import com.mosaic.investment.dto.WithdrawalInvestmentDto;
@@ -45,7 +46,7 @@ public class LoanServiceImpl implements LoanService {
     //상환입금
     @Override
     public void publishAndCalculateLoanRepayRequest(RequestInvestmentDto requestDto) throws JsonProcessingException {
-        Loan loan = loanRepository.findByIdWithContracts(requestDto.id())
+        Loan loan = loanRepository.findByIdAndStatus(requestDto.id(), LoanStatus.IN_PROGRESS)
                 .orElseThrow(() -> new LoanNotFoundException(requestDto.id()));
         BigDecimal moneyToRepay = BigDecimal.ZERO;
         for (Contract contract : loan.getContracts()) {
@@ -71,7 +72,7 @@ public class LoanServiceImpl implements LoanService {
     //상환 필요금과 실 상환금 비율 맞춰 분배
     @Override
     public void completeLoanRepayRequest(AccountTransactionPayload payload) throws Exception {
-        Loan loan = loanRepository.findByIdWithContracts(payload.targetId())
+        Loan loan = loanRepository.findByIdAndStatus(payload.targetId(), LoanStatus.IN_PROGRESS)
                 .orElseThrow(() -> new LoanNotFoundException(payload.targetId()));
         BigDecimal repaidAmountResidue = payload.amount();
         BigDecimal originalMoneyToRepay = BigDecimal.ZERO;

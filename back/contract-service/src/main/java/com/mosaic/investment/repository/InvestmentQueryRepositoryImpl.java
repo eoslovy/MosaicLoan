@@ -20,7 +20,6 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 	@Override
 	public List<Investment> findQualifiedInvestments(BigDecimal minimumAmount, Loan loan) {
 		QInvestment investment = QInvestment.investment;
-		BigDecimal minAmount = BigDecimal.valueOf(100000);
 		//돈에 대한 조건, 최소금액보다 분산금액이 커야할것, 최소금액보다 잔액이 커야할것
 		BooleanExpression amountCondition = investment.principal.multiply(1.0 / 500)
 			.goe(minimumAmount)

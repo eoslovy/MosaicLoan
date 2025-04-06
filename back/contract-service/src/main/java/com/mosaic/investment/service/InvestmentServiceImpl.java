@@ -2,13 +2,19 @@ package com.mosaic.investment.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.core.exception.InternalSystemException;
+import com.mosaic.core.model.Contract;
+import com.mosaic.core.model.ContractTransaction;
 import com.mosaic.core.model.Investment;
 import com.mosaic.core.model.Loan;
+import com.mosaic.core.model.status.LoanStatus;
+import com.mosaic.core.util.TimeUtil;
 import com.mosaic.investment.dto.RequestInvestmentDto;
 import com.mosaic.investment.dto.WithdrawalInvestmentDto;
 import com.mosaic.investment.event.producer.InvestmentKafkaProducer;
 import com.mosaic.investment.exception.InvestmentNotFoundException;
+import com.mosaic.investment.repository.InvestmentQueryRepository;
 import com.mosaic.investment.repository.InvestmentRepository;
+import com.mosaic.loan.exception.LoanNotFoundException;
 import com.mosaic.loan.repository.LoanRepository;
 import com.mosaic.payload.AccountTransactionPayload;
 import com.mosaic.payload.ContractTransactionPayload;
@@ -18,6 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -26,6 +35,7 @@ import java.util.Optional;
 public class InvestmentServiceImpl implements InvestmentService {
 	//TODO 진입점 기준으로 서비스 쪼개기
 	private final InvestmentRepository investmentRepository;
+	private final InvestmentQueryRepository	investmentQueryRepository;
 	private final LoanRepository loanRepository;
 	private final InvestmentKafkaProducer investmentProducer;
 	
@@ -81,16 +91,68 @@ public class InvestmentServiceImpl implements InvestmentService {
 	}
 
 	@Override
-	public void searchLoanAptInvestor(ContractTransactionPayload loanTransactionReq) throws Exception {
-		//Todo 해당 대출 계좌 검색 Exception처리
-		Optional<Loan> targetLoan = loanRepository.findById(loanTransactionReq.targetId());
-		if (targetLoan.isEmpty())
-			throw new Exception("구현예정");
+	@Transactional
+	public void searchLoanAptInvestor(ContractTransactionPayload loanTransactionReq) {
+		// 1. 대출 조회
+		Loan loan = loanRepository.findByIdAndStatus(loanTransactionReq.targetId(), LoanStatus.PENDING)
+				.orElseThrow(() -> new LoanNotFoundException(loanTransactionReq.targetId()));
 
-		//Todo 목표수익률 미만, 투자 잔액 특정금액(MAX(최소기준금액, 본인원금분산비율) 이상 대상계좌 검색 (잔액이 미달량이 클수록)
+		BigDecimal requestAmount = loan.getRequestAmount();
+		BigDecimal alreadyRaised = loan.getAmount();
+		BigDecimal requiredAmount = requestAmount.subtract(alreadyRaised);
 
-		//Todo Stream으로 투자금액을 관리하는 Wrapper Dto를 만들어주면 될듯?
+		if (requiredAmount.compareTo(BigDecimal.ZERO) <= 0) return; // 이미 완료
 
-		//투자금액이 모이면 Transaction Start;
+		// 2. 최소 투자금 기준 계산 (예: 전체 금액의 10분의 1, 하드코딩 X)
+		BigDecimal minimumPerInvestment = BigDecimal.valueOf(100);
+
+		// 3. 조건에 맞는 투자자 조회
+		List<Investment> candidates = investmentQueryRepository.findQualifiedInvestments(minimumPerInvestment, loan);
+
+		BigDecimal accumulated = BigDecimal.ZERO;
+		List<Contract> contracts = new ArrayList<>();
+
+		for (Investment investment : candidates) {
+			if (accumulated.compareTo(requiredAmount) >= 0) break;
+
+			BigDecimal baseAmount = investment.getPrincipal()
+					.divide(new BigDecimal(500), 0, RoundingMode.DOWN); // 1/500
+			BigDecimal truncated = baseAmount.divide(new BigDecimal(100), 0, RoundingMode.DOWN)
+					.multiply(new BigDecimal(100)); // 100원 단위 절사
+
+			if (truncated.compareTo(BigDecimal.ZERO) <= 0) continue;
+
+			BigDecimal available = investment.getAmount();
+			BigDecimal remaining = requiredAmount.subtract(accumulated);
+			BigDecimal allocated = truncated.min(available).min(remaining);
+
+			if (allocated.compareTo(BigDecimal.ZERO) <= 0) continue;
+
+			Contract contract = Contract.create(
+					loan,
+					investment,
+					allocated,
+					loanTransactionReq.rate(),
+					250,
+					TimeUtil.now()
+			);
+
+			contracts.add(contract);
+			accumulated = accumulated.add(allocated);
+			investment.investAmount(contract);
+		}
+
+		if (accumulated.compareTo(requiredAmount) < 0) {
+			throw new IllegalStateException("조건에 맞는 투자금 부족으로 매칭 실패");
+		}
+
+		for (Contract c : contracts) {
+			c.putTransaction(ContractTransaction.buildLoanCreateTransaction(c, c.getAmount()));
+		}
+		loan.addContracts(contracts);
+
+		loan.startLoan(accumulated);
+
+		loanRepository.save(loan); // 하위 엔티티까지 전부 저장
 	}
 }

@@ -86,4 +86,9 @@ public class Investment {
     public void rollBack(BigDecimal amount){
         this.amount = amount;
     }
+
+    public void investAmount(Contract contract) {
+        this.contracts.add(contract);
+        this.amount = amount.subtract(contract.getAmount());
+    }
 }

@@ -37,7 +37,7 @@ public class Loan {
     @Column(name = "amount", precision = 18, scale = 5)
     private BigDecimal amount;
     @Builder.Default
-    @OneToMany(mappedBy = "loan", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "loan", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Contract> contracts = new ArrayList<>();
 
     @Column(name = "due_date")
@@ -68,7 +68,8 @@ public class Loan {
         return amount;
     }
 
-    public void startLoan() {
+    public void startLoan(BigDecimal amount) {
+        this.amount = amount;
         this.status = LoanStatus.IN_PROGRESS;
     }
     public void finishLoan() {
@@ -77,5 +78,11 @@ public class Loan {
 
     public void rollBack(BigDecimal amount){
         this.amount = amount;
+    }
+    public void addContracts(List<Contract> newContracts) {
+        for (Contract contract : newContracts) {
+            contract.setLoan(this);
+            this.contracts.add(contract);
+        }
     }
 }
