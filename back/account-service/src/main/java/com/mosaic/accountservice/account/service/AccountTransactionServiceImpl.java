@@ -1,7 +1,10 @@
 package com.mosaic.accountservice.account.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,6 +12,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.accountservice.account.domain.Account;
 import com.mosaic.accountservice.account.domain.AccountTransaction;
 import com.mosaic.accountservice.account.domain.TransactionType;
+import com.mosaic.accountservice.account.dto.AccountTransactionSearchRequest;
+import com.mosaic.accountservice.account.dto.AccountTransactionSearchResponse;
 import com.mosaic.accountservice.account.outbox.OutboxEventService;
 import com.mosaic.accountservice.account.repository.AccountRepository;
 import com.mosaic.accountservice.account.repository.AccountTransactionRepository;
@@ -137,6 +142,34 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
 	public void compensateLoanWithdrawalFailure(AccountTransactionPayload payload) {
 		processTransaction(payload.accountId(), payload.amount(), TransactionType.LOAN_IN_COMPENSATION, "대출 계좌 출금 보상",
 			payload.targetId(), payload.compensationTargetId());
+	}
+
+	@Override
+	public AccountTransactionSearchResponse searchTransactions(AccountTransactionSearchRequest request,
+		Integer memberId) {
+
+		Pageable pageable = PageRequest.of(request.safePage(), request.safePageSize());
+
+		List<AccountTransaction> transactions = transactionRepository.search(request, memberId, pageable);
+		long total = transactionRepository.count(request, memberId);
+
+		List<AccountTransactionSearchResponse.TransactionDto> transactionDtos = transactions.stream()
+			.map(AccountTransactionSearchResponse.TransactionDto::from)
+			.toList();
+
+		int totalPage = (int)Math.ceil((double)total / request.pageSize());
+
+		return AccountTransactionSearchResponse.builder()
+			.transactions(transactionDtos)
+			.pagination(
+				AccountTransactionSearchResponse.Pagination.builder()
+					.page(request.safePage())
+					.pageSize(request.safePageSize())
+					.totalItemCount(total)
+					.totalPage(totalPage)
+					.build()
+			)
+			.build();
 	}
 
 	private AccountTransaction processTransaction(Integer accountId, BigDecimal amount, TransactionType type,
