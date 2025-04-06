@@ -17,8 +17,14 @@ public class InvestmentKafkaProducer {
 
 	private static final String INVEST_REQUESTED = "investment.deposit.requested";
 	private static final String INVEST_REJECTED = "investment.deposit.failed";
+
+	private static final String WITHDRWAL_REQUESTED = "investment.withdrawal.requested";
+
 	private final KafkaTemplate<String, String> kafkaTemplate;
 	private final ObjectMapper kafkaObjectMapper;
+	public void sendInvestmentWithdrawalEvent(AccountTransactionPayload payload) throws JsonProcessingException {
+		kafkaTemplate.send(WITHDRWAL_REQUESTED, kafkaObjectMapper.writeValueAsString((payload)));
+	};
 
 	public void sendInvestmentCreatedEvent(AccountTransactionPayload payload) throws JsonProcessingException {
 		kafkaTemplate.send(INVEST_REQUESTED, kafkaObjectMapper.writeValueAsString(payload));

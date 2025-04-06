@@ -2,7 +2,9 @@ package com.mosaic.investment.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.core.exception.InternalSystemException;
+import com.mosaic.core.model.Investment;
 import com.mosaic.investment.dto.RequestInvestmentDto;
+import com.mosaic.investment.dto.WithdrawalInvestmentDto;
 import com.mosaic.payload.AccountTransactionPayload;
 import com.mosaic.payload.ContractTransactionPayload;
 
@@ -13,5 +15,11 @@ public interface InvestmentService {
 
 	void completeInvestmentRequest(AccountTransactionPayload requestDto) throws Exception;
 
-	void searchLoanAptInvestor(ContractTransactionPayload loanTransactionReq) throws Exception;
+    void finishActiveInvestment(Investment investment);
+
+    void publishInvestmentWithdrawal(WithdrawalInvestmentDto requestDto) throws JsonProcessingException;
+
+    void rollbackInvestmentWithdrawal(AccountTransactionPayload payload);
+
+    void searchLoanAptInvestor(ContractTransactionPayload loanTransactionReq) throws Exception;
 }

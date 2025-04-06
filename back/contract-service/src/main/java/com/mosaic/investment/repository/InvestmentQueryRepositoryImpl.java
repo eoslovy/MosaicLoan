@@ -1,17 +1,15 @@
 package com.mosaic.investment.repository;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
 import com.mosaic.core.model.Investment;
 import com.mosaic.core.model.Loan;
 import com.mosaic.core.model.QInvestment;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor

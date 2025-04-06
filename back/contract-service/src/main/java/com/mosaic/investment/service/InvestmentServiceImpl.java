@@ -1,33 +1,36 @@
 package com.mosaic.investment.service;
 
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.core.exception.InternalSystemException;
 import com.mosaic.core.model.Investment;
 import com.mosaic.core.model.Loan;
 import com.mosaic.investment.dto.RequestInvestmentDto;
+import com.mosaic.investment.dto.WithdrawalInvestmentDto;
 import com.mosaic.investment.event.producer.InvestmentKafkaProducer;
+import com.mosaic.investment.exception.InvestmentNotFoundException;
 import com.mosaic.investment.repository.InvestmentRepository;
 import com.mosaic.loan.repository.LoanRepository;
 import com.mosaic.payload.AccountTransactionPayload;
 import com.mosaic.payload.ContractTransactionPayload;
-
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class InvestmentServiceImpl implements InvestmentService {
-
+	//TODO 진입점 기준으로 서비스 쪼개기
 	private final InvestmentRepository investmentRepository;
 	private final LoanRepository loanRepository;
 	private final InvestmentKafkaProducer investmentProducer;
 
 	@Override
+	@Transactional
 	public void publishInvestmentRequest(RequestInvestmentDto requestDto) throws
 		InternalSystemException, JsonProcessingException {
 		//TODO 멱등성 : 시간기준 UUID 및 요청별 request막는 ttl 발행
@@ -39,13 +42,39 @@ public class InvestmentServiceImpl implements InvestmentService {
 	}
 
 	@Override
-	public void completeInvestmentRequest(AccountTransactionPayload completeInvestmentRequest) throws Exception {
-		Optional<Investment> getNewInvestment = investmentRepository.findById(completeInvestmentRequest.targetId());
-		if (getNewInvestment.isEmpty())
-			throw new Exception("해당하는 투자계좌 없음 에러");
-		Investment newInvestment = getNewInvestment.get();
-		newInvestment.completeRequest(completeInvestmentRequest);
-		// investmentProducer.sendInvestmentConfirmedEvent(completeInvestmentRequest);
+	@Transactional
+	public void completeInvestmentRequest(AccountTransactionPayload completeInvestmentRequest)
+			throws InternalSystemException, JsonProcessingException {
+		Optional<Investment> optionalInvestment = investmentRepository.findById(completeInvestmentRequest.targetId());
+		if (optionalInvestment.isEmpty()) {
+			investmentProducer.sendInvestmentRejectedEvent(completeInvestmentRequest);
+			throw new InvestmentNotFoundException(completeInvestmentRequest.targetId());
+		}
+		Investment investment = optionalInvestment.get();
+		investment.completeRequest(completeInvestmentRequest);
+	}
+
+	@Override
+	public void finishActiveInvestment(Investment investment) {
+	}
+
+	@Override
+	public void publishInvestmentWithdrawal(WithdrawalInvestmentDto requestDto) throws JsonProcessingException {
+		Investment investment = investmentRepository.findById(requestDto.id())
+				.orElseThrow(() -> new InvestmentNotFoundException(requestDto.id()));
+
+		BigDecimal withdrawnAmount = investment.withDrawAll();
+		investment.finishInvestment();
+		AccountTransactionPayload investWithdrawalPayload = AccountTransactionPayload.buildInvestWithdrawal(investment, withdrawnAmount);
+
+		investmentProducer.sendInvestmentWithdrawalEvent(investWithdrawalPayload);
+	}
+	@Override
+	public void rollbackInvestmentWithdrawal(AccountTransactionPayload payload) {
+		Investment investment = investmentRepository.findById(payload.targetId())
+				.orElseThrow(() -> new InvestmentNotFoundException(payload.targetId()));
+		investment.rollBack(payload.amount());
+		investment.unFinishInvestment();
 	}
 
 	@Override
