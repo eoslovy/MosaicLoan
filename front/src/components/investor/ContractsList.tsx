@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '@/styles/investors/ContractsList.module.scss';
 import BasicTable from '@/components/common/BasicTable';
 import SortableTableHeader from '@/components/common/SortableTableHeader';
@@ -13,223 +13,34 @@ import type {
 } from '@/types/components';
 import Pill from '@/components/common/Pill';
 
-interface Contract {
-  id: string;
-  product: string;
-  bond: string;
-  transactionDate: string;
-  bondMaturity: string;
+interface Transaction {
+  id: number;
+  contractId: number;
+  investmentId: number;
   amount: string;
+  createdAt: string;
+  status: string;
+  bondMaturity: string;
   interestRate: string;
-  type: string;
 }
 
-const contracts: Contract[] = [
-  {
-    id: '1',
-    product: 'INVEST-A',
-    bond: 'BOND-1',
-    transactionDate: '2025-03-01',
-    bondMaturity: '2025-09-01',
-    amount: '+W 10,000',
-    interestRate: '6.5%',
-    type: '원금 상환',
-  },
-  {
-    id: '2',
-    product: 'INVEST-A',
-    bond: 'BOND-1',
-    transactionDate: '2025-03-02',
-    bondMaturity: '2025-09-01',
-    amount: '+W 15,000',
-    interestRate: '6.5%',
-    type: '이자상환',
-  },
-  {
-    id: '3',
-    product: 'INVEST-A',
-    bond: 'BOND-2',
-    transactionDate: '2025-03-03',
-    bondMaturity: '2025-09-01',
-    amount: '+W 20,000',
-    interestRate: '6.5%',
-    type: '원금 상환',
-  },
-  {
-    id: '4',
-    product: 'INVEST-A',
-    bond: 'BOND-2',
-    transactionDate: '2025-03-04',
-    bondMaturity: '2025-09-01',
-    amount: '+W 25,000',
-    interestRate: '6.5%',
-    type: '이자상환',
-  },
-  {
-    id: '5',
-    product: 'INVEST-A',
-    bond: 'BOND-3',
-    transactionDate: '2025-03-05',
-    bondMaturity: '2025-09-01',
-    amount: '+W 30,000',
-    interestRate: '6.5%',
-    type: '원금 상환',
-  },
-  {
-    id: '6',
-    product: 'INVEST-B',
-    bond: 'BOND-3',
-    transactionDate: '2025-03-06',
-    bondMaturity: '2025-09-01',
-    amount: '+W 11,000',
-    interestRate: '6.6%',
-    type: '이자상환',
-  },
-  {
-    id: '7',
-    product: 'INVEST-B',
-    bond: 'BOND-4',
-    transactionDate: '2025-03-07',
-    bondMaturity: '2025-09-01',
-    amount: '+W 12,000',
-    interestRate: '6.6%',
-    type: '원금 상환',
-  },
-  {
-    id: '8',
-    product: 'INVEST-B',
-    bond: 'BOND-4',
-    transactionDate: '2025-03-08',
-    bondMaturity: '2025-09-01',
-    amount: '+W 13,000',
-    interestRate: '6.6%',
-    type: '이자상환',
-  },
-  {
-    id: '9',
-    product: 'INVEST-B',
-    bond: 'BOND-5',
-    transactionDate: '2025-03-09',
-    bondMaturity: '2025-09-01',
-    amount: '+W 14,000',
-    interestRate: '6.6%',
-    type: '원금 상환',
-  },
-  {
-    id: '10',
-    product: 'INVEST-B',
-    bond: 'BOND-5',
-    transactionDate: '2025-03-10',
-    bondMaturity: '2025-09-01',
-    amount: '+W 15,000',
-    interestRate: '6.6%',
-    type: '이자상환',
-  },
-  {
-    id: '11',
-    product: 'INVEST-C',
-    bond: 'BOND-6',
-    transactionDate: '2025-03-11',
-    bondMaturity: '2025-09-01',
-    amount: '+W 16,000',
-    interestRate: '6.7%',
-    type: '원금 상환',
-  },
-  {
-    id: '12',
-    product: 'INVEST-C',
-    bond: 'BOND-6',
-    transactionDate: '2025-03-12',
-    bondMaturity: '2025-09-01',
-    amount: '+W 17,000',
-    interestRate: '6.7%',
-    type: '이자상환',
-  },
-  {
-    id: '13',
-    product: 'INVEST-C',
-    bond: 'BOND-7',
-    transactionDate: '2025-03-13',
-    bondMaturity: '2025-09-01',
-    amount: '+W 18,000',
-    interestRate: '6.7%',
-    type: '원금 상환',
-  },
-  {
-    id: '14',
-    product: 'INVEST-C',
-    bond: 'BOND-7',
-    transactionDate: '2025-03-14',
-    bondMaturity: '2025-09-01',
-    amount: '+W 19,000',
-    interestRate: '6.7%',
-    type: '이자상환',
-  },
-  {
-    id: '15',
-    product: 'INVEST-C',
-    bond: 'BOND-8',
-    transactionDate: '2025-03-15',
-    bondMaturity: '2025-09-01',
-    amount: '+W 20,000',
-    interestRate: '6.7%',
-    type: '원금 상환',
-  },
-  {
-    id: '16',
-    product: 'INVEST-D',
-    bond: 'BOND-8',
-    transactionDate: '2025-03-16',
-    bondMaturity: '2025-09-01',
-    amount: '+W 21,000',
-    interestRate: '6.8%',
-    type: '이자상환',
-  },
-  {
-    id: '17',
-    product: 'INVEST-D',
-    bond: 'BOND-9',
-    transactionDate: '2025-03-17',
-    bondMaturity: '2025-09-01',
-    amount: '+W 22,000',
-    interestRate: '6.8%',
-    type: '원금 상환',
-  },
-  {
-    id: '18',
-    product: 'INVEST-D',
-    bond: 'BOND-9',
-    transactionDate: '2025-03-18',
-    bondMaturity: '2025-09-01',
-    amount: '+W 23,000',
-    interestRate: '6.8%',
-    type: '이자상환',
-  },
-  {
-    id: '19',
-    product: 'INVEST-D',
-    bond: 'BOND-10',
-    transactionDate: '2025-03-19',
-    bondMaturity: '2025-09-01',
-    amount: '+W 24,000',
-    interestRate: '6.8%',
-    type: '원금 상환',
-  },
-  {
-    id: '20',
-    product: 'INVEST-D',
-    bond: 'BOND-10',
-    transactionDate: '2025-03-20',
-    bondMaturity: '2025-09-01',
-    amount: '+W 25,000',
-    interestRate: '6.8%',
-    type: '이자상환',
-  },
-];
+const apiToSortKeyMapping: Record<string, string> = {
+  'product': 'investmentId',
+  'bond': 'contractId',
+  'transactionDate': 'createdAt',
+  'maturityDate': 'bondMaturity',
+  'interestRate': 'interestRate'
+};
+
+const sortOrderMapping: {[key: string]: string} = {
+  'true': 'asc',
+  'false': 'desc'
+};
 
 const getTypeVariant = (type: string): PillVariant => {
   switch (type) {
     case '원금 상환':
+    case '원금상환':
       return 'principal-repayment';
     case '이자상환':
       return 'interest-repayment';
@@ -242,79 +53,92 @@ const getTypeVariant = (type: string): PillVariant => {
   }
 };
 
-const ContractsList = () => {
+interface ContractsListProps {
+  transactions: Transaction[];
+  isLoading: boolean;
+  error: string | null;
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  onSortChange: (sortState: { field: string; order: string }[]) => void;
+}
+
+const ContractsList = ({ 
+  transactions, 
+  isLoading, 
+  error, 
+  currentPage, 
+  totalPages, 
+  onPageChange, 
+  onSortChange 
+}: ContractsListProps) => {
   const [sortStates, setSortStates] = useState<SortState[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
 
   const handleSort = (key: SortKey) => {
-    setSortStates((prev) => {
-      const existing = prev.find((s) => s.key === key);
+    const newSortStates = (() => {
+      const existing = sortStates.find((s) => s.key === key);
 
-      if (!existing) return [...prev, { key, ascending: true }];
-
-      if (existing.ascending) {
-        return prev.map((s) =>
+      if (!existing) {
+        return [...sortStates, { key, ascending: true }];
+      } else if (existing.ascending) {
+        return sortStates.map((s) =>
           s.key === key ? { ...s, ascending: false } : s,
         );
+      } else {
+        return sortStates.filter((s) => s.key !== key);
       }
+    })();
 
-      return prev.filter((s) => s.key !== key);
-    });
+    setSortStates(newSortStates);
+    console.log(newSortStates)
+
+    const apiSortFormat = newSortStates.map(sort => ({
+      field: apiToSortKeyMapping[sort.key] || sort.key,
+      order: sortOrderMapping[String(sort.ascending)] || 'unsorted'
+    }));
+
+    onSortChange(apiSortFormat);
   };
 
-  const sortPriority: SortKey[] = ['product', 'bond', 'transactionDate'];
+  const formatTransactionForDisplay = (transaction: Transaction) => {
+    return {
+      key: `transaction-${transaction.id}`,
+      cells: [
+        { 
+          key: `product-${transaction.id}`, 
+          content: `INVEST-${transaction.investmentId}` 
+        },
+        { 
+          key: `bond-${transaction.id}`, 
+          content: `BOND-${transaction.contractId}` 
+        },
+        { 
+          key: `date-${transaction.id}`, 
+          content: transaction.createdAt 
+        },
+        { 
+          key: `maturity-${transaction.id}`, 
+          content: transaction.bondMaturity
+        },
+        { 
+          key: `amount-${transaction.id}`, 
+          content: `+W ${transaction.amount}` 
+        },
+        { 
+          key: `rate-${transaction.id}`, 
+          content: transaction.interestRate
+        },
+        {
+          key: `type-${transaction.id}`,
+          content: <Pill variant={getTypeVariant(transaction.status)}>{transaction.status}</Pill>,
+        },
+      ],
+    };
+  };
 
-  const activeSortStates =
-    sortStates.length === 1
-      ? sortStates
-      : sortPriority
-          .map((key) => sortStates.find((s) => s.key === key))
-          .filter((s): s is SortState => !!s);
-
-  const sortedContracts = [...contracts].sort((a, b) => {
-    let result = 0;
-
-    activeSortStates.some(({ key, ascending }) => {
-      const valA = a[key];
-      const valB = b[key];
-
-      if (valA < valB) {
-        result = ascending ? -1 : 1;
-        return true;
-      }
-
-      if (valA > valB) {
-        result = ascending ? 1 : -1;
-        return true;
-      }
-
-      return false;
-    });
-
-    return result;
-  });
-
-  const paginatedContracts = sortedContracts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
-
-  const rows: BasicTableRow[] = paginatedContracts.map((c, idx) => ({
-    key: c.id || `contract-${idx}`,
-    cells: [
-      { key: `product-${idx}`, content: c.product },
-      { key: `bond-${idx}`, content: c.bond },
-      { key: `date-${idx}`, content: c.transactionDate },
-      { key: `maturity-${idx}`, content: c.bondMaturity },
-      { key: `amount-${idx}`, content: c.amount },
-      { key: `rate-${idx}`, content: c.interestRate },
-      {
-        key: `type-${idx}`,
-        content: <Pill variant={getTypeVariant(c.type)}>{c.type}</Pill>,
-      },
-    ],
-  }));
+  const rows: BasicTableRow[] = isLoading
+    ? []
+    : transactions.map(formatTransactionForDisplay);
 
   const columnHeaders = [
     <SortableTableHeader
@@ -338,20 +162,48 @@ const ContractsList = () => {
       sortStates={sortStates}
       onSort={handleSort}
     />,
-    '채권 만기일',
+    <SortableTableHeader
+      key='maturityDate'
+      label='채권 만기일'
+      sortKey='maturityDate'
+      sortStates={sortStates}
+      onSort={handleSort}
+    />,
     '거래 금액',
-    '금리',
+    <SortableTableHeader
+      key='interestRate'
+      label='금리'
+      sortKey='interestRate'
+      sortStates={sortStates}
+      onSort={handleSort}
+    />,
     '분류',
   ];
 
+  const hasTransactions = transactions && transactions.length > 0;
+
   return (
     <div className={styles.tableContainer}>
-      <BasicTable title='채권 거래 내역' columns={columnHeaders} rows={rows} />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={Math.ceil(contracts.length / itemsPerPage)}
-        onPageChange={setCurrentPage}
-      />
+      {isLoading ? (
+        <div>데이터 로딩 중...</div>
+      ) : error ? (
+        <div className={styles.errorMessage}>{error}</div>
+      ) : (
+        <>
+          <BasicTable 
+            title='채권 거래 내역' 
+            columns={columnHeaders} 
+            rows={rows} 
+          />
+          {hasTransactions && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 };

@@ -208,7 +208,7 @@ export interface StatusBadgeProps {
   status: '상환완료' | '상환중' | '부실';
 }
 
-export type SortKey = 'product' | 'bond' | 'transactionDate';
+export type SortKey = 'product' | 'bond' | 'transactionDate' | 'maturityDate' | 'interestRate';
 
 export interface SortState {
   key: SortKey;

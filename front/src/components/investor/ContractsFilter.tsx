@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import styles from '@/styles/investors/ContractsFilter.module.scss';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Select, { MultiValue, StylesConfig } from 'react-select';
 import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 import FilterSelectTable from '@/components/common/FilterSelectTable';
-import { subYears, isBefore } from 'date-fns';
+import { subYears, isBefore, format } from 'date-fns';
 import type { PillVariant } from '@/types/components';
 import Pill from '@/components/common/Pill';
 import request from '@/service/apis/request';
@@ -29,11 +29,18 @@ interface ApiResponse {
   investments: Investment[];
 }
 
+// Transaction types
 const typeOptions = [
   { value: 'repayment', label: '상환' },
   { value: 'delayed', label: '연체' },
   { value: 'defaulted', label: '부실' },
 ];
+
+const typeValueToApiValue = {
+  'repayment': '원금상환',
+  'delayed': '이자상환',
+  'defaulted': '환급'
+};
 
 const customSelectStyles: StylesConfig<{ label: string; value: string }, true> =
   {
@@ -57,7 +64,11 @@ const getStatusVariant = (status: string): PillVariant => {
   }
 };
 
-const ContractsFilter = () => {
+interface ContractsFilterProps {
+  onSearch: (searchParams: any) => void;
+}
+
+const ContractsFilter = ({ onSearch }: ContractsFilterProps) => {
   const today = new Date();
   const oneYearAgo = subYears(today, 1);
 
@@ -77,11 +88,11 @@ const ContractsFilter = () => {
     setIsOpen(newIsOpen);
     
     if (newIsOpen && investmentData.length === 0) {
-      fetchContrackData();
+      fetchInvestmentData();
     }
   };
 
-  const fetchContrackData = async () => {
+  const fetchInvestmentData = async () => {
     setIsLoading(true);
     setError(null);
     
@@ -128,6 +139,22 @@ const ContractsFilter = () => {
   const handleRemoveSelected = (id: string) => {
     setSelectedIds((prev) => prev.filter((selectedId) => selectedId !== id));
   };
+
+  const handleSearch = useCallback(() => {
+    const formattedStartDate = startDate ? format(startDate, "yyyy-MM-dd") : '';
+    const formattedEndDate = endDate ? format(endDate, "yyyy-MM-dd") : '';
+
+    const types = selectedTypes.map(type => typeValueToApiValue[type.value as keyof typeof typeValueToApiValue]);
+
+    const searchParams = {
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+      types: types,
+      investmentIds: selectedIds.map(id => parseInt(id))
+    };
+
+    onSearch(searchParams);
+  }, [startDate, endDate, selectedTypes, selectedIds, onSearch]);
 
   const data = investmentData.length > 0 ? investmentData : [];
   const selectedData = data.filter((item) => selectedIds.includes(item.investmentId.toString()));
@@ -178,7 +205,11 @@ const ContractsFilter = () => {
 
         {!isOpen && (
           <div className={styles.buttonWrapper}>
-            <button type='button' className={styles.searchButton}>
+            <button 
+              type='button' 
+              className={styles.searchButton}
+              onClick={handleSearch}
+            >
               검색하기
             </button>
           </div>
@@ -189,12 +220,18 @@ const ContractsFilter = () => {
         <div className={styles.detailBox}>
           <div className={styles.detailInner}>
             <div className={styles.tableWrapper}>
-              <FilterSelectTable
-                data={data}
-                selectedIds={selectedIds}
-                onSelect={setSelectedIds}
-                columns={['투자명', '거래 건수', '투자 시작일']}
-              />
+              {isLoading ? (
+                <div>데이터 로딩 중...</div>
+              ) : error ? (
+                <div className={styles.errorMessage}>{error}</div>
+              ) : (
+                <FilterSelectTable
+                  data={data}
+                  selectedIds={selectedIds}
+                  onSelect={setSelectedIds}
+                  columns={['투자명', '거래 건수', '투자 시작일']}
+                />
+              )}
               <div className={styles.legend}>
                 <div className={styles.legendItem}>
                   <Pill variant='repayment-complete' size='small'>
@@ -216,7 +253,7 @@ const ContractsFilter = () => {
                     variant={getStatusVariant(item.investStatus)}
                     onClose={() => handleRemoveSelected(item.investmentId.toString())}
                   >
-                    {`INVESR - ${item.investmentId}`}
+                    {`INVEST - ${item.investmentId}`}
                   </Pill>
                 </div>
               ))}
@@ -224,7 +261,11 @@ const ContractsFilter = () => {
           </div>
 
           <div className={styles.buttonWrapper}>
-            <button type='button' className={styles.searchButton}>
+            <button 
+              type='button' 
+              className={styles.searchButton}
+              onClick={handleSearch}
+            >
               검색하기
             </button>
           </div>
