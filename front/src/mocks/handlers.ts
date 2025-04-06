@@ -229,6 +229,14 @@ const handlers = [
       }),
     );
   }),
+  rest.get('/api/account/accounts', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        amount: 300000,
+      }),
+    );
+  }),
 ];
 
 export default handlers;
