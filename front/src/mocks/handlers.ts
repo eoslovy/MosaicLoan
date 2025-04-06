@@ -824,6 +824,66 @@ const handlers = [
       ctx.json({ message: '투자 신청이 완료되었습니다.' }),
     );
   }),
+  rest.get('/api/contract/investments/statistics', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        byAge: [
+          { group: '10s', count: 150, amount: 500000, ratio: 12 },
+          { group: '20s', count: 300, amount: 1200000, ratio: 24 },
+          { group: '30s', count: 500, amount: 2400000, ratio: 32 },
+          { group: '40s', count: 400, amount: 1800000, ratio: 20 },
+          { group: '50+', count: 200, amount: 1000000, ratio: 12 },
+        ],
+        byFamilyStatus: [
+          { group: 'single', count: 500, amount: 2200000, ratio: 35 },
+          {
+            group: 'married_with_children',
+            count: 400,
+            amount: 2000000,
+            ratio: 30,
+          },
+          {
+            group: 'married_without_children',
+            count: 300,
+            amount: 1500000,
+            ratio: 25,
+          },
+          { group: 'other', count: 100, amount: 500000, ratio: 10 },
+        ],
+        byResidence: [
+          { group: 'own', count: 400, amount: 1800000, ratio: 28 },
+          { group: 'apartment', count: 300, amount: 1600000, ratio: 25 },
+          { group: 'companyHousing', count: 100, amount: 400000, ratio: 10 },
+          { group: 'multiHouse', count: 150, amount: 700000, ratio: 12 },
+          { group: 'publicRental', count: 200, amount: 800000, ratio: 15 },
+          { group: 'other', count: 150, amount: 600000, ratio: 10 },
+        ],
+        byIndustry: [
+          { industry: 0, ratio: 1.2 },
+          { industry: 1, ratio: 2.4 },
+          { industry: 2, ratio: 0.5 },
+          { industry: 3, ratio: 1.8 },
+          { industry: 4, ratio: 3.1 },
+          { industry: 5, ratio: 5.6 },
+          { industry: 6, ratio: 0.7 },
+          { industry: 7, ratio: 10.3 },
+          { industry: 8, ratio: 4.2 },
+          { industry: 9, ratio: 5.5 },
+          { industry: 10, ratio: 9.8 },
+          { industry: 11, ratio: 2.1 },
+          { industry: 12, ratio: 6.3 },
+          { industry: 13, ratio: 2.7 },
+          { industry: 14, ratio: 1.9 },
+          { industry: 15, ratio: 13.5 },
+          { industry: 16, ratio: 2.2 },
+          { industry: 17, ratio: 3.0 },
+          { industry: 18, ratio: 1.0 },
+          { industry: 19, ratio: 0.9 },
+        ],
+      }),
+    );
+  }),
 ];
 
 export default handlers;
