@@ -13,6 +13,7 @@ import com.creditservice.domain.EvaluationStatus;
 import com.creditservice.dto.EvaluationResultDto;
 import com.creditservice.repository.CreditEvaluationRepository;
 import com.creditservice.repository.EconomySentimentRepository;
+import com.creditservice.util.RiskBasedYieldCalculator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,8 +68,11 @@ public class CalculationServiceImpl implements CalculationService {
 		riskFreeRate -= sentiment * 0.0025; // 범위에 따라 ±0.25% 조정
 
 		double lossGivenDefault = 0.5;
-		int interestRate = (int)Math.round(
-			(riskFreeRate + (probability * lossGivenDefault)) * 10000);
+		double adjustProbability = probability * 53;
+
+		int interestRate = (int) Math.round(
+			(riskFreeRate + RiskBasedYieldCalculator.calculateAssignedRate(adjustProbability).doubleValue()) * 10000
+		);
 
 		// 3. DSR 기반 대출 한도 계산
 		// Redis에서 데이터 가져오기rm
