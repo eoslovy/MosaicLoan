@@ -149,7 +149,7 @@ const handlers = [
   }),
   rest.get('/credit/evaluations/recent', (req, res, ctx) => {
     return res(
-      ctx.status(200),
+      ctx.status(404),
       ctx.json({
         maxLoanLimit: 123000,
         interestRate: 90,
@@ -158,9 +158,9 @@ const handlers = [
     );
   }),
   rest.post('/credit/evaluations', async (req, res, ctx) => {
-    const { appliedAt, memberId } = await req.json();
+    const { appliedAt } = await req.json();
 
-    console.log(`신용평가 req - memberId: ${memberId}, 날짜: ${appliedAt}`);
+    console.log(`신용평가 req - 날짜: ${appliedAt}`);
 
     return res(
       ctx.status(200),
