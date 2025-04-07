@@ -1,5 +1,6 @@
 package com.creditservice.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -7,9 +8,11 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.creditservice.domain.CreditEvaluation;
+import com.creditservice.domain.EconomySentiment;
 import com.creditservice.domain.EvaluationStatus;
 import com.creditservice.dto.EvaluationResultDto;
 import com.creditservice.repository.CreditEvaluationRepository;
+import com.creditservice.repository.EconomySentimentRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +24,7 @@ public class CalculationServiceImpl implements CalculationService {
 
 	private final CreditEvaluationRepository evaluationRepository;
 	private final EvaluationRedisService evaluationRedisService;
+	private final EconomySentimentRepository economySentimentRepository;
 
 	public CreditEvaluation createAndSaveEvaluation(Integer caseId, Integer memberId, Integer defaultRate,
 		Integer interestRate, Integer maxLoanLimit, EvaluationStatus status) {
@@ -36,6 +40,19 @@ public class CalculationServiceImpl implements CalculationService {
 
 		return evaluationRepository.save(evaluation);
 	}
+	
+	// 전일 경제 심리지수를 조회하는 메서드
+	private double getYesterdaySentiment() {
+		LocalDate yesterday = LocalDate.now().minusDays(1);
+		Optional<EconomySentiment> sentimentOpt = economySentimentRepository.findBySentimentDate(yesterday);
+		
+		if (sentimentOpt.isPresent()) {
+			double sentiment = sentimentOpt.get().getAverageSentiment();
+			return sentiment;
+		} else {
+			return 0.0;
+		}
+	}
 
 	@Override
 	public CreditEvaluation evaluateCredit(Integer caseId, Integer memberId, double probability) {
@@ -44,6 +61,11 @@ public class CalculationServiceImpl implements CalculationService {
 
 		// 2. 이자율 계산 (무위험 이자율 4%, 손실률 0.5 가정)
 		double riskFreeRate = 0.04;
+		
+		// 전날의 경제 심리지수를 가져와 이자율에 반영
+		double sentiment = getYesterdaySentiment();
+		riskFreeRate -= sentiment * 0.0025; // 범위에 따라 ±0.25% 조정
+
 		double lossGivenDefault = 0.5;
 		int interestRate = (int)Math.round(
 			(riskFreeRate + (probability * lossGivenDefault)) * 10000);
