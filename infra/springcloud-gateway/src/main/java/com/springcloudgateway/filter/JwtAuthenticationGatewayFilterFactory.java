@@ -1,6 +1,5 @@
 package com.springcloudgateway.filter;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpCookie;
@@ -21,16 +20,16 @@ public class JwtAuthenticationGatewayFilterFactory
 	private static final String MEMBER_ID_HEADER = "X-MEMBER-ID";
 	private static final String IS_BOT_HEADER = "X-IS-BOT";
 	private static final String ACCESS_TOKEN_COOKIE_NAME = "access-token";
-	private final String verifyUrl;
+	// private final String verifyUrl;
 
 	private final WebClient webClient;
 
 	public JwtAuthenticationGatewayFilterFactory(
-		@Value("${verify-url}") String verifyUrl,
+		// @Value("${verify-url}") String verifyUrl,
 		WebClient.Builder webClientBuilder
 	) {
 		super(Config.class);
-		this.verifyUrl = verifyUrl;
+		// this.verifyUrl = verifyUrl;
 		this.webClient = webClientBuilder.build();
 	}
 
@@ -74,7 +73,7 @@ public class JwtAuthenticationGatewayFilterFactory
 
 	private Mono<MemberInfoResponse> fetchMemberInfo(HttpCookie accessTokenCookie) {
 		return webClient.get()
-			.uri(verifyUrl)
+			.uri("http://member-service:8080/auth/internal/verify-token")
 			.header("X-INTERNAL-CALL", "true")
 			.cookies(cookies -> {
 				cookies.add(accessTokenCookie.getName(), accessTokenCookie.getValue());

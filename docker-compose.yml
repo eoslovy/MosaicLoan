@@ -1,11 +1,11 @@
 version: '3.8'
 services:
-  member-api:
-    container_name: member-api
+  member-service:
+    container_name: member-service
     build:
       context: ./back/member-service
       dockerfile: Dockerfile
-    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-api:${IMAGE_TAG:-local}
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-service:${IMAGE_TAG:-local}
     env_file:
       - .env
     #    environment:
@@ -21,12 +21,12 @@ services:
     ports:
       - "18081:8080"
 
-  account-api:
-    container_name: account-api
+  account-service:
+    container_name: account-service
     build:
       context: ./back/account-service
       dockerfile: Dockerfile
-    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-account-api:${IMAGE_TAG:-local}
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-account-service:${IMAGE_TAG:-local}
     env_file:
       - .env
     depends_on:
@@ -34,36 +34,36 @@ services:
     ports:
       - "18082:8080"
 
-  contract-api:
-    container_name: contract-api
+  contract-service:
+    container_name: contract-service
     build:
       context: ./back/contract-service
       dockerfile: Dockerfile
-    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-contract-api:${IMAGE_TAG:-local}
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-contract-service:${IMAGE_TAG:-local}
     env_file:
       - .env
     depends_on:
       - contract-db
     ports:
       - "18083:8080"
-  credit-api:
-    container_name: credit-api
+  credit-service:
+    container_name: credit-service
     build:
       context: ./back/credit-service
       dockerfile: Dockerfile
-    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-credit-api:${IMAGE_TAG:-local}
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-credit-service:${IMAGE_TAG:-local}
     env_file:
       - .env
     depends_on:
       - credit-db
     ports:
       - "18084:8080"
-  mydata-api:
-    container_name: mydata-api
+  mydata-service:
+    container_name: mydata-service
     build:
       context: ./back/mydata-service
       dockerfile: Dockerfile
-    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-mydata-api:${IMAGE_TAG:-local}
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-mydata-service:${IMAGE_TAG:-local}
     env_file:
       - .env
     depends_on:
