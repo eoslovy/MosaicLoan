@@ -44,20 +44,6 @@ public class GlobalExceptionHandler {
 		return createErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage(), e.getErrorCode(), request);
 	}
 
-	// @ExceptionHandler(InsufficientAuthenticationException.class)
-	// public ResponseEntity<ErrorResponse> handleInsufficientAuthenticationException(
-	// 	InsufficientAuthenticationException e, HttpServletRequest request) {
-	// 	log.error("InsufficientAuthenticationException: {}", e.getMessage());
-	// 	return createErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage(), ErrorCode.UNAUTHORIZED, request);
-	// }
-
-	// @ExceptionHandler(AccessDeniedException.class)
-	// public ResponseEntity<ErrorResponse> handleAccessDeniedException(
-	// 	AccessDeniedException e, HttpServletRequest request) {
-	// 	log.error("AccessDeniedException: {}", e.getMessage());
-	// 	return createErrorResponse(HttpStatus.FORBIDDEN, e.getMessage(), ErrorCode.ACCESS_DENIED, request);
-	// }
-
 	private ResponseEntity<ErrorResponse> createErrorResponse(
 		HttpStatus status, String message, ErrorCode errorCode, HttpServletRequest request) {
 		ErrorResponse errorResponse = ErrorResponse.builder()
