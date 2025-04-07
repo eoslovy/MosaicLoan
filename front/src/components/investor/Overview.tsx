@@ -4,10 +4,13 @@ import React from 'react';
 import BasicInfoCard from '@/components/common/BasicInfoCard';
 import styles from '@/styles/investors/Overview.module.scss';
 import EmptyState from '@/components/empty/investor/EmptyState';
-import { mockInvestorOverview } from '@/data/mockData';
+import { InvestmentSummary } from '@/types/pages';
 
-const Overview = () => {
-  const { summary } = mockInvestorOverview;
+interface OverviewProps {
+  summary: InvestmentSummary;
+}
+
+const Overview: React.FC<OverviewProps> = ({ summary }) => {
   const { 총투자금액, 누적수익금, 평균수익률, 투자건수 } = summary;
 
   if (!summary || Object.values(summary).every((v) => !v)) {

@@ -1,18 +1,33 @@
 'use client';
 
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useEffect, useState } from 'react';
 import TotalContractsOverview from '@/components/investor/TotalContractsOverview';
 import ContractsFilter from '@/components/investor/ContractsFilter';
 import ContractsList from '@/components/investor/ContractsList';
 import { fetchContractSummary } from '@/service/apis/investments';
 import EmptyState from '@/components/empty/investor/EmptyState';
+import type { ContractSummaryResponse } from '@/types/pages';
 
 const ContractsPage = () => {
-  const { data, isError, isLoading } = useQuery({
-    queryKey: ['contractSummary'],
-    queryFn: fetchContractSummary,
-  });
+  const [data, setData] = useState<ContractSummaryResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await fetchContractSummary();
+        setData(result);
+      } catch (error) {
+        console.error('채권 요약 정보 요청 실패', error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   if (isLoading) {
     return <EmptyState message='채권 정보를 불러오는 중입니다' />;
@@ -24,10 +39,7 @@ const ContractsPage = () => {
 
   return (
     <>
-      {/* <div className='py-10 px-10'>
-        
-      </div> */}
-      <TotalContractsOverview data={data} />
+      <TotalContractsOverview />
       <ContractsFilter />
       <ContractsList />
     </>

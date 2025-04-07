@@ -1,28 +1,26 @@
 import { useUserStore } from '@/stores/userStore';
+import request from '@/service/apis/request';
+import type { User } from '@/types/user';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-export const handleKakaoLogin = (redirectTo?: string) => {
-  const encoded = encodeURIComponent(redirectTo || window.location.pathname);
-  window.location.href = `${API_URL}/auth/kakao/login?redirectTo=${encoded}`;
-};
-
-export const fetchUser = async () => {
-  const res = await fetch(`${API_URL}/me`, {
-    credentials: 'include',
-  });
-
-  if (!res.ok) return null;
-  const json = await res.json();
-  return json.data;
+export const handleKakaoLogin = () => {
+  window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/member/auth/kakao/login`;
 };
 
 export const handleLogout = async () => {
-  await fetch(`${API_URL}/logout`, {
-    method: 'POST',
-    credentials: 'include',
-  });
-
-  const { setUser } = useUserStore.getState();
+  await request.POST('/member/logout');
+  const { setUser, setIsFetched } = useUserStore.getState();
   setUser(null);
+  setIsFetched(false);
+};
+
+export const handleProtectedRoute = (
+  user: User | null,
+  path: string,
+  router: ReturnType<typeof import('next/navigation').useRouter>,
+) => {
+  if (user) {
+    router.push(path);
+  } else {
+    handleKakaoLogin();
+  }
 };

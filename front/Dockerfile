@@ -7,7 +7,7 @@ COPY . .
 RUN pnpm install
 RUN pnpm format
 RUN pnpm lint
-RUN pnpm build || (echo "❌ React build failed" && exit 1)
+RUN pnpm build:static || (echo "❌ React build failed" && exit 1)
 FROM alpine AS react-static
 WORKDIR /dist
 COPY --from=builder /app/out ./  

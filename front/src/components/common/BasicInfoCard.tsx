@@ -7,6 +7,7 @@ import {
   Clock,
   ArrowUpRight,
   Percent,
+  TriangleAlert,
 } from 'lucide-react';
 
 const iconMap = {
@@ -15,6 +16,7 @@ const iconMap = {
   clock: Clock,
   arrowUpRight: ArrowUpRight,
   percent: Percent,
+  triangleAlert: TriangleAlert,
 };
 
 const MAX_WIDTH = 200;

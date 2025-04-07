@@ -1,36 +1,64 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useUserStore } from '@/stores/userStore';
+import request from '@/service/apis/request';
+import type { UserResponse, User } from '@/types/user';
+import { AxiosError } from 'axios';
 
 const useUser = () => {
-  const { user, setUser } = useUserStore();
+  const user = useUserStore((state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
+  const isFetched = useUserStore((state) => state.isFetched);
+  const setIsFetched = useUserStore((state) => state.setIsFetched);
+  const [isLoading, setIsLoading] = useState(!isFetched);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    // mock service worker실행할 때는 아래꺼 주석처리 하고, 실제로 할때는 주설 풀어야함..
+    // if (typeof window === 'undefined' || isFetched) return;
+
     const fetchUser = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-        const res = await fetch(`${apiUrl}/me`, {
-          credentials: 'include',
-        });
+        const response = await request.GET<UserResponse['data']>('/member/me');
+        console.log('[useUser] 응답:', response);
 
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-
-        if (data && data.username) {
-          setUser(data);
+        if (response) {
+          const convertedUser: User = {
+            id: response.id,
+            username: response.name,
+            oauthProvider: response.oauthProvider,
+          };
+          console.log('[useUser] 저장할 유저:', convertedUser);
+          setUser(convertedUser);
         } else {
+          console.log('[useUser] 사용자 없음 → null');
           setUser(null);
         }
-      } catch {
+      } catch (err) {
+        const axiosError = err as AxiosError;
+        if (axiosError.response?.status === 401) {
+          console.info('[useUser] 로그인되지 않은 상태 (401)');
+        } else {
+          console.error('[useUser] 에러 발생:', err);
+        }
         setUser(null);
+        setError(err as Error);
+      } finally {
+        setIsFetched(true);
+        setIsLoading(false);
       }
     };
 
-    fetchUser();
-  }, [setUser]);
+    const timeout = setTimeout(() => {
+      console.info('[useUser] 기다리는 중');
+      fetchUser();
+    }, 1000);
 
-  return user;
+    return () => clearTimeout(timeout);
+  }, [isFetched]);
+
+  return { user, isFetched, isLoading, error };
 };
 
 export default useUser;
