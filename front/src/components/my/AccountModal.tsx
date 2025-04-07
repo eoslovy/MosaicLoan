@@ -8,6 +8,7 @@ import Text from '@/components/common/Text';
 import styles from '@/styles/my/AccountModal.module.scss';
 import useAccountStore from '@/stores/accountStore';
 import request from '@/service/apis/request';
+import bankCodes from '@/types/bankCodes';
 
 interface Props {
   isOpen: boolean;
@@ -16,17 +17,6 @@ interface Props {
   openChargeModal?: () => void;
   setToast?: (msg: string | null) => void;
 }
-
-const bankOptions = [
-  { code: '004', name: '국민은행' },
-  { code: '088', name: '신한은행' },
-  { code: '081', name: '하나은행' },
-  { code: '090', name: '카카오뱅크' },
-  { code: '089', name: '케이뱅크' },
-  { code: '020', name: '우리은행' },
-  { code: '011', name: '농협은행' },
-  // 필요한 만큼 더 추가 가능
-];
 
 const formatBalance = (amount: number): string => {
   if (amount >= 1_0000_0000_0000)
@@ -111,10 +101,12 @@ const AccountModal = ({
     amount % 1000 === 0 &&
     (type === 'charge' || amount <= balance);
 
+  const rawAccountNumber = accountNumber.replace(/-/g, '');
+
   const isValidAccountNumber =
-    accountNumber.length > 0 &&
-    accountNumber.length <= 14 &&
-    /^[0-9]+$/.test(accountNumber);
+    rawAccountNumber.length > 0 &&
+    rawAccountNumber.length <= 14 &&
+    /^[0-9]+$/.test(rawAccountNumber);
 
   const isValidWithdraw =
     type === 'withdraw'
@@ -218,7 +210,7 @@ const AccountModal = ({
                 type='text'
                 inputMode='numeric'
                 className={styles.input}
-                placeholder='계좌번호를 입력하세요 (숫자만)'
+                placeholder='계좌번호를 입력하세요'
                 value={accountNumber}
                 onChange={(e) =>
                   setAccountNumber(formatAccountNumber(e.target.value))
@@ -235,7 +227,7 @@ const AccountModal = ({
                 onChange={(e) => setBankCode(e.target.value)}
               >
                 <option value=''>은행을 선택하세요</option>
-                {bankOptions.map((bank) => (
+                {bankCodes.map((bank) => (
                   <option key={bank.code} value={bank.code}>
                     {bank.name}
                   </option>
