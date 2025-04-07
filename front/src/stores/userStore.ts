@@ -9,8 +9,8 @@ export interface UserStore {
   setIsFetched: (fetched: boolean) => void;
 }
 
-export const useUserStore = create(
-  persist<UserStore>(
+export const useUserStore = create<UserStore>()(
+  persist(
     (set) => ({
       user: null,
       isFetched: false,
@@ -19,11 +19,8 @@ export const useUserStore = create(
     }),
     {
       name: 'user-store',
-      partialize: (state): UserStore => ({
-        user: null,
+      partialize: (state) => ({
         isFetched: state.isFetched,
-        setUser: () => {},
-        setIsFetched: () => {},
       }),
     },
   ),

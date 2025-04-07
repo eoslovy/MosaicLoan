@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 import InvestSectionTabNav from '@/components/layout/InvestSectionTabNav';
+import withAuthProtection from '@/components/auth/withAuthProtection';
 
 const tabPaths = [
   '/investor/overview',
@@ -30,4 +31,4 @@ const InvestorLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default InvestorLayout;
+export default withAuthProtection(InvestorLayout);
