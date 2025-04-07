@@ -75,26 +75,26 @@ const ContractsList = ({
   const [sortStates, setSortStates] = useState<SortState[]>([]);
 
   const handleSort = (key: SortKey) => {
-    const newSortStates = (() => {
-      const existing = sortStates.find((s) => s.key === key);
+    console.log('정렬 실행:', key);
 
-      if (!existing) {
-        return [...sortStates, { key, ascending: true }];
-      } else if (existing.ascending) {
-        return sortStates.map((s) =>
-          s.key === key ? { ...s, ascending: false } : s,
-        );
-      } else {
-        return sortStates.filter((s) => s.key !== key);
-      }
-    })();
+    let newSortStates: SortState[] = [...sortStates];
+
+    const existingIndex = newSortStates.findIndex(s => s.key === key);
+    const existing = existingIndex !== -1 ? newSortStates[existingIndex] : null;
+
+    if (!existing) {
+      newSortStates.push({ key, ascending: true });
+    } else if (existing.ascending) {
+      newSortStates[existingIndex] = { ...existing, ascending: false };
+    } else {
+      newSortStates = newSortStates.filter(s => s.key !== key);
+    }
 
     setSortStates(newSortStates);
-    console.log(newSortStates)
 
     const apiSortFormat = newSortStates.map(sort => ({
       field: apiToSortKeyMapping[sort.key] || sort.key,
-      order: sortOrderMapping[String(sort.ascending)] || 'unsorted'
+      order: sortOrderMapping[String(sort.ascending)]
     }));
 
     onSortChange(apiSortFormat);

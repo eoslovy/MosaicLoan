@@ -473,6 +473,39 @@ const handlers = [
 
     let filteredTransactions: Transaction[] = [...allTransactions];
 
+    if (sort.length > 0) {
+      const { field, order } = sort[0];
+      
+      console.log(`MSW - 정렬 적용: ${field} ${order}`);
+      
+      filteredTransactions.sort((a, b) => {
+        const valueA = a[field];
+        const valueB = b[field];
+        
+        if (typeof valueA === 'string' && typeof valueB === 'string') {
+          if (valueA.includes('%') && valueB.includes('%')) {
+            const numA = parseFloat(valueA.replace('%', ''));
+            const numB = parseFloat(valueB.replace('%', ''));
+            return order === 'asc' ? numA - numB : numB - numA;
+          }
+
+          return order === 'asc' 
+            ? valueA.localeCompare(valueB) 
+            : valueB.localeCompare(valueA);
+        }
+
+        if (typeof valueA === 'number' && typeof valueB === 'number') {
+          return order === 'asc' ? valueA - valueB : valueB - valueA;
+        }
+
+        const strA = String(valueA);
+        const strB = String(valueB);
+        return order === 'asc' 
+          ? strA.localeCompare(strB) 
+          : strB.localeCompare(strA);
+      });
+    }
+
     const totalItemCount = filteredTransactions.length;
     const totalPage = Math.ceil(totalItemCount / pageSize);
     const startIndex = (page - 1) * pageSize;

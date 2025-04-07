@@ -68,23 +68,14 @@ const ContractsPage = () => {
     fetchData();
   }, []);
 
-  const handleSearch = async (searchParams: any) => {
+  const fetchTransactions = async (params: any) => {
     setIsLoadingTransactions(true);
     setTransactionsError(null);
-
-    const finalParams = {
-      ...searchParams,
-      page: currentPage,
-      pageSize,
-      sort: sortState
-    };
-
-    setCurrentSearchParams(searchParams);
 
     try {
       const response = await request.POST<ApiResponseData>(
         '/api/contract/investments/transactions/search',
-        finalParams
+        params
       );
 
       if (response && response.transactions) {
@@ -103,22 +94,43 @@ const ContractsPage = () => {
     }
   };
 
+  const handleSearch = (searchParams: any) => {
+    const finalParams = {
+      ...searchParams,
+      page: 1,
+      pageSize,
+      sort: sortState
+    };
+
+    setCurrentPage(1);
+    setCurrentSearchParams(searchParams);
+    fetchTransactions(finalParams);
+  };
+
   const handleSortChange = (newSortState: { field: string; order: string }[]) => {
     setSortState(newSortState);
 
-    handleSearch({
+    const finalParams = {
       ...currentSearchParams,
+      page: 1,
+      pageSize,
       sort: newSortState
-    });
+    };
+
+    setCurrentPage(1);
+    fetchTransactions(finalParams);
   };
 
   const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-
-    handleSearch({
+    const finalParams = {
       ...currentSearchParams,
-      page: newPage
-    });
+      page: newPage,
+      pageSize,
+      sort: sortState
+    };
+
+    setCurrentPage(newPage);
+    fetchTransactions(finalParams);
   };
 
   if (isLoadingSummary) {
