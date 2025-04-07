@@ -17,6 +17,17 @@ interface Props {
   setToast?: (msg: string | null) => void;
 }
 
+const bankOptions = [
+  { code: '004', name: '국민은행' },
+  { code: '088', name: '신한은행' },
+  { code: '081', name: '하나은행' },
+  { code: '090', name: '카카오뱅크' },
+  { code: '089', name: '케이뱅크' },
+  { code: '020', name: '우리은행' },
+  { code: '011', name: '농협은행' },
+  // 필요한 만큼 더 추가 가능
+];
+
 const formatBalance = (amount: number): string => {
   if (amount >= 1_0000_0000_0000)
     return `${Math.floor(amount / 1_0000_0000_0000)} 조원`;
@@ -40,6 +51,8 @@ const AccountModal = ({
   const [inputValue, setInputValue] = useState('');
   const [isBlurred, setIsBlurred] = useState(false);
   const [amount, setAmount] = useState<number>(0);
+  const [accountNumber, setAccountNumber] = useState('');
+  const [bankCode, setBankCode] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
@@ -47,10 +60,25 @@ const AccountModal = ({
     if (isOpen) {
       setInputValue('');
       setAmount(0);
+      setAccountNumber('');
+      setBankCode('');
       setErrorMessage(null);
       setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [isOpen]);
+
+  const formatAccountNumber = (value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 14);
+    let formatted = digits;
+
+    if (digits.length > 6) {
+      formatted = `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+    } else if (digits.length > 3) {
+      formatted = `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    }
+
+    return formatted;
+  };
 
   const handleAmountChange = (value: string) => {
     const raw = value.replace(/[^0-9]/g, '');
@@ -83,34 +111,43 @@ const AccountModal = ({
     amount % 1000 === 0 &&
     (type === 'charge' || amount <= balance);
 
-  const handleSubmit = async () => {
-    if (!isValidAmount) return;
+  const isValidAccountNumber =
+    accountNumber.length > 0 &&
+    accountNumber.length <= 14 &&
+    /^[0-9]+$/.test(accountNumber);
 
-    if (type === 'charge') {
-      try {
+  const isValidWithdraw =
+    type === 'withdraw'
+      ? isValidAmount && isValidAccountNumber && bankCode !== ''
+      : true;
+
+  const handleSubmit = async () => {
+    if (!isValidAmount || (type === 'withdraw' && !isValidWithdraw)) return;
+
+    try {
+      if (type === 'charge') {
         const res = await request.POST<{ redirectUrl: string }>(
           '/account/external/deposit/ready',
           { amount },
         );
-
         if (res?.redirectUrl && res.redirectUrl !== '') {
           window.location.href = res.redirectUrl;
         } else {
           setToast?.('결제 페이지 요청에 실패했습니다.');
         }
-      } catch (e) {
-        console.error('충전 요청 실패:', e);
-        setToast?.('충전 중 오류가 발생했습니다.');
-      }
-    } else {
-      try {
-        await request.POST('/account/external/withdrawal', { amount });
-        // setToast?.('출금이 완료되었습니다.');
+      } else {
+        await request.POST('/account/external/withdrawal', {
+          amount,
+          accountNumber: accountNumber.replace(/-/g, ''),
+          bankCode,
+        });
         router.refresh();
-      } catch (e) {
-        console.error('출금 요청 실패:', e);
-        setToast?.('출금 중 오류가 발생했습니다.');
       }
+    } catch (e) {
+      console.error(`${type === 'charge' ? '충전' : '출금'} 요청 실패:`, e);
+      setToast?.(
+        `${type === 'charge' ? '충전' : '출금'} 중 오류가 발생했습니다.`,
+      );
     }
 
     onClose();
@@ -118,7 +155,6 @@ const AccountModal = ({
 
   const formattedBalance =
     balance > 0 ? formatBalance(balance) : '잔액을 불러오는 중...';
-
   const expectedBalance =
     type === 'charge' ? balance + amount : balance - amount;
 
@@ -137,6 +173,7 @@ const AccountModal = ({
       >
         <Text text={`현재 잔액: ${formattedBalance}`} size='lg' weight='bold' />
 
+        {/* 금액 입력 */}
         <div className={styles.inputWrapper}>
           <div className={styles.inputWithUnit}>
             <input
@@ -152,8 +189,6 @@ const AccountModal = ({
             />
             <span className={styles.unit}>원</span>
           </div>
-
-          {/* 에러 메시지 */}
           {errorMessage === '잔액이 부족합니다' ? (
             <div className={styles.error}>
               <p>{errorMessage}</p>
@@ -175,7 +210,42 @@ const AccountModal = ({
           )}
         </div>
 
-        {/* 예상 잔액 표시 */}
+        {/* 출금 전용: 계좌번호 입력 */}
+        {type === 'withdraw' && (
+          <>
+            <div className={styles.inputWrapper}>
+              <input
+                type='text'
+                inputMode='numeric'
+                className={styles.input}
+                placeholder='계좌번호를 입력하세요 (숫자만)'
+                value={accountNumber}
+                onChange={(e) =>
+                  setAccountNumber(formatAccountNumber(e.target.value))
+                }
+                maxLength={17}
+              />
+            </div>
+
+            {/* 은행 코드 선택 */}
+            <div className={styles.inputWrapper}>
+              <select
+                className={styles.select}
+                value={bankCode}
+                onChange={(e) => setBankCode(e.target.value)}
+              >
+                <option value=''>은행을 선택하세요</option>
+                {bankOptions.map((bank) => (
+                  <option key={bank.code} value={bank.code}>
+                    {bank.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
+
+        {/* 예상 잔액 */}
         {isBlurred && isValidAmount && !errorMessage && (
           <div className={styles.expectedBalance}>
             <Text
@@ -197,7 +267,7 @@ const AccountModal = ({
           variant='filled'
           size='large'
           onClick={handleSubmit}
-          disabled={!isValidAmount}
+          disabled={!isValidAmount || (type === 'withdraw' && !isValidWithdraw)}
         />
       </form>
     </Modal>

@@ -21,7 +21,7 @@
   .input {
     width: 100%;
     font-size: $text-md;
-    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    padding: 0.75rem 1rem;
     border: 1px solid $border-color;
     border-radius: 8px;
     font-weight: 600;
@@ -55,4 +55,12 @@
   &:hover {
     text-decoration: underline;
   }
+}
+
+.select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
 }
