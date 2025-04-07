@@ -40,9 +40,9 @@ public class MemberServiceImpl implements MemberService {
 				var newMember = memberRepository.save(
 					Member.createMember(oauthId, kakaoMemberResponse.getNickname())
 				);
-				
+
 				webClient.post()
-					.uri("http://account-service:8080/accounts/create")
+					.uri("http://account-service:8080/accounts/")
 					.header("X-MEMBER-ID", String.valueOf(newMember.getId()))
 					.header("X-INTERNAL-CALL", "true")
 					.retrieve()
