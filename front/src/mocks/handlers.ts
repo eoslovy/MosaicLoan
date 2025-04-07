@@ -344,7 +344,7 @@ const handlers = [
       amount: string;
       createdAt: string;
       status: string;
-      bondMaturity: string;
+      dueDate: string;
       interestRate: string;
       [key: string]: string | number;
     }
@@ -357,7 +357,7 @@ const handlers = [
         amount: '10000000',
         createdAt: '2025-03-01',
         status: '원금상환',
-        bondMaturity: '2025-09-01',
+        dueDate: '2025-09-01',
         interestRate: '6.5%',
       },
       {
@@ -367,7 +367,7 @@ const handlers = [
         amount: '650000',
         createdAt: '2025-03-01',
         status: '이자상환',
-        bondMaturity: '2025-09-01',
+        dueDate: '2025-09-01',
         interestRate: '6.5%',
       },
       {
@@ -377,7 +377,7 @@ const handlers = [
         amount: '15000000',
         createdAt: '2025-03-02',
         status: '원금상환',
-        bondMaturity: '2025-09-02',
+        dueDate: '2025-09-02',
         interestRate: '6.5%',
       },
       {
@@ -387,7 +387,7 @@ const handlers = [
         amount: '975000',
         createdAt: '2025-03-02',
         status: '이자상환',
-        bondMaturity: '2025-09-02',
+        dueDate: '2025-09-02',
         interestRate: '6.5%',
       },
       {
@@ -397,7 +397,7 @@ const handlers = [
         amount: '8000000',
         createdAt: '2025-03-05',
         status: '원금상환',
-        bondMaturity: '2025-09-05',
+        dueDate: '2025-09-05',
         interestRate: '6.6%',
       },
       {
@@ -407,7 +407,7 @@ const handlers = [
         amount: '528000',
         createdAt: '2025-03-05',
         status: '이자상환',
-        bondMaturity: '2025-09-05',
+        dueDate: '2025-09-05',
         interestRate: '6.6%',
       },
       {
@@ -417,7 +417,7 @@ const handlers = [
         amount: '12000000',
         createdAt: '2025-03-07',
         status: '원금상환',
-        bondMaturity: '2025-09-07',
+        dueDate: '2025-09-07',
         interestRate: '6.6%',
       },
       {
@@ -427,7 +427,7 @@ const handlers = [
         amount: '792000',
         createdAt: '2025-03-07',
         status: '이자상환',
-        bondMaturity: '2025-09-07',
+        dueDate: '2025-09-07',
         interestRate: '6.6%',
       },
       {
@@ -437,7 +437,7 @@ const handlers = [
         amount: '20000000',
         createdAt: '2025-03-10',
         status: '원금상환',
-        bondMaturity: '2025-09-10',
+        dueDate: '2025-09-10',
         interestRate: '6.7%',
       },
       {
@@ -447,7 +447,7 @@ const handlers = [
         amount: '1340000',
         createdAt: '2025-03-10',
         status: '이자상환',
-        bondMaturity: '2025-09-10',
+        dueDate: '2025-09-10',
         interestRate: '6.7%',
       },
       {
@@ -457,7 +457,7 @@ const handlers = [
         amount: '18000000',
         createdAt: '2025-03-12',
         status: '원금상환',
-        bondMaturity: '2025-09-12',
+        dueDate: '2025-09-12',
         interestRate: '6.7%',
       },
       {
@@ -467,7 +467,7 @@ const handlers = [
         amount: '1206000',
         createdAt: '2025-03-12',
         status: '이자상환',
-        bondMaturity: '2025-09-12',
+        dueDate: '2025-09-12',
         interestRate: '6.7%',
       },
       {
@@ -477,7 +477,7 @@ const handlers = [
         amount: '25000000',
         createdAt: '2025-03-15',
         status: '원금상환',
-        bondMaturity: '2025-09-15',
+        dueDate: '2025-09-15',
         interestRate: '6.8%',
       },
       {
@@ -487,7 +487,7 @@ const handlers = [
         amount: '1700000',
         createdAt: '2025-03-15',
         status: '이자상환',
-        bondMaturity: '2025-09-15',
+        dueDate: '2025-09-15',
         interestRate: '6.8%',
       },
       {
@@ -497,7 +497,7 @@ const handlers = [
         amount: '500000',
         createdAt: '2025-03-18',
         status: '환급',
-        bondMaturity: '2025-09-18',
+        dueDate: '2025-09-18',
         interestRate: '6.8%',
       },
       {
@@ -507,7 +507,7 @@ const handlers = [
         amount: '30000000',
         createdAt: '2025-03-20',
         status: '원금상환',
-        bondMaturity: '2025-09-20',
+        dueDate: '2025-09-20',
         interestRate: '6.9%',
       },
       {
@@ -517,7 +517,7 @@ const handlers = [
         amount: '2010000',
         createdAt: '2025-03-20',
         status: '이자상환',
-        bondMaturity: '2025-09-20',
+        dueDate: '2025-09-20',
         interestRate: '6.9%',
       },
       {
@@ -527,7 +527,7 @@ const handlers = [
         amount: '22000000',
         createdAt: '2025-03-22',
         status: '원금상환',
-        bondMaturity: '2025-09-22',
+        dueDate: '2025-09-22',
         interestRate: '6.9%',
       },
       {
@@ -537,7 +537,7 @@ const handlers = [
         amount: '1474000',
         createdAt: '2025-03-22',
         status: '이자상환',
-        bondMaturity: '2025-09-22',
+        dueDate: '2025-09-22',
         interestRate: '6.9%',
       },
       {
@@ -547,7 +547,7 @@ const handlers = [
         amount: '700000',
         createdAt: '2025-03-25',
         status: '환급',
-        bondMaturity: '2025-09-25',
+        dueDate: '2025-09-25',
         interestRate: '7.0%',
       },
       {
@@ -557,7 +557,7 @@ const handlers = [
         amount: '18000000',
         createdAt: '2025-03-27',
         status: '원금상환',
-        bondMaturity: '2025-09-27',
+        dueDate: '2025-09-27',
         interestRate: '7.0%',
       },
       {
@@ -567,7 +567,7 @@ const handlers = [
         amount: '1188000',
         createdAt: '2025-03-27',
         status: '이자상환',
-        bondMaturity: '2025-09-27',
+        dueDate: '2025-09-27',
         interestRate: '7.0%',
       },
       {
@@ -577,7 +577,7 @@ const handlers = [
         amount: '15000000',
         createdAt: '2025-03-29',
         status: '원금상환',
-        bondMaturity: '2025-09-29',
+        dueDate: '2025-09-29',
         interestRate: '7.1%',
       },
       {
@@ -587,7 +587,7 @@ const handlers = [
         amount: '1005000',
         createdAt: '2025-03-29',
         status: '이자상환',
-        bondMaturity: '2025-09-29',
+        dueDate: '2025-09-29',
         interestRate: '7.1%',
       },
       {
@@ -597,7 +597,7 @@ const handlers = [
         amount: '28000000',
         createdAt: '2025-03-30',
         status: '원금상환',
-        bondMaturity: '2025-09-30',
+        dueDate: '2025-09-30',
         interestRate: '7.2%',
       },
       {
@@ -607,7 +607,7 @@ const handlers = [
         amount: '1904000',
         createdAt: '2025-03-30',
         status: '이자상환',
-        bondMaturity: '2025-09-30',
+        dueDate: '2025-09-30',
         interestRate: '7.2%',
       },
       {
@@ -617,7 +617,7 @@ const handlers = [
         amount: '32000000',
         createdAt: '2025-03-31',
         status: '원금상환',
-        bondMaturity: '2025-09-30',
+        dueDate: '2025-09-30',
         interestRate: '7.2%',
       },
       {
@@ -627,7 +627,7 @@ const handlers = [
         amount: '2144000',
         createdAt: '2025-03-31',
         status: '이자상환',
-        bondMaturity: '2025-09-30',
+        dueDate: '2025-09-30',
         interestRate: '7.2%',
       },
       {
@@ -637,7 +637,7 @@ const handlers = [
         amount: '900000',
         createdAt: '2025-04-01',
         status: '환급',
-        bondMaturity: '2025-10-01',
+        dueDate: '2025-10-01',
         interestRate: '7.3%',
       },
       {
@@ -647,22 +647,22 @@ const handlers = [
         amount: '800000',
         createdAt: '2025-04-01',
         status: '환급',
-        bondMaturity: '2025-10-01',
+        dueDate: '2025-10-01',
         interestRate: '7.3%',
       },
     ];
 
-    let filteredTransactions: Transaction[] = [...allTransactions];
+    const filteredTransactions: Transaction[] = [...allTransactions];
 
     if (sort.length > 0) {
       const { field, order } = sort[0];
-      
+
       console.log(`MSW - 정렬 적용: ${field} ${order}`);
-      
+
       filteredTransactions.sort((a, b) => {
         const valueA = a[field];
         const valueB = b[field];
-        
+
         if (typeof valueA === 'string' && typeof valueB === 'string') {
           if (valueA.includes('%') && valueB.includes('%')) {
             const numA = parseFloat(valueA.replace('%', ''));
@@ -670,8 +670,8 @@ const handlers = [
             return order === 'asc' ? numA - numB : numB - numA;
           }
 
-          return order === 'asc' 
-            ? valueA.localeCompare(valueB) 
+          return order === 'asc'
+            ? valueA.localeCompare(valueB)
             : valueB.localeCompare(valueA);
         }
 
@@ -681,8 +681,8 @@ const handlers = [
 
         const strA = String(valueA);
         const strB = String(valueB);
-        return order === 'asc' 
-          ? strA.localeCompare(strB) 
+        return order === 'asc'
+          ? strA.localeCompare(strB)
           : strB.localeCompare(strA);
       });
     }
@@ -784,6 +784,473 @@ const handlers = [
       }),
     );
   }),
+rest.post('/api/contract/loans/transactions/search', (req, res, ctx) => {
+  const {
+    startDate,
+    endDate,
+    types,
+    page = 1,
+    pageSize = 10,
+    sort = [],
+  } = req.body as {
+    startDate?: string;
+    endDate?: string;
+    types?: string[];
+    page?: number;
+    pageSize?: number;
+    sort?: Array<{ field: string; order: string }>;
+  };
+ 
+  interface Transaction {
+    id: string;
+    contractId: number;
+    amount: string;
+    createdAt: string;
+    status: string;
+    dueDate: string;
+    interestRate: string;
+    detail: {
+      date: string;
+      amount: string;
+      balance: string;    
+      type: string;
+    }[];
+    [key: string]: string | number | object[] | any;
+  }
+ 
+  const allTransactions: Transaction[] = [
+    {
+      id: 'loan-1',
+      contractId: 1,
+      amount: '₩ 10,000,000',
+      createdAt: '2024-01-01',
+      status: '상환중',
+      dueDate: '2025-01-01',
+      interestRate: '6.5%',
+      detail: [
+        {
+          date: '2024-03-01',
+          amount: '₩ 100,000',
+          balance: '₩ 9,900,000',
+          type: '이자 납부',
+        },
+        {
+          date: '2024-06-01',
+          amount: '₩ 1,000,000',
+          balance: '₩ 8,900,000',
+          type: '원금 상환',
+        },
+      ],
+    },
+    {
+      id: 'loan-2',
+      contractId: 2,
+      amount: '₩ 20,000,000',
+      createdAt: '2024-02-01',
+      status: '상환완료',
+      dueDate: '2025-02-01',
+      interestRate: '7.0%',
+      detail: [
+        {
+          date: '2024-03-15',
+          amount: '₩ 120,000',
+          balance: '₩ 0',
+          type: '완납',
+        },
+      ],
+    },
+    {
+      id: 'loan-3',
+      contractId: 3,
+      amount: '₩ 15,000,000',
+      createdAt: '2024-03-10',
+      status: '연체',
+      dueDate: '2025-03-10',
+      interestRate: '8.2%',
+      detail: [
+        {
+          date: '2024-04-10',
+          amount: '₩ 120,000',
+          balance: '₩ 14,880,000',
+          type: '이자 납부',
+        },
+        {
+          date: '2024-05-10',
+          amount: '₩ 0',
+          balance: '₩ 14,880,000',
+          type: '연체',
+        },
+      ],
+    },
+    {
+      id: 'loan-4',
+      contractId: 4,
+      amount: '₩ 5,000,000',
+      createdAt: '2024-04-05',
+      status: '상환중',
+      dueDate: '2024-12-05',
+      interestRate: '5.5%',
+      detail: [
+        {
+          date: '2024-05-05',
+          amount: '₩ 100,000',
+          balance: '₩ 4,900,000',
+          type: '이자 납부',
+        },
+      ],
+    },
+    {
+      id: 'loan-5',
+      contractId: 5,
+      amount: '₩ 30,000,000',
+      createdAt: '2024-01-20',
+      status: '상환완료',
+      dueDate: '2025-01-20',
+      interestRate: '6.0%',
+      detail: [
+        {
+          date: '2024-03-01',
+          amount: '₩ 1,000,000',
+          balance: '₩ 29,000,000',
+          type: '원금 상환',
+        },
+        {
+          date: '2024-07-01',
+          amount: '₩ 29,000,000',
+          balance: '₩ 0',
+          type: '완납',
+        },
+      ],
+    },
+    {
+      id: 'loan-6',
+      contractId: 6,
+      amount: '₩ 12,000,000',
+      createdAt: '2024-05-10',
+      status: '상환중',
+      dueDate: '2025-05-10',
+      interestRate: '6.8%',
+      detail: [
+        {
+          date: '2024-06-10',
+          amount: '₩ 100,000',
+          balance: '₩ 11,900,000',
+          type: '이자 납부',
+        },
+      ],
+    },
+    {
+      id: 'loan-7',
+      contractId: 7,
+      amount: '₩ 8,000,000',
+      createdAt: '2023-12-20',
+      status: '상환완료',
+      dueDate: '2024-12-20',
+      interestRate: '5.2%',
+      detail: [
+        {
+          date: '2024-01-20',
+          amount: '₩ 8,000,000',
+          balance: '₩ 0',
+          type: '일시 상환',
+        },
+      ],
+    },
+    {
+      id: 'loan-8',
+      contractId: 8,
+      amount: '₩ 50,000,000',
+      createdAt: '2024-06-01',
+      status: '상환중',
+      dueDate: '2026-06-01',
+      interestRate: '9.1%',
+      detail: [
+        {
+          date: '2024-07-01',
+          amount: '₩ 500,000',
+          balance: '₩ 49,500,000',
+          type: '이자 납부',
+        },
+        {
+          date: '2024-10-01',
+          amount: '₩ 5,000,000',
+          balance: '₩ 44,500,000',
+          type: '원금 상환',
+        },
+      ],
+    },
+    {
+      id: 'loan-9',
+      contractId: 9,
+      amount: '₩ 6,500,000',
+      createdAt: '2024-03-22',
+      status: '연체',
+      dueDate: '2025-03-22',
+      interestRate: '7.3%',
+      detail: [
+        {
+          date: '2024-04-22',
+          amount: '₩ 0',
+          balance: '₩ 6,500,000',
+          type: '연체',
+        },
+      ],
+    },
+    {
+      id: 'loan-10',
+      contractId: 10,
+      amount: '₩ 18,000,000',
+      createdAt: '2024-02-14',
+      status: '상환중',
+      dueDate: '2025-02-14',
+      interestRate: '6.0%',
+      detail: [
+        {
+          date: '2024-03-14',
+          amount: '₩ 180,000',
+          balance: '₩ 17,820,000',
+          type: '이자 납부',
+        },
+        {
+          date: '2024-05-14',
+          amount: '₩ 2,000,000',
+          balance: '₩ 15,820,000',
+          type: '원금 상환',
+        },
+      ],
+    },
+    {
+      id: 'loan-11',
+      contractId: 11,
+      amount: '₩ 30,000,000',
+      createdAt: '2024-01-15',
+      status: '상환중',
+      dueDate: '2025-01-15',
+      interestRate: '5.8%',
+      detail: [
+        {
+          date: '2024-02-15',
+          amount: '₩ 290,000',
+          balance: '₩ 29,710,000',
+          type: '이자 납부',
+        },
+      ],
+    },
+    {
+      id: 'loan-12',
+      contractId: 12,
+      amount: '₩ 15,000,000',
+      createdAt: '2024-03-05',
+      status: '상환완료',
+      dueDate: '2025-03-05',
+      interestRate: '6.2%',
+      detail: [
+        {
+          date: '2024-08-05',
+          amount: '₩ 15,000,000',
+          balance: '₩ 0',
+          type: '완납',
+        },
+      ],
+    },
+    {
+      id: 'loan-13',
+      contractId: 13,
+      amount: '₩ 5,000,000',
+      createdAt: '2024-04-18',
+      status: '상환중',
+      dueDate: '2025-04-18',
+      interestRate: '4.9%',
+      detail: [
+        {
+          date: '2024-05-18',
+          amount: '₩ 50,000',
+          balance: '₩ 4,950,000',
+          type: '이자 납부',
+        },
+      ],
+    },
+    {
+      id: 'loan-14',
+      contractId: 14,
+      amount: '₩ 40,000,000',
+      createdAt: '2024-06-22',
+      status: '연체',
+      dueDate: '2026-06-22',
+      interestRate: '7.5%',
+      detail: [
+        {
+          date: '2024-07-22',
+          amount: '₩ 0',
+          balance: '₩ 40,000,000',
+          type: '연체',
+        },
+      ],
+    },
+    {
+      id: 'loan-15',
+      contractId: 15,
+      amount: '₩ 22,000,000',
+      createdAt: '2024-02-01',
+      status: '상환중',
+      dueDate: '2025-02-01',
+      interestRate: '6.3%',
+      detail: [
+        {
+          date: '2024-03-01',
+          amount: '₩ 220,000',
+          balance: '₩ 21,780,000',
+          type: '이자 납부',
+        },
+        {
+          date: '2024-06-01',
+          amount: '₩ 2,000,000',
+          balance: '₩ 19,780,000',
+          type: '원금 상환',
+        },
+      ],
+    },
+    {
+      id: 'loan-16',
+      contractId: 16,
+      amount: '₩ 27,000,000',
+      createdAt: '2024-01-25',
+      status: '상환완료',
+      dueDate: '2024-12-25',
+      interestRate: '5.5%',
+      detail: [
+        {
+          date: '2024-11-25',
+          amount: '₩ 27,000,000',
+          balance: '₩ 0',
+          type: '완납',
+        },
+      ],
+    },
+    {
+      id: 'loan-17',
+      contractId: 17,
+      amount: '₩ 11,000,000',
+      createdAt: '2024-05-07',
+      status: '상환중',
+      dueDate: '2025-05-07',
+      interestRate: '6.1%',
+      detail: [
+        {
+          date: '2024-06-07',
+          amount: '₩ 100,000',
+          balance: '₩ 10,900,000',
+          type: '이자 납부',
+        },
+      ],
+    },
+    {
+      id: 'loan-18',
+      contractId: 18,
+      amount: '₩ 13,000,000',
+      createdAt: '2023-11-11',
+      status: '상환완료',
+      dueDate: '2024-11-11',
+      interestRate: '5.7%',
+      detail: [
+        {
+          date: '2024-10-11',
+          amount: '₩ 13,000,000',
+          balance: '₩ 0',
+          type: '완납',
+        },
+      ],
+    },
+    {
+      id: 'loan-19',
+      contractId: 19,
+      amount: '₩ 17,500,000',
+      createdAt: '2024-04-30',
+      status: '연체',
+      dueDate: '2025-04-30',
+      interestRate: '6.9%',
+      detail: [
+        {
+          date: '2024-05-30',
+          amount: '₩ 0',
+          balance: '₩ 17,500,000',
+          type: '연체',
+        },
+      ],
+    },
+    {
+      id: 'loan-20',
+      contractId: 20,
+      amount: '₩ 19,000,000',
+      createdAt: '2024-03-03',
+      status: '상환중',
+      dueDate: '2025-03-03',
+      interestRate: '6.4%',
+      detail: [
+        {
+          date: '2024-04-03',
+          amount: '₩ 190,000',
+          balance: '₩ 18,810,000',
+          type: '이자 납부',
+        },
+      ],
+    },    
+  ];
+  
+  const filteredTransactions: Transaction[] = [...allTransactions];
+ 
+  if (sort.length > 0) {
+    const { field, order } = sort[0];
+ 
+    filteredTransactions.sort((a, b) => {
+      const valueA = a[field];
+      const valueB = b[field];
+ 
+      if (typeof valueA === 'string' && typeof valueB === 'string') {
+        if (valueA.includes('%') && valueB.includes('%')) {
+          const numA = parseFloat(valueA.replace('%', ''));
+          const numB = parseFloat(valueB.replace('%', ''));
+          return order === 'asc' ? numA - numB : numB - numA;
+        }
+ 
+        return order === 'asc'
+          ? valueA.localeCompare(valueB)
+          : valueB.localeCompare(valueA);
+      }
+ 
+      if (typeof valueA === 'number' && typeof valueB === 'number') {
+        return order === 'asc' ? valueA - valueB : valueB - valueA;
+      }
+ 
+      const strA = String(valueA);
+      const strB = String(valueB);
+      return order === 'asc'
+        ? strA.localeCompare(strB)
+        : strB.localeCompare(strA);
+    });
+  }
+ 
+  const totalItemCount = filteredTransactions.length;
+  const totalPage = Math.ceil(totalItemCount / pageSize);
+  const startIndex = (page - 1) * pageSize;
+  const paginatedTransactions = filteredTransactions.slice(
+    startIndex,
+    startIndex + pageSize,
+  );
+ 
+  return res(
+    ctx.status(200),
+    ctx.json({
+      pagination: {
+        page,
+        pageSize,
+        totalPage,
+        totalItemCount,
+      },
+      transactions: paginatedTransactions,
+    }),
+  );
+ }),
 ];
 
 export default handlers;

@@ -30,6 +30,18 @@ interface ApiResponseData {
   transactions: Transaction[];
 }
 
+interface SearchParams extends Record<string, unknown> {
+  startDate?: string;
+  endDate?: string;
+  types?: string[];
+  investmentIds?: number[];
+}
+
+interface SortState {
+  field: string;
+  order: string;
+}
+
 const ContractsPage = () => {
   const [summaryData, setSummaryData] =
     useState<ContractSummaryResponse | null>(null);
@@ -77,14 +89,20 @@ const ContractsPage = () => {
     fetchData();
   }, []);
 
-  const fetchTransactions = async (params: any) => {
+  const fetchTransactions = async (
+    params: SearchParams & {
+      page: number;
+      pageSize: number;
+      sort: SortState[];
+    },
+  ) => {
     setIsLoadingTransactions(true);
     setTransactionsError(null);
 
     try {
       const response = await request.POST<ApiResponseData>(
         '/api/contract/investments/transactions/search',
-        params
+        params,
       );
 
       if (response && response.transactions) {
@@ -111,12 +129,12 @@ const ContractsPage = () => {
     }
   };
 
-  const handleSearch = (searchParams: any) => {
+  const handleSearch = (searchParams: SearchParams) => {
     const finalParams = {
       ...searchParams,
       page: 1,
       pageSize,
-      sort: sortState
+      sort: sortState,
     };
 
     setCurrentPage(1);
@@ -124,14 +142,16 @@ const ContractsPage = () => {
     fetchTransactions(finalParams);
   };
 
-  const handleSortChange = (newSortState: { field: string; order: string }[]) => {
+  const handleSortChange = (
+    newSortState: { field: string; order: string }[],
+  ) => {
     setSortState(newSortState);
 
     const finalParams = {
       ...currentSearchParams,
       page: 1,
       pageSize,
-      sort: newSortState
+      sort: newSortState,
     };
 
     setCurrentPage(1);
@@ -143,7 +163,7 @@ const ContractsPage = () => {
       ...currentSearchParams,
       page: newPage,
       pageSize,
-      sort: sortState
+      sort: sortState,
     };
 
     setCurrentPage(newPage);
