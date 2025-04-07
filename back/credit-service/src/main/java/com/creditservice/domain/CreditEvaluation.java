@@ -49,4 +49,7 @@ public class CreditEvaluation {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
 	private EvaluationStatus status;
+	
+	@Column(name = "default_flag")
+	private Boolean defaultFlag;
 }
