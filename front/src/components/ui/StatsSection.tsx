@@ -1,29 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import StatCard from '@/components/common/StatCard';
 import styles from '@/styles/uis/StatsSection.module.scss';
-import request from '@/service/apis/request';
-
-interface MainStats {
-  totalUsers: number;
-  totalInvestment: number;
-  totalrepaymentRate: number;
-}
 
 const StatsSection = () => {
-  const [mainStats, setMainStats] = useState<MainStats | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const stats = await request.GET<MainStats>('/main');
-      setMainStats(stats);
-    };
-
-    fetchData();
-  }, []);
-
-  if (!mainStats) return <div>Loading...</div>;
+  const mainStats = {
+    totalUsers: 12345,
+    totalInvestment: 8650000,
+    totalrepaymentRate: 97.5,
+  };
 
   return (
     <section className={styles.sectionWrapper}>
