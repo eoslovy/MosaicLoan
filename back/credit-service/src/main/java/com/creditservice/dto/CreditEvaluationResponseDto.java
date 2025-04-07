@@ -18,4 +18,5 @@ public class CreditEvaluationResponseDto {
     private LocalDateTime createdAt;
     private Integer caseId;
     private EvaluationStatus status;
+    private Boolean defaultFlag;
 } 
