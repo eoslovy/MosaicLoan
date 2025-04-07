@@ -15,8 +15,7 @@ public interface LoanService {
 
     void completeLoanRepayRequest(AccountTransactionPayload requestDto) throws Exception;
 
-    void publishLoanWithdrawal(WithdrawalInvestmentDto requestDto) throws JsonProcessingException;
+	void rollbackLoanWithdrawal(AccountTransactionPayload payload);
 
-    void rollbackLoanWithdrawal(AccountTransactionPayload payload);
-
+	void failLoanRepayRequest(AccountTransactionPayload accountTransactionFail);
 }

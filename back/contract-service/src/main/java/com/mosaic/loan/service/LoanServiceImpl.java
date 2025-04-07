@@ -119,6 +119,10 @@ public class LoanServiceImpl implements LoanService {
         if (repaidAmountResidue.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalStateException("받은 돈보다 더 많이 분배했습니다.");
         }
+        if (repaidAmountResidue.compareTo(BigDecimal.ZERO) > 0){
+            loan.delinquentLoan();
+            log.info("{}의 대출금액 상환 미달로 부분상환 후 상태 {}로 변경", loan.getId(), loan.getStatus());
+        }
         //TODO 현재투자 수익률 재조정식
         //이자상환
         //Transaction만들기
@@ -143,7 +147,14 @@ public class LoanServiceImpl implements LoanService {
         Loan loan = loanRepository.findById(payload.targetId())
                 .orElseThrow(() -> new LoanNotFoundException(payload.targetId()));
         loan.rollBack(payload.amount());
+    }
 
+    @Override
+    public void failLoanRepayRequest(AccountTransactionPayload payload) {
+        Loan loan = loanRepository.findByIdAndStatus(payload.targetId(), LoanStatus.IN_PROGRESS)
+            .orElseThrow(() -> new LoanNotFoundException(payload.targetId()));
+        log.info("{}의 대출이 연체상태로 변경되었습니다 연체금 : {}", payload.targetId(), loan.getAmount());
+        loan.delinquentLoan();
     }
 
     private Boolean evaluateLoanRequest(CreditEvaluationResponseDto creditEvaluationResponseDto) {

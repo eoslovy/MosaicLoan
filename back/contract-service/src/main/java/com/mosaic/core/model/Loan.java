@@ -75,7 +75,7 @@ public class Loan {
     public void finishLoan() {
         this.status = LoanStatus.COMPLETED;
     }
-
+    public void delinquentLoan() {this.status = LoanStatus.DELINQUENT; }
     public void rollBack(BigDecimal amount){
         this.amount = amount;
     }
