@@ -149,7 +149,7 @@ const handlers = [
   }),
   rest.get('/credit/evaluations/recent', (req, res, ctx) => {
     return res(
-      ctx.status(404),
+      ctx.status(200),
       ctx.json({
         maxLoanLimit: 123000,
         interestRate: 90,
