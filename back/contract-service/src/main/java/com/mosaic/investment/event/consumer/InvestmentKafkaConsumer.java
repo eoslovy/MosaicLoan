@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public class InvestmentKafkaConsumer {
-	private static final String INVEST_CREATE_COMPLETE = "investment.deposit.requested";
-	private static final String INVEST_CREATE_FAIL = "investment.deposit.rejected";
+	private static final String INVEST_CREATE_COMPLETE = "investment.deposit.completed";
+	private static final String INVEST_CREATE_REJECTED = "investment.deposit.rejected";
 	//private static final String LOAN_EXECUTE_REQUEST = "loan.execute.request";
 	private static final String LOAN_CREATE_EXECUTE = "loan.created.requested";
 
@@ -32,7 +32,7 @@ public class InvestmentKafkaConsumer {
 		log.info("{}의 투자 계좌 생성이 정상적으로 처리되었습니다", accountTransactionComplete.accountId());
 	}
 
-	@KafkaListener(topics = INVEST_CREATE_FAIL, groupId = "investment.deposit.fail.consumer")
+	@KafkaListener(topics = INVEST_CREATE_REJECTED, groupId = "investment.deposit.rejected.consumer")
 	public void failMessageInvestmentRequested(@Payload String payload) throws JsonProcessingException {
 		AccountTransactionPayload accountTransactionFail = objectMapper.readValue(payload,
 			AccountTransactionPayload.class);

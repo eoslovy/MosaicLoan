@@ -19,7 +19,6 @@ public class InvestmentKafkaProducer {
 	private static final String INVEST_DEPOSIT_REJECTED = "investment.deposit.failed";
 
 	private static final String INVEST_WITHDRAWAL_REQUESTED = "investment.withdrawal.requested";
-	private static final String INVEST_WITHDRAWAL_REJECTED = "investment.withdrawal.rejected";
 
 	private final KafkaTemplate<String, String> kafkaTemplate;
 	private final ObjectMapper kafkaObjectMapper;

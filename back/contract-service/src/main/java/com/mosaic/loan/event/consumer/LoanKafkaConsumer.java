@@ -16,10 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class LoanKafkaConsumer {
-	private static final String LOAN_DEPOSIT_REQUEST = "loan.repay.requested";
+	//private static final String LOAN_DEPOSIT_REQUEST = "loan.repay.requested";
 	private static final String LOAN_DEPOSIT_COMPLETE = "loan.deposit.completed";
 	private static final String LOAN_DEPOSIT_REJECT = "loan.deposit.rejected";
-	private static final String LOAN_WITHDRAW_FAIL = "loan.withdraw.rejected";
+	//private static final String LOAN_WITHDRAW_COMPLETE = "loan.withdraw.completed";
+	private static final String LOAN_WITHDRAW_REJECT = "loan.withdraw.rejected";
 	private final ObjectMapper objectMapper;
 
 	private final LoanService loanService;
@@ -33,7 +34,7 @@ public class LoanKafkaConsumer {
 		log.info("{}의 대출 상환이 이루어집니다", accountTransactionComplete.accountId());
 	}
 
-	@KafkaListener(topics = LOAN_WITHDRAW_FAIL, groupId = "investment.withdraw.fail.consumer")
+	@KafkaListener(topics = LOAN_WITHDRAW_REJECT, groupId = "investment.withdraw.fail.consumer")
 	public void rollbackDepositLoanRequested(@Payload String payload) throws JsonProcessingException {
 		AccountTransactionPayload accountTransactionFail = objectMapper.readValue(payload,
 			AccountTransactionPayload.class);
