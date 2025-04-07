@@ -150,7 +150,7 @@ const InvestmentModal = ({
     if (!isAmountValid || !isRateValid) return;
 
     try {
-      await request.POST('/api/contract/investments/', {
+      await request.POST('/contract/investments/', {
         principal: localAmount,
         targetRate: Math.round((localRate || 0) * 100), // 소수 → 만분율
         targetWeeks: selectedWeeks,

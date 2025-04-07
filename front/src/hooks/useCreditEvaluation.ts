@@ -20,7 +20,7 @@ const useCreditEvaluation = ({ onCompleted }: { onCompleted: () => void }) => {
       setStep(0);
 
       const today = new Date().toISOString().split('T')[0];
-      await postCreditEvaluation({ appliedAt: today, memberId: user.id });
+      await postCreditEvaluation({ appliedAt: today });
       setStep(1);
 
       if (isMock) {
@@ -36,7 +36,7 @@ const useCreditEvaluation = ({ onCompleted }: { onCompleted: () => void }) => {
         return;
       }
 
-      const ws = new WebSocket(`ws://localhost:8080/ws?memberId=${user.id}`);
+      const ws = new WebSocket(`ws://localhost:8080/ws`);
       wsRef.current = ws;
 
       ws.onopen = () => {

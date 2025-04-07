@@ -34,7 +34,7 @@ const OverviewInvestSimulation: React.FC = () => {
   useEffect(() => {
     const fetchSimulationData = async () => {
       try {
-        const response = await fetch('/api/investment/simulation', {
+        const response = await fetch('/investment/simulation', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
