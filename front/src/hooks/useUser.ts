@@ -15,7 +15,7 @@ const useUser = () => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // mock service worker실행할 때는 아래꺼 주석처리 하고, 실제로 할때는 주설 풀어야함..
+    // mock service worker실행할 때는 아래꺼 주석처리 하고, 실제로 할때는 주석 풀어야함..
     // if (typeof window === 'undefined' || isFetched) return;
 
     const fetchUser = async () => {
