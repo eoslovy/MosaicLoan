@@ -3,6 +3,7 @@ package com.mosaic.loan.event.producer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mosaic.loan.event.message.LoanCreateTransactionPayload;
+import com.mosaic.payload.AccountTransactionPayload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -13,11 +14,22 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class LoanKafkaProducer {
 
-    private static final String INVEST_CREATE = "invest.created";
+    private static final String LOAN_CREATE = "loan.created.requested";
+    private static final String LOAN_WITHDRAWAL_REQUEST = "loan.withdrawal.requested";
+    private static final String LOAN_DEPOSIT_REQUEST = "loan.deposit.requested";
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
-    public void sendLoanCreatedEvent(LoanCreateTransactionPayload payload) throws JsonProcessingException {
-        kafkaTemplate.send(INVEST_CREATE, payload);
+    public void sendLoanCreatedRequest(LoanCreateTransactionPayload payload) throws JsonProcessingException {
+        log.info(objectMapper.writeValueAsString(payload));
+        kafkaTemplate.send(LOAN_CREATE, objectMapper.writeValueAsString(payload));
+    }
+
+    public void sendLoanWithdrawalRequest(AccountTransactionPayload withdrawalEventPayload) throws JsonProcessingException {
+        kafkaTemplate.send(LOAN_WITHDRAWAL_REQUEST, objectMapper.writeValueAsString(withdrawalEventPayload));
+    }
+
+    public void sendLoanRepayRequestEvent(AccountTransactionPayload repayEventPayload) throws JsonProcessingException {
+        kafkaTemplate.send(LOAN_DEPOSIT_REQUEST, objectMapper.writeValueAsString(repayEventPayload));
     }
 }

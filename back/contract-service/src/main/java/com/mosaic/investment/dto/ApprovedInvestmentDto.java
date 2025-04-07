@@ -6,6 +6,6 @@ public record ApprovedInvestmentDto(
         Integer id,
         BigDecimal principal,
         Integer targetRate,
-        Integer targetMonth
+        Integer targetWeeks
 ) {
 }

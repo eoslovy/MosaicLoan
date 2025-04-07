@@ -13,7 +13,7 @@ public class TimeUtil {
         return LocalDate.now(ZoneId.of("Asia/Seoul"));
     }
 
-    public static LocalDate dueDate(LocalDate localDate, int months) {
-        return localDate.plusMonths(months);
+    public static LocalDate dueDate(LocalDate localDate, int weeks) {
+        return localDate.plusWeeks(weeks);
     }
 }
