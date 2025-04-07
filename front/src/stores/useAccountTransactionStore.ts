@@ -61,7 +61,7 @@ const useAccountTransactionStore = create<AccountTransactionStore>(
         const res = await request.POST<{
           transactions: AccountTransaction[];
           pagination: PaginationInfo;
-        }>('/api/account/accounts/transactions/search', {
+        }>('/account/accounts/transactions/search', {
           startDate,
           endDate,
           types,

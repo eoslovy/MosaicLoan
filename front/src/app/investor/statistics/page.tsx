@@ -48,7 +48,7 @@ const StatisticsPage = () => {
     const fetchData = async () => {
       try {
         const res = await request.GET<InvestmentStatisticsResponse>(
-          '/api/contract/investments/statistics',
+          '/contract/investments/statistics',
         );
         setData(res);
       } catch (e) {

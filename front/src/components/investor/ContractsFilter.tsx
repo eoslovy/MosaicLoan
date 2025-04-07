@@ -87,9 +87,7 @@ const ContractsFilter = ({ onSearch }: ContractsFilterProps) => {
     setError(null);
 
     try {
-      const response = await request.GET<ApiResponse>(
-        '/api/contract/investments',
-      );
+      const response = await request.GET<ApiResponse>('/contract/investments');
 
       if (response?.investments && Array.isArray(response.investments)) {
         setInvestmentData(response.investments);

@@ -40,7 +40,7 @@ const MyAccount = () => {
     const fetchBalance = async () => {
       try {
         const response = await request.GET<{ amount: number }>(
-          '/api/account/accounts',
+          '/account/accounts',
         );
         setBalance(response.amount);
       } catch (error) {

@@ -28,25 +28,22 @@ export interface LoanOverviewResponse {
 
 export const postCreditEvaluation = async ({
   appliedAt,
-  memberId,
 }: {
   appliedAt: string;
-  memberId: number;
 }) => {
-  return request.POST<CreditEvaluation>('/api/evaluations', {
+  return request.POST<CreditEvaluation>('/credit/evaluations', {
     appliedAt,
-    memberId,
   });
 };
 
 export const getRecentCreditEvaluation = async () => {
-  return request.GET<CreditEvaluation>('/api/credit/evaluations/recent');
+  return request.GET<CreditEvaluation>('/credit/evaluations/recent');
 };
 
 export const getLoanOverview = async () => {
-  return request.GET<LoanOverviewResponse>('/api/contract/loans/overview');
+  return request.GET<LoanOverviewResponse>('/contract/loans/overview');
 };
 
 export const postLoanRequest = async (data: PostLoanRequestBody) => {
-  return request.POST('/api/contract/loans/', data);
+  return request.POST('/contract/loans/', data);
 };

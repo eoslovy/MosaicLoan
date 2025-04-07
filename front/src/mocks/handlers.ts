@@ -24,7 +24,7 @@ const handlers = [
       }),
     );
   }),
-  rest.get('/api/contract/investments/overview', (req, res, ctx) => {
+  rest.get('/contract/investments/overview', (req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json({
@@ -112,7 +112,7 @@ const handlers = [
     );
   }),
 
-  rest.get('/api/contract/contracts/summary', (req, res, ctx) => {
+  rest.get('/contract/contracts/summary', (req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json({
@@ -128,7 +128,7 @@ const handlers = [
       }),
     );
   }),
-  rest.get('/api/contract/investments', (req, res, ctx) => {
+  rest.get('/contract/investments', (req, res, ctx) => {
     const mockData = {
       investments: Array.from({ length: 14 }, (_, idx) => ({
         investmentId: idx + 1,
@@ -147,7 +147,7 @@ const handlers = [
 
     return res(ctx.status(200), ctx.json(mockData));
   }),
-  rest.get('/api/credit/evaluations/recent', (req, res, ctx) => {
+  rest.get('/credit/evaluations/recent', (req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json({
@@ -157,7 +157,7 @@ const handlers = [
       }),
     );
   }),
-  rest.post('/api/evaluations', async (req, res, ctx) => {
+  rest.post('/credit/evaluations', async (req, res, ctx) => {
     const { appliedAt, memberId } = await req.json();
 
     console.log(`신용평가 req - memberId: ${memberId}, 날짜: ${appliedAt}`);
@@ -172,7 +172,7 @@ const handlers = [
     );
   }),
 
-  rest.get('/api/contract/loans/overview', (req, res, ctx) => {
+  rest.get('/contract/loans/overview', (req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json({
@@ -215,7 +215,7 @@ const handlers = [
       }),
     );
   }),
-  rest.post('/api/contract/loans/', async (req, res, ctx) => {
+  rest.post('/contract/loans/', async (req, res, ctx) => {
     const { id, requestAmount, targetWeeks } = await req.json();
     const now = new Date();
     const dueDate = new Date();
@@ -231,7 +231,7 @@ const handlers = [
       }),
     );
   }),
-  rest.get('/api/account/accounts', (req, res, ctx) => {
+  rest.get('/account/accounts', (req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json({
@@ -239,7 +239,7 @@ const handlers = [
       }),
     );
   }),
-  rest.post('/api/account/external/deposit/ready', async (req, res, ctx) => {
+  rest.post('/account/external/deposit/ready', async (req, res, ctx) => {
     const { amount } = await req.json();
 
     if (!amount || amount < 1000) {
@@ -256,7 +256,7 @@ const handlers = [
       }),
     );
   }),
-  rest.post('/api/account/external/withdrawal', async (req, res, ctx) => {
+  rest.post('/account/external/withdrawal', async (req, res, ctx) => {
     const { amount } = await req.json();
 
     if (!amount || amount < 1000) {
@@ -268,547 +268,535 @@ const handlers = [
 
     return res(ctx.status(200), ctx.json({ success: true }));
   }),
-  rest.post(
-    '/api/account/accounts/transactions/search',
-    async (req, res, ctx) => {
-      const { startDate, endDate, types, page, pageSize } = await req.json();
+  rest.post('/account/accounts/transactions/search', async (req, res, ctx) => {
+    const { startDate, endDate, types, page, pageSize } = await req.json();
 
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      const totalDays = Math.max(1, differenceInDays(end, start) + 1);
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const totalDays = Math.max(1, differenceInDays(end, start) + 1);
 
-      const allTransactions: AccountTransaction[] = [];
+    const allTransactions: AccountTransaction[] = [];
 
-      for (let d = 0; d < totalDays; d += 1) {
-        const date = format(subDays(end, d), 'yyyy-MM-dd');
+    for (let d = 0; d < totalDays; d += 1) {
+      const date = format(subDays(end, d), 'yyyy-MM-dd');
 
-        // 하루에 2건씩 mock 생성
-        for (let i = 0; i < 2; i += 1) {
-          const index = d * 2 + i;
+      // 하루에 2건씩 mock 생성
+      for (let i = 0; i < 2; i += 1) {
+        const index = d * 2 + i;
 
-          allTransactions.push({
-            amount: 10000 + index * 1000,
-            cash: 1000000 - index * 3000,
-            type: types[index % types.length],
-            content: `(${date}) 모의 거래 ${index + 1}`,
-            createdAt: date,
-            targetId: 1000 + index,
-          });
-        }
+        allTransactions.push({
+          amount: 10000 + index * 1000,
+          cash: 1000000 - index * 3000,
+          type: types[index % types.length],
+          content: `(${date}) 모의 거래 ${index + 1}`,
+          createdAt: date,
+          targetId: 1000 + index,
+        });
+      }
+    }
+
+    // 최신순 정렬
+    const sorted = allTransactions.sort((a, b) =>
+      a.createdAt < b.createdAt ? 1 : -1,
+    );
+
+    const totalItemCount = sorted.length;
+    const totalPage = Math.ceil(totalItemCount / pageSize);
+    const startIdx = (page - 1) * pageSize;
+    const paged = sorted.slice(startIdx, startIdx + pageSize);
+
+    return res(
+      ctx.status(200),
+      ctx.json({
+        transactions: paged,
+        pagination: {
+          page,
+          pageSize,
+          totalPage,
+          totalItemCount,
+        },
+      }),
+    );
+  }),
+  rest.post('/contract/investments/transactions/search', (req, res, ctx) => {
+    const {
+      startDate,
+      endDate,
+      types,
+      investmentIds,
+      page = 1,
+      pageSize = 15,
+      sort = [],
+    } = req.body as {
+      startDate?: string;
+      endDate?: string;
+      types?: string[];
+      investmentIds?: number[];
+      page?: number;
+      pageSize?: number;
+      sort?: Array<{ field: string; order: string }>;
+    };
+
+    interface Transaction {
+      id: number;
+      contractId: number;
+      investmentId: number;
+      amount: string;
+      createdAt: string;
+      status: string;
+      bondMaturity: string;
+      interestRate: string;
+      [key: string]: string | number;
+    }
+
+    const allTransactions: Transaction[] = [
+      {
+        id: 1001,
+        contractId: 5001,
+        investmentId: 1,
+        amount: '10000000',
+        createdAt: '2025-03-01',
+        status: '원금상환',
+        bondMaturity: '2025-09-01',
+        interestRate: '6.5%',
+      },
+      {
+        id: 1002,
+        contractId: 5001,
+        investmentId: 1,
+        amount: '650000',
+        createdAt: '2025-03-01',
+        status: '이자상환',
+        bondMaturity: '2025-09-01',
+        interestRate: '6.5%',
+      },
+      {
+        id: 1003,
+        contractId: 5002,
+        investmentId: 1,
+        amount: '15000000',
+        createdAt: '2025-03-02',
+        status: '원금상환',
+        bondMaturity: '2025-09-02',
+        interestRate: '6.5%',
+      },
+      {
+        id: 1004,
+        contractId: 5002,
+        investmentId: 1,
+        amount: '975000',
+        createdAt: '2025-03-02',
+        status: '이자상환',
+        bondMaturity: '2025-09-02',
+        interestRate: '6.5%',
+      },
+      {
+        id: 1005,
+        contractId: 5003,
+        investmentId: 2,
+        amount: '8000000',
+        createdAt: '2025-03-05',
+        status: '원금상환',
+        bondMaturity: '2025-09-05',
+        interestRate: '6.6%',
+      },
+      {
+        id: 1006,
+        contractId: 5003,
+        investmentId: 2,
+        amount: '528000',
+        createdAt: '2025-03-05',
+        status: '이자상환',
+        bondMaturity: '2025-09-05',
+        interestRate: '6.6%',
+      },
+      {
+        id: 1007,
+        contractId: 5004,
+        investmentId: 2,
+        amount: '12000000',
+        createdAt: '2025-03-07',
+        status: '원금상환',
+        bondMaturity: '2025-09-07',
+        interestRate: '6.6%',
+      },
+      {
+        id: 1008,
+        contractId: 5004,
+        investmentId: 2,
+        amount: '792000',
+        createdAt: '2025-03-07',
+        status: '이자상환',
+        bondMaturity: '2025-09-07',
+        interestRate: '6.6%',
+      },
+      {
+        id: 1009,
+        contractId: 5005,
+        investmentId: 3,
+        amount: '20000000',
+        createdAt: '2025-03-10',
+        status: '원금상환',
+        bondMaturity: '2025-09-10',
+        interestRate: '6.7%',
+      },
+      {
+        id: 1010,
+        contractId: 5005,
+        investmentId: 3,
+        amount: '1340000',
+        createdAt: '2025-03-10',
+        status: '이자상환',
+        bondMaturity: '2025-09-10',
+        interestRate: '6.7%',
+      },
+      {
+        id: 1011,
+        contractId: 5006,
+        investmentId: 3,
+        amount: '18000000',
+        createdAt: '2025-03-12',
+        status: '원금상환',
+        bondMaturity: '2025-09-12',
+        interestRate: '6.7%',
+      },
+      {
+        id: 1012,
+        contractId: 5006,
+        investmentId: 3,
+        amount: '1206000',
+        createdAt: '2025-03-12',
+        status: '이자상환',
+        bondMaturity: '2025-09-12',
+        interestRate: '6.7%',
+      },
+      {
+        id: 1013,
+        contractId: 5007,
+        investmentId: 4,
+        amount: '25000000',
+        createdAt: '2025-03-15',
+        status: '원금상환',
+        bondMaturity: '2025-09-15',
+        interestRate: '6.8%',
+      },
+      {
+        id: 1014,
+        contractId: 5007,
+        investmentId: 4,
+        amount: '1700000',
+        createdAt: '2025-03-15',
+        status: '이자상환',
+        bondMaturity: '2025-09-15',
+        interestRate: '6.8%',
+      },
+      {
+        id: 1015,
+        contractId: 5008,
+        investmentId: 4,
+        amount: '500000',
+        createdAt: '2025-03-18',
+        status: '환급',
+        bondMaturity: '2025-09-18',
+        interestRate: '6.8%',
+      },
+      {
+        id: 1016,
+        contractId: 5009,
+        investmentId: 5,
+        amount: '30000000',
+        createdAt: '2025-03-20',
+        status: '원금상환',
+        bondMaturity: '2025-09-20',
+        interestRate: '6.9%',
+      },
+      {
+        id: 1017,
+        contractId: 5009,
+        investmentId: 5,
+        amount: '2010000',
+        createdAt: '2025-03-20',
+        status: '이자상환',
+        bondMaturity: '2025-09-20',
+        interestRate: '6.9%',
+      },
+      {
+        id: 1018,
+        contractId: 5010,
+        investmentId: 5,
+        amount: '22000000',
+        createdAt: '2025-03-22',
+        status: '원금상환',
+        bondMaturity: '2025-09-22',
+        interestRate: '6.9%',
+      },
+      {
+        id: 1019,
+        contractId: 5010,
+        investmentId: 5,
+        amount: '1474000',
+        createdAt: '2025-03-22',
+        status: '이자상환',
+        bondMaturity: '2025-09-22',
+        interestRate: '6.9%',
+      },
+      {
+        id: 1020,
+        contractId: 5011,
+        investmentId: 6,
+        amount: '700000',
+        createdAt: '2025-03-25',
+        status: '환급',
+        bondMaturity: '2025-09-25',
+        interestRate: '7.0%',
+      },
+      {
+        id: 1021,
+        contractId: 5012,
+        investmentId: 7,
+        amount: '18000000',
+        createdAt: '2025-03-27',
+        status: '원금상환',
+        bondMaturity: '2025-09-27',
+        interestRate: '7.0%',
+      },
+      {
+        id: 1022,
+        contractId: 5012,
+        investmentId: 7,
+        amount: '1188000',
+        createdAt: '2025-03-27',
+        status: '이자상환',
+        bondMaturity: '2025-09-27',
+        interestRate: '7.0%',
+      },
+      {
+        id: 1023,
+        contractId: 5013,
+        investmentId: 8,
+        amount: '15000000',
+        createdAt: '2025-03-29',
+        status: '원금상환',
+        bondMaturity: '2025-09-29',
+        interestRate: '7.1%',
+      },
+      {
+        id: 1024,
+        contractId: 5013,
+        investmentId: 8,
+        amount: '1005000',
+        createdAt: '2025-03-29',
+        status: '이자상환',
+        bondMaturity: '2025-09-29',
+        interestRate: '7.1%',
+      },
+      {
+        id: 1025,
+        contractId: 5014,
+        investmentId: 9,
+        amount: '28000000',
+        createdAt: '2025-03-30',
+        status: '원금상환',
+        bondMaturity: '2025-09-30',
+        interestRate: '7.2%',
+      },
+      {
+        id: 1026,
+        contractId: 5014,
+        investmentId: 9,
+        amount: '1904000',
+        createdAt: '2025-03-30',
+        status: '이자상환',
+        bondMaturity: '2025-09-30',
+        interestRate: '7.2%',
+      },
+      {
+        id: 1027,
+        contractId: 5015,
+        investmentId: 10,
+        amount: '32000000',
+        createdAt: '2025-03-31',
+        status: '원금상환',
+        bondMaturity: '2025-09-30',
+        interestRate: '7.2%',
+      },
+      {
+        id: 1028,
+        contractId: 5015,
+        investmentId: 10,
+        amount: '2144000',
+        createdAt: '2025-03-31',
+        status: '이자상환',
+        bondMaturity: '2025-09-30',
+        interestRate: '7.2%',
+      },
+      {
+        id: 1029,
+        contractId: 5016,
+        investmentId: 11,
+        amount: '900000',
+        createdAt: '2025-04-01',
+        status: '환급',
+        bondMaturity: '2025-10-01',
+        interestRate: '7.3%',
+      },
+      {
+        id: 1030,
+        contractId: 5017,
+        investmentId: 12,
+        amount: '800000',
+        createdAt: '2025-04-01',
+        status: '환급',
+        bondMaturity: '2025-10-01',
+        interestRate: '7.3%',
+      },
+    ];
+
+    let filteredTransactions: Transaction[] = [...allTransactions];
+
+    try {
+      if (startDate && endDate) {
+        console.log('날짜 필터링:', startDate, 'to', endDate);
+        console.log('필터링 전 트랜잭션 수:', filteredTransactions.length);
+
+        filteredTransactions = filteredTransactions.filter((transaction) => {
+          try {
+            const transactionDate = new Date(transaction.createdAt);
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            return transactionDate >= start && transactionDate <= end;
+          } catch (e) {
+            console.error('날짜 필터링 오류:', e);
+            return true;
+          }
+        });
+
+        console.log('날짜 필터링 후 트랜잭션 수:', filteredTransactions.length);
       }
 
-      // 최신순 정렬
-      const sorted = allTransactions.sort((a, b) =>
-        a.createdAt < b.createdAt ? 1 : -1,
-      );
+      if (types && Array.isArray(types) && types.length > 0) {
+        console.log('타입 필터링:', types);
+        console.log('필터링 전 트랜잭션 수:', filteredTransactions.length);
 
-      const totalItemCount = sorted.length;
-      const totalPage = Math.ceil(totalItemCount / pageSize);
-      const startIdx = (page - 1) * pageSize;
-      const paged = sorted.slice(startIdx, startIdx + pageSize);
+        filteredTransactions = filteredTransactions.filter((transaction) =>
+          types.includes(transaction.status),
+        );
 
-      return res(
-        ctx.status(200),
-        ctx.json({
-          transactions: paged,
-          pagination: {
-            page,
-            pageSize,
-            totalPage,
-            totalItemCount,
-          },
-        }),
-      );
-    },
-  ),
-  rest.post(
-    '/api/contract/investments/transactions/search',
-    (req, res, ctx) => {
-      const {
-        startDate,
-        endDate,
-        types,
-        investmentIds,
-        page = 1,
-        pageSize = 15,
-        sort = [],
-      } = req.body as {
-        startDate?: string;
-        endDate?: string;
-        types?: string[];
-        investmentIds?: number[];
-        page?: number;
-        pageSize?: number;
-        sort?: Array<{ field: string; order: string }>;
-      };
-
-      interface Transaction {
-        id: number;
-        contractId: number;
-        investmentId: number;
-        amount: string;
-        createdAt: string;
-        status: string;
-        bondMaturity: string;
-        interestRate: string;
-        [key: string]: string | number;
+        console.log('타입 필터링 후 트랜잭션 수:', filteredTransactions.length);
       }
 
-      const allTransactions: Transaction[] = [
-        {
-          id: 1001,
-          contractId: 5001,
-          investmentId: 1,
-          amount: '10000000',
-          createdAt: '2025-03-01',
-          status: '원금상환',
-          bondMaturity: '2025-09-01',
-          interestRate: '6.5%',
-        },
-        {
-          id: 1002,
-          contractId: 5001,
-          investmentId: 1,
-          amount: '650000',
-          createdAt: '2025-03-01',
-          status: '이자상환',
-          bondMaturity: '2025-09-01',
-          interestRate: '6.5%',
-        },
-        {
-          id: 1003,
-          contractId: 5002,
-          investmentId: 1,
-          amount: '15000000',
-          createdAt: '2025-03-02',
-          status: '원금상환',
-          bondMaturity: '2025-09-02',
-          interestRate: '6.5%',
-        },
-        {
-          id: 1004,
-          contractId: 5002,
-          investmentId: 1,
-          amount: '975000',
-          createdAt: '2025-03-02',
-          status: '이자상환',
-          bondMaturity: '2025-09-02',
-          interestRate: '6.5%',
-        },
-        {
-          id: 1005,
-          contractId: 5003,
-          investmentId: 2,
-          amount: '8000000',
-          createdAt: '2025-03-05',
-          status: '원금상환',
-          bondMaturity: '2025-09-05',
-          interestRate: '6.6%',
-        },
-        {
-          id: 1006,
-          contractId: 5003,
-          investmentId: 2,
-          amount: '528000',
-          createdAt: '2025-03-05',
-          status: '이자상환',
-          bondMaturity: '2025-09-05',
-          interestRate: '6.6%',
-        },
-        {
-          id: 1007,
-          contractId: 5004,
-          investmentId: 2,
-          amount: '12000000',
-          createdAt: '2025-03-07',
-          status: '원금상환',
-          bondMaturity: '2025-09-07',
-          interestRate: '6.6%',
-        },
-        {
-          id: 1008,
-          contractId: 5004,
-          investmentId: 2,
-          amount: '792000',
-          createdAt: '2025-03-07',
-          status: '이자상환',
-          bondMaturity: '2025-09-07',
-          interestRate: '6.6%',
-        },
-        {
-          id: 1009,
-          contractId: 5005,
-          investmentId: 3,
-          amount: '20000000',
-          createdAt: '2025-03-10',
-          status: '원금상환',
-          bondMaturity: '2025-09-10',
-          interestRate: '6.7%',
-        },
-        {
-          id: 1010,
-          contractId: 5005,
-          investmentId: 3,
-          amount: '1340000',
-          createdAt: '2025-03-10',
-          status: '이자상환',
-          bondMaturity: '2025-09-10',
-          interestRate: '6.7%',
-        },
-        {
-          id: 1011,
-          contractId: 5006,
-          investmentId: 3,
-          amount: '18000000',
-          createdAt: '2025-03-12',
-          status: '원금상환',
-          bondMaturity: '2025-09-12',
-          interestRate: '6.7%',
-        },
-        {
-          id: 1012,
-          contractId: 5006,
-          investmentId: 3,
-          amount: '1206000',
-          createdAt: '2025-03-12',
-          status: '이자상환',
-          bondMaturity: '2025-09-12',
-          interestRate: '6.7%',
-        },
-        {
-          id: 1013,
-          contractId: 5007,
-          investmentId: 4,
-          amount: '25000000',
-          createdAt: '2025-03-15',
-          status: '원금상환',
-          bondMaturity: '2025-09-15',
-          interestRate: '6.8%',
-        },
-        {
-          id: 1014,
-          contractId: 5007,
-          investmentId: 4,
-          amount: '1700000',
-          createdAt: '2025-03-15',
-          status: '이자상환',
-          bondMaturity: '2025-09-15',
-          interestRate: '6.8%',
-        },
-        {
-          id: 1015,
-          contractId: 5008,
-          investmentId: 4,
-          amount: '500000',
-          createdAt: '2025-03-18',
-          status: '환급',
-          bondMaturity: '2025-09-18',
-          interestRate: '6.8%',
-        },
-        {
-          id: 1016,
-          contractId: 5009,
-          investmentId: 5,
-          amount: '30000000',
-          createdAt: '2025-03-20',
-          status: '원금상환',
-          bondMaturity: '2025-09-20',
-          interestRate: '6.9%',
-        },
-        {
-          id: 1017,
-          contractId: 5009,
-          investmentId: 5,
-          amount: '2010000',
-          createdAt: '2025-03-20',
-          status: '이자상환',
-          bondMaturity: '2025-09-20',
-          interestRate: '6.9%',
-        },
-        {
-          id: 1018,
-          contractId: 5010,
-          investmentId: 5,
-          amount: '22000000',
-          createdAt: '2025-03-22',
-          status: '원금상환',
-          bondMaturity: '2025-09-22',
-          interestRate: '6.9%',
-        },
-        {
-          id: 1019,
-          contractId: 5010,
-          investmentId: 5,
-          amount: '1474000',
-          createdAt: '2025-03-22',
-          status: '이자상환',
-          bondMaturity: '2025-09-22',
-          interestRate: '6.9%',
-        },
-        {
-          id: 1020,
-          contractId: 5011,
-          investmentId: 6,
-          amount: '700000',
-          createdAt: '2025-03-25',
-          status: '환급',
-          bondMaturity: '2025-09-25',
-          interestRate: '7.0%',
-        },
-        {
-          id: 1021,
-          contractId: 5012,
-          investmentId: 7,
-          amount: '18000000',
-          createdAt: '2025-03-27',
-          status: '원금상환',
-          bondMaturity: '2025-09-27',
-          interestRate: '7.0%',
-        },
-        {
-          id: 1022,
-          contractId: 5012,
-          investmentId: 7,
-          amount: '1188000',
-          createdAt: '2025-03-27',
-          status: '이자상환',
-          bondMaturity: '2025-09-27',
-          interestRate: '7.0%',
-        },
-        {
-          id: 1023,
-          contractId: 5013,
-          investmentId: 8,
-          amount: '15000000',
-          createdAt: '2025-03-29',
-          status: '원금상환',
-          bondMaturity: '2025-09-29',
-          interestRate: '7.1%',
-        },
-        {
-          id: 1024,
-          contractId: 5013,
-          investmentId: 8,
-          amount: '1005000',
-          createdAt: '2025-03-29',
-          status: '이자상환',
-          bondMaturity: '2025-09-29',
-          interestRate: '7.1%',
-        },
-        {
-          id: 1025,
-          contractId: 5014,
-          investmentId: 9,
-          amount: '28000000',
-          createdAt: '2025-03-30',
-          status: '원금상환',
-          bondMaturity: '2025-09-30',
-          interestRate: '7.2%',
-        },
-        {
-          id: 1026,
-          contractId: 5014,
-          investmentId: 9,
-          amount: '1904000',
-          createdAt: '2025-03-30',
-          status: '이자상환',
-          bondMaturity: '2025-09-30',
-          interestRate: '7.2%',
-        },
-        {
-          id: 1027,
-          contractId: 5015,
-          investmentId: 10,
-          amount: '32000000',
-          createdAt: '2025-03-31',
-          status: '원금상환',
-          bondMaturity: '2025-09-30',
-          interestRate: '7.2%',
-        },
-        {
-          id: 1028,
-          contractId: 5015,
-          investmentId: 10,
-          amount: '2144000',
-          createdAt: '2025-03-31',
-          status: '이자상환',
-          bondMaturity: '2025-09-30',
-          interestRate: '7.2%',
-        },
-        {
-          id: 1029,
-          contractId: 5016,
-          investmentId: 11,
-          amount: '900000',
-          createdAt: '2025-04-01',
-          status: '환급',
-          bondMaturity: '2025-10-01',
-          interestRate: '7.3%',
-        },
-        {
-          id: 1030,
-          contractId: 5017,
-          investmentId: 12,
-          amount: '800000',
-          createdAt: '2025-04-01',
-          status: '환급',
-          bondMaturity: '2025-10-01',
-          interestRate: '7.3%',
-        },
-      ];
+      if (
+        investmentIds &&
+        Array.isArray(investmentIds) &&
+        investmentIds.length > 0
+      ) {
+        console.log('투자 ID 필터링:', investmentIds);
+        console.log('필터링 전 트랜잭션 수:', filteredTransactions.length);
+        console.log('현재 데이터의 투자 ID들:', [
+          ...new Set(filteredTransactions.map((t) => t.investmentId)),
+        ]);
 
-      let filteredTransactions: Transaction[] = [...allTransactions];
+        filteredTransactions = filteredTransactions.filter((transaction) =>
+          investmentIds.includes(transaction.investmentId),
+        );
 
-      try {
-        if (startDate && endDate) {
-          console.log('날짜 필터링:', startDate, 'to', endDate);
-          console.log('필터링 전 트랜잭션 수:', filteredTransactions.length);
-
-          filteredTransactions = filteredTransactions.filter((transaction) => {
-            try {
-              const transactionDate = new Date(transaction.createdAt);
-              const start = new Date(startDate);
-              const end = new Date(endDate);
-
-              return transactionDate >= start && transactionDate <= end;
-            } catch (e) {
-              console.error('날짜 필터링 오류:', e);
-              return true;
-            }
-          });
-
-          console.log(
-            '날짜 필터링 후 트랜잭션 수:',
-            filteredTransactions.length,
-          );
-        }
-
-        if (types && Array.isArray(types) && types.length > 0) {
-          console.log('타입 필터링:', types);
-          console.log('필터링 전 트랜잭션 수:', filteredTransactions.length);
-
-          filteredTransactions = filteredTransactions.filter((transaction) =>
-            types.includes(transaction.status),
-          );
-
-          console.log(
-            '타입 필터링 후 트랜잭션 수:',
-            filteredTransactions.length,
-          );
-        }
-
-        if (
-          investmentIds &&
-          Array.isArray(investmentIds) &&
-          investmentIds.length > 0
-        ) {
-          console.log('투자 ID 필터링:', investmentIds);
-          console.log('필터링 전 트랜잭션 수:', filteredTransactions.length);
-          console.log('현재 데이터의 투자 ID들:', [
-            ...new Set(filteredTransactions.map((t) => t.investmentId)),
-          ]);
-
-          filteredTransactions = filteredTransactions.filter((transaction) =>
-            investmentIds.includes(transaction.investmentId),
-          );
-
-          console.log(
-            '투자 ID 필터링 후 트랜잭션 수:',
-            filteredTransactions.length,
-          );
-        }
-
-        if (sort && Array.isArray(sort) && sort.length > 0) {
-          console.log('정렬 설정:', sort);
-
-          filteredTransactions.sort((a, b) => {
-            for (let i = 0; i < sort.length; i += 1) {
-              const { field, order } = sort[i];
-
-              if (field in a && field in b) {
-                let result = 0;
-
-                if (field === 'interestRate') {
-                  const aValue = parseFloat(String(a[field]).replace('%', ''));
-                  const bValue = parseFloat(String(b[field]).replace('%', ''));
-                  result =
-                    aValue < bValue
-                      ? order === 'asc'
-                        ? -1
-                        : 1
-                      : aValue > bValue
-                        ? order === 'asc'
-                          ? 1
-                          : -1
-                        : 0;
-                } else if (field === 'createdAt' || field === 'bondMaturity') {
-                  const aValue = new Date(a[field] as string).getTime();
-                  const bValue = new Date(b[field] as string).getTime();
-                  result =
-                    aValue < bValue
-                      ? order === 'asc'
-                        ? -1
-                        : 1
-                      : aValue > bValue
-                        ? order === 'asc'
-                          ? 1
-                          : -1
-                        : 0;
-                } else {
-                  const aValue = a[field];
-                  const bValue = b[field];
-                  result =
-                    aValue < bValue
-                      ? order === 'asc'
-                        ? -1
-                        : 1
-                      : aValue > bValue
-                        ? order === 'asc'
-                          ? 1
-                          : -1
-                        : 0;
-                }
-
-                if (result !== 0) {
-                  return result;
-                }
-              }
-            }
-
-            return 0;
-          });
-        }
-      } catch (error) {
-        console.error('데이터 처리 중 오류:', error);
-        return res(
-          ctx.status(500),
-          ctx.json({ error: '데이터 처리 중 오류가 발생했습니다' }),
+        console.log(
+          '투자 ID 필터링 후 트랜잭션 수:',
+          filteredTransactions.length,
         );
       }
 
-      const totalItemCount = filteredTransactions.length;
-      const totalPage = Math.ceil(totalItemCount / pageSize);
-      const startIndex = (page - 1) * pageSize;
-      const paginatedTransactions = filteredTransactions.slice(
-        startIndex,
-        startIndex + pageSize,
-      );
+      if (sort && Array.isArray(sort) && sort.length > 0) {
+        console.log('정렬 설정:', sort);
 
+        filteredTransactions.sort((a, b) => {
+          for (let i = 0; i < sort.length; i += 1) {
+            const { field, order } = sort[i];
+
+            if (field in a && field in b) {
+              let result = 0;
+
+              if (field === 'interestRate') {
+                const aValue = parseFloat(String(a[field]).replace('%', ''));
+                const bValue = parseFloat(String(b[field]).replace('%', ''));
+                result =
+                  aValue < bValue
+                    ? order === 'asc'
+                      ? -1
+                      : 1
+                    : aValue > bValue
+                      ? order === 'asc'
+                        ? 1
+                        : -1
+                      : 0;
+              } else if (field === 'createdAt' || field === 'bondMaturity') {
+                const aValue = new Date(a[field] as string).getTime();
+                const bValue = new Date(b[field] as string).getTime();
+                result =
+                  aValue < bValue
+                    ? order === 'asc'
+                      ? -1
+                      : 1
+                    : aValue > bValue
+                      ? order === 'asc'
+                        ? 1
+                        : -1
+                      : 0;
+              } else {
+                const aValue = a[field];
+                const bValue = b[field];
+                result =
+                  aValue < bValue
+                    ? order === 'asc'
+                      ? -1
+                      : 1
+                    : aValue > bValue
+                      ? order === 'asc'
+                        ? 1
+                        : -1
+                      : 0;
+              }
+
+              if (result !== 0) {
+                return result;
+              }
+            }
+          }
+
+          return 0;
+        });
+      }
+    } catch (error) {
+      console.error('데이터 처리 중 오류:', error);
       return res(
-        ctx.status(200),
-        ctx.json({
-          pagination: {
-            page,
-            pageSize,
-            totalPage,
-            totalItemCount,
-          },
-          transactions: paginatedTransactions,
-        }),
+        ctx.status(500),
+        ctx.json({ error: '데이터 처리 중 오류가 발생했습니다' }),
       );
-    },
-  ),
-  rest.post('/api/contract/investments/', async (req, res, ctx) => {
+    }
+
+    const totalItemCount = filteredTransactions.length;
+    const totalPage = Math.ceil(totalItemCount / pageSize);
+    const startIndex = (page - 1) * pageSize;
+    const paginatedTransactions = filteredTransactions.slice(
+      startIndex,
+      startIndex + pageSize,
+    );
+
+    return res(
+      ctx.status(200),
+      ctx.json({
+        pagination: {
+          page,
+          pageSize,
+          totalPage,
+          totalItemCount,
+        },
+        transactions: paginatedTransactions,
+      }),
+    );
+  }),
+  rest.post('/contract/investments/', async (req, res, ctx) => {
     const { principal, targetRate, targetWeeks } = await req.json();
 
     // 예시: 최소 금액 미만일 때 400 에러
@@ -824,7 +812,7 @@ const handlers = [
       ctx.json({ message: '투자 신청이 완료되었습니다.' }),
     );
   }),
-  rest.get('/api/contract/investments/statistics', (req, res, ctx) => {
+  rest.get('/contract/investments/statistics', (req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json({

@@ -29,7 +29,7 @@ const TotalContractsOverview: React.FC = () => {
         setIsLoading(true);
         // request.GET을 사용하여 API 요청
         const summaryData = await request.GET<ContractSummaryResponse>(
-          '/api/contract/contracts/summary',
+          '/contract/contracts/summary',
         );
         setData(summaryData);
       } catch (err) {
