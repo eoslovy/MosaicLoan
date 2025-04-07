@@ -16,7 +16,7 @@ build_front:
     - $GITLAB_USER_EMAIL
   script:
     - echo "🔨 Docker 이미지 빌드 및 테스트 중..."
-    - docker build -t --build-arg NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} ${DOCKERHUB_USERNAME:-default}/$REGISTRY_PATH-${SERVICE_NAME}:$IMAGE_TAG  ${BUILD_CONTEXT}
+    - docker build --build-arg NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} -t ${DOCKERHUB_USERNAME:-default}/$REGISTRY_PATH-${SERVICE_NAME}:$IMAGE_TAG  ${BUILD_CONTEXT}
     - docker images
     #- echo "✅ 빌드 완료: $IMAGE_NAME:$IMAGE_TAG
 build_nginx:
