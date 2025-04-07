@@ -17,8 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LoanKafkaConsumer {
 	private static final String LOAN_DEPOSIT_REQUEST = "loan.repay.requested";
-	private static final String LOAN_DEPOSIT_COMPLETE = "loan.repay.completed";
-	private static final String LOAN_DEPOSIT_REJECT = "loan.repay.rejected";
+	private static final String LOAN_DEPOSIT_COMPLETE = "loan.deposit.completed";
+	private static final String LOAN_DEPOSIT_REJECT = "loan.deposit.rejected";
 	private static final String LOAN_WITHDRAW_FAIL = "loan.withdraw.rejected";
 	private final ObjectMapper objectMapper;
 

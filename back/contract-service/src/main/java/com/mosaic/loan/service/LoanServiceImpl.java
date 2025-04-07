@@ -16,6 +16,8 @@ import com.mosaic.loan.event.producer.LoanKafkaProducer;
 import com.mosaic.loan.exception.LoanNotFoundException;
 import com.mosaic.loan.repository.LoanRepository;
 import com.mosaic.payload.AccountTransactionPayload;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,7 @@ public class LoanServiceImpl implements LoanService {
 
     //투자 생성
     @Override
+    @Transactional
     public void createLoan(CreateLoanRequestDto request) throws JsonProcessingException {
         //Todo 내부 신용평가 확인후 예외처리(없음, 시간지남 등등)
         //CreditEvaluationResponseDto creditEvaluationResponseDto = internalApiClient.getMemberCreditEvaluation(request);
@@ -46,11 +49,12 @@ public class LoanServiceImpl implements LoanService {
         loanRepository.save(newLoan);
         LoanCreateTransactionPayload payload = LoanCreateTransactionPayload.buildLoan(newLoan, creditEvaluationResponseDto);
         log.info("Create loan: {}", payload);
-        loanKafkaProducer.sendLoanCreatedEvent(payload);
+        loanKafkaProducer.sendLoanCreatedRequest(payload);
     }
 
     //상환입금
     @Override
+    @Transactional
     public void publishAndCalculateLoanRepayRequest(RequestInvestmentDto requestDto) throws JsonProcessingException {
         Loan loan = loanRepository.findByIdAndStatus(requestDto.id(), LoanStatus.IN_PROGRESS)
                 .orElseThrow(() -> new LoanNotFoundException(requestDto.id()));
@@ -77,6 +81,7 @@ public class LoanServiceImpl implements LoanService {
 
     //상환 필요금과 실 상환금 비율 맞춰 분배
     @Override
+    @Transactional
     public void completeLoanRepayRequest(AccountTransactionPayload payload) throws Exception {
         Loan loan = loanRepository.findByIdAndStatus(payload.targetId(), LoanStatus.IN_PROGRESS)
                 .orElseThrow(() -> new LoanNotFoundException(payload.targetId()));
@@ -134,15 +139,17 @@ public class LoanServiceImpl implements LoanService {
 
     //대출금 출금
     @Override
-    public void publishLoanWithdrawal(WithdrawalInvestmentDto requestDto) throws JsonProcessingException {
+    @Transactional
+    public void publishLoanWithdrawalRequest(WithdrawalInvestmentDto requestDto) throws JsonProcessingException {
         Loan loan = loanRepository.findById(requestDto.id())
                 .orElseThrow(() -> new LoanNotFoundException(requestDto.id()));
         BigDecimal withdrawnAmount = loan.withdrawAll();
         AccountTransactionPayload withdrawalEventPayload = AccountTransactionPayload.buildLoanWithdrawal(loan, withdrawnAmount);
-        loanKafkaProducer.sendLoanWithdrawalEvent(withdrawalEventPayload);
+        loanKafkaProducer.sendLoanWithdrawalRequest(withdrawalEventPayload);
     }
 
     @Override
+    @Transactional
     public void rollbackLoanWithdrawal(AccountTransactionPayload payload) {
         Loan loan = loanRepository.findById(payload.targetId())
                 .orElseThrow(() -> new LoanNotFoundException(payload.targetId()));
@@ -150,6 +157,7 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
+    @Transactional
     public void failLoanRepayRequest(AccountTransactionPayload payload) {
         Loan loan = loanRepository.findByIdAndStatus(payload.targetId(), LoanStatus.IN_PROGRESS)
             .orElseThrow(() -> new LoanNotFoundException(payload.targetId()));

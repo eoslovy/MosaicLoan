@@ -9,8 +9,8 @@ import com.mosaic.payload.AccountTransactionPayload;
 public interface LoanService {
     void createLoan(CreateLoanRequestDto request) throws JsonProcessingException;
 
-
-    //상환입금
+	void publishLoanWithdrawalRequest(WithdrawalInvestmentDto requestDto) throws JsonProcessingException;
+		//상환입금
     void publishAndCalculateLoanRepayRequest(RequestInvestmentDto requestDto) throws JsonProcessingException;
 
     void completeLoanRepayRequest(AccountTransactionPayload requestDto) throws Exception;

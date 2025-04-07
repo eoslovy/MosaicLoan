@@ -47,9 +47,9 @@ public class InvestmentServiceImpl implements InvestmentService {
 		//TODO 멱등성 : 시간기준 UUID 및 요청별 request막는 ttl 발행
 		Integer idempotencyKey = requestDto.hashCode();
 		Investment newInvestment = Investment.requestOnlyFormInvestment(requestDto);
-		var saved = investmentRepository.save(newInvestment);
+		Investment saved = investmentRepository.save(newInvestment);
 		AccountTransactionPayload requestEvent = AccountTransactionPayload.buildInvest(saved, requestDto);
-		investmentProducer.sendInvestmentCreatedEvent(requestEvent);
+		investmentProducer.sendInvestmentDepositRequest(requestEvent);
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class InvestmentServiceImpl implements InvestmentService {
 			throws InternalSystemException, JsonProcessingException {
 		Optional<Investment> optionalInvestment = investmentRepository.findById(completeInvestmentRequest.targetId());
 		if (optionalInvestment.isEmpty()) {
-			investmentProducer.sendInvestmentRejectedEvent(completeInvestmentRequest);
+			investmentProducer.sendInvestmentDepositReject(completeInvestmentRequest);
 			throw new InvestmentNotFoundException(completeInvestmentRequest.targetId());
 		}
 		Investment investment = optionalInvestment.get();
@@ -68,10 +68,10 @@ public class InvestmentServiceImpl implements InvestmentService {
 	@Override
 	public void finishActiveInvestment(Investment investment) {
 	}
-	
-	
+
 	//출금
 	@Override
+	@Transactional
 	public void publishInvestmentWithdrawal(WithdrawalInvestmentDto requestDto) throws JsonProcessingException {
 		Investment investment = investmentRepository.findById(requestDto.id())
 				.orElseThrow(() -> new InvestmentNotFoundException(requestDto.id()));
@@ -80,9 +80,11 @@ public class InvestmentServiceImpl implements InvestmentService {
 		investment.finishInvestment();
 		AccountTransactionPayload investWithdrawalPayload = AccountTransactionPayload.buildInvestWithdrawal(investment, withdrawnAmount);
 
-		investmentProducer.sendInvestmentWithdrawalEvent(investWithdrawalPayload);
+		investmentProducer.sendInvestmentWithdrawalRequest(investWithdrawalPayload);
 	}
+
 	@Override
+	@Transactional
 	public void rollbackInvestmentWithdrawal(AccountTransactionPayload payload) {
 		Investment investment = investmentRepository.findById(payload.targetId())
 				.orElseThrow(() -> new InvestmentNotFoundException(payload.targetId()));

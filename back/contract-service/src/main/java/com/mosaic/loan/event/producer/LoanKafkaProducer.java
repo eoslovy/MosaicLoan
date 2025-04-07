@@ -16,20 +16,20 @@ public class LoanKafkaProducer {
 
     private static final String LOAN_CREATE = "loan.created.requested";
     private static final String LOAN_WITHDRAWAL_REQUEST = "loan.withdrawal.requested";
-    private static final String LOAN_REPAY_REQUEST = "loan.deposit.requested";
+    private static final String LOAN_DEPOSIT_REQUEST = "loan.deposit.requested";
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
-    public void sendLoanCreatedEvent(LoanCreateTransactionPayload payload) throws JsonProcessingException {
+    public void sendLoanCreatedRequest(LoanCreateTransactionPayload payload) throws JsonProcessingException {
         log.info(objectMapper.writeValueAsString(payload));
         kafkaTemplate.send(LOAN_CREATE, objectMapper.writeValueAsString(payload));
     }
 
-    public void sendLoanWithdrawalEvent(AccountTransactionPayload withdrawalEventPayload) throws JsonProcessingException {
+    public void sendLoanWithdrawalRequest(AccountTransactionPayload withdrawalEventPayload) throws JsonProcessingException {
         kafkaTemplate.send(LOAN_WITHDRAWAL_REQUEST, objectMapper.writeValueAsString(withdrawalEventPayload));
     }
 
     public void sendLoanRepayRequestEvent(AccountTransactionPayload repayEventPayload) throws JsonProcessingException {
-        kafkaTemplate.send(LOAN_REPAY_REQUEST, objectMapper.writeValueAsString(repayEventPayload));
+        kafkaTemplate.send(LOAN_DEPOSIT_REQUEST, objectMapper.writeValueAsString(repayEventPayload));
     }
 }
