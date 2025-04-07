@@ -75,7 +75,8 @@ public class KakaoPayServiceImpl implements KakaoPayService {
 			tx.getAccountId(),
 			tx.getId(),
 			tx.getAmount(),
-			tx.getCreatedAt()
+			tx.getCreatedAt(),
+			null
 		);
 
 		ExternalOutboxEvent event = ExternalOutboxEvent.builder()
