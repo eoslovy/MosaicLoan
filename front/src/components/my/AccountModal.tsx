@@ -89,7 +89,7 @@ const AccountModal = ({
     if (type === 'charge') {
       try {
         const res = await request.POST<{ redirectUrl: string }>(
-          '/api/account/external/deposit/ready',
+          '/account/external/deposit/ready',
           { amount },
         );
 
@@ -104,7 +104,7 @@ const AccountModal = ({
       }
     } else {
       try {
-        await request.POST('/api/account/external/withdrawal', { amount });
+        await request.POST('/account/external/withdrawal', { amount });
         // setToast?.('출금이 완료되었습니다.');
         router.refresh();
       } catch (e) {
