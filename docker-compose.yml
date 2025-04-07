@@ -8,6 +8,14 @@ services:
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-api:${IMAGE_TAG:-local}
     env_file:
       - .env
+    #    environment:
+    #      - SPRING_DATASOURCE_URL=${MEMBER_DATASOURCE_URL}
+    #      - SPRING_DATASOURCE_USERNAME=${MEMBER_DATASOURCE_USERNAME}
+    #      - SPRING_DATASOURCE_PASSWORD=${MEMBER_DATASOURCE_PASSWORD}
+    #      - SPRING_DATASOURCE_DRIVER-CLASS-NAME=com.mysql.cj.jdbc.Driver
+    #      - SPRING_JPA_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
+    #      - REDIS_HOST=${REDIS_HOST}
+    #      - REDIS_PORT=${REDIS_PORT}
     depends_on:
       - member-db
     ports:
@@ -67,6 +75,8 @@ services:
     build:
       context: ./front
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-frontend:${IMAGE_TAG:-local}
     env_file:
       - .env
@@ -127,24 +137,25 @@ services:
 
   kafka:
     container_name: kafka
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-kafka:${IMAGE_TAG:-local}
     build:
       context: ./infra/kafka
       dockerfile: Dockerfile
+    ports:
+      - "9092:9092"      # 내부용 (다른 컨테이너용)
+      - "29092:29092"    # 외부용 (GUI용)
     env_file:
       - .env
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092   # 여기 중요!!
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-kafka:${IMAGE_TAG:-local}
-    ports:
-      - "9092:9092"
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:29092
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka:9092,EXTERNAL://host.docker.internal:29092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
-
   member-db:
     container_name: member-db
     build:
@@ -156,7 +167,7 @@ services:
         MEMBER_DATASOURCE_PASSWORD: ${MEMBER_DATASOURCE_PASSWORD}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-db:${IMAGE_TAG:-local}
     env_file:
-      - .env    
+      - .env
     environment:
       DATABASE_URL: ${MEMBER_DATASOURCE_URL}
       MYSQL_ROOT_PASSWORD: root
@@ -181,7 +192,7 @@ services:
       DATABASE_URL: ${ACCOUNT_DATASOURCE_URL}
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: ${ACCOUNT_DATASOURCE_USERNAME}
-      MYSQL_PASSWORD: ${ACCOUNT_DATASOURCE_PASSWORD}    
+      MYSQL_PASSWORD: ${ACCOUNT_DATASOURCE_PASSWORD}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-account-db:${IMAGE_TAG:-local}
     ports:
       - "3308:3306"

@@ -6,7 +6,7 @@ import './globals.css';
 import Nav from '@/components/layout/Nav';
 import { useRouter } from 'next/navigation';
 import Msw from '@/mocks/Msw';
-import useUser from '@/hooks/useUser'; // ✅ 추가!
+import useUser from '@/hooks/useUser';
 
 const notoSansKR = Noto_Sans_KR({
   subsets: ['latin'],
@@ -21,7 +21,7 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   const router = useRouter();
-  useUser(); // ✅ 전역에서 로그인 상태 확인
+  useUser(); // 전역에서 로그인 상태 확인
 
   useEffect(() => {
     const onUnauthorized = () => router.replace('/');

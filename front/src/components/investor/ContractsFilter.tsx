@@ -5,7 +5,7 @@ import styles from '@/styles/investors/ContractsFilter.module.scss';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Select, { MultiValue, StylesConfig } from 'react-select';
-import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Filter } from 'lucide-react';
 import FilterSelectTable from '@/components/common/FilterSelectTable';
 import { subYears, isBefore, format } from 'date-fns';
 import type { PillVariant } from '@/types/components';
@@ -29,7 +29,6 @@ interface ApiResponse {
   investments: Investment[];
 }
 
-// Transaction types
 const typeOptions = [
   { value: 'repayment', label: '상환' },
   { value: 'delayed', label: '연체' },
@@ -37,9 +36,9 @@ const typeOptions = [
 ];
 
 const typeValueToApiValue = {
-  'repayment': '원금상환',
-  'delayed': '이자상환',
-  'defaulted': '환급'
+  repayment: '원금상환',
+  delayed: '이자상환',
+  defaulted: '환급',
 };
 
 const customSelectStyles: StylesConfig<{ label: string; value: string }, true> =
@@ -65,7 +64,7 @@ const getStatusVariant = (status: string): PillVariant => {
 };
 
 interface ContractsFilterProps {
-  onSearch: (searchParams: any) => void;
+  onSearch: (searchParams: Record<string, unknown>) => void;
 }
 
 const ContractsFilter = ({ onSearch }: ContractsFilterProps) => {
@@ -83,33 +82,32 @@ const ContractsFilter = ({ onSearch }: ContractsFilterProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleToggleDetails = async () => {
-    const newIsOpen = !isOpen;
-    setIsOpen(newIsOpen);
-    
-    if (newIsOpen && investmentData.length === 0) {
-      fetchInvestmentData();
-    }
-  };
-
-  const fetchInvestmentData = async () => {
+  const fetchContrackData = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      const response = await request.GET<ApiResponse>('/api/contract/investments');
-      
-      if (response && response.investments && Array.isArray(response.investments)) {
+      const response = await request.GET<ApiResponse>('/contract/investments');
+
+      if (response?.investments && Array.isArray(response.investments)) {
         setInvestmentData(response.investments);
       } else {
         throw new Error('올바른 형식의 데이터를 받지 못했습니다.');
       }
     } catch (err) {
-      console.error('데이터 로딩 중 오류가 발생했습니다:', err);
+      console.error('데이터 로딩 중 오류:', err);
       setError('데이터를 불러오는데 실패했습니다.');
-      
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleToggleDetails = async () => {
+    const newIsOpen = !isOpen;
+    setIsOpen(newIsOpen);
+
+    if (newIsOpen && investmentData.length === 0) {
+      fetchContrackData();
     }
   };
 
@@ -141,23 +139,28 @@ const ContractsFilter = ({ onSearch }: ContractsFilterProps) => {
   };
 
   const handleSearch = useCallback(() => {
-    const formattedStartDate = startDate ? format(startDate, "yyyy-MM-dd") : '';
-    const formattedEndDate = endDate ? format(endDate, "yyyy-MM-dd") : '';
+    const formattedStartDate = startDate ? format(startDate, 'yyyy-MM-dd') : '';
+    const formattedEndDate = endDate ? format(endDate, 'yyyy-MM-dd') : '';
 
-    const types = selectedTypes.map(type => typeValueToApiValue[type.value as keyof typeof typeValueToApiValue]);
+    const types = selectedTypes.map(
+      (type) =>
+        typeValueToApiValue[type.value as keyof typeof typeValueToApiValue],
+    );
 
     const searchParams = {
       startDate: formattedStartDate,
       endDate: formattedEndDate,
-      types: types,
-      investmentIds: selectedIds.map(id => parseInt(id))
+      types,
+      investmentIds: selectedIds.map((id) => parseInt(id, 10)),
     };
 
     onSearch(searchParams);
   }, [startDate, endDate, selectedTypes, selectedIds, onSearch]);
 
   const data = investmentData.length > 0 ? investmentData : [];
-  const selectedData = data.filter((item) => selectedIds.includes(item.investmentId.toString()));
+  const selectedData = data.filter((item) =>
+    selectedIds.includes(item.investmentId.toString()),
+  );
 
   return (
     <div className={styles.filterContainer}>
@@ -205,8 +208,8 @@ const ContractsFilter = ({ onSearch }: ContractsFilterProps) => {
 
         {!isOpen && (
           <div className={styles.buttonWrapper}>
-            <button 
-              type='button' 
+            <button
+              type='button'
               className={styles.searchButton}
               onClick={handleSearch}
             >
@@ -248,10 +251,15 @@ const ContractsFilter = ({ onSearch }: ContractsFilterProps) => {
 
             <div className={styles.selectedData}>
               {selectedData.map((item) => (
-                <div key={`${item.investmentId}`} className={styles.selectedItem}>
+                <div
+                  key={`${item.investmentId}`}
+                  className={styles.selectedItem}
+                >
                   <Pill
                     variant={getStatusVariant(item.investStatus)}
-                    onClose={() => handleRemoveSelected(item.investmentId.toString())}
+                    onClose={() =>
+                      handleRemoveSelected(item.investmentId.toString())
+                    }
                   >
                     {`INVEST - ${item.investmentId}`}
                   </Pill>
@@ -261,8 +269,8 @@ const ContractsFilter = ({ onSearch }: ContractsFilterProps) => {
           </div>
 
           <div className={styles.buttonWrapper}>
-            <button 
-              type='button' 
+            <button
+              type='button'
               className={styles.searchButton}
               onClick={handleSearch}
             >

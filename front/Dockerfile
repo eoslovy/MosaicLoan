@@ -2,6 +2,8 @@
 FROM node:22 AS builder
 WORKDIR /app
 RUN npm install -g pnpm
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 COPY . .
 RUN pnpm install

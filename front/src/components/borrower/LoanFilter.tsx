@@ -9,7 +9,6 @@ import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 import FilterSelectTable from '@/components/common/FilterSelectTable';
 import { subYears, isBefore } from 'date-fns';
 import Pill from '@/components/common/Pill';
-
 import { ContractRow } from '@/types/components';
 
 const typeOptions = [
@@ -109,72 +108,11 @@ const LoanFilter = () => {
         </div>
 
         <div className={styles.rightButtons}>
-          <button
-            type='button'
-            className={styles.toggleButton}
-            onClick={() => setIsOpen((prev) => !prev)}
-          >
-            상세 필터링 설정{' '}
-            {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          <button type='button' className={styles.searchButton}>
+            검색하기
           </button>
-
-          {!isOpen && (
-            <button type='button' className={styles.searchButton}>
-              검색하기
-            </button>
-          )}
         </div>
       </div>
-
-      {isOpen && (
-        <div className={styles.detailBox}>
-          <div className={styles.detailInner}>
-            <div className={styles.tableWrapper}>
-              <FilterSelectTable
-                data={data}
-                selectedIds={selectedIds}
-                onSelect={setSelectedIds}
-                columns={['대출명', '대출 시작일', '대출 만기일']}
-              />
-              <div className={styles.legend}>
-                <div className={styles.legendItem}>
-                  <Pill variant='repayment-complete' size='small'>
-                    상환 완료
-                  </Pill>
-                </div>
-                <div className={styles.legendItem}>
-                  <Pill variant='repayment-in-progress' size='small'>
-                    상환중
-                  </Pill>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.selectedData}>
-              {selectedData.map((row) => (
-                <div key={row.id} className={styles.selectedItem}>
-                  <Pill
-                    variant={
-                      row.status === '상환중'
-                        ? 'repayment-in-progress'
-                        : 'repayment-complete'
-                    }
-                    onClose={() => handleRemoveSelected(row.id)}
-                  >
-                    {row.name}
-                  </Pill>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className={styles.buttonWrapper}>
-            <button type='button' className={styles.searchButton}>
-              검색하기
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

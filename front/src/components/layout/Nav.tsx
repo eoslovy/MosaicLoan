@@ -14,6 +14,11 @@ const Nav = () => {
   const { user } = useUser();
   const router = useRouter();
 
+  const maskName = (name: string) => {
+    if (name.length <= 2) return `${name[0]} *`;
+    return `${name[0]} * ${name[name.length - 1]}`;
+  };
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -71,7 +76,11 @@ const Nav = () => {
         {user ? (
           <>
             <Button
-              label={{ text: `${user.username}님`, size: 'sm', color: 'blue' }}
+              label={{
+                text: `${maskName(user.username)}님`,
+                size: 'sm',
+                color: 'blue',
+              }}
               variant='outlined'
               size='normal'
               onClick={() => handleProtectedRoute('/my')}

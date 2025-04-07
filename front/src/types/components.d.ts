@@ -208,7 +208,12 @@ export interface StatusBadgeProps {
   status: '상환완료' | '상환중' | '부실';
 }
 
-export type SortKey = 'product' | 'bond' | 'transactionDate' | 'maturityDate' | 'interestRate';
+export type SortKey =
+  | 'product'
+  | 'bond'
+  | 'transactionDate'
+  | 'maturityDate'
+  | 'interestRate';
 
 export interface SortState {
   key: SortKey;
@@ -268,3 +273,41 @@ export type PillVariant =
   | 'refund'
   | 'defaulted'
   | 'overdue';
+
+export interface IndustryHeatMapChartProps {
+  data: {
+    industry: number;
+    ratio: number;
+  }[];
+}
+
+export interface MatrixDataPoint {
+  x: number;
+  y: number;
+  v: number;
+  label: string;
+}
+
+export interface GroupedStats {
+  group: string;
+  count: number;
+  amount: number;
+  ratio: number;
+}
+
+export interface RawIndustryRatio {
+  industry: number;
+  ratio: number;
+}
+
+export interface InvestmentStatisticsResponse {
+  byAge: GroupedStats[];
+  byFamilyStatus: GroupedStats[];
+  byResidence: GroupedStats[];
+  byIndustry: RawIndustryRatio[];
+}
+
+export interface IndustryRatio {
+  industry: string;
+  ratio: number;
+}

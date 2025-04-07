@@ -111,15 +111,6 @@ const LoanList = () => {
                     <Pill variant={getStatusVariant(loan.status)}>
                       {loan.status}
                     </Pill>
-                    {loan.status === '상환중' && (
-                      <button
-                        type='button'
-                        className={styles.repayButton}
-                        aria-label={`${loan.name} 상환하기`}
-                      >
-                        상환하기
-                      </button>
-                    )}
                   </div>
                 </td>
                 <td>

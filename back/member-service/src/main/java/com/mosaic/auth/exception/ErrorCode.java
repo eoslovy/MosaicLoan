@@ -17,7 +17,10 @@ public enum ErrorCode {
 
 	// 쿠키 관련 에러
 	COOKIE_NOT_FOUND("COOKIE_001", "요청에 쿠키가 존재하지 않습니다."),
-	COOKIE_VALUE_NOT_FOUND("COOKIE_002", "'%s' 쿠키를 찾을 수 없습니다.");
+	COOKIE_VALUE_NOT_FOUND("COOKIE_002", "'%s' 쿠키를 찾을 수 없습니다."),
+
+	// 멤버 관련 에러
+	MEMBER_NOT_FOUND("MEMBER_001", "존재하지 않는 회원입니다.");
 
 	private final String code;
 	private final String defaultMessage;

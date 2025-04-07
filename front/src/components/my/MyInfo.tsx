@@ -2,26 +2,39 @@
 
 import styles from '@/styles/my/MyInfo.module.scss';
 import React, { useEffect, useState } from 'react';
+import useUser from '@/hooks/useUser';
 
-const mockUserInfo = {
-  oauthProvider: '카카오 간편 가입',
-  // email: 'ssafy123@ssafy.com',
-  name: '김 * 피',
-  createdAt: '2025.05.10',
+const maskName = (name: string) => {
+  if (name.length <= 2) return `${name[0]} *`;
+  return `${name[0]} * ${name[name.length - 1]}`;
+};
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(
+    date.getDate(),
+  ).padStart(2, '0')}`;
 };
 
 const MyInfo = () => {
+  const { user, isFetched, isLoading } = useUser();
   const [userInfo, setUserInfo] = useState({
     oauthProvider: '',
-    // email: '',
     name: '',
     createdAt: '',
   });
 
   useEffect(() => {
-    // 실제 API 대체용
-    setUserInfo(mockUserInfo);
-  }, []);
+    if (user && isFetched) {
+      setUserInfo({
+        oauthProvider: user.oauthProvider ?? '-',
+        name: maskName(user.username),
+        createdAt: user.createdAt ? formatDate(user.createdAt) : '-',
+      });
+    }
+  }, [user, isFetched]);
+
+  if (isLoading) return <p>불러오는 중...</p>;
 
   return (
     <section className={styles.container}>
@@ -31,8 +44,6 @@ const MyInfo = () => {
         <div className={styles.row}>
           <span className={styles.label}>인증 경로</span>
           <div className={styles.value}>
-            {/* <p>{userInfo.emailProvider}</p> */}
-            {/* <p>카카오 간편 가입</p> */}
             <p>{userInfo.oauthProvider}</p>
           </div>
         </div>

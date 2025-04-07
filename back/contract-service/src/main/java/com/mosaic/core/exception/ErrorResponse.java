@@ -1,36 +1,35 @@
 package com.mosaic.core.exception;
 
-import java.time.LocalDateTime;
-
-import org.springframework.http.HttpStatusCode;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.http.HttpStatusCode;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
 @AllArgsConstructor
 public class ErrorResponse {
-	private final LocalDateTime timestamp;
-	private final int status;
-	private final String error;     // ex: "Bad Request"
-	private final String message;   // 상세 메시지
-	private final String path;      // 요청 경로
-	private final String code;      // 시스템 내 정의한 에러 코드
+    private final LocalDateTime timestamp;
+    private final int status;
+    private final String error;     // ex: "Bad Request"
+    private final String message;   // 상세 메시지
+    private final String path;      // 요청 경로
+    private final String code;      // 시스템 내 정의한 에러 코드
 
-	public static ErrorResponse of(HttpStatusCode status, String message, String path, String code) {
-		return ErrorResponse.builder()
-			.timestamp(LocalDateTime.now())
-			.status(status.value())
-			.error(String.valueOf(status.value()))
-			.message(message)
-			.path(path)
-			.code(code)
-			.build();
-	}
+    public static ErrorResponse of(HttpStatusCode status, String message, String path, String code) {
+        return ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(status.value())
+                .error(String.valueOf(status.value()))
+                .message(message)
+                .path(path)
+                .code(code)
+                .build();
+    }
 
-	public static ErrorResponse of(HttpStatusCode status, String message, String path) {
-		return of(status, message, path, null);
-	}
+    public static ErrorResponse of(HttpStatusCode status, String message, String path) {
+        return of(status, message, path, null);
+    }
 }

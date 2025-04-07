@@ -25,16 +25,16 @@ interface Transaction {
 }
 
 const apiToSortKeyMapping: Record<string, string> = {
-  'product': 'investmentId',
-  'bond': 'contractId',
-  'transactionDate': 'createdAt',
-  'maturityDate': 'bondMaturity',
-  'interestRate': 'interestRate'
+  product: 'investmentId',
+  bond: 'contractId',
+  transactionDate: 'createdAt',
+  maturityDate: 'bondMaturity',
+  interestRate: 'interestRate',
 };
 
-const sortOrderMapping: {[key: string]: string} = {
-  'true': 'asc',
-  'false': 'desc'
+const sortOrderMapping: { [key: string]: string } = {
+  true: 'asc',
+  false: 'desc',
 };
 
 const getTypeVariant = (type: string): PillVariant => {
@@ -63,14 +63,14 @@ interface ContractsListProps {
   onSortChange: (sortState: { field: string; order: string }[]) => void;
 }
 
-const ContractsList = ({ 
-  transactions, 
-  isLoading, 
-  error, 
-  currentPage, 
-  totalPages, 
-  onPageChange, 
-  onSortChange 
+const ContractsList = ({
+  transactions,
+  isLoading,
+  error,
+  currentPage,
+  totalPages,
+  onPageChange,
+  onSortChange,
 }: ContractsListProps) => {
   const [sortStates, setSortStates] = useState<SortState[]>([]);
 
@@ -92,7 +92,7 @@ const ContractsList = ({
 
     setSortStates(newSortStates);
 
-    const apiSortFormat = newSortStates.map(sort => ({
+    const apiSortFormat = newSortStates.map((sort) => ({
       field: apiToSortKeyMapping[sort.key] || sort.key,
       order: sortOrderMapping[String(sort.ascending)]
     }));
@@ -104,33 +104,37 @@ const ContractsList = ({
     return {
       key: `transaction-${transaction.id}`,
       cells: [
-        { 
-          key: `product-${transaction.id}`, 
-          content: `INVEST-${transaction.investmentId}` 
+        {
+          key: `product-${transaction.id}`,
+          content: `INVEST-${transaction.investmentId}`,
         },
-        { 
-          key: `bond-${transaction.id}`, 
-          content: `BOND-${transaction.contractId}` 
+        {
+          key: `bond-${transaction.id}`,
+          content: `BOND-${transaction.contractId}`,
         },
-        { 
-          key: `date-${transaction.id}`, 
-          content: transaction.createdAt 
+        {
+          key: `date-${transaction.id}`,
+          content: transaction.createdAt,
         },
-        { 
-          key: `maturity-${transaction.id}`, 
-          content: transaction.bondMaturity
+        {
+          key: `maturity-${transaction.id}`,
+          content: transaction.bondMaturity,
         },
-        { 
-          key: `amount-${transaction.id}`, 
-          content: `+W ${transaction.amount}` 
+        {
+          key: `amount-${transaction.id}`,
+          content: `+W ${transaction.amount}`,
         },
-        { 
-          key: `rate-${transaction.id}`, 
-          content: transaction.interestRate
+        {
+          key: `rate-${transaction.id}`,
+          content: transaction.interestRate,
         },
         {
           key: `type-${transaction.id}`,
-          content: <Pill variant={getTypeVariant(transaction.status)}>{transaction.status}</Pill>,
+          content: (
+            <Pill variant={getTypeVariant(transaction.status)}>
+              {transaction.status}
+            </Pill>
+          ),
         },
       ],
     };
@@ -190,10 +194,10 @@ const ContractsList = ({
         <div className={styles.errorMessage}>{error}</div>
       ) : (
         <>
-          <BasicTable 
-            title='채권 거래 내역' 
-            columns={columnHeaders} 
-            rows={rows} 
+          <BasicTable
+            title='채권 거래 내역'
+            columns={columnHeaders}
+            rows={rows}
           />
           {hasTransactions && (
             <Pagination

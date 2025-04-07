@@ -31,21 +31,28 @@ interface ApiResponseData {
 }
 
 const ContractsPage = () => {
-  const [summaryData, setSummaryData] = useState<ContractSummaryResponse | null>(null);
+  const [summaryData, setSummaryData] =
+    useState<ContractSummaryResponse | null>(null);
   const [isLoadingSummary, setIsLoadingSummary] = useState(true);
   const [isSummaryError, setIsSummaryError] = useState(false);
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(false);
-  const [transactionsError, setTransactionsError] = useState<string | null>(null);
+  const [transactionsError, setTransactionsError] = useState<string | null>(
+    null,
+  );
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
   const [totalPages, setTotalPages] = useState(1);
 
-  const [sortState, setSortState] = useState<{ field: string; order: string }[]>([]);
+  const [sortState, setSortState] = useState<
+    { field: string; order: string }[]
+  >([]);
 
-  const [currentSearchParams, setCurrentSearchParams] = useState<any>({
+  const [currentSearchParams, setCurrentSearchParams] = useState<
+    Record<string, unknown>
+  >({
     startDate: '',
     endDate: '',
     types: [],
@@ -58,7 +65,9 @@ const ContractsPage = () => {
         const result = await fetchContractSummary();
         setSummaryData(result);
       } catch (error) {
-        console.error('채권 요약 정보 요청 실패', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('채권 요약 정보 요청 실패', error);
+        }
         setIsSummaryError(true);
       } finally {
         setIsLoadingSummary(false);
@@ -86,9 +95,17 @@ const ContractsPage = () => {
       } else {
         throw new Error('유효하지 않은 응답 데이터입니다.');
       }
-    } catch (err) {
-      console.error('거래 데이터 검색 중 오류가 발생했습니다:', err);
-      setTransactionsError('거래 데이터를 가져오는데 실패했습니다.');
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : '거래 데이터를 가져오는데 실패했습니다.';
+
+      if (process.env.NODE_ENV === 'development') {
+        console.error('거래 데이터 검색 중 오류가 발생했습니다:', err);
+      }
+
+      setTransactionsError(message);
     } finally {
       setIsLoadingTransactions(false);
     }
@@ -145,7 +162,7 @@ const ContractsPage = () => {
     <>
       <TotalContractsOverview />
       <ContractsFilter onSearch={handleSearch} />
-      <ContractsList 
+      <ContractsList
         transactions={transactions}
         isLoading={isLoadingTransactions}
         error={transactionsError}

@@ -9,5 +9,4 @@ public class MosaicMemberApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MosaicMemberApplication.class, args);
 	}
-
 }

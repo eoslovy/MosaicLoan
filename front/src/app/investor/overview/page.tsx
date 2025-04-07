@@ -19,7 +19,7 @@ const OverviewPage = () => {
     const fetchOverview = async () => {
       try {
         const result = await request.GET<InvestmentOverviewResponse>(
-          '/api/contract/investments/overview',
+          '/contract/investments/overview',
         );
         setData(result);
       } catch (e: unknown) {

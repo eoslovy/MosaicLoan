@@ -10,9 +10,6 @@ import InvestmentCalculator from '@/components/ui/InvestmentCalculator';
 const Home = () => (
   <div className='w-full flex flex-col'>
     {/* 메인 콘텐츠 */}
-    {/* <main className='flex flex-col gap-0 px-6 sm:px-10 pt-0 items-center sm:items-start'>
-    </main> */}
-
     <main>
       <Hero />
       <StatsSection />
@@ -23,7 +20,7 @@ const Home = () => (
     </main>
 
     {/* 푸터 */}
-    <footer className='mt-auto flex gap-6 flex-wrap items-center justify-center py-6'>
+    {/* <footer className='mt-auto flex gap-6 flex-wrap items-center justify-center py-6'>
       <a
         className='flex items-center gap-2 hover:underline hover:underline-offset-4'
         href='https://nextjs.org/learn'
@@ -69,7 +66,7 @@ const Home = () => (
         />
         Go to nextjs.org →
       </a>
-    </footer>
+    </footer> */}
   </div>
 );
 
