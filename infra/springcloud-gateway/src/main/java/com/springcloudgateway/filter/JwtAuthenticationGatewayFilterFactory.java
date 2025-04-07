@@ -21,16 +21,16 @@ public class JwtAuthenticationGatewayFilterFactory
 	private static final String MEMBER_ID_HEADER = "X-MEMBER-ID";
 	private static final String IS_BOT_HEADER = "X-IS-BOT";
 	private static final String ACCESS_TOKEN_COOKIE_NAME = "access-token";
+	private final String verifyUrl;
 
 	private final WebClient webClient;
-	// private final SecretKey key;
 
 	public JwtAuthenticationGatewayFilterFactory(
-		@Value("${jwt.secret}") String secret,
+		@Value("${verify-url}") String verifyUrl,
 		WebClient.Builder webClientBuilder
 	) {
 		super(Config.class);
-		// this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+		this.verifyUrl = verifyUrl;
 		this.webClient = webClientBuilder.build();
 	}
 
@@ -44,12 +44,6 @@ public class JwtAuthenticationGatewayFilterFactory
 			if (cookie == null) {
 				return unauthorized(exchange);
 			}
-
-			// try {
-			// Claims claims = validateToken(cookie.getValue());
-			// 이거 뽑아내는 로직이 memberService랑 달랐음
-			// Integer memberId = claims.get("memberId", Integer.class);
-			// Integer memberId = Integer.valueOf(claims.getSubject());
 
 			return fetchMemberInfo(cookie)
 				.flatMap(member -> {
@@ -70,9 +64,6 @@ public class JwtAuthenticationGatewayFilterFactory
 				})
 				.onErrorResume(e -> unauthorized(exchange));
 
-			// } catch (ExpiredJwtException | MalformedJwtException | SignatureException e) {
-			// 	return unauthorized(exchange);
-			// }
 		};
 	}
 
@@ -81,17 +72,9 @@ public class JwtAuthenticationGatewayFilterFactory
 		return exchange.getResponse().setComplete();
 	}
 
-	// private Claims validateToken(String token) {
-	// 	return Jwts.parserBuilder()
-	// 		.setSigningKey(key)
-	// 		.build()
-	// 		.parseClaimsJws(token)
-	// 		.getBody();
-	// }
-
 	private Mono<MemberInfoResponse> fetchMemberInfo(HttpCookie accessTokenCookie) {
 		return webClient.get()
-			.uri("http://member-api:8080/auth/internal/verify-token")
+			.uri(verifyUrl)
 			.header("X-INTERNAL-CALL", "true")
 			.cookies(cookies -> {
 				cookies.add(accessTokenCookie.getName(), accessTokenCookie.getValue());

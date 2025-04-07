@@ -4,8 +4,7 @@ spring:
   profiles:
     active: docker
 
-jwt:
-  secret: ${JWT_SECRET}
+
 
 logging:
   level:
@@ -91,6 +90,8 @@ spring:
           filters:
             - StripPrefix=2
             - name: JwtAuthentication
+verify-url: http://member-api:8080/auth/internal/verify-token
+
 
 server:
   port: 8080
@@ -153,6 +154,7 @@ spring:
           filters:
             - StripPrefix=2
             - name: JwtAuthentication
+verify-url: http://member-service.mosaic.svc.cluster.local:8080/auth/internal/verify-token
 
 server:
   port: 8080
