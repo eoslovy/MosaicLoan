@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.mosaic.auth.domain.Member;
 import com.mosaic.auth.dto.KakaoMemberResponse;
@@ -28,15 +29,28 @@ public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
 	private final JwtProvider jwtProvider;
 	private final RedisService redisService;
+	private final WebClient webClient;
 
 	@Override
 	@Transactional
 	public Member findOrCreateMember(KakaoMemberResponse kakaoMemberResponse) {
 		String oauthId = String.valueOf(kakaoMemberResponse.getId());
 		return memberRepository.findByOauthId(oauthId)
-			.orElseGet(() -> memberRepository.save(
-				Member.createMember(oauthId, kakaoMemberResponse.getNickname())
-			));
+			.orElseGet(() -> {
+				var newMember = memberRepository.save(
+					Member.createMember(oauthId, kakaoMemberResponse.getNickname())
+				);
+
+				webClient.post()
+					.uri("http://account-service:8080/accounts")
+					.header("X-MEMBER-ID", String.valueOf(newMember.getId()))
+					.header("X-INTERNAL-CALL", "true")
+					.retrieve()
+					.bodyToMono(Void.class)
+					.block();
+
+				return newMember;
+			});
 	}
 
 	@Override

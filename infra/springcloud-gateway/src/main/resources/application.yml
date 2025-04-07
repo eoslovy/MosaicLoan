@@ -4,8 +4,7 @@ spring:
   profiles:
     active: docker
 
-jwt:
-  secret: ${JWT_SECRET}
+
 
 logging:
   level:
@@ -27,15 +26,15 @@ spring:
       default-filters:
         - AddResponseHeader=X-GATEWAY, docker
       routes:
-        - id: test-public-api
-          uri: http://member-api:8080
+        - id: test-public-service
+          uri: http://member-service:8080
           predicates:
             - Path=/api/member/test/public/**
           filters:
             - StripPrefix=2
 
-        - id: test-api
-          uri: http://member-api:8080
+        - id: test-service
+          uri: http://member-service:8080
           predicates:
             - Path=/api/member/test/**
           filters:
@@ -43,16 +42,16 @@ spring:
             - name: JwtAuthentication
 
 
-        - id: member-api-auth
-          uri: http://member-api:8080
+        - id: member-service-auth
+          uri: http://member-service:8080
           predicates:
             - Path=/api/member/auth/**
           filters:
             - PreserveHostHeader
             - StripPrefix=2
 
-        - id: member-api-need-auth
-          uri: http://member-api:8080
+        - id: member-service-need-auth
+          uri: http://member-service:8080
           predicates:
             - Path=/api/member/**
           filters:
@@ -60,37 +59,39 @@ spring:
             - StripPrefix=2
             - name: JwtAuthentication
 
-        - id: account-api
-          uri: http://account-api:8080
+        - id: account-service
+          uri: http://account-service:8080
           predicates:
             - Path=/api/account/**
           filters:
             - StripPrefix=2
             - name: JwtAuthentication
 
-        - id: contract-api
-          uri: http://contract-api:8080
+        - id: contract-service
+          uri: http://contract-service:8080
           predicates:
             - Path=/api/contract/**
           filters:
             - StripPrefix=2
             - name: JwtAuthentication
 
-        - id: mydata-api
-          uri: http://mydata-api:8080
+        - id: mydata-service
+          uri: http://mydata-service:8080
           predicates:
             - Path=/api/mydata/**
           filters:
             - StripPrefix=2
             - name: JwtAuthentication
 
-        - id: credit-api
-          uri: http://credit-api:8080
+        - id: credit-service
+          uri: http://credit-service:8080
           predicates:
             - Path=/api/credit/**
           filters:
             - StripPrefix=2
             - name: JwtAuthentication
+#verify-url: http://member-service:8080/auth/internal/verify-token
+
 
 server:
   port: 8080
@@ -107,7 +108,7 @@ spring:
         - AddResponseHeader=X-GATEWAY, k8s
       routes:
         - id: member-service-auth
-          uri: http://member-service.mosaic.svc.cluster.local:8080
+          uri: http://member-service:8080
           predicates:
             - Path=/api/member/auth/**
           filters:
@@ -115,7 +116,7 @@ spring:
             - StripPrefix=2
 
         - id: member-service
-          uri: http://member-service.mosaic.svc.cluster.local:8080
+          uri: http://member-service:8080
           predicates:
             - Path=/api/member/**
           filters:
@@ -123,7 +124,7 @@ spring:
             - name: JwtAuthentication
 
         - id: account-service
-          uri: http://account-service.mosaic.svc.cluster.local:8080
+          uri: http://account-service:8080
           predicates:
             - Path=/api/account/**
           filters:
@@ -131,7 +132,7 @@ spring:
             - name: JwtAuthentication
 
         - id: contract-service
-          uri: http://contract-service.mosaic.svc.cluster.local:8080
+          uri: http://contract-service:8080
           predicates:
             - Path=/api/contract/**
           filters:
@@ -139,7 +140,7 @@ spring:
             - name: JwtAuthentication
 
         - id: mydata-service
-          uri: http://mydata-service.mosaic.svc.cluster.local:8080
+          uri: http://mydata-service:8080
           predicates:
             - Path=/api/mydata/**
           filters:
@@ -147,12 +148,13 @@ spring:
             - name: JwtAuthentication
 
         - id: credit-service
-          uri: http://credit-service.mosaic.svc.cluster.local:8080
+          uri: http://credit-service:8080
           predicates:
             - Path=/api/credit/**
           filters:
             - StripPrefix=2
             - name: JwtAuthentication
+#verify-url: http://member-service:8080/auth/internal/verify-token
 
 server:
   port: 8080
