@@ -38,7 +38,7 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping("/internal/auth/verify-token")
+	@GetMapping("/auth/internal/verify-token")
 	public ResponseEntity<MemberInfoResponse> verifyToken(
 		@RequestHeader(value = "X-INTERNAL-CALL", required = false) Boolean isInternal,
 		HttpServletRequest request) {
