@@ -105,9 +105,8 @@ spring:
     gateway:
       default-filters:
         - AddResponseHeader=X-GATEWAY, k8s
-        - name: JwtAuthentication
       routes:
-        - id: member-service-need-auth
+        - id: member-service-auth
           uri: http://member-service.mosaic.svc.cluster.local:8080
           predicates:
             - Path=/api/member/auth/**
