@@ -42,7 +42,7 @@ public class MemberServiceImpl implements MemberService {
 				);
 
 				webClient.post()
-					.uri("http://account-service:8080/accounts/")
+					.uri("http://account-service:8080/accounts")
 					.header("X-MEMBER-ID", String.valueOf(newMember.getId()))
 					.header("X-INTERNAL-CALL", "true")
 					.retrieve()
