@@ -26,8 +26,17 @@ export interface LoanOverviewResponse {
   averageInterestRate: number; // 만분율
 }
 
-export const postCreditEvaluation = async (appliedAt: string) => {
-  return request.POST<CreditEvaluation>('/api/evaluations', { appliedAt });
+export const postCreditEvaluation = async ({
+  appliedAt,
+  memberId,
+}: {
+  appliedAt: string;
+  memberId: number;
+}) => {
+  return request.POST<CreditEvaluation>('/api/evaluations', {
+    appliedAt,
+    memberId,
+  });
 };
 
 export const getRecentCreditEvaluation = async () => {

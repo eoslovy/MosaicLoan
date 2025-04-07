@@ -34,7 +34,7 @@ const InvestSectionTabNav: React.FC<InvestSectionTabNavProps> = ({
       href: '/investor/overview',
     },
     {
-      label: { text: '채권 거래 내역', size: 'sm', color: 'gray' },
+      label: { text: '투자 거래 내역', size: 'sm', color: 'gray' },
       href: '/investor/contracts',
     },
     {

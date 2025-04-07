@@ -15,17 +15,17 @@
 
 .card {
   position: relative;
-  width: clamp(260px, 40vw, 420px); // 뷰포트 기준 크기
+  width: clamp(260px, 40vw, 420px);
   height: clamp(140px, 22vw, 240px);
   transform-style: preserve-3d;
   transition: transform 0.8s ease;
+
+  &:hover {
+    transform: rotateY(180deg);
+  }
 }
 
-.cardContainer:hover .card {
-  transform: rotateY(180deg);
-}
-
-// 공통: 앞면/뒷면
+// 공통
 .cardFront,
 .cardBack {
   position: absolute;
@@ -73,6 +73,7 @@
     font-weight: 500;
   }
 }
+
 .backLabel {
   font-size: $text-sm;
   color: rgba(255, 255, 255, 0.85);
@@ -125,5 +126,44 @@
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+.globalErrorToast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background-color: #ff4444;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation:
+    slideIn 0.3s ease-out,
+    disappear 0.5s ease-out 3s forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes disappear {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
   }
 }

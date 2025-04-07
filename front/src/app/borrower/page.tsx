@@ -11,6 +11,11 @@ import { getLoanOverview, LoanOverviewResponse } from '@/service/apis/borrow';
 const BorrowerPage = () => {
   const [loanData, setLoanData] = useState<LoanOverviewResponse | null>(null);
   const [error, setError] = useState(false);
+  const [creditKey, setCreditKey] = useState(0);
+
+  const handleEvaluationComplete = () => {
+    setCreditKey((prev) => prev + 1); // 신용평가 한 다음에 화면 리렌더링하기 위함.
+  };
 
   useEffect(() => {
     const fetchLoanData = async () => {
@@ -34,7 +39,10 @@ const BorrowerPage = () => {
 
   return (
     <>
-      <BorrowerCreditSection />
+      <BorrowerCreditSection
+        key={creditKey}
+        onComplete={handleEvaluationComplete}
+      />
       <LoanSummarySection recentLoans={recentLoans} />
       <LoanOverview
         activeLoanCount={activeLoanCount}

@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { AccountTransaction, PaginationInfo } from '@/types/pages';
+import { useEffect } from 'react';
+import useAccountTransactionStore from '@/stores/useAccountTransactionStore';
 import BasicTable from '@/components/common/BasicTable';
 import Pagination from '@/components/common/Pagination';
-import type { PillVariant } from '@/types/components';
-import styles from '@/styles/my/MyAccountTransactionList.module.scss';
 import Pill from '@/components/common/Pill';
+import styles from '@/styles/my/MyAccountTransactionList.module.scss';
+import type { PillVariant } from '@/types/components';
 
 const getTypeLabel = (type: string) => {
   switch (type) {
@@ -25,15 +25,6 @@ const getTypeLabel = (type: string) => {
     default:
       return type;
   }
-};
-
-const getPaginatedTransactions = (
-  data: AccountTransaction[],
-  page: number,
-  pageSize: number,
-): AccountTransaction[] => {
-  const start = (page - 1) * pageSize;
-  return data.slice(start, start + pageSize);
 };
 
 const getTypeVariant = (type: string): PillVariant => {
@@ -64,7 +55,6 @@ const getActionButton = (type: string, targetId: number) => {
           type='button'
           className={styles.detailButton}
           onClick={() => {
-            // TODO: 투자상품 상세 페이지로 이동
             console.log(`Navigate to investment detail: ${targetId}`);
           }}
         >
@@ -78,7 +68,6 @@ const getActionButton = (type: string, targetId: number) => {
           type='button'
           className={styles.detailButton}
           onClick={() => {
-            // TODO: 대출정보 상세 페이지로 이동
             console.log(`Navigate to loan detail: ${targetId}`);
           }}
         >
@@ -91,73 +80,21 @@ const getActionButton = (type: string, targetId: number) => {
 };
 
 const MyAccountTransactionList = () => {
-  const mockTransactions: AccountTransaction[] = [
-    {
-      amount: 1000000000,
-      cash: 1000000000,
-      type: 'INVESTMENT_OUT',
-      content: '투자상품1 신설',
-      createdAt: '2025-03-25',
-      targetId: 101,
-    },
-    {
-      amount: 1000000000,
-      cash: 1000000000,
-      type: 'INVESTMENT_IN',
-      content: '투자상품1 종료',
-      createdAt: '2025-03-25',
-      targetId: 102,
-    },
-    {
-      amount: 1000000000,
-      cash: 1000000000,
-      type: 'EXTERNAL_OUT',
-      content: '출금',
-      createdAt: '2025-03-25',
-      targetId: 0,
-    },
-    {
-      amount: 1000000000,
-      cash: 1000000000,
-      type: 'LOAN_IN',
-      content: '대출 시작한다',
-      createdAt: '2025-03-25',
-      targetId: 201,
-    },
-  ];
+  const { transactions, pagination, isLoading, fetchTransactions } =
+    useAccountTransactionStore();
 
-  const mockPagination: PaginationInfo = {
-    page: 1,
-    pageSize: 10,
-    totalPage: 3,
-    totalItemCount: 25,
-  };
-
-  // 상태연결
-  const [transactions, setTransactions] = useState<AccountTransaction[]>([]);
-  const [pagination, setPagination] = useState<PaginationInfo>(mockPagination);
-
-  // 초기설정
-  useEffect(() => {
-    setTransactions(mockTransactions);
-    setPagination(mockPagination);
-  }, []);
-
-  // 거래 내역 컬럼
   const tableColumns = ['거래일', '금액', '잔액', '내용', '유형', ''];
 
-  const pagedTransactions = getPaginatedTransactions(
-    transactions,
-    pagination.page,
-    pagination.pageSize,
-  );
+  const handlePageChange = (nextPage: number) => {
+    fetchTransactions({ page: nextPage });
+  };
 
   return (
     <section className={styles.container}>
       <BasicTable
         title='계좌 입출금 내역'
         columns={tableColumns}
-        rows={pagedTransactions.map((tx, idx) => ({
+        rows={transactions.map((tx, idx) => ({
           key: `tx-${idx}`,
           cells: [
             {
@@ -210,7 +147,7 @@ const MyAccountTransactionList = () => {
       <Pagination
         currentPage={pagination.page}
         totalPages={pagination.totalPage}
-        onPageChange={(page) => setPagination((prev) => ({ ...prev, page }))}
+        onPageChange={handlePageChange}
       />
     </section>
   );

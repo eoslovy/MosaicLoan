@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import styles from '@/styles/borrowers/LoanSummarySection.module.scss';
 import LoanDetailSlider from '@/components/borrower/LoanDetailSlider';
 import Button from '@/components/common/Button';
+import { useUserStore } from '@/stores/userStore';
 import {
   getRecentCreditEvaluation,
   postCreditEvaluation,
@@ -20,6 +21,7 @@ interface Props {
 }
 
 const LoanSummarySection = ({ recentLoans }: Props) => {
+  const { user } = useUserStore();
   const [error, setError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [maxLoanLimit, setMaxLoanLimit] = useState<number>(0);
@@ -35,20 +37,9 @@ const LoanSummarySection = ({ recentLoans }: Props) => {
       setMaxLoanLimit(result.maxLoanLimit);
       setModalOpen(true);
     } catch {
-      try {
-        const today = new Date().toISOString().split('T')[0];
-        const result = await postCreditEvaluation(today);
-
-        if (!result || !result.maxLoanLimit) {
-          throw new Error('신용평가 실패');
-        }
-
-        setMaxLoanLimit(result.maxLoanLimit);
-        setModalOpen(true);
-      } catch {
-        setError('신용 평가 데이터를 불러오지 못했습니다.');
-        setTimeout(() => setError(null), 3000); // 3초 후 사라짐
-      }
+      // 신용평가 정보 없을 경우: 토스트 표시 후 리턴-> 그냥 대출 모달창이 안 나오도록 하자
+      setError('신용평가를 먼저 진행해 주세요.');
+      setTimeout(() => setError(null), 3000);
     }
   };
 

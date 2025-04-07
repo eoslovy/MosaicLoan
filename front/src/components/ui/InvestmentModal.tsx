@@ -7,6 +7,7 @@ import Button from '@/components/common/Button';
 import Text from '@/components/common/Text';
 import WeekPicker from '@/components/common/WeekPicker';
 import styles from '@/styles/uis/InvestmentModal.module.scss';
+import request from '@/service/apis/request';
 
 interface InvestmentModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface InvestmentModalProps {
   initialRate?: number;
   setAmount?: (amount: number) => void;
   setRate?: (rate: number) => void;
+  setToast?: (msg: string | null) => void;
 }
 
 const DEFAULT_AMOUNT = 5000000;
@@ -32,6 +34,7 @@ const InvestmentModal = ({
   initialRate,
   setAmount,
   setRate,
+  setToast,
 }: InvestmentModalProps): React.JSX.Element => {
   const [localAmount, setLocalAmount] = useState(initialAmount);
   const [localRate, setLocalRate] = useState(initialRate);
@@ -140,13 +143,24 @@ const InvestmentModal = ({
     setMaturityDate(endDate);
   };
 
-  const handleInvest = () => {
-    // 최종 유효성 검사
+  const handleInvest = async () => {
     const isAmountValid = validateAmount(localAmount || 0);
     const isRateValid = validateRate(localRate || 0);
 
-    if (isAmountValid && isRateValid) {
-      onClose();
+    if (!isAmountValid || !isRateValid) return;
+
+    try {
+      await request.POST('/api/contract/investments/', {
+        principal: localAmount,
+        targetRate: Math.round((localRate || 0) * 100), // 소수 → 만분율
+        targetWeeks: selectedWeeks,
+      });
+
+      onClose(); // 성공 시 모달 닫기
+      // 성공 알림 추가하고 싶다면 여기서 setToast?.("투자 신청이 완료되었습니다.") 해도 됨
+    } catch (error) {
+      console.error('투자 신청 실패:', error);
+      setToast?.('투자 신청 중 오류가 발생했습니다.');
     }
   };
 
@@ -227,6 +241,7 @@ InvestmentModal.defaultProps = {
   initialRate: DEFAULT_RATE,
   setAmount: () => {},
   setRate: () => {},
+  setToast: () => {},
 } as Partial<InvestmentModalProps>;
 
 export default InvestmentModal;
