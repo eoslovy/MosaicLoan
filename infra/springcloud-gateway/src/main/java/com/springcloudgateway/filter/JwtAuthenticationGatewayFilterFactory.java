@@ -91,7 +91,7 @@ public class JwtAuthenticationGatewayFilterFactory
 
 	private Mono<MemberInfoResponse> fetchMemberInfo(HttpCookie accessTokenCookie) {
 		return webClient.get()
-			.uri("http://member-api:8080/internal/auth/verify-token")
+			.uri("http://member-api:8080/auth/internal/verify-token")
 			.header("X-INTERNAL-CALL", "true")
 			.cookies(cookies -> {
 				cookies.add(accessTokenCookie.getName(), accessTokenCookie.getValue());
