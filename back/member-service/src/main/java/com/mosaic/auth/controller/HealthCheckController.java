@@ -6,9 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * 모든 테스트 및 헬스 체크 엔드포인트를 통합한 컨트롤러
- */
 @Slf4j
 @RestController
 public class HealthCheckController {
@@ -30,10 +27,4 @@ public class HealthCheckController {
 		log.info("간단한 테스트 엔드포인트 요청이 도착했습니다: /simple-test");
 		return ResponseEntity.ok("SIMPLE TEST ENDPOINT WORKS!");
 	}
-	// 이거 테스트 컨트롤러에 같은 url 매핑해둔게 있어서 에러 났었음
-	// @GetMapping("/test/public")
-	// public ResponseEntity<String> testPublic() {
-	//     log.info("공개 테스트 엔드포인트 요청이 도착했습니다: /test/public");
-	//     return ResponseEntity.ok("PUBLIC TEST ENDPOINT WORKS!");
-	// }
-} 
+}
