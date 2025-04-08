@@ -55,7 +55,9 @@
     - cat docker-compose.yml
       # 3️⃣ 환경변수가 반영된 `docker-compose.yml`을 배포 서버로 전송
     - envsubst < docker-compose.yml > docker-compose.processed.yml
-
+    - ssh -T -o StrictHostKeyChecking=no -i bastion.pem ubuntu@$BASTION_HOST "
+        echo \"$ENV_FILE_CONTENT\" > /home/ubuntu/.env && \
+        chmod 600 /home/ubuntu/.env"
     - cat docker-compose.processed.yml
 
     - scp -o StrictHostKeyChecking=no -i bastion.pem docker-compose.processed.yml ubuntu@$BASTION_HOST:/home/ubuntu/docker-compose.yml
