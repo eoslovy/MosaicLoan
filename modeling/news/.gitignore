@@ -1,0 +1,27 @@
+.git
+.env
+
+tests/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+temp.py
+dist/
+
+.vscode/
+
+# 모델
+*.dict
+*.lda
+*.model
+*.pt
+*.pth
+*.bin
+*.h5
+models/
+*.joblib
+*.pkl
