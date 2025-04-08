@@ -800,7 +800,7 @@ const handlers = [
       pageSize?: number;
       sort?: Array<{ field: string; order: string }>;
     };
-  
+
     interface Transaction {
       id: string;
       contractId: number;
@@ -812,12 +812,16 @@ const handlers = [
       detail: {
         date: string;
         amount: string;
-        balance: string;    
+        balance: string;
         type: string;
       }[];
-      [key: string]: string | number | object[] | any;
+      [key: string]:
+        | string
+        | number
+        | { date: string; amount: string; balance: string; type: string }[]
+        | undefined;
     }
-  
+
     const allTransactions: Transaction[] = [
       {
         id: 'loan-1',
@@ -1194,34 +1198,34 @@ const handlers = [
             type: '이자 납부',
           },
         ],
-      },    
+      },
     ];
-    
+
     const filteredTransactions: Transaction[] = [...allTransactions];
-  
+
     if (sort.length > 0) {
       const { field, order } = sort[0];
-  
+
       filteredTransactions.sort((a, b) => {
         const valueA = a[field];
         const valueB = b[field];
-  
+
         if (typeof valueA === 'string' && typeof valueB === 'string') {
           if (valueA.includes('%') && valueB.includes('%')) {
             const numA = parseFloat(valueA.replace('%', ''));
             const numB = parseFloat(valueB.replace('%', ''));
             return order === 'asc' ? numA - numB : numB - numA;
           }
-  
+
           return order === 'asc'
             ? valueA.localeCompare(valueB)
             : valueB.localeCompare(valueA);
         }
-  
+
         if (typeof valueA === 'number' && typeof valueB === 'number') {
           return order === 'asc' ? valueA - valueB : valueB - valueA;
         }
-  
+
         const strA = String(valueA);
         const strB = String(valueB);
         return order === 'asc'
@@ -1229,7 +1233,7 @@ const handlers = [
           : strB.localeCompare(strA);
       });
     }
-  
+
     const totalItemCount = filteredTransactions.length;
     const totalPage = Math.ceil(totalItemCount / pageSize);
     const startIndex = (page - 1) * pageSize;
@@ -1237,7 +1241,7 @@ const handlers = [
       startIndex,
       startIndex + pageSize,
     );
-  
+
     return res(
       ctx.status(200),
       ctx.json({

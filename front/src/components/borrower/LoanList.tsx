@@ -2,11 +2,11 @@
 
 import React from 'react';
 import styles from '@/styles/borrowers/LoanList.module.scss';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+// import { ChevronDown, ChevronUp } from 'lucide-react';
 import type { PillVariant } from '@/types/components';
 import Pagination from '@/components/common/Pagination';
 import Pill from '@/components/common/Pill';
-import { LoanTransaction } from '../../app/borrower/page';
+import { LoanTransaction } from '@/types/components';
 
 interface LoanListProps {
   loans: LoanTransaction[];
@@ -35,15 +35,15 @@ const getStatusVariant = (status: string): PillVariant => {
   }
 };
 
-const LoanList: React.FC<LoanListProps> = ({ 
-  loans, 
-  pagination, 
-  onPageChange 
+const LoanList: React.FC<LoanListProps> = ({
+  loans,
+  pagination,
+  onPageChange,
 }) => {
   return (
     <div className={styles.tableContainer}>
       {loans.length === 0 ? (
-        <div className="text-center py-4 text-gray-500">
+        <div className='text-center py-4 text-gray-500'>
           검색 결과가 없습니다.
         </div>
       ) : (
