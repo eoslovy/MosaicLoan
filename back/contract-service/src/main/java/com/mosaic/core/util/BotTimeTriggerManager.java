@@ -29,14 +29,14 @@ public class BotTimeTriggerManager {
 		if (isLocked()) {
 			throw new BotTimestampLockedException("트리거 작업 중입니다.");
 		}
-		if (botTime.getHour() >= 10 && !hasTriggered(loanKey(date))) {
+		if (botTime.getHour() >= 22 && !hasTriggered(loanKey(date))) {
 			runWithLock(() -> {
 				loanBatchService.run(botTime, Boolean.TRUE);
 				markTriggered(loanKey(date));
 			});
 		}
 
-		if (botTime.getHour() >= 11 && !hasTriggered(investmentKey(date))) {
+		if (botTime.getHour() >= 23 && !hasTriggered(investmentKey(date))) {
 			runWithLock(() -> {
 				investmentBatchService.run(botTime, Boolean.TRUE);
 				markTriggered(investmentKey(date));
