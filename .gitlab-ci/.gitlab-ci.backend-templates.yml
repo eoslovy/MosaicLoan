@@ -51,20 +51,20 @@
     - chmod 600 bastion.pem
 
       # 2️⃣ 배포 서버에 Docker 로그인 정보 전송
-    - ssh -T -o StrictHostKeyChecking=no -i bastion.pem $DEPLOY_SERVER "echo \"$DOCKER_HUB_TOKEN\" | docker login -u \"$DOCKER_HUB_USERNAME\" --password-stdin"
+    - ssh -T -o StrictHostKeyChecking=no -i bastion.pem $BASTION_HOST "echo \"$DOCKER_HUB_TOKEN\" | docker login -u \"$DOCKER_HUB_USERNAME\" --password-stdin"
 
       # 3️⃣ 환경변수가 반영된 `docker-compose.processed.yml`을 배포 서버로 전송
-    - scp -o StrictHostKeyChecking=no -i bastion.pem docker-compose.processed.yml $DEPLOY_SERVER:/home/ubuntu/docker-compose.yml
+    - scp -o StrictHostKeyChecking=no -i bastion.pem docker-compose.processed.yml $BASTION_HOST:/home/ubuntu/docker-compose.yml
 
       # 4️⃣ 배포 서버에서 `docker-compose` 실행 (로그인 유지됨)
-    - ssh -T -o StrictHostKeyChecking=no -i bastion.pem $DEPLOY_SERVER "
+    - ssh -T -o StrictHostKeyChecking=no -i bastion.pem $BASTION_HOST "
           export DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME && \
           export IMAGE_TAG=$IMAGE_TAG && \
           export SERVICE_NAME=$SERVICE_NAME && \
           cd /home/ubuntu && \
           docker-compose pull $SERVICE_NAME && \
           docker-compose up -d $SERVICE_NAME --remove-orphans"
-    - ssh -T -o StrictHostKeyChecking=no -i bastion.pem $DEPLOY_SERVER "
+    - ssh -T -o StrictHostKeyChecking=no -i bastion.pem $BASTION_HOST "
           docker ps"
 
 
