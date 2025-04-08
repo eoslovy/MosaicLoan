@@ -52,7 +52,7 @@ const BorrowerPage = () => {
           sort: searchParams.sort || defaultSort,
         },
       );
-      console.log;
+      // console.log;
       setSearchedLoans(response.transactions);
       setPagination(response.pagination);
     } catch (err) {
