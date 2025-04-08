@@ -1,4 +1,160 @@
-@use '../variables.scss' as *;
+.investButton {
+  width: 120px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #eaeaea;
+  margin-bottom: 20px;
+  margin-left: auto;
+  animation: pulse 1.5s infinite;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  gap: 0.5rem;
+}
+
+.iconPlaceholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: #eaeaea;
+  margin-bottom: 10px;
+  animation: pulse 1.5s infinite;
+}
+
+.valuePlaceholder {
+  width: 80%;
+  height: 24px;
+  background-color: #eaeaea;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  animation: pulse 1.5s infinite;
+}
+
+.labelPlaceholder {
+  width: 60%;
+  height: 16px;
+  background-color: #eaeaea;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite;
+}
+
+.simulationSection {
+  margin-top: 2rem;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+  width: 200px;
+  height: 30px;
+  background-color: #eaeaea;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  animation: pulse 1.5s infinite;
+}
+
+.simulationWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+.simulationLeft {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.simulationRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sliderContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sliderLabel {
+  width: 120px;
+  height: 16px;
+  background-color: #eaeaea;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite;
+}
+
+.slider {
+  width: 100%;
+  height: 40px;
+  background-color: #eaeaea;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite;
+}
+
+.resultTitle {
+  width: 150px;
+  height: 20px;
+  background-color: #eaeaea;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  animation: pulse 1.5s infinite;
+}
+
+.resultAmount {
+  width: 70%;
+  height: 30px;
+  background-color: #eaeaea;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  animation: pulse 1.5s infinite;
+}
+
+.resultDetail {
+  width: 90%;
+  height: 40px;
+  background-color: #eaeaea;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  animation: pulse 1.5s infinite;
+}
+
+.chartTitle {
+  width: 80%;
+  height: 20px;
+  background-color: #eaeaea;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  animation: pulse 1.5s infinite;
+}
+
+.chart {
+  width: 100%;
+  height: 200px;
+  background-color: #eaeaea;
+  border-radius: 8px;
+  animation: pulse 1.5s infinite;
+}
+
+.tableTitle {
+  width: 120px;
+  height: 24px;
+  background-color: #eaeaea;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  animation: pulse 1.5s infinite;
+}
 
 .row {
   display: flex;
@@ -7,29 +163,21 @@
 }
 
 .cell {
-  height: 20px;
-  background-color: #e0e0e0;
-  border-radius: 4px;
   flex: 1;
-  animation: pulse 1.5s infinite ease-in-out;
-}
-
-.tableTitle {
-  width: 150px;
   height: 24px;
-  background-color: #d0d0d0;
+  background-color: #eaeaea;
   border-radius: 4px;
-  margin-bottom: 1rem;
+  animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse {
   0% {
-    opacity: 1;
+    opacity: 0.6;
   }
   50% {
-    opacity: 0.4;
+    opacity: 0.3;
   }
   100% {
-    opacity: 1;
+    opacity: 0.6;
   }
 }
