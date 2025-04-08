@@ -1,0 +1,48 @@
+sudo rm -f /etc/apt/sources.list.d/kubernetes.list
+sudo curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /usr/share/keyrings/kubernetes-apt-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubeadm kubelet kubectl
+sudo apt-mark hold kubeadm kubelet kubectl  # 버전 고정 (업데이트 방지)
+
+sudo apt-get install -y docker.io
+sudo systemctl enable --now docker
+sudo systemctl status docker  # Docker 실행 확인
+
+#CNI 플러그인 재설치 CNI 플러그인 패키지를 설치하려면, 아래 명령어를 사용하여 플러그인을 다운로드하고 설치할 수 있습니다:
+ls /opt/cni/bin
+sudo mkdir -p /opt/cni/bin
+sudo wget https://github.com/containernetworking/plugins/releases/download/v1.0.1/cni-plugins-linux-amd64-v1.0.1.tgz
+sudo tar -C /opt/cni/bin -xvzf cni-plugins-linux-amd64-v1.0.1.tgz
+
+#Containerd Cri
+sudo apt-get update
+sudo apt-get install -y git
+git clone https://github.com/Mirantis/cri-dockerd.git
+cd cri-dockerd
+sudo mkdir -p /usr/local/bin
+make
+sudo cp ./cri-dockerd /usr/local/bin/
+sudo mkdir -p /etc/systemd/system/cri-docker.service.d
+sudo tee /etc/systemd/system/cri-docker.service.d/override.conf <<EOF
+[Service]
+ExecStart=
+ExecStart=/usr/local/bin/cri-dockerd --host=/var/run/docker.sock
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now cri-docker
+sudo systemctl status cri-docker
+
+
+
+
+kubeadm join j12a608.p.ssafy.io:6443 --token d7f0vg.0p0klgc3ytix1t7f \
+        --discovery-token-ca-cert-hash sha256:1e1fc1602a49c60cbdd3f302f441e05e25a89a154a622a41dddf5f968e5220cd
+
+
+sudo kubeadm init \
+  --apiserver-advertise-address=172.26.11.124 \
+  --control-plane-endpoint="j12a608.p.ssafy.io:6443" \
+  --pod-network-cidr=10.244.0.0/16 \
+  --cri-socket=unix:///var/run/containerd/containerd.sock
