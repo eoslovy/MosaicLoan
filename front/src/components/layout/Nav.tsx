@@ -11,8 +11,12 @@ import { useUserStore } from '@/stores/userStore';
 import useUser from '@/hooks/useUser';
 
 const Nav = () => {
-  const { user } = useUser();
+  const { user, isFetched } = useUser();
   const router = useRouter();
+
+  if (!isFetched) {
+    return null; // 아직 사용자 정보 받아오는 중이면 아무것도 렌더하지 않음
+  }
 
   const maskName = (name: string) => {
     if (name.length <= 2) return `${name[0]} *`;

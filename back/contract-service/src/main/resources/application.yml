@@ -7,7 +7,7 @@ spring:
 
   application:
     name: contract-service
-
+#
   datasource:
     url: ${CONTRACT_DATASOURCE_URL}
     username: ${CONTRACT_DATASOURCE_USERNAME}
