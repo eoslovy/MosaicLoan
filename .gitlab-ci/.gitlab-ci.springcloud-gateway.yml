@@ -7,6 +7,8 @@ build_springcloud-gateway:
   rules:
     - changes:
         - infra/springcloud-gateway/**/*
+      when: always
+    - when: never
 
 push_springcloud-gateway:
   variables:

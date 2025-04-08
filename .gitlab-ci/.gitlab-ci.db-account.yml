@@ -7,6 +7,8 @@ build_account-db:
   rules:
     - changes:
         - infra/rdbms/account/**/*
+      when: always
+    - when: never
 
 push_account-db:
   variables:

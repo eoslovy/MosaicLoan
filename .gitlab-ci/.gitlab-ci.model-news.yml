@@ -1,0 +1,44 @@
+build_model-news:
+  variables:
+    SERVICE_NAME: model-news
+    BUILD_CONTEXT: ./modeling/news
+  extends: .backend-default-build
+  rules:
+    - changes:
+        - modeling/news/**/*
+      when: always
+    - when: never
+
+push_model-news:
+  variables:
+    SERVICE_NAME: model-news
+    BUILD_CONTEXT: ./modeling/news
+  extends: .backend-default-push
+  needs: [build_model-news]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - modeling/news/**/*
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - modeling/news/**/*
+      when: manual
+    - when: never
+
+deploy_model-news:
+  variables:
+    SERVICE_NAME: model-news
+    BUILD_CONTEXT: ./modeling/news
+  extends: .modeling-default-deploy
+  needs: [push_model-news]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - modeling/news/**/*
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - modeling/news/**/*
+      when: manual
+    - when: never

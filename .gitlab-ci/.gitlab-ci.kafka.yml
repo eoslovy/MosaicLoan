@@ -7,6 +7,8 @@ build_kafka:
   rules:
     - changes:
         - infra/kafka/**/*
+      when: always
+    - when: never
 
 push_kafka:
   variables:
