@@ -195,15 +195,15 @@ services:
     restart: always
     ports:
       - "9001:8000"
-
-  volumes:
-      member-db-data:
-        driver: local
-      account-db-data:
-        driver: local
-      contract-db-data:
-        driver: local
-      mydata-db-data:
-        driver: local
-      credit-db-data:
-        driver: local
+#
+volumes:
+    member-db-data:
+      driver: local
+    account-db-data:
+      driver: local
+    contract-db-data:
+      driver: local
+    mydata-db-data:
+      driver: local
+    credit-db-data:
+      driver: local
