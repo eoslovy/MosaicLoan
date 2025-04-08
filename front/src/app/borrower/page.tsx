@@ -45,7 +45,7 @@ export interface LoanSearchResponse {
 const BorrowerPage = () => {
   const [loanData, setLoanData] = useState<LoanOverviewResponse | null>(null);
   const [searchedLoans, setSearchedLoans] = useState<LoanTransaction[]>([]);
-  const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState<LoanSearchResponse['pagination']>({
     page: 1,
     pageSize: 10,
     totalPage: 0,
@@ -73,7 +73,7 @@ const BorrowerPage = () => {
           sort: searchParams.sort || defaultSort,
         }
       );
-
+      console.log
       setSearchedLoans(response.transactions);
       setPagination(response.pagination);
     } catch (err) {

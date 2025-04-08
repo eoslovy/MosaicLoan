@@ -85,7 +85,7 @@ const LoanFilter: React.FC<LoanFilterProps> = ({ onSearch }) => {
       endDate: format(endDate, 'yyyy-MM-dd'),
       types: selectedTypes.map(type => typeMap[type.value] || type.value),
       page: 1,
-      pageSize: 20,
+      pageSize: 10,
       sort: [
         { field: 'createdAt', order: 'desc' },
       ],
