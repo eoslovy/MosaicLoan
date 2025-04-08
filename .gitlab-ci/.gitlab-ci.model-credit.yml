@@ -6,6 +6,8 @@ build_model-credit:
   rules:
     - changes:
         - modeling/credit/**/*
+      when: always
+    - when: never
 
 push_model-credit:
   variables:
