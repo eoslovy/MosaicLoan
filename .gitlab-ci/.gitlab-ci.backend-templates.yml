@@ -63,7 +63,7 @@
     - ssh -T -o StrictHostKeyChecking=no -i bastion.pem ubuntu@$BASTION_HOST "
       cd /home/ubuntu && docker-compose pull $SERVICE_NAME"
     - ssh -T -o StrictHostKeyChecking=no -i bastion.pem ubuntu@$BASTION_HOST "
-      cd /home/ubuntu && docker-compose up -d $SERVICE_NAME --remove-orphans"
+      cd /home/ubuntu && docker-compose up -d --no-build $SERVICE_NAME --remove-orphans"
 
     # 4️⃣ 배포 서버에서 `docker-compose` 실행 (로그인 유지됨)
     #- ssh -T -o StrictHostKeyChecking=no -i bastion.pem ubuntu@$BASTION_HOST \
