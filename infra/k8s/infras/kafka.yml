@@ -27,6 +27,8 @@ spec:
               value: zookeeper:2181 # Zookeeper 연결 설정
             - name: ALLOW_PLAINTEXT_LISTENER
               value: "yes"
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              value: PLAINTEXT://kafka-0.kafka.mosaic.svc.cluster.local:9092
           ports:
             - containerPort: 9092 # Kafka 기본 포트
 
