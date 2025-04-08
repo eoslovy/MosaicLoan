@@ -116,7 +116,9 @@
   max-width: 600px;
   max-height: 80vh;
   overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .modalHeader {
@@ -125,7 +127,7 @@
   align-items: center;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #e2e8f0;
-  
+
   h2 {
     font-size: 1.25rem;
     font-weight: 600;
@@ -139,7 +141,7 @@
   font-size: 1.25rem;
   cursor: pointer;
   color: #64748b;
-  
+
   &:hover {
     color: #1e293b;
   }
@@ -154,18 +156,19 @@
 .detailsTable {
   width: 100%;
   border-collapse: collapse;
-  
-  th, td {
+
+  th,
+  td {
     padding: 0.75rem;
     text-align: left;
     border-bottom: 1px solid #e2e8f0;
   }
-  
+
   th {
     font-weight: 600;
     background-color: #f8fafc;
   }
-  
+
   tbody tr:hover {
     background-color: #f1f5f9;
   }

@@ -84,20 +84,23 @@ const LoanList: React.FC<LoanListProps> = ({
     return Number(amountStr.replace(/[^0-9]/g, ''));
   };
 
-  const calculateBalance = (transactions: TransactionDetail[], totalAmount: string): TransactionWithBalance[] => {
+  const calculateBalance = (
+    transactions: TransactionDetail[],
+    totalAmount: string,
+  ): TransactionWithBalance[] => {
     let balance = 0;
     let initialLoanAmount = 0;
-    
+
     const sortedTransactions = [...transactions].sort((a, b) => {
       if (a.status === '대출실행') return -1;
       if (b.status === '대출실행') return 1;
-      
+
       return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     });
-    
+
     return sortedTransactions.map((transaction, index) => {
       const transactionAmount = extractAmount(transaction.amount);
-      
+
       if (index === 0 || transaction.status === '대출실행') {
         if (transaction.status === '대출실행') {
           initialLoanAmount = transactionAmount;
@@ -113,10 +116,10 @@ const LoanList: React.FC<LoanListProps> = ({
       }
 
       const formattedBalance = `₩ ${balance.toLocaleString()}`;
-      
+
       return {
         ...transaction,
-        balance: formattedBalance
+        balance: formattedBalance,
       };
     });
   };
@@ -149,10 +152,15 @@ const LoanList: React.FC<LoanListProps> = ({
     setLoading(true);
     setCurrentLoanId(loan.id.toString());
     setCurrentLoan(loan);
-    
+
     try {
-      const response = await request.GET<TransactionResponse>(`/api/contract/loans/${loan.id}`);
-      const detailsWithBalance = calculateBalance(response.transactions, loan.amount);
+      const response = await request.GET<TransactionResponse>(
+        `/api/contract/loans/${loan.id}`,
+      );
+      const detailsWithBalance = calculateBalance(
+        response.transactions,
+        loan.amount,
+      );
       setLoanDetails(detailsWithBalance);
       setIsModalOpen(true);
     } catch (error) {
@@ -232,8 +240,11 @@ const LoanList: React.FC<LoanListProps> = ({
                         <button
                           className={styles.toggleButton}
                           onClick={() => handleToggleClick(loan)}
-                          disabled={loading && currentLoanId === loan.id.toString()}
-                          aria-label="상세 정보 보기"
+                          disabled={
+                            loading && currentLoanId === loan.id.toString()
+                          }
+                          aria-label='상세 정보 보기'
+                          type='button'
                         >
                           <Info size={16} />
                         </button>
@@ -261,10 +272,11 @@ const LoanList: React.FC<LoanListProps> = ({
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
               <h2>대출 상세 정보</h2>
-              <button 
-                className={styles.closeButton} 
+              <button
+                className={styles.closeButton}
                 onClick={closeModal}
-                aria-label="닫기"
+                aria-label='닫기'
+                type='button'
               >
                 ✕
               </button>
@@ -282,7 +294,9 @@ const LoanList: React.FC<LoanListProps> = ({
                   </thead>
                   <tbody>
                     {loanDetails.map((detail, index) => (
-                      <tr key={index}>
+                      <tr
+                        key={`transaction-${detail.contractId}-${detail.createdAt}`}
+                      >
                         <td>{detail.createdAt}</td>
                         <td>{detail.amount}</td>
                         <td>{detail.balance}</td>
