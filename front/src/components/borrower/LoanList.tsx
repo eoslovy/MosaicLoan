@@ -6,7 +6,7 @@ import type { PillVariant, SortState, SortKey } from '@/types/components';
 import Pagination from '@/components/common/Pagination';
 import Pill from '@/components/common/Pill';
 import SortableTableHeader from '@/components/common/SortableTableHeader';
-import { LoanTransaction } from '../../app/borrower/page';
+import { LoanTransaction } from '@/types/components';
 
 const apiToSortKeyMapping: Record<string, string> = {
   loan: 'contractId',
@@ -91,7 +91,7 @@ const LoanList: React.FC<LoanListProps> = ({
       ) : (
         <>
           <table className={styles.contractsTable}>
-          <thead>
+            <thead>
               <tr>
                 <th>대출명</th>
                 <th>

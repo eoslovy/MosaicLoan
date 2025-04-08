@@ -7,11 +7,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Select, { MultiValue, StylesConfig } from 'react-select';
 import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 import FilterSelectTable from '@/components/common/FilterSelectTable';
-import { subYears, isBefore } from 'date-fns';
+import { format, subYears, isBefore } from 'date-fns';
 import Pill from '@/components/common/Pill';
-import { ContractRow } from '@/types/components';
-import { format } from 'date-fns';
-import { LoanSearchParams } from '../../app/borrower/page';
+import { LoanSearchParams } from '@/types/components';
 
 const typeOptions = [
   { value: 'repaid', label: '상환완료' },

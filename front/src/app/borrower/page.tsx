@@ -10,25 +10,7 @@ import EmptyState from '@/components/empty/investor/EmptyState';
 import { getLoanOverview, LoanOverviewResponse } from '@/service/apis/borrow';
 import request from '@/service/apis/request';
 import { format } from 'date-fns';
-
-export interface LoanTransaction {
-  id: number;
-  contractId: number;
-  amount: string;
-  createdAt: string;
-  status: string;
-  dueDate: string;
-  interestRate: number;
-}
-
-export interface LoanSearchParams {
-  startDate?: string;
-  endDate?: string;
-  types?: string[];
-  page?: number;
-  pageSize?: number;
-  sort?: LoanSortState[];
-}
+import { LoanTransaction, LoanSearchParams } from '@/types/components';
 
 export interface LoanSortState {
   field: string;

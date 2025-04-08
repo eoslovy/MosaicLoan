@@ -316,3 +316,22 @@ export interface IndustryRatio {
   industry: string;
   ratio: number;
 }
+
+export interface LoanTransaction {
+  id: number;
+  contractId: number;
+  amount: string;
+  createdAt: string;
+  status: string;
+  dueDate: string;
+  interestRate: number;
+}
+
+export interface LoanSearchParams {
+  startDate?: string;
+  endDate?: string;
+  types?: string[];
+  page?: number;
+  pageSize?: number;
+  sort?: LoanSortState[];
+}
