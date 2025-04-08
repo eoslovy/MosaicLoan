@@ -51,7 +51,7 @@
     - chmod 600 bastion.pem
 
       # 2️⃣ 배포 서버에 Docker 로그인 정보 전송
-    - ssh -T -o StrictHostKeyChecking=no -i bastion.pem ubuntu@$BASTION_HOST "echo \"$DOCKER_HUB_TOKEN\" | docker login -u \"$DOCKER_HUB_USERNAME\" --password-stdin"
+    - ssh -T -o StrictHostKeyChecking=no -i bastion.pem ubuntu@$BASTION_HOST "echo \"$DOCKER_HUB_TOKEN\" | docker login --username \"$DOCKER_HUB_USERNAME\" --password-stdin"
 
       # 3️⃣ 환경변수가 반영된 `docker-compose.processed.yml`을 배포 서버로 전송
     - scp -o StrictHostKeyChecking=no -i bastion.pem docker-compose.processed.yml ubuntu@$BASTION_HOST:/home/ubuntu/docker-compose.yml
