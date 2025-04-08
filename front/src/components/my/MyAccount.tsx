@@ -22,11 +22,27 @@ const formatBalance = (amount: number): string => {
 
 const MyAccount = () => {
   const { user } = useUser();
-  const { balance, setBalance } = useAccountStore();
+  const { balance, setBalance, setIsFetched } = useAccountStore();
   const [isChargeOpen, setIsChargeOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
-  const [isFlipped, setIsFlipped] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false); // 카드 전환 상태 복원
   const [toast, setToast] = useState<string | null>(null);
+
+  const refetchBalance = async () => {
+    try {
+      const res = await request.GET<{ amount: number }>('/account/accounts');
+      setBalance(res.amount);
+    } catch (err) {
+      console.error('잔액 재조회 실패:', err);
+      setBalance(0);
+    } finally {
+      setIsFetched(true);
+    }
+  };
+
+  useEffect(() => {
+    refetchBalance();
+  }, []);
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -34,23 +50,6 @@ const MyAccount = () => {
     const timer = setTimeout(() => setToast(null), 3000);
     return () => clearTimeout(timer);
   }, [toast]);
-
-  // 잔액 조회
-  useEffect(() => {
-    const fetchBalance = async () => {
-      try {
-        const response = await request.GET<{ amount: number }>(
-          '/account/accounts',
-        );
-        setBalance(response.amount);
-      } catch (error) {
-        console.error('잔액 조회 실패:', error);
-        setBalance(0);
-      }
-    };
-
-    fetchBalance();
-  }, [setBalance]);
 
   return (
     <>
@@ -107,6 +106,7 @@ const MyAccount = () => {
         onClose={() => setIsChargeOpen(false)}
         type='charge'
         setToast={setToast}
+        refetchBalance={refetchBalance}
       />
       <AccountModal
         isOpen={isWithdrawOpen}
@@ -117,6 +117,7 @@ const MyAccount = () => {
           setTimeout(() => setIsChargeOpen(true), 300);
         }}
         setToast={setToast}
+        refetchBalance={refetchBalance}
       />
     </>
   );
