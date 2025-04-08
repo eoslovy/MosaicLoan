@@ -2,18 +2,31 @@
 
 .barChartContainer {
   width: 100%;
-  max-width: 600px;
+  max-width: none;
   margin: auto;
 }
 
 .chartTitle {
-  font-size: $text-lg;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 10px;
+  margin-top: 5px;
+  margin-left: 50px;
+  margin-bottom: 0;
 }
 
 .chartWrapper {
   width: 100%;
-  height: 300px;
+  height: 350px;
+}
+
+@media (max-width: 768px) {
+  .chartWrapper {
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chartWrapper {
+    height: 250px;
+  }
 }
