@@ -7,6 +7,8 @@ build_zookeeper:
   rules:
     - changes:
         - infra/zookeeper/**/*
+      when: always
+    - when: never
 
 push_zookeeper:
   variables:

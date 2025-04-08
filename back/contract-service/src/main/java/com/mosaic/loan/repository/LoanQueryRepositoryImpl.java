@@ -1,5 +1,7 @@
 package com.mosaic.loan.repository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,12 +9,17 @@ import org.springframework.stereotype.Repository;
 
 import com.mosaic.core.model.QContract;
 import com.mosaic.core.model.QLoan;
+import com.mosaic.core.model.status.LoanStatus;
+import com.mosaic.loan.dto.LoanOverviewResponse;
+import com.mosaic.loan.dto.LoanOverviewResponse.RecentLoanInfo;
 import com.mosaic.loan.dto.LoanTransactionResponse;
 import com.mosaic.loan.dto.LoanTransactionSearchRequest;
 import com.mosaic.loan.dto.LoanTransactionsResponse;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -134,6 +141,100 @@ public class LoanQueryRepositoryImpl implements LoanQueryRepository {
 
         return LoanTransactionsResponse.builder()
             .transactions(transactions)
+            .build();
+    }
+
+    @Override
+    public LoanOverviewResponse getLoanOverview(Integer memberId) {
+        QLoan loan = QLoan.loan;
+        QContract contract = QContract.contract;
+
+        // 기본 조건 설정 (회원 ID로 필터링)
+        BooleanExpression memberCondition = loan.accountId.eq(memberId);
+        
+        // 1. 전체 대출 건수 조회
+        long totalCount = queryFactory
+            .select(loan.count())
+            .from(loan)
+            .where(memberCondition)
+            .fetchOne();
+
+        // 2. 진행 중인 대출 건수 조회
+        BooleanExpression activeCondition = loan.status.eq(LoanStatus.IN_PROGRESS);
+        long activeLoanCount = queryFactory
+            .select(loan.count())
+            .from(loan)
+            .where(memberCondition.and(activeCondition))
+            .fetchOne();
+
+        // 3. 진행 중인 대출 금액 합계 조회
+        BigDecimal activeLoanAmount = queryFactory
+            .select(loan.amount.sum())
+            .from(loan)
+            .where(memberCondition.and(activeCondition))
+            .fetchOne();
+
+        if (activeLoanAmount == null) {
+            activeLoanAmount = BigDecimal.ZERO;
+        }
+
+        // 4. 평균 금리 계산
+        List<Tuple> loans = queryFactory
+            .select(loan.amount, loan.requestAmount)
+            .from(loan)
+            .where(memberCondition.and(activeCondition))
+            .fetch();
+        
+        int averageInterestRate = 0;
+        if (!loans.isEmpty()) {
+            BigDecimal totalAmount = BigDecimal.ZERO;
+            BigDecimal totalRequestAmount = BigDecimal.ZERO;
+            
+            for (Tuple t : loans) {
+                BigDecimal amount = t.get(loan.amount);
+                BigDecimal requestAmount = t.get(loan.requestAmount);
+                
+                if (amount != null && requestAmount != null && requestAmount.compareTo(BigDecimal.ZERO) > 0) {
+                    totalAmount = totalAmount.add(amount);
+                    totalRequestAmount = totalRequestAmount.add(requestAmount);
+                }
+            }
+            
+            if (totalRequestAmount.compareTo(BigDecimal.ZERO) > 0) {
+                // (총 상환금액 - 총 원금) / 총 원금 * 10000
+                BigDecimal interestAmount = totalAmount.subtract(totalRequestAmount);
+                BigDecimal interestRate = interestAmount.divide(totalRequestAmount, 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(10000));
+                averageInterestRate = interestRate.intValue();
+            }
+        }
+
+        // 5. 최근 대출 목록 5개 조회
+        List<RecentLoanInfo> recentLoans = queryFactory
+            .select(
+                Projections.constructor(
+                    RecentLoanInfo.class,
+                    loan.dueDate,
+                    loan.amount,
+                    Expressions.numberTemplate(Integer.class, 
+                        "CAST((({0} - {1}) / {1} * 10000) AS INTEGER)", 
+                        loan.amount, 
+                        loan.requestAmount),
+                    loan.amount
+                )
+            )
+            .from(loan)
+            .where(memberCondition)
+            .orderBy(loan.createdAt.desc())
+            .limit(5)
+            .fetch();
+
+        // 응답 생성
+        return LoanOverviewResponse.builder()
+            .recentLoans(recentLoans)
+            .activeLoanCount(activeLoanCount)
+            .totalCount(totalCount)
+            .activeLoanAmount(activeLoanAmount)
+            .averageInterestRate(averageInterestRate)
             .build();
     }
 } 

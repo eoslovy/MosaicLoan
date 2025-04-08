@@ -11,6 +11,8 @@ build_front:
     - changes:
         - front/**/*
         - front/*
+      when: always
+    - when: never
   stage: build
   tags:
     - $GITLAB_USER_EMAIL

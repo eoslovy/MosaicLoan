@@ -1,9 +1,6 @@
 services:
   member-service:
     container_name: member-service
-    build:
-      context: ./back/member-service
-      dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-service:${IMAGE_TAG:-latest}
     restart: always
     env_file:
@@ -13,9 +10,6 @@ services:
 
   account-service:
     container_name: account-service
-    build:
-      context: ./back/account-service
-      dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-account-service:${IMAGE_TAG:-latest}
     restart: always
     env_file:
@@ -26,9 +20,6 @@ services:
 
   contract-service:
     container_name: contract-service
-    build:
-      context: ./back/contract-service
-      dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-contract-service:${IMAGE_TAG:-latest}
     restart: always
     env_file:
@@ -38,9 +29,6 @@ services:
       - "18083:8080"
   credit-service:
     container_name: credit-service
-    build:
-      context: ./back/credit-service
-      dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-credit-service:${IMAGE_TAG:-latest}
     restart: always
     env_file:
@@ -50,9 +38,6 @@ services:
       - "18084:8080"
   mydata-service:
     container_name: mydata-service
-    build:
-      context: ./back/mydata-service
-      dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-mydata-service:${IMAGE_TAG:-latest}
     restart: always
     env_file:
@@ -61,26 +46,8 @@ services:
     ports:
       - "18085:8080"
 
-  frontend-react:
-    build:
-      context: ./front
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
-    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-frontend:${IMAGE_TAG:-latest}
-    env_file:
-      - .env
-    profiles:
-      - build-only
-    ports:
-      - "80:80"
-    
-
   springcloud-gateway:
     container_name: springcloud-gateway
-    build:
-      context: ./infra/springcloud-gateway
-      dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-springcloud-gateway:${IMAGE_TAG:-latest}
     restart: always
     env_file:
@@ -90,28 +57,20 @@ services:
 
   frontend-nginx:
     container_name: nginx
-    build:
-      context: ./infra/nginx
-      dockerfile: Dockerfile
-      args:
-        FRONTEND_IMAGE: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-frontend-nginx:${IMAGE_TAG:-latest}
-        NGINX: nginx.conf
-    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-nginx:${IMAGE_TAG:-latest}
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-frontend-nginx:${IMAGE_TAG:-latest}
     restart: always
     env_file:
       - .env
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./path/to/nginx.conf:/etc/nginx/nginx.conf  # Nginx 설정 파일
+      - ./nginx.conf:/etc/nginx/nginx.conf  # Nginx 설정 파일
       - /etc/letsencrypt/live/j12a608.p.ssafy.io/fullchain.pem:/etc/letsencrypt/live/j12a608.p.ssafy.io/fullchain.pem  # 인증서
       - /etc/letsencrypt/live/j12a608.p.ssafy.io/privkey.pem:/etc/letsencrypt/live/j12a608.p.ssafy.io/privkey.pem  # 개인 키
     
   redis:
     container_name: redis
-    build:
-      context: ./infra/redis
-      dockerfile: Dockerfile
     env_file:
       - .env
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-redis:${IMAGE_TAG:-latest}
@@ -121,9 +80,6 @@ services:
 
   zookeeper:
     container_name: zookeeper
-    build:
-      context: ./infra/zookeeper
-      dockerfile: Dockerfile
     env_file:
       - .env
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-zookeeper:${IMAGE_TAG:-latest}
@@ -135,9 +91,6 @@ services:
     container_name: kafka
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-kafka:${IMAGE_TAG:-latest}
     restart: always
-    build:
-      context: ./infra/kafka
-      dockerfile: Dockerfile
     ports:
       - "9092:9092"      # 내부용 (다른 컨테이너용)
       - "29092:29092"    # 외부용 (GUI용)
@@ -154,13 +107,6 @@ services:
     
   member-db:
     container_name: member-db
-    build:
-      context: ./infra/rdbms/member
-      dockerfile: Dockerfile
-      args:
-        MEMBER_DATASOURCE_URL: ${MEMBER_SCHEMA}
-        MEMBER_DATASOURCE_USERNAME: ${MEMBER_DATASOURCE_USERNAME}
-        MEMBER_DATASOURCE_PASSWORD: ${MEMBER_DATASOURCE_PASSWORD}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-db:${IMAGE_TAG:-latest}
     restart: always
     env_file:
@@ -178,13 +124,6 @@ services:
 
   account-db:
     container_name: account-db
-    build:
-      context: ./infra/rdbms/account
-      dockerfile: Dockerfile
-      args:
-        ACCOUNT_DATASOURCE_URL: ${ACCOUNT_SCHEMA}
-        ACCOUNT_DATASOURCE_USERNAME: ${ACCOUNT_DATASOURCE_USERNAME}
-        ACCOUNT_DATASOURCE_PASSWORD: ${ACCOUNT_DATASOURCE_PASSWORD}
     env_file:
       - .env
     environment:
@@ -201,13 +140,6 @@ services:
 
   contract-db:
     container_name: contract-db
-    build:
-      context: ./infra/rdbms/contract
-      dockerfile: Dockerfile
-      args:
-        CONTRACT_DATASOURCE_URL: ${CONTRACT_SCHEMA}
-        CONTRACT_DATASOURCE_USERNAME: ${CONTRACT_DATASOURCE_USERNAME}
-        CONTRACT_DATASOURCE_PASSWORD: ${CONTRACT_DATASOURCE_PASSWORD}
     env_file:
       - .env
     environment:
@@ -224,13 +156,6 @@ services:
 
   mydata-db:
     container_name: mydata-db
-    build:
-      context: ./infra/rdbms/mydata
-      dockerfile: Dockerfile
-      args:
-        MYDATA_DATASOURCE_URL: ${MYDATA_SCHEMA}
-        MYDATA_DATASOURCE_USERNAME: ${MYDATA_DATASOURCE_USERNAME}
-        MYDATA_DATASOURCE_PASSWORD: ${MYDATA_DATASOURCE_PASSWORD}
     env_file:
       - .env
     environment:
@@ -246,13 +171,6 @@ services:
       - mydata-db-data:/var/lib/mysql
   credit-db:
     container_name: credit-db
-    build:
-      context: ./infra/rdbms/credit
-      dockerfile: Dockerfile
-      args:
-        CREDIT_DATASOURCE_URL: ${CREDIT_SCHEMA}
-        CREDIT_DATASOURCE_USERNAME: ${CREDIT_DATASOURCE_USERNAME}
-        CREDIT_DATASOURCE_PASSWORD: ${CREDIT_DATASOURCE_PASSWORD}
     env_file:
       - .env
     environment:
@@ -268,9 +186,6 @@ services:
       - credit-db-data:/var/lib/mysql
   model-credit:
     container_name: model-credit
-    build:
-      context: ./modeling/credit
-      dockerfile: Dockerfile
     env_file:
       - .env
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-model-credit:${IMAGE_TAG:-latest}
@@ -279,16 +194,13 @@ services:
       - "9000:8000"
   model-news:
     container_name: model-news
-    build:
-      context: ./modeling/news
-      dockerfile: Dockerfile
     env_file:
       - .env
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-model-news:${IMAGE_TAG:-latest}
     restart: always
     ports:
       - "9001:8000"
-
+#
 volumes:
     member-db-data:
       driver: local

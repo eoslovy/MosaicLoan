@@ -1,48 +1,45 @@
-build_member-db:
+build_model-credit:
   variables:
-    SERVICE_NAME: member-db
-    BUILD_CONTEXT: ./infra/rdbms/member
-    K8S_PATH: ./infra/k8s/databases/db-member.yml
+    SERVICE_NAME: model-credit
+    BUILD_CONTEXT: ./modeling/credit
   extends: .backend-default-build
   rules:
     - changes:
-        - infra/rdbms/member/**/*
+        - modeling/credit/**/*
       when: always
     - when: never
 
-push_member-db:
+push_model-credit:
   variables:
-    SERVICE_NAME: member-db
-    BUILD_CONTEXT: ./infra/rdbms/member
-    K8S_PATH: ./infra/k8s/databases/db-member.yml
+    SERVICE_NAME: model-credit
+    BUILD_CONTEXT: ./modeling/credit
   extends: .backend-default-push
-  needs: [build_member-db]
+  needs: [build_model-credit]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       changes:
-        - infra/rdbms/member/**/*
+        - modeling/credit/**/*
       when: always
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
       changes:
-        - infra/rdbms/member/**/*
+        - modeling/credit/**/*
       when: manual
     - when: never
 
-deploy_member-db:
+deploy_model-credit:
   variables:
-    SERVICE_NAME: member-db
-    BUILD_CONTEXT: ./infra/rdbms/member
-    K8S_PATH: ./infra/k8s/databases/db-member.yml
-  extends: .backend-default-deploy
-  needs: [push_member-db]
+    SERVICE_NAME: model-credit
+    BUILD_CONTEXT: ./modeling/credit
+  extends: .modeling-default-deploy
+  needs: [push_model-credit]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       changes:
-        - infra/rdbms/member/**/*
+        - modeling/credit/**/*
       when: always
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
       changes:
-        - infra/rdbms/member/**/*
+        - modeling/credit/**/*
       when: manual
     - when: never
 #test_include_trigger:

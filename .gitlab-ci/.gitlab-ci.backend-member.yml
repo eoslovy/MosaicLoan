@@ -7,6 +7,8 @@ build_member_service:
   rules:
     - changes:
         - back/member-service/**/*
+      when: always
+    - when: never
 
 push_member_service:
   variables:

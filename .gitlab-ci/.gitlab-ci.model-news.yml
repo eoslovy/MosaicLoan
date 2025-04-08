@@ -1,52 +1,44 @@
-build_kafka:
+build_model-news:
   variables:
-    SERVICE_NAME: kafka
-    BUILD_CONTEXT: ./infra/kafka
-    K8S_PATH: ./infra/k8s/infras/kafka.yml
+    SERVICE_NAME: model-news
+    BUILD_CONTEXT: ./modeling/news
   extends: .backend-default-build
   rules:
     - changes:
-        - infra/kafka/**/*
+        - modeling/news/**/*
       when: always
     - when: never
 
-push_kafka:
+push_model-news:
   variables:
-    SERVICE_NAME: kafka
-    BUILD_CONTEXT: ./infra/kafka
-    K8S_PATH: ./infra/k8s/infras/kafka.yml
+    SERVICE_NAME: model-news
+    BUILD_CONTEXT: ./modeling/news
   extends: .backend-default-push
-  needs: [build_kafka]
+  needs: [build_model-news]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       changes:
-        - infra/kafka/**/*
+        - modeling/news/**/*
       when: always
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
       changes:
-        - infra/kafka/**/*
+        - modeling/news/**/*
       when: manual
     - when: never
 
-deploy_kafka:
+deploy_model-news:
   variables:
-    SERVICE_NAME: kafka
-    BUILD_CONTEXT: ./infra/kafka
-    K8S_PATH: ./infra/k8s/infras/kafka.yml
-  extends: .backend-default-deploy
-  needs: [push_kafka]
+    SERVICE_NAME: model-news
+    BUILD_CONTEXT: ./modeling/news
+  extends: .modeling-default-deploy
+  needs: [push_model-news]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       changes:
-        - infra/kafka/**/*
+        - modeling/news/**/*
       when: always
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
       changes:
-        - infra/kafka/**/*
+        - modeling/news/**/*
       when: manual
     - when: never
-#test_include_trigger:
-# tags:
-#  - $GITLAB_USER_EMAIL
-#script:
-#  - echo "CI 정상 작동 여부 확인"

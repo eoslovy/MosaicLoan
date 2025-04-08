@@ -7,6 +7,8 @@ build_credit-db:
   rules:
     - changes:
         - infra/rdbms/credit/**/*
+      when: always
+    - when: never
 
 push_credit-db:
   variables:

@@ -7,6 +7,8 @@ build_mydata-db:
   rules:
     - changes:
         - infra/rdbms/mydata/**/*
+      when: always
+    - when: never
 
 push_mydata-db:
   variables:

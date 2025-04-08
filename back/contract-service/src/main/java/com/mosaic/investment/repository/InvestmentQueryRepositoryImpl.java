@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +13,7 @@ import com.mosaic.core.model.Loan;
 import com.mosaic.core.model.QContract;
 import com.mosaic.core.model.QInvestment;
 import com.mosaic.core.model.status.ContractStatus;
+import com.mosaic.investment.dto.InvestmentOverviewDto;
 import com.mosaic.investment.dto.InvestmentTransactionResponse;
 import com.mosaic.investment.dto.InvestmentTransactionSearchRequest;
 import com.mosaic.investment.dto.InvestmentWithStatusDto;
@@ -51,78 +51,152 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 	}
 
 	@Override
-	public List<InvestmentWithStatusDto> findInvestmentsWithStatusDistribution(Integer memberId) {
+	public Map<String, Object> findInvestmentsWithOverview(Integer memberId) {
 		QInvestment investment = QInvestment.investment;
 		QContract contract = QContract.contract;
 
 		try {
-			// 1. 사용자의 모든 투자 정보 조회
+			// 1. 사용자의 모든 투자 정보와 각 투자별 계약 상태 분포 조회
 			List<Investment> investments = queryFactory
 				.selectFrom(investment)
 				.where(investment.accountId.eq(memberId))
 				.fetch();
-
-			// 2. 각 투자별 계약 상태 분포 계산
-			return investments.stream()
-				.map(inv -> {
-					try {
-						// 2-1. 해당 투자에 연결된 모든 계약의 상태별 개수 조회
-						Map<ContractStatus, Long> statusCount = new HashMap<>();
+			
+			// 2. 상태 분포 초기화
+			Map<String, Long> totalStatusDistribution = new HashMap<>();
+			totalStatusDistribution.put("completed", 0L);
+			totalStatusDistribution.put("active", 0L);
+			totalStatusDistribution.put("default", 0L);
+			totalStatusDistribution.put("transferred", 0L);
+			
+			int totalContractCount = 0;
+			BigDecimal totalProfit = BigDecimal.ZERO;
+			BigDecimal totalLoss = BigDecimal.ZERO;
+			
+			// 3. 각 투자에 대한 DTO 생성 및 통계 데이터 수집
+			List<InvestmentWithStatusDto> investmentDtos = new ArrayList<>();
+			
+			for (Investment inv : investments) {
+				try {
+					// 3-1. 해당 투자에 연결된 모든 계약의 상태별 개수 조회
+					Map<ContractStatus, Long> statusCount = new HashMap<>();
+					
+					List<Tuple> results = queryFactory
+						.select(contract.status, contract.count())
+						.from(contract)
+						.where(contract.investment.id.eq(inv.getId()))
+						.groupBy(contract.status)
+						.fetch();
 						
-						try {
-							List<Tuple> results = queryFactory
-								.select(contract.status, contract.count())
-								.from(contract)
-								.where(contract.investment.id.eq(inv.getId()))
-								.groupBy(contract.status)
-								.fetch();
-								
-							for (Tuple tuple : results) {
-								ContractStatus status = tuple.get(contract.status);
-								Long count = tuple.get(contract.count());
-								if (status != null && count != null) {
-									statusCount.put(status, count);
-								}
-							}
-						} catch (Exception e) {
-							log.error("Error querying contract status: {}", e.getMessage(), e);
+					for (Tuple tuple : results) {
+						ContractStatus status = tuple.get(contract.status);
+						Long count = tuple.get(contract.count());
+						if (status != null && count != null) {
+							statusCount.put(status, count);
 						}
-
-						// 2-2. Map<ContractStatus, Long>을 Map<String, Long>으로 변환
-						Map<String, Long> statusDistribution = new HashMap<>();
-						
-						// 모든 상태 유형에 대해 0으로 초기화
-						for (ContractStatus status : ContractStatus.values()) {
-							statusDistribution.put(status.name(), 0L);
-						}
-						
-						// 실제 데이터로 업데이트 (statusCount가 null이 아닐 때만)
-						if (statusCount != null) {
-							statusCount.forEach((status, count) -> 
-								statusDistribution.put(status.name(), count));
-						}
-							
-						// 전체 계약 수 계산
-						Integer contractCount = statusDistribution.values().stream()
-							.mapToInt(Long::intValue)
-							.sum();
-
-						// 2-3. DTO 생성
-						return InvestmentWithStatusDto.builder()
-							.investmentId(inv.getId())
-							.createdAt(inv.getCreatedAt())
-							.investStatus(inv.getStatus() != null ? inv.getStatus().name() : "UNKNOWN")
-							.statusDistribution(statusDistribution)
-							.contractCount(contractCount)
-							.build();
-					} catch (Exception e) {
-						log.error("Error processing investment {}: {}", inv.getId(), e.getMessage(), e);
-						throw e;
 					}
-				})
-				.collect(Collectors.toList());
+					
+					// 3-2. 해당 투자의 수익/손실 계산
+					// COMPLETED 계약의 수익 계산
+					List<BigDecimal> completedResults = queryFactory
+						.select(contract.paidAmount.subtract(contract.amount))
+						.from(contract)
+						.where(contract.investment.id.eq(inv.getId())
+							.and(contract.status.eq(ContractStatus.COMPLETED)))
+						.fetch();
+					
+					BigDecimal investmentProfit = BigDecimal.ZERO;
+					for (BigDecimal profit : completedResults) {
+						if (profit != null) {
+							investmentProfit = investmentProfit.add(profit);
+							totalProfit = totalProfit.add(profit);
+						}
+					}
+					
+					// OWNERSHIP_TRANSFERRED 계약의 손실 계산
+					List<BigDecimal> lossResults = queryFactory
+						.select(contract.amount.subtract(contract.paidAmount).divide(BigDecimal.valueOf(2)))
+						.from(contract)
+						.where(contract.investment.id.eq(inv.getId())
+							.and(contract.status.eq(ContractStatus.OWNERSHIP_TRANSFERRED)))
+						.fetch();
+					
+					BigDecimal investmentLoss = BigDecimal.ZERO;
+					for (BigDecimal loss : lossResults) {
+						if (loss != null) {
+							investmentLoss = investmentLoss.add(loss);
+							totalLoss = totalLoss.add(loss);
+						}
+					}
+					
+					// 3-3. Map<ContractStatus, Long>을 Map<String, Long>으로 변환
+					Map<String, Long> statusDistribution = new HashMap<>();
+					
+					// 모든 상태 유형에 대해 0으로 초기화
+					for (ContractStatus status : ContractStatus.values()) {
+						statusDistribution.put(status.name(), 0L);
+					}
+					
+					// 실제 데이터로 업데이트
+					statusCount.forEach((status, count) -> 
+						statusDistribution.put(status.name(), count));
+					
+					// 3-4. 상태별 카운트 합산
+					if (statusDistribution.containsKey("COMPLETED")) {
+						totalStatusDistribution.put("completed", 
+							totalStatusDistribution.get("completed") + statusDistribution.get("COMPLETED"));
+					}
+					if (statusDistribution.containsKey("IN_PROGRESS")) {
+						totalStatusDistribution.put("active", 
+							totalStatusDistribution.get("active") + statusDistribution.get("IN_PROGRESS"));
+					}
+					if (statusDistribution.containsKey("DELINQUENT")) {
+						totalStatusDistribution.put("default", 
+							totalStatusDistribution.get("default") + statusDistribution.get("DELINQUENT"));
+					}
+					if (statusDistribution.containsKey("OWNERSHIP_TRANSFERRED")) {
+						totalStatusDistribution.put("transferred", 
+							totalStatusDistribution.get("transferred") + statusDistribution.get("OWNERSHIP_TRANSFERRED"));
+					}
+					
+					// 3-5. 계약 수 계산 및 합산
+					Integer contractCount = statusDistribution.values().stream()
+						.mapToInt(Long::intValue)
+						.sum();
+					
+					totalContractCount += contractCount;
+					
+					// 3-6. 투자 DTO 생성
+					InvestmentWithStatusDto dto = InvestmentWithStatusDto.builder()
+						.investmentId(inv.getId())
+						.createdAt(inv.getCreatedAt())
+						.investStatus(inv.getStatus() != null ? inv.getStatus().name() : "UNKNOWN")
+						.statusDistribution(statusDistribution)
+						.contractCount(contractCount)
+						.build();
+					
+					investmentDtos.add(dto);
+				} catch (Exception e) {
+					log.error("Error processing investment {}: {}", inv.getId(), e.getMessage(), e);
+				}
+			}
+			
+			// 4. InvestmentOverviewDto 생성
+			InvestmentOverviewDto overview = InvestmentOverviewDto.builder()
+				.statusDistribution(totalStatusDistribution)
+				.totalContractCount(totalContractCount)
+				.totalProfit(totalProfit)
+				.totalLoss(totalLoss)
+				.build();
+			
+			// 5. 최종 결과 생성
+			Map<String, Object> result = new HashMap<>();
+			result.put("investments", investmentDtos);
+			result.put("investOverview", overview);
+			
+			return result;
 		} catch (Exception e) {
-			log.error("Error in findInvestmentsWithStatusDistribution: {}", e.getMessage(), e);
+			log.error("Error in findInvestmentsWithOverview: {}", e.getMessage(), e);
 			throw e;
 		}
 	}

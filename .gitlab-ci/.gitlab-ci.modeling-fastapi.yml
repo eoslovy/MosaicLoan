@@ -4,7 +4,10 @@ build_mydata_service:
     BUILD_CONTEXT: ./back/mydata-service
     K8S_PATH: ./infra/k8s/apis/api-mydata.yml
   extends: .backend-default-build
-  rules: [{ changes: [modeling/mydata-service/**/*] }]
+  rules:
+    - changes: modeling/mydata-service/**/*
+      when: always
+    - when: never
 
 push_mydata_service:
   variables:
