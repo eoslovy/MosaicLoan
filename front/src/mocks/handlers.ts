@@ -1304,6 +1304,106 @@ const handlers = [
       }),
     );
   }),
+  rest.get('/api/contract/loans/:id', (req, res, ctx) => {
+    const { id } = req.params;
+    
+    if (id === 'loan-3') {
+      return res(
+        ctx.status(200),
+        ctx.json({
+          transactions: [
+            {
+              contractId: 3,
+              loanId: 'loan-3',
+              amount: '₩ 15,000,000',
+              createdAt: '2024-03-10',
+              status: '대출실행'
+            },
+            {
+              contractId: 3,
+              loanId: 'loan-3',
+              amount: '₩ 120,000',
+              createdAt: '2024-04-10',
+              status: '원금상환'
+            },
+            {
+              contractId: 3,
+              loanId: 'loan-3',
+              amount: '₩ 120,000',
+              createdAt: '2024-05-10',
+              status: '원금상환'
+            }
+          ]
+        })
+      );
+    } else if (id === 'loan-9') {
+      return res(
+        ctx.status(200),
+        ctx.json({
+          transactions: [
+            {
+              contractId: 9,
+              loanId: 'loan-9',
+              amount: '₩ 6,500,000',
+              createdAt: '2024-03-22',
+              status: '대출실행'
+            },
+            {
+              contractId: 9,
+              loanId: 'loan-9',
+              amount: '₩ 47,500',
+              createdAt: '2024-04-22',
+              status: '원금상환'
+            }
+          ]
+        })
+      );
+    } else if (id === 'loan-14') {
+      return res(
+        ctx.status(200),
+        ctx.json({
+          transactions: [
+            {
+              contractId: 14,
+              loanId: 'loan-14',
+              amount: '₩ 40,000,000',
+              createdAt: '2024-06-22',
+              status: '대출실행'
+            },
+            {
+              contractId: 14,
+              loanId: 'loan-14',
+              amount: '₩ 300,000',
+              createdAt: '2024-07-22',
+              status: '원금상환'
+            }
+          ]
+        })
+      );
+    } else if (id === 'loan-19') {
+      return res(
+        ctx.status(200),
+        ctx.json({
+          transactions: [
+            {
+              contractId: 19,
+              loanId: 'loan-19',
+              amount: '₩ 17,500,000',
+              createdAt: '2024-04-30',
+              status: '대출실행'
+            },
+            {
+              contractId: 19,
+              loanId: 'loan-19',
+              amount: '₩ 120,750',
+              createdAt: '2024-05-30',
+              status: '원금상환'
+            }
+          ]
+        })
+      );
+    }
+  })
 ];
 
 export default handlers;

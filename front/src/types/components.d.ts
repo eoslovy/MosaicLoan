@@ -325,6 +325,7 @@ export interface LoanTransaction {
   status: string;
   dueDate: string;
   interestRate: number;
+  detail?: LoanTransactionDetail[];
 }
 
 export interface LoanSearchParams {
