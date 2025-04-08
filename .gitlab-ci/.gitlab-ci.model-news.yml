@@ -1,0 +1,47 @@
+build_news_model:
+  variables:
+    SERVICE_NAME: news_model
+    BUILD_CONTEXT: ./modeling/news
+  extends: .backend-default-build
+  rules:
+    - changes:
+        - modeling/news/**/*
+
+push_news_model:
+  variables:
+    SERVICE_NAME: news_model
+    BUILD_CONTEXT: ./modeling/news
+  extends: .backend-default-push
+  needs: [build_news_model]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - modeling/news/**/*
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - modeling/news/**/*
+      when: manual
+    - when: never
+
+deploy_news_model:
+  variables:
+    SERVICE_NAME: news_model
+    BUILD_CONTEXT: ./modeling/news
+  extends: .modeling-default-deploy
+  needs: [push_news_model]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - modeling/news/**/*
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - modeling/news/**/*
+      when: manual
+    - when: never
+#test_include_trigger:
+# tags:
+#  - $GITLAB_USER_EMAIL
+#script:
+#  - echo "CI 정상 작동 여부 확인"

@@ -104,7 +104,7 @@ services:
     ports:
       - "8080:8080"
 
-  nginx:
+  frontend-nginx:
     container_name: nginx
     build:
       context: ./infra/nginx
