@@ -6,6 +6,7 @@ services:
       context: ./back/member-service
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-service:${IMAGE_TAG:-local}
+    restart: always
     env_file:
       - .env
     #    environment:
@@ -27,6 +28,7 @@ services:
       context: ./back/account-service
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-account-service:${IMAGE_TAG:-local}
+    restart: always
     env_file:
       - .env
     depends_on:
@@ -40,6 +42,7 @@ services:
       context: ./back/contract-service
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-contract-service:${IMAGE_TAG:-local}
+    restart: always
     env_file:
       - .env
     depends_on:
@@ -52,6 +55,7 @@ services:
       context: ./back/credit-service
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-credit-service:${IMAGE_TAG:-local}
+    restart: always
     env_file:
       - .env
     depends_on:
@@ -64,6 +68,7 @@ services:
       context: ./back/mydata-service
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-mydata-service:${IMAGE_TAG:-local}
+    restart: always
     env_file:
       - .env
     depends_on:
@@ -93,6 +98,7 @@ services:
       context: ./infra/springcloud-gateway
       dockerfile: Dockerfile
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-springcloud-gateway:${IMAGE_TAG:-local}
+    restart: always
     env_file:
       - .env
     ports:
@@ -107,6 +113,7 @@ services:
         FRONTEND_IMAGE: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-frontend:${IMAGE_TAG:-local}
         NGINX: nginx.conf
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-nginx:${IMAGE_TAG:-local}
+    restart: always
     env_file:
       - .env
     ports:
@@ -121,6 +128,7 @@ services:
     env_file:
       - .env
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-redis:${IMAGE_TAG:-local}
+    restart: always
     ports:
       - "6379:6379"
 
@@ -132,12 +140,14 @@ services:
     env_file:
       - .env
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-zookeeper:${IMAGE_TAG:-local}
+    restart: always
     ports:
       - "2181:2181"
 
   kafka:
     container_name: kafka
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-kafka:${IMAGE_TAG:-local}
+    restart: always
     build:
       context: ./infra/kafka
       dockerfile: Dockerfile
@@ -166,6 +176,7 @@ services:
         MEMBER_DATASOURCE_USERNAME: ${MEMBER_DATASOURCE_USERNAME}
         MEMBER_DATASOURCE_PASSWORD: ${MEMBER_DATASOURCE_PASSWORD}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-member-db:${IMAGE_TAG:-local}
+    restart: always
     env_file:
       - .env
     environment:
@@ -194,6 +205,7 @@ services:
       MYSQL_USER: ${ACCOUNT_DATASOURCE_USERNAME}
       MYSQL_PASSWORD: ${ACCOUNT_DATASOURCE_PASSWORD}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-account-db:${IMAGE_TAG:-local}
+    restart: always
     ports:
       - "3308:3306"
 
@@ -214,6 +226,7 @@ services:
       MYSQL_USER: ${CONTRACT_DATASOURCE_USERNAME}
       MYSQL_PASSWORD: ${CONTRACT_DATASOURCE_PASSWORD}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-contract-db:${IMAGE_TAG:-local}
+    restart: always
     ports:
       - "3309:3306"
 
@@ -234,6 +247,7 @@ services:
       MYSQL_USER: ${MYDATA_DATASOURCE_USERNAME}
       MYSQL_PASSWORD: ${MYDATA_DATASOURCE_PASSWORD}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-mydata-db:${IMAGE_TAG:-local}
+    restart: always
     ports:
       - "3310:3306"
   credit-db:
@@ -253,5 +267,6 @@ services:
       MYSQL_USER: ${CREDIT_DATASOURCE_USERNAME}
       MYSQL_PASSWORD: ${CREDIT_DATASOURCE_PASSWORD}
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-credit-db:${IMAGE_TAG:-local}
+    restart: always
     ports:
       - "3311:3306"
