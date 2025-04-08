@@ -47,7 +47,7 @@
     # 1️⃣ SSH Key 설정
     - apt-get update && apt-get install -y openssh-client basez
     - mkdir -p ~/.ssh
-    - echo "$BASTION_PRIVATE_KEY_B64" | base32 --decode > ~/.ssh/BASTION.pem
+    - echo "$BASTION_PRIVATE_KEY_B64" | base64 -d > ~/.ssh/BASTION.pem
     - chmod 600 ~/.ssh/BASTION.pem
 
     # 2️⃣ 배포 서버에 Docker 로그인 정보 전송
