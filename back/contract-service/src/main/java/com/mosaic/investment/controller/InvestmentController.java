@@ -1,6 +1,5 @@
 package com.mosaic.investment.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.investment.dto.InvestmentTransactionResponse;
 import com.mosaic.investment.dto.InvestmentTransactionSearchRequest;
-import com.mosaic.investment.dto.InvestmentWithStatusDto;
 import com.mosaic.investment.dto.RequestInvestmentDto;
 import com.mosaic.investment.repository.InvestmentQueryRepository;
 import com.mosaic.investment.service.InvestmentService;
@@ -42,11 +40,15 @@ public class InvestmentController {
 
     //TODO 내 투자내역 확인
     // 헤더까보고 memberId 확인해서 내 투자 상품들 리스트로 다 가져오기
-    @GetMapping("")
-    public ResponseEntity<Map<String, List<InvestmentWithStatusDto>>> getInvestments(@RequestHeader("X-MEMBER-ID") Integer memberId) {
-        List<InvestmentWithStatusDto> investments = investmentQueryRepository.findInvestmentsWithStatusDistribution(memberId);
-        Map<String, List<InvestmentWithStatusDto>> response = Map.of("investments", investments);
-        return ResponseEntity.ok(response);
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getInvestments(@RequestHeader("X-MEMBER-ID") Integer memberId) {
+        try {
+            Map<String, Object> response = investmentQueryRepository.findInvestmentsWithOverview(memberId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error fetching investments: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     //TODO 내 개별 투자의 거래내역 확인
