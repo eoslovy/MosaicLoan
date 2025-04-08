@@ -8,15 +8,6 @@ services:
     restart: always
     env_file:
       - .env
-    #    environment:
-    #      - SPRING_DATASOURCE_URL=${MEMBER_DATASOURCE_URL}
-    #      - SPRING_DATASOURCE_USERNAME=${MEMBER_DATASOURCE_USERNAME}
-    #      - SPRING_DATASOURCE_PASSWORD=${MEMBER_DATASOURCE_PASSWORD}
-    #      - SPRING_DATASOURCE_DRIVER-CLASS-NAME=com.mysql.cj.jdbc.Driver
-    #      - SPRING_JPA_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
-    #      - REDIS_HOST=${REDIS_HOST}
-    #      - REDIS_PORT=${REDIS_PORT}
-    
     ports:
       - "18081:8080"
 
@@ -178,6 +169,8 @@ services:
       #ENV MYSQL_DATABASE=mosaic_account
     ports:
       - "3307:3306"
+    volumes:
+      - member-db-data:/var/lib/mysql
 
   account-db:
     container_name: account-db
@@ -199,6 +192,8 @@ services:
     restart: always
     ports:
       - "3308:3306"
+    volumes:
+      - account-db-data:/var/lib/mysql
 
   contract-db:
     container_name: contract-db
@@ -220,6 +215,8 @@ services:
     restart: always
     ports:
       - "3309:3306"
+    volumes:
+      - contract-db-data:/var/lib/mysql
 
   mydata-db:
     container_name: mydata-db
@@ -241,6 +238,8 @@ services:
     restart: always
     ports:
       - "3310:3306"
+    volumes:
+      - mydata-db-data:/var/lib/mysql
   credit-db:
     container_name: credit-db
     build:
@@ -261,6 +260,8 @@ services:
     restart: always
     ports:
       - "3311:3306"
+    volumes:
+      - credit-db-data:/var/lib/mysql
   model-credit:
     container_name: model-credit
     build:
@@ -282,4 +283,16 @@ services:
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-model-news:${IMAGE_TAG:-local}
     restart: always
     ports:
-      - "9000:8000"
+      - "9001:8000"
+
+  volumes:
+      member-db-data:
+        driver: local
+      account-db-data:
+        driver: local
+      contract-db-data:
+        driver: local
+      mydata-db-data:
+        driver: local
+      credit-db-data:
+        driver: local
