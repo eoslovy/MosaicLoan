@@ -73,22 +73,20 @@ const LoanFilter: React.FC<LoanFilterProps> = ({ onSearch }) => {
   const handleSearch = () => {
     if (!startDate || !endDate) return;
 
-    const typeMap: {[key: string]: string} = {
-      'repaid': '상환완료',
-      'inProgress': '상환중',
-      'defaulted': '부실확정',
-      'delayed': '연체'
+    const typeMap: { [key: string]: string } = {
+      repaid: '상환완료',
+      inProgress: '상환중',
+      defaulted: '부실확정',
+      delayed: '연체',
     };
 
     const searchParams: LoanSearchParams = {
       startDate: format(startDate, 'yyyy-MM-dd'),
       endDate: format(endDate, 'yyyy-MM-dd'),
-      types: selectedTypes.map(type => typeMap[type.value] || type.value),
+      types: selectedTypes.map((type) => typeMap[type.value] || type.value),
       page: 1,
       pageSize: 10,
-      sort: [
-        { field: 'createdAt', order: 'desc' },
-      ],
+      sort: [{ field: 'createdAt', order: 'desc' }],
     };
 
     onSearch(searchParams);
@@ -128,8 +126,8 @@ const LoanFilter: React.FC<LoanFilterProps> = ({ onSearch }) => {
         </div>
 
         <div className={styles.rightButtons}>
-          <button 
-            type='button' 
+          <button
+            type='button'
             className={styles.searchButton}
             onClick={handleSearch}
           >

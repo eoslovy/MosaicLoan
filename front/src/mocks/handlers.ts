@@ -800,7 +800,7 @@ const handlers = [
       pageSize?: number;
       sort?: Array<{ field: string; order: string }>;
     };
-  
+
     interface Transaction {
       id: string;
       contractId: number;
@@ -812,12 +812,12 @@ const handlers = [
       detail: {
         date: string;
         amount: string;
-        balance: string;    
+        balance: string;
         type: string;
       }[];
       [key: string]: string | number | object[] | any;
     }
-  
+
     const allTransactions: Transaction[] = [
       {
         id: 'loan-1',
@@ -1194,42 +1194,86 @@ const handlers = [
             type: '이자 납부',
           },
         ],
-      },    
+      },
     ];
-    
-    const filteredTransactions: Transaction[] = [...allTransactions];
-  
-    if (sort.length > 0) {
-      const { field, order } = sort[0];
-  
-      filteredTransactions.sort((a, b) => {
-        const valueA = a[field];
-        const valueB = b[field];
-  
-        if (typeof valueA === 'string' && typeof valueB === 'string') {
-          if (valueA.includes('%') && valueB.includes('%')) {
-            const numA = parseFloat(valueA.replace('%', ''));
-            const numB = parseFloat(valueB.replace('%', ''));
-            return order === 'asc' ? numA - numB : numB - numA;
-          }
-  
-          return order === 'asc'
-            ? valueA.localeCompare(valueB)
-            : valueB.localeCompare(valueA);
-        }
-  
-        if (typeof valueA === 'number' && typeof valueB === 'number') {
-          return order === 'asc' ? valueA - valueB : valueB - valueA;
-        }
-  
-        const strA = String(valueA);
-        const strB = String(valueB);
-        return order === 'asc'
-          ? strA.localeCompare(strB)
-          : strB.localeCompare(strA);
+
+    let filteredTransactions: Transaction[] = [...allTransactions];
+
+    if (startDate && endDate) {
+      filteredTransactions = filteredTransactions.filter((transaction) => {
+        const transactionDate = new Date(transaction.createdAt);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        start.setHours(0, 0, 0, 0);
+        end.setHours(23, 59, 59, 999);
+
+        return transactionDate >= start && transactionDate <= end;
       });
     }
-  
+
+    if (types && types.length > 0) {
+      filteredTransactions = filteredTransactions.filter((transaction) => {
+        return types.includes(transaction.status);
+      });
+    }
+
+    if (sort.length > 0) {
+      filteredTransactions.sort((a, b) => {
+        for (const { field, order } of sort) {
+          const valueA = a[field];
+          const valueB = b[field];
+     
+          let comparisonResult: number;
+     
+          if (field === 'createdAt' || field === 'dueDate') {
+            const parseDate = (dateString: string) => {
+              const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})/);
+              if (match) {
+                return new Date(
+                  parseInt(match[1]), 
+                  parseInt(match[2]) - 1, 
+                  parseInt(match[3])
+                );
+              }
+              return new Date(dateString);
+            };
+     
+            const dateA = valueA ? parseDate(valueA) : new Date(0);
+            const dateB = valueB ? parseDate(valueB) : new Date(0);
+            
+            comparisonResult = order === 'asc'
+              ? dateA.getTime() - dateB.getTime()
+              : dateB.getTime() - dateA.getTime();
+          } else if (typeof valueA === 'string' && typeof valueB === 'string') {
+            if (valueA.includes('%') && valueB.includes('%')) {
+              const numA = parseFloat(valueA.replace('%', ''));
+              const numB = parseFloat(valueB.replace('%', ''));
+              comparisonResult = order === 'asc' ? numA - numB : numB - numA;
+            } else {
+              comparisonResult = order === 'asc'
+                ? valueA.localeCompare(valueB)
+                : valueB.localeCompare(valueA);
+            }
+          } else if (typeof valueA === 'number' && typeof valueB === 'number') {
+            comparisonResult = order === 'asc' ? valueA - valueB : valueB - valueA;
+          } else {
+            const strA = String(valueA);
+            const strB = String(valueB);
+            comparisonResult = order === 'asc'
+              ? strA.localeCompare(strB)
+              : strB.localeCompare(strA);
+          }
+     
+          if (comparisonResult !== 0) {
+            return comparisonResult;
+          }
+        }
+     
+        return 0;
+      });
+     }
+
     const totalItemCount = filteredTransactions.length;
     const totalPage = Math.ceil(totalItemCount / pageSize);
     const startIndex = (page - 1) * pageSize;
@@ -1237,7 +1281,7 @@ const handlers = [
       startIndex,
       startIndex + pageSize,
     );
-  
+
     return res(
       ctx.status(200),
       ctx.json({

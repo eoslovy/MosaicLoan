@@ -6,7 +6,8 @@ import LoanSummarySection from '@/components/borrower/LoanSummarySection';
 import LoanOverview from '@/components/borrower/LoanOverview';
 import LoanFilter from '@/components/borrower/LoanFilter';
 import LoanList from '@/components/borrower/LoanList';
-import { getLoanOverview, LoanOverviewResponse } from'@/service/apis/borrow';
+import EmptyState from '@/components/empty/investor/EmptyState';
+import { getLoanOverview, LoanOverviewResponse } from '@/service/apis/borrow';
 import request from '@/service/apis/request';
 import { format } from 'date-fns';
 
@@ -21,15 +22,17 @@ export interface LoanTransaction {
 }
 
 export interface LoanSearchParams {
-  startDate: string;
-  endDate: string;
-  types: string[];
+  startDate?: string;
+  endDate?: string;
+  types?: string[];
   page?: number;
   pageSize?: number;
-  sort?: Array<{
-    field: string;
-    order: 'asc' | 'desc' | 'unsorted';
-  }>;
+  sort?: LoanSortState[];
+}
+
+export interface LoanSortState {
+  field: string;
+  order: string;
 }
 
 export interface LoanSearchResponse {
@@ -44,42 +47,106 @@ export interface LoanSearchResponse {
 
 const BorrowerPage = () => {
   const [loanData, setLoanData] = useState<LoanOverviewResponse | null>(null);
+  const [isLoadingLoanData, setIsLoadingLoanData] = useState(true);
+  const [loanDataError, setLoanDataError] = useState<string | null>(null);
+
   const [searchedLoans, setSearchedLoans] = useState<LoanTransaction[]>([]);
-  const [pagination, setPagination] = useState<LoanSearchResponse['pagination']>({
+  const [isLoadingLoans, setIsLoadingLoans] = useState(false);
+  const [loansError, setLoansError] = useState<string | null>(null);
+
+  const [pagination, setPagination] = useState<
+    LoanSearchResponse['pagination']
+  >({
     page: 1,
     pageSize: 10,
     totalPage: 0,
     totalItemCount: 0,
   });
-  const [error, setError] = useState(false);
+
   const [creditKey, setCreditKey] = useState(0);
+  const [currentSearchParams, setCurrentSearchParams] =
+    useState<LoanSearchParams>({
+      startDate: format(new Date(), 'yyyy-MM-dd'),
+      endDate: format(new Date(), 'yyyy-MM-dd'),
+      types: ['상환중', '상환완료'],
+    });
+
+  const [sortState, setSortState] = useState<
+    { field: string; order: string }[]
+  >([]);
 
   const handleEvaluationComplete = () => {
-    setCreditKey((prev) => prev + 1); // 신용평가 한 다음에 화면 리렌더링하기 위함.
+    setCreditKey((prev) => prev + 1);
   };
 
-  const handleLoanSearch = async (searchParams: LoanSearchParams) => {
-    try {
-      const defaultSort = [
-        { field: 'createdAt', order: 'desc' as const },
-      ];
+  const fetchLoans = async (
+    params: LoanSearchParams & {
+      page: number;
+      pageSize: number;
+      sort: LoanSortState[];
+    },
+  ) => {
+    setIsLoadingLoans(true);
+    setLoansError(null);
 
+    try {
       const response = await request.POST<LoanSearchResponse>(
-        '/api/contract/loans/transactions/search', 
+        '/api/contract/loans/transactions/search',
         {
-          ...searchParams,
-          page: searchParams.page || 1,
-          pageSize: searchParams.pageSize || 10,
-          sort: searchParams.sort || defaultSort,
-        }
+          ...params,
+          page: params.page || 1,
+          pageSize: params.pageSize || 10,
+          sort: params.sort || [{ field: 'createdAt', order: 'desc' }],
+        },
       );
-      console.log
+
       setSearchedLoans(response.transactions);
       setPagination(response.pagination);
+      setCurrentSearchParams({
+        startDate: params.startDate,
+        endDate: params.endDate,
+        types: params.types,
+      });
     } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : '대출 검색 데이터 불러오기 실패';
+
       console.error('대출 검색 데이터 불러오기 실패:', err);
-      setError(true);
+      setLoansError(errorMessage);
+    } finally {
+      setIsLoadingLoans(false);
     }
+  };
+
+  const handleLoanSearch = (searchParams: LoanSearchParams) => {
+    fetchLoans({
+      ...searchParams,
+      page: 1,
+      pageSize: 10,
+      sort: sortState,
+    });
+  };
+
+  const handleSortChange = (
+    newSortState: { field: string; order: string }[],
+  ) => {
+    setSortState(newSortState);
+
+    fetchLoans({
+      ...currentSearchParams,
+      page: 1,
+      pageSize: 10,
+      sort: newSortState,
+    });
+  };
+
+  const handlePageChange = async (page: number) => {
+    fetchLoans({
+      ...currentSearchParams,
+      page,
+      pageSize: 10,
+      sort: sortState,
+    });
   };
 
   useEffect(() => {
@@ -88,13 +155,32 @@ const BorrowerPage = () => {
         const data = await getLoanOverview();
         setLoanData(data);
       } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : '대출 요약 데이터 불러오기 실패';
+
         console.error('대출 요약 데이터 불러오기 실패:', err);
-        setError(true);
+        setLoanDataError(errorMessage);
+      } finally {
+        setIsLoadingLoanData(false);
       }
     };
 
     fetchLoanData();
+    fetchLoans({
+      ...currentSearchParams,
+      page: 1,
+      pageSize: 10,
+      sort: sortState,
+    });
   }, []);
+
+  if (isLoadingLoanData) {
+    return <EmptyState message='대출 정보를 불러오는 중입니다' />;
+  }
+
+  if (loanDataError || !loanData) {
+    return <EmptyState message='대출 요약 정보를 불러올 수 없습니다.' />;
+  }
 
   const recentLoans = loanData?.recentLoans ?? [];
   const activeLoanCount = loanData?.activeLoanCount ?? 0;
@@ -116,15 +202,11 @@ const BorrowerPage = () => {
         averageInterestRate={averageInterestRate}
       />
       <LoanFilter onSearch={handleLoanSearch} />
-      <LoanList 
-        loans={searchedLoans} 
+      <LoanList
+        loans={searchedLoans}
         pagination={pagination}
-        onPageChange={(page) => handleLoanSearch({ 
-          startDate: format(new Date(), 'yyyy-MM-dd'), 
-          endDate: format(new Date(), 'yyyy-MM-dd'), 
-          types: ['상환중', '상환완료'], 
-          page 
-        })}
+        onPageChange={handlePageChange}
+        onSortChange={handleSortChange}
       />
     </>
   );

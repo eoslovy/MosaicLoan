@@ -213,7 +213,12 @@ export type SortKey =
   | 'bond'
   | 'transactionDate'
   | 'maturityDate'
-  | 'interestRate';
+  | 'interestRate'
+  | 'loan'
+  | 'amount'
+  | 'loanDate'
+  | 'loanMaturityDate'
+  | 'dueDate';
 
 export interface SortState {
   key: SortKey;

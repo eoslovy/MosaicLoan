@@ -55,7 +55,7 @@ const ContractsPage = () => {
   );
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(15);
+  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
 
   const [sortState, setSortState] = useState<
