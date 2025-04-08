@@ -58,9 +58,13 @@
     - scp -o StrictHostKeyChecking=no -i bastion.pem docker-compose.processed.yml ubuntu@$BASTION_HOST:/home/ubuntu/docker-compose.yml
       # 4️⃣ 배포 서버에서 `docker-compose` 실행 (로그인 유지됨)
     - ssh -T -o StrictHostKeyChecking=no -i bastion.pem ubuntu@$BASTION_HOST \
-        "DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME IMAGE_TAG=$IMAGE_TAG SERVICE_NAME=$SERVICE_NAME \
-        docker-compose -f /home/ubuntu/docker-compose.yml pull $SERVICE_NAME && \
-        docker-compose -f /home/ubuntu/docker-compose.yml up -d $SERVICE_NAME --remove-orphans"
+      "bash -l -c '
+        DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME \
+        IMAGE_TAG=$IMAGE_TAG \
+        SERVICE_NAME=$SERVICE_NAME \
+        docker-compose -f /home/ubuntu/docker-compose.yml pull \$SERVICE_NAME && \
+        docker-compose -f /home/ubuntu/docker-compose.yml up -d \$SERVICE_NAME --remove-orphans
+      '"
     - ssh -T -o StrictHostKeyChecking=no -i bastion.pem ubuntu@$BASTION_HOST "
           docker ps"
 
