@@ -1,18 +1,18 @@
-build_news_model:
+build_model-news:
   variables:
-    SERVICE_NAME: news_model
+    SERVICE_NAME: model-news
     BUILD_CONTEXT: ./modeling/news
   extends: .backend-default-build
   rules:
     - changes:
         - modeling/news/**/*
 
-push_news_model:
+push_model-news:
   variables:
-    SERVICE_NAME: news_model
+    SERVICE_NAME: model-news
     BUILD_CONTEXT: ./modeling/news
   extends: .backend-default-push
-  needs: [build_news_model]
+  needs: [build_model-news]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       changes:
@@ -24,12 +24,12 @@ push_news_model:
       when: manual
     - when: never
 
-deploy_news_model:
+deploy_model-news:
   variables:
-    SERVICE_NAME: news_model
+    SERVICE_NAME: model-news
     BUILD_CONTEXT: ./modeling/news
   extends: .modeling-default-deploy
-  needs: [push_news_model]
+  needs: [push_model-news]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       changes:
@@ -40,8 +40,3 @@ deploy_news_model:
         - modeling/news/**/*
       when: manual
     - when: never
-#test_include_trigger:
-# tags:
-#  - $GITLAB_USER_EMAIL
-#script:
-#  - echo "CI 정상 작동 여부 확인"

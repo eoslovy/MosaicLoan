@@ -1,18 +1,18 @@
-build_credit_model:
+build_model-credit:
   variables:
-    SERVICE_NAME: credit_model
+    SERVICE_NAME: model-credit
     BUILD_CONTEXT: ./modeling/credit
   extends: .backend-default-build
   rules:
     - changes:
         - modeling/credit/**/*
 
-push_credit_model:
+push_model-credit:
   variables:
-    SERVICE_NAME: credit_model
+    SERVICE_NAME: model-credit
     BUILD_CONTEXT: ./modeling/credit
   extends: .backend-default-push
-  needs: [build_credit_model]
+  needs: [build_model-credit]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       changes:
@@ -24,12 +24,12 @@ push_credit_model:
       when: manual
     - when: never
 
-deploy_credit_model:
+deploy_model-credit:
   variables:
-    SERVICE_NAME: credit_model
+    SERVICE_NAME: model-credit
     BUILD_CONTEXT: ./modeling/credit
   extends: .modeling-default-deploy
-  needs: [push_credit_model]
+  needs: [push_model-credit]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       changes:
