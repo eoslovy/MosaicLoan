@@ -166,9 +166,9 @@ const handlers = [
     );
   }),
   rest.post('/credit/evaluations', async (req, res, ctx) => {
-    const { appliedAt, memberId } = await req.json();
+    const { appliedAt } = await req.json();
 
-    console.log(`신용평가 req - memberId: ${memberId}, 날짜: ${appliedAt}`);
+    console.log(`신용평가 req - 날짜: ${appliedAt}`);
 
     return res(
       ctx.status(200),

@@ -36,7 +36,7 @@ const useCreditEvaluation = ({ onCompleted }: { onCompleted: () => void }) => {
         return;
       }
 
-      const ws = new WebSocket(`ws://localhost:8080/ws`);
+      const ws = new WebSocket(`ws://localhost:8080/ws?memberId=${user.id}`);
       wsRef.current = ws;
 
       ws.onopen = () => {

@@ -1,9 +1,28 @@
 package com.mosaic.core.model;
 
-import jakarta.persistence.*;
-import lombok.*;
-
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.mosaic.core.model.status.ContractTransactionType;
+import com.mosaic.core.util.TimeUtil;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -14,21 +33,51 @@ import java.time.LocalDateTime;
 public class ContractTransaction {
     @Id
     @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "contract_id", nullable = false)
     private Contract contract;
 
     @Column(name = "amount")
-    private Integer amount;
+    private BigDecimal amount;
 
-    @Lob
+    @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    private String type;
+    private ContractTransactionType type;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    public void setContract(Contract contract) {
+        this.contract = contract;
+    }
+
+    public static ContractTransaction buildRepayPrincipalTransaction(Contract contract, BigDecimal repaidAmount) {
+        return ContractTransaction.builder()
+                .contract(contract)
+                .amount(repaidAmount)
+                .createdAt(TimeUtil.now())
+                .type(ContractTransactionType.PRINCIPAL)
+                .build();
+    }
+
+    public static ContractTransaction buildRepayInterestTransaction(Contract contract, BigDecimal repaidAmount) {
+        return ContractTransaction.builder()
+                .contract(contract)
+                .amount(repaidAmount)
+                .createdAt(TimeUtil.now())
+                .type(ContractTransactionType.INTEREST)
+                .build();
+    }
+
+    public static ContractTransaction buildLoanCreateTransaction(Contract contract, BigDecimal amount) {
+        return ContractTransaction.builder()
+                .contract(contract)
+                .amount(amount)
+                .type(ContractTransactionType.LOAN)
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
 }

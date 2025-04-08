@@ -37,6 +37,9 @@ public class CreditEvaluation {
 	@Column(name = "interest_rate", nullable = false)
 	private Integer interestRate;
 
+	@Column(name = "expected_yield", nullable = false)
+	private Integer expectedYield;
+
 	@Column(name = "max_loan_limit", nullable = false)
 	private Integer maxLoanLimit;
 
@@ -49,7 +52,7 @@ public class CreditEvaluation {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
 	private EvaluationStatus status;
-	
+
 	@Column(name = "default_flag")
 	private Boolean defaultFlag;
 }

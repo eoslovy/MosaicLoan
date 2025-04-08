@@ -2,13 +2,12 @@ server:
   port: 8080
 
 spring:
-  #  config:
-  #    activate:
-  #      on-profile: docker
+  profiles:
+    active: default
 
   application:
     name: contract-service
-
+#
   datasource:
     url: ${CONTRACT_DATASOURCE_URL}
     username: ${CONTRACT_DATASOURCE_USERNAME}
@@ -17,11 +16,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
 
   data:
     redis:
@@ -30,6 +33,28 @@ spring:
 
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer:
+      properties:
+        spring.json.trusted.packages: "com.mosaic.payload"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    url: jdbc:mysql://localhost:3309/mosaic_contract
+    username: contract
+    password: 608
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  kafka:
+    bootstrap-servers: localhost:9092
     consumer:
       properties:
         spring.json.trusted.packages: "com.mosaic.payload"

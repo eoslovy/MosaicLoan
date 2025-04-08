@@ -16,6 +16,7 @@ build_front:
     - $GITLAB_USER_EMAIL
   script:
     - echo "🔨 Docker 이미지 빌드 및 테스트 중..."
+    - 'echo "NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}"'
     - docker build --build-arg NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} -t ${DOCKERHUB_USERNAME:-default}/$REGISTRY_PATH-${SERVICE_NAME}:$IMAGE_TAG  ${BUILD_CONTEXT}
     - docker images
     #- echo "✅ 빌드 완료: $IMAGE_NAME:$IMAGE_TAG
@@ -51,7 +52,7 @@ push_front:
       changes:
         - front/**/*
       when: always
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'
       changes:
         - front/**/*
       when: manual

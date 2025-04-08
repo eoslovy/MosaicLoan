@@ -17,7 +17,6 @@ const MyAccountPage = () => {
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(today.getMonth() - 1);
 
-    // 날짜 포맷 맞추기 (YYYY-MM-DD)
     const startDate = format(oneMonthAgo, 'yyyy-MM-dd');
     const endDate = format(today, 'yyyy-MM-dd');
 
