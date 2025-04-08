@@ -282,4 +282,4 @@ services:
     image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-model-news:${IMAGE_TAG:-local}
     restart: always
     ports:
-      - "9000:8000"
+      - "9001:8000"
