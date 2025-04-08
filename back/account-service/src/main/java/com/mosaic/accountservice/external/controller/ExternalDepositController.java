@@ -1,5 +1,8 @@
 package com.mosaic.accountservice.external.controller;
 
+import java.io.IOException;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +17,7 @@ import com.mosaic.accountservice.external.dto.CreatePaymentRequest;
 import com.mosaic.accountservice.external.dto.KakaoPayReadyResponse;
 import com.mosaic.accountservice.external.service.KakaoPayService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -21,6 +25,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ExternalDepositController {
 	private final KakaoPayService kakaoPayService;
+
+	@Value("${BASE_FRONT_URL}")
+	private String baseFrontUrl;
 
 	@PostMapping("/ready")
 	public ResponseEntity<KakaoPayReadyResponse> getReady(@RequestBody CreatePaymentRequest request,
@@ -30,9 +37,11 @@ public class ExternalDepositController {
 	}
 
 	@GetMapping("/success")
-	public ResponseEntity<Void> handleExternalDepositSuccess(
-		@RequestParam(name = "pg_token") String pgToken) throws JsonProcessingException {
-		kakaoPayService.approveKakaoPay(pgToken, 3);
-		return ResponseEntity.ok().build();
+	public void handleExternalDepositSuccess (
+		@RequestParam(name = "pg_token") String pgToken, 
+		@RequestHeader("X-MEMBER-ID") Integer memberId,
+		HttpServletResponse response) throws JsonProcessingException, IOException {
+		kakaoPayService.approveKakaoPay(pgToken, memberId);
+		response.sendRedirect(baseFrontUrl + "my/myAccount");
 	}
 }
