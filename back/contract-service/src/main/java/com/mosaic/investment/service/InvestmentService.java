@@ -9,17 +9,17 @@ import com.mosaic.loan.event.message.LoanCreateTransactionPayload;
 import com.mosaic.payload.AccountTransactionPayload;
 
 public interface InvestmentService {
-	void publishInvestmentRequest(RequestInvestmentDto requestDto) throws
+	void publishInvestmentRequest(RequestInvestmentDto requestDto, Integer memberId, Boolean isBot) throws
 		InternalSystemException,
 		JsonProcessingException;
 
 	void completeInvestmentRequest(AccountTransactionPayload requestDto) throws Exception;
 
-    void finishActiveInvestment(Investment investment);
+	void finishActiveInvestment(Investment investment);
 
-    void publishInvestmentWithdrawal(WithdrawalInvestmentDto requestDto) throws JsonProcessingException;
+	void publishInvestmentWithdrawal(WithdrawalInvestmentDto requestDto, Boolean isBot) throws JsonProcessingException;
 
-    void rollbackInvestmentWithdrawal(AccountTransactionPayload payload);
+	void rollbackInvestmentWithdrawal(AccountTransactionPayload payload);
 
-    void searchLoanAptInvestor(LoanCreateTransactionPayload loanTransactionReq) throws Exception;
+	void searchLoanAptInvestor(LoanCreateTransactionPayload loanTransactionReq) throws Exception;
 }

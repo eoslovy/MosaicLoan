@@ -27,25 +27,25 @@ public class CalculationServiceImpl implements CalculationService {
 	private final EconomySentimentRepository economySentimentRepository;
 
 	public CreditEvaluation createAndSaveEvaluation(Integer caseId, Integer memberId, Integer defaultRate,
-		Integer interestRate, Integer maxLoanLimit, EvaluationStatus status) {
+		Integer interestRate, Integer maxLoanLimit, EvaluationStatus status, LocalDateTime now) {
 		CreditEvaluation evaluation = CreditEvaluation.builder()
 			.memberId(memberId)
 			.defaultRate(defaultRate)
 			.interestRate(interestRate)
 			.maxLoanLimit(maxLoanLimit)
-			.createdAt(LocalDateTime.now())
+			.createdAt(now)
 			.caseId(caseId)
 			.status(status)
 			.build();
 
 		return evaluationRepository.save(evaluation);
 	}
-	
+
 	// 전일 경제 심리지수를 조회하는 메서드
 	private double getYesterdaySentiment() {
 		LocalDate yesterday = LocalDate.now().minusDays(1);
 		Optional<EconomySentiment> sentimentOpt = economySentimentRepository.findBySentimentDate(yesterday);
-		
+
 		if (sentimentOpt.isPresent()) {
 			double sentiment = sentimentOpt.get().getAverageSentiment();
 			return sentiment;
@@ -61,7 +61,7 @@ public class CalculationServiceImpl implements CalculationService {
 
 		// 2. 이자율 계산 (무위험 이자율 4%, 손실률 0.5 가정)
 		double riskFreeRate = 0.04;
-		
+
 		// 전날의 경제 심리지수를 가져와 이자율에 반영
 		double sentiment = getYesterdaySentiment();
 		riskFreeRate -= sentiment * 0.0025; // 범위에 따라 ±0.25% 조정
@@ -81,7 +81,8 @@ public class CalculationServiceImpl implements CalculationService {
 			Map<String, Object> demographicPayload = demographicData.get().getPayload();
 			Map<String, Object> creditPayload = creditData.get().getPayload();
 
-			if (demographicPayload.containsKey("total_income") && creditPayload.containsKey("totaldebtoverduevalue_178A")) {
+			if (demographicPayload.containsKey("total_income") && creditPayload.containsKey(
+				"totaldebtoverduevalue_178A")) {
 				Double totalIncome = Double.parseDouble(demographicPayload.get("total_income").toString());
 				Double totalDebt = Double.parseDouble(creditPayload.get("totaldebtoverduevalue_178A").toString());
 
@@ -96,17 +97,21 @@ public class CalculationServiceImpl implements CalculationService {
 
 				// DSR이 40%를 넘으면 대출 불가
 				if (dsr > 0.4) {
-					return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, 0, EvaluationStatus.DSR_EXCEEDED);
+					return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, 0,
+						EvaluationStatus.DSR_EXCEEDED, demographicData.get().getCreatedAt());
 				}
 
 				// DSR에 따른 대출 한도 계산 (남은 DSR 여유분 * 월소득 * 12)
-				int maxLoanLimit = (int) ((0.4 - dsr) * monthlyIncome * 12);
-				return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, maxLoanLimit, EvaluationStatus.APPROVED);
+				int maxLoanLimit = (int)((0.4 - dsr) * monthlyIncome * 12);
+				return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, maxLoanLimit,
+					EvaluationStatus.APPROVED, demographicData.get().getCreatedAt());
 			}
 		}
 
 		// DSR 계산이 불가능한 경우 기본 대출 한도 설정
 		log.info("DSR 계산 불가: caseId={}, memberId={}, 기본 대출 한도 적용", caseId, memberId);
-		return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, 1000000, EvaluationStatus.APPROVED);
+		// 이 경우 시간 못줌
+		return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, 1000000, EvaluationStatus.APPROVED,
+			LocalDateTime.now());
 	}
 }

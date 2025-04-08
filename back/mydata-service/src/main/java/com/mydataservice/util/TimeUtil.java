@@ -1,4 +1,4 @@
-package com.mosaic.core.util;
+package com.mydataservice.util;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -21,7 +21,6 @@ public class TimeUtil {
 	private static final LocalDateTime DEFAULT_BOT_START = LocalDateTime.of(2022, 1, 1, 0, 0);
 
 	private final StringRedisTemplate redisTemplate;
-	private final BotTimeTriggerManager botTimeTriggerManager;
 
 	public LocalDateTime now(boolean isBot) {
 		if (!isBot) {
@@ -32,9 +31,7 @@ public class TimeUtil {
 			throw new IllegalStateException("봇 타임스탬프는 현재 트리거 작업 중입니다.");
 		}
 
-		LocalDateTime botTime = getBotTimestamp();
-		botTimeTriggerManager.triggerIfNeeded(botTime);
-		return botTime;
+		return getBotTimestamp();
 	}
 
 	private boolean isLocked() {
@@ -68,4 +65,3 @@ public class TimeUtil {
 		return baseTime.toLocalDate().plusWeeks(weeks);
 	}
 }
-
