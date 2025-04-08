@@ -135,16 +135,24 @@ const handlers = [
         createdAt:
           idx % 2 === 0 ? '2024-01-01T00:00:00Z' : '2024-02-01T00:00:00Z',
         investStatus: idx % 2 === 0 ? 'IN_PROGRESS' : 'COMPLETED',
-        totalContractCount: idx % 2 === 0 ? 5 : 10,
         statusDistribution: {
-          completed: idx % 3,
-          active: idx % 5,
-          default: idx % 2,
-          transferred: 0,
+          completed: 42,
+          active: 78,
+          default: 12,                
+          transferred: 5,
         },
       })),
-    };
-
+      investOverview: Array.from({ length: 1 }, (_, idx) => ({
+        statusDistribution: {
+        completed: 42,
+        active: 78,
+        default: 12,                
+        transferred: 5,
+      },
+      totalContractCount: 137,
+      totalProfit: 28750000,
+      totalLoss: 3400000}),
+      )}
     return res(ctx.status(200), ctx.json(mockData));
   }),
   rest.get('/credit/evaluations/recent', (req, res, ctx) => {
@@ -318,7 +326,7 @@ const handlers = [
       }),
     );
   }),
-  rest.post('/contract/investments/transactions/search', (req, res, ctx) => {
+  rest.post('/api/contract/investments/transactions/search', (req, res, ctx) => {
     const {
       startDate,
       endDate,
