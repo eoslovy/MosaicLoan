@@ -6,6 +6,8 @@ build_model-news:
   rules:
     - changes:
         - modeling/news/**/*
+      when: always
+    - when: never
 
 push_model-news:
   variables:

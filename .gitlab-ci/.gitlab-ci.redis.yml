@@ -7,6 +7,8 @@ build_redis:
   rules:
     - changes:
         - infra/redis/**/*
+      when: always
+    - when: never
 
 push_redis:
   variables:

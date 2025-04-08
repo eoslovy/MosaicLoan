@@ -7,6 +7,9 @@ build_contract_service:
   rules:
     - changes:
         - back/contract-service/**/*
+      when: always
+    - when: never
+
 
 push_contract_service:
   variables:

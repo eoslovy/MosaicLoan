@@ -7,6 +7,8 @@ build_account_service:
   rules:
     - changes:
         - back/account-service/**/*
+      when: always
+    - when : never
 
 push_account_service:
   variables:

@@ -7,6 +7,8 @@ build_credit_service:
   rules:
     - changes:
         - back/credit-service/**/*
+      when: always
+    - when: never
 
 push_credit_service:
   variables:
