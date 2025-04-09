@@ -2,16 +2,23 @@ package com.mosaic.contract.service;
 
 import java.time.LocalDateTime;
 
+import org.springframework.stereotype.Service;
+
 import com.mosaic.core.model.Contract;
 import com.mosaic.core.model.ContractTransaction;
 import com.mosaic.core.model.Investment;
 import com.mosaic.core.model.Loan;
 
+@Service
 public class ContractServiceImpl implements ContractService {
 	@Override
 	public Contract liquidateContract(Contract contract, LocalDateTime now) {
-		if(contract == null) { throw new IllegalArgumentException("Contract is null"); }
-		if(contract.getInvestment()== null) { throw new IllegalArgumentException("Investment is null"); }
+		if (contract == null) {
+			throw new IllegalArgumentException("Contract is null");
+		}
+		if (contract.getInvestment() == null) {
+			throw new IllegalArgumentException("Investment is null");
+		}
 		//없으면 예외
 		Investment investment = contract.getInvestment();
 		contract.setStatusLiquidate();
@@ -43,8 +50,10 @@ public class ContractServiceImpl implements ContractService {
 
 	@Override
 	public void addDelinquentMarginInterest(Loan loan) {
-		if(loan.getContracts()== null) { throw new IllegalArgumentException("Loan is null"); }
-		for(Contract contract : loan.getContracts()) {
+		if (loan.getContracts() == null) {
+			throw new IllegalArgumentException("Loan is null");
+		}
+		for (Contract contract : loan.getContracts()) {
 			contract.addExtraInterestDaily();
 		}
 	}
