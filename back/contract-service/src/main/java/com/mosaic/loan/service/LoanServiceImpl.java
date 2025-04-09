@@ -124,12 +124,17 @@ public class LoanServiceImpl implements LoanService {
 				interestTransaction.getAmount());
 			contract.putTransaction(interestTransaction);
 
+			contract.getInvestment().addCurrentRate(interestTransaction, contract);
+
 			repaidAmountResidue = repaidAmountResidue.subtract(interestTransaction.getAmount());
 		}
 
 		BigDecimal returnPrincipalRatio = repaidAmountResidue.divide(originalMoneyToRepay, 18, RoundingMode.DOWN)
 			.min(BigDecimal.ONE);
 		if (BigDecimal.ZERO.compareTo(returnPrincipalRatio) >= 0) {
+			for (Contract contract : loan.getContracts()) {
+				contract.setStatusDelinquent();
+			}
 			return; //상환비율 0 처리불가능
 		}
 		for (Contract contract : loan.getContracts()) {
@@ -146,16 +151,20 @@ public class LoanServiceImpl implements LoanService {
 			throw new IllegalStateException("받은 돈보다 더 많이 분배했습니다.");
 		}
 		if (repaidAmountResidue.compareTo(BigDecimal.ZERO) > 0) {
-			loan.delinquentLoan();
+			loan.setStatusDelinquent();
+			for (Contract contract : loan.getContracts()) {
+				contract.setStatusDelinquent();
+			}
 			log.info("{}의 대출금액 상환 미달로 부분상환 후 상태 {}로 변경", loan.getId(), loan.getStatus());
 		}
-		//TODO 현재투자 수익률 재조정식
-		//이자상환
-		//Transaction만들기
-
-		//원금상환
-		//Transaction만들기
-
+		if (repaidAmountResidue.compareTo(BigDecimal.ZERO) == 0) {
+			loan.setStatusComplete();
+			for (Contract contract : loan.getContracts()) {
+				contract.setStatusComplete();
+				contract.getInvestment().subtractExpectYield(contract);
+			}
+			log.info("{}의 대출완납으로 상태 완료로 변경", loan.getId());
+		}
 	}
 
 	//대출금 출금
@@ -186,7 +195,7 @@ public class LoanServiceImpl implements LoanService {
 		Loan loan = loanRepository.findByIdAndStatus(payload.targetId(), LoanStatus.IN_PROGRESS)
 			.orElseThrow(() -> new LoanNotFoundException(payload.targetId()));
 		log.info("{}의 대출이 연체상태로 변경되었습니다 연체금 : {}", payload.targetId(), loan.getAmount());
-		loan.delinquentLoan();
+		loan.setStatusDelinquent();
 	}
 
 	private Boolean evaluateLoanRequest(CreditEvaluationResponseDto creditEvaluationResponseDto) {

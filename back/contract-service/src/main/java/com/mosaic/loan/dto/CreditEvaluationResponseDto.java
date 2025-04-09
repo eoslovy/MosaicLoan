@@ -12,6 +12,7 @@ public class CreditEvaluationResponseDto {
     private Integer memberId;
     private Integer defaultRate;
     private Integer interestRate;
+    private Integer expectYieldRate;
     private Integer maxLoanLimit;
     private LocalDateTime createdAt;
     private Integer caseId;

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.mosaic.core.model.status.ContractTransactionType;
-import com.mosaic.core.util.TimeUtil;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -36,9 +35,9 @@ public class ContractTransaction {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "contract_id", nullable = false)
-    private Contract contract;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
+	@JoinColumn(name = "contract_id", nullable = false)
+	private Contract contract;
 
 	@Column(name = "amount")
 	private BigDecimal amount;
@@ -49,6 +48,15 @@ public class ContractTransaction {
 
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
+
+	public static ContractTransaction buildLiquidateTransaction(Contract contract, LocalDateTime now) {
+		return builder()
+			.contract(contract)
+			.amount(contract.getOutstandingAmount().divide(BigDecimal.valueOf(2), 18, BigDecimal.ROUND_DOWN))
+			.createdAt(now)
+			.type(ContractTransactionType.OWNERSHIP_TRANSFER)
+			.build();
+	}
 
 	public void setContract(Contract contract) {
 		this.contract = contract;
