@@ -9,6 +9,8 @@ out
 .vscode
 *.log
 *.tsbuildinfo
-
-# git
-.git
+.cache
+.storybook
+pnpm-lock.yaml
+Dockerfile
+docker-compose.yml
