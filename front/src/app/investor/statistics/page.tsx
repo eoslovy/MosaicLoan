@@ -5,7 +5,7 @@ import BarLineChart from '@/components/chart/BarLineChart';
 import BarChart from '@/components/chart/BarChart';
 import request from '@/service/apis/request';
 import styles from '@/styles/investors/Statistics.module.scss';
-
+import useAuthRedirect from '@/hooks/useAuthRedirect';
 import IndustryTreemapChart from '@/components/chart/IndustryTreemapChart';
 import type {
   InvestmentStatisticsResponse,
@@ -42,6 +42,8 @@ const StatisticsPage = () => {
   const [data, setData] = useState<InvestmentStatisticsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
+
+  useAuthRedirect('/investor/statistics');
 
   useEffect(() => {
     const fetchData = async () => {

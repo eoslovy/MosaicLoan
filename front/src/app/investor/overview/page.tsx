@@ -8,10 +8,21 @@ import InvestButton from '@/components/investor/InvestButton';
 import InvestorOverviewSkeleton from '@/components/loading/InvestorOverviewSkeleton';
 import type { InvestmentOverviewResponse } from '@/types/pages';
 import request from '@/service/apis/request';
+import useAuthRedirect from '@/hooks/useAuthRedirect';
 
 const OverviewPage = () => {
   const [data, setData] = useState<InvestmentOverviewResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // const router = useRouter();
+  //   const { user, isFetched } = useUser();
+
+  //   useEffect(() => {
+  //     if (isFetched && !user) {
+  //       router.push('/investor/overview');
+  //     }
+  //   }, [user, isFetched]);
+  useAuthRedirect('/investor/overview');
 
   useEffect(() => {
     const fetchOverview = async () => {
