@@ -15,8 +15,21 @@ const Nav = () => {
   const { user, isFetched } = useUser();
   const router = useRouter();
 
-  if (!isFetched) {
+  const [isDelayDone, setIsDelayDone] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsDelayDone(true);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!isFetched || !isDelayDone) {
     return null;
+
+    // if (!isFetched) {
+    //   return null;
   }
 
   // const maskName = (name: string) => {

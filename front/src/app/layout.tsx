@@ -21,12 +21,26 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   const router = useRouter();
-  useUser(); // 전역에서 로그인 상태 확인
+  useUser(); // 로그인 여부 확인
 
   useEffect(() => {
-    const onUnauthorized = () => router.replace('/');
+    const onUnauthorized = () => {
+      const ignorePaths = ['/my/myAccount', '/my/myInfo']; // 제외할 경로들
+      const currentPath = window.location.pathname;
+
+      const shouldRedirect = !ignorePaths.some((path) =>
+        currentPath.startsWith(path),
+      );
+
+      if (shouldRedirect) {
+        router.replace('/');
+      }
+    };
+
     window.addEventListener('unauthorized', onUnauthorized);
-    return () => window.removeEventListener('unauthorized', onUnauthorized);
+    return () => {
+      window.removeEventListener('unauthorized', onUnauthorized);
+    };
   }, [router]);
 
   return (
