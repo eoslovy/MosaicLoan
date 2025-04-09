@@ -27,14 +27,14 @@ const OverviewTable: React.FC<InvestmentOverviewTableProps> = ({
   profitHistory,
 }) => {
   // 투자 리스트가 비어있는지 확인
-  const isInvestListEmpty = !investlist || investlist.length === 0;
+  const isInvestListEmpty = !investmentlist || investmentlist.length === 0;
 
   // 수익 내역이 비어있는지 확인
   const isProfitHistoryEmpty = !profitHistory || profitHistory.length === 0;
 
   const investmentRows: BasicTableRow[] = isInvestListEmpty
     ? []
-    : investlist.map((item, idx) => ({
+    : investmentlist.map((item, idx) => ({
         key: `investment-${idx}`,
         cells: [
           { key: `name-${idx}`, content: item.투자명 },

@@ -5,11 +5,11 @@
   background-color: $background-light;
   max-width: 1200px;
   margin: 0 auto;
-  
+
   @media (min-width: 768px) {
     padding: 32px;
   }
-  
+
   @media (min-width: 1024px) {
     padding: 40px;
   }
@@ -44,12 +44,12 @@
   flex-direction: column;
   margin-top: 10px;
   gap: 25px;
-  
+
   @media (min-width: 1024px) {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    
+
     .chartColumn {
       flex: 1;
       min-width: 0;
@@ -94,7 +94,7 @@
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 24px;
-  
+
   .treeMapTitle {
     font-size: $text-lg;
     font-weight: 600;

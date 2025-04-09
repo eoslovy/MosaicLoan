@@ -7,7 +7,7 @@ export const mockInvestorOverview: InvestmentOverviewResponse = {
     평균수익률: 8.3,
     투자건수: 50,
   },
-  investlist: [
+  investmentlist: [
     {
       투자명: '대박나는투자',
       투자금액: '123000',

@@ -20,7 +20,6 @@ const OverviewPage = () => {
           '/contract/investments/overview',
         );
         setData(result);
-        
       } catch (e: unknown) {
         if (process.env.NODE_ENV === 'development') {
           if (e instanceof Error) {
@@ -37,7 +36,7 @@ const OverviewPage = () => {
             평균수익률: 0,
             투자건수: 0,
           },
-          investlist: [],
+          investmentlist: [],
           profitHistory: [],
           simulation: {},
         });
@@ -48,8 +47,8 @@ const OverviewPage = () => {
 
     fetchOverview();
   }, []);
-  
-  if (isLoading) {
+
+  if (isLoading || data === null) {
     return <InvestorOverviewSkeleton />;
   }
 
