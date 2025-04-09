@@ -11,23 +11,7 @@ import { subYears, isBefore, format } from 'date-fns';
 import type { PillVariant } from '@/types/components';
 import Pill from '@/components/common/Pill';
 import request from '@/service/apis/request';
-
-interface Investment {
-  investmentId: number;
-  createdAt: string;
-  investStatus: 'COMPLETED' | 'IN_PROGRESS';
-  totalContractCount: number;
-  statusDistribution: {
-    completed: number;
-    active: number;
-    default: number;
-    transferred: number;
-  };
-}
-
-interface ApiResponse {
-  investments: Investment[];
-}
+import type { ContractResponse, Investment } from '@/types/pages';
 
 const typeOptions = [
   { value: 'repayment', label: '상환' },
@@ -87,7 +71,9 @@ const ContractsFilter = ({ onSearch }: ContractsFilterProps) => {
     setError(null);
 
     try {
-      const response = await request.GET<ApiResponse>('/contract/investments');
+      const response = await request.GET<ContractResponse>(
+        '/contract/investments',
+      );
 
       if (response?.investments && Array.isArray(response.investments)) {
         setInvestmentData(response.investments);

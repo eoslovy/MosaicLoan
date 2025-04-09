@@ -1,7 +1,4 @@
-import type {
-  InvestmentOverviewResponse,
-  ContractSummaryResponse,
-} from '@/types/pages';
+import type { InvestmentOverviewResponse, InvestOverview } from '@/types/pages';
 
 export const mockInvestorOverview: InvestmentOverviewResponse = {
   summary: {
@@ -10,7 +7,7 @@ export const mockInvestorOverview: InvestmentOverviewResponse = {
     평균수익률: 8.3,
     투자건수: 50,
   },
-  investlist: [
+  investmentlist: [
     {
       투자명: '대박나는투자',
       투자금액: '123000',
@@ -57,7 +54,7 @@ export const mockInvestorOverview: InvestmentOverviewResponse = {
   },
 };
 
-export const mockContractSummary: ContractSummaryResponse = {
+export const mockContractSummary: InvestOverview = {
   statusDistribution: {
     completed: 30,
     active: 120,

@@ -10,7 +10,7 @@ interface Investment {
   investmentId: number;
   createdAt: string;
   investStatus: 'COMPLETED' | 'IN_PROGRESS';
-  totalContractCount: number;
+  contractCount: number;
   statusDistribution: {
     completed: number;
     active: number;
@@ -179,7 +179,7 @@ const FilterSelectTable = ({
                         key={`${'investmentId' in item ? item.investmentId : item.id}-${col}`}
                       >
                         {'investmentId' in item
-                          ? (item.totalContractCount ?? '-')
+                          ? (item.contractCount ?? '-')
                           : '-'}
                       </td>
                     );

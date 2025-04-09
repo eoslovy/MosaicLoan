@@ -16,12 +16,12 @@ const useUser = () => {
 
   useEffect(() => {
     // mock service worker실행할 때는 아래꺼 주석처리 하고, 실제로 할때는 주석 풀어야함..
-    if (typeof window === 'undefined' || isFetched) return;
+    // if (typeof window === 'undefined' || isFetched) return;
 
     const fetchUser = async () => {
       try {
         const response = await request.GET<UserResponse['data']>('/member/me');
-        console.log('[useUser] 응답:', response);
+        // console.log('[useUser] 응답:', response);
 
         if (response) {
           const convertedUser: User = {
