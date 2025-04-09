@@ -135,16 +135,25 @@ const handlers = [
         createdAt:
           idx % 2 === 0 ? '2024-01-01T00:00:00Z' : '2024-02-01T00:00:00Z',
         investStatus: idx % 2 === 0 ? 'IN_PROGRESS' : 'COMPLETED',
-        totalContractCount: idx % 2 === 0 ? 5 : 10,
         statusDistribution: {
-          completed: idx % 3,
-          active: idx % 5,
-          default: idx % 2,
-          transferred: 0,
+          completed: 42,
+          active: 78,
+          default: 12,
+          transferred: 5,
         },
       })),
+      investOverview: Array.from({ length: 1 }, (_, idx) => ({
+        statusDistribution: {
+          completed: 42,
+          active: 78,
+          default: 12,
+          transferred: 5,
+        },
+        totalContractCount: 137,
+        totalProfit: 28750000,
+        totalLoss: 3400000,
+      })),
     };
-
     return res(ctx.status(200), ctx.json(mockData));
   }),
   rest.get('/credit/evaluations/recent', (req, res, ctx) => {
@@ -318,396 +327,399 @@ const handlers = [
       }),
     );
   }),
-  rest.post('/contract/investments/transactions/search', (req, res, ctx) => {
-    const {
-      startDate,
-      endDate,
-      types,
-      investmentIds,
-      page = 1,
-      pageSize = 15,
-      sort = [],
-    } = req.body as {
-      startDate?: string;
-      endDate?: string;
-      types?: string[];
-      investmentIds?: number[];
-      page?: number;
-      pageSize?: number;
-      sort?: Array<{ field: string; order: string }>;
-    };
+  rest.post(
+    '/api/contract/investments/transactions/search',
+    (req, res, ctx) => {
+      const {
+        startDate,
+        endDate,
+        types,
+        investmentIds,
+        page = 1,
+        pageSize = 15,
+        sort = [],
+      } = req.body as {
+        startDate?: string;
+        endDate?: string;
+        types?: string[];
+        investmentIds?: number[];
+        page?: number;
+        pageSize?: number;
+        sort?: Array<{ field: string; order: string }>;
+      };
 
-    interface Transaction {
-      id: number;
-      contractId: number;
-      investmentId: number;
-      amount: string;
-      createdAt: string;
-      status: string;
-      dueDate: string;
-      interestRate: string;
-      [key: string]: string | number;
-    }
+      interface Transaction {
+        id: number;
+        contractId: number;
+        investmentId: number;
+        amount: string;
+        createdAt: string;
+        status: string;
+        dueDate: string;
+        interestRate: string;
+        [key: string]: string | number;
+      }
 
-    const allTransactions: Transaction[] = [
-      {
-        id: 1001,
-        contractId: 5001,
-        investmentId: 1,
-        amount: '10000000',
-        createdAt: '2025-03-01',
-        status: '원금상환',
-        dueDate: '2025-09-01',
-        interestRate: '6.5%',
-      },
-      {
-        id: 1002,
-        contractId: 5001,
-        investmentId: 1,
-        amount: '650000',
-        createdAt: '2025-03-01',
-        status: '이자상환',
-        dueDate: '2025-09-01',
-        interestRate: '6.5%',
-      },
-      {
-        id: 1003,
-        contractId: 5002,
-        investmentId: 1,
-        amount: '15000000',
-        createdAt: '2025-03-02',
-        status: '원금상환',
-        dueDate: '2025-09-02',
-        interestRate: '6.5%',
-      },
-      {
-        id: 1004,
-        contractId: 5002,
-        investmentId: 1,
-        amount: '975000',
-        createdAt: '2025-03-02',
-        status: '이자상환',
-        dueDate: '2025-09-02',
-        interestRate: '6.5%',
-      },
-      {
-        id: 1005,
-        contractId: 5003,
-        investmentId: 2,
-        amount: '8000000',
-        createdAt: '2025-03-05',
-        status: '원금상환',
-        dueDate: '2025-09-05',
-        interestRate: '6.6%',
-      },
-      {
-        id: 1006,
-        contractId: 5003,
-        investmentId: 2,
-        amount: '528000',
-        createdAt: '2025-03-05',
-        status: '이자상환',
-        dueDate: '2025-09-05',
-        interestRate: '6.6%',
-      },
-      {
-        id: 1007,
-        contractId: 5004,
-        investmentId: 2,
-        amount: '12000000',
-        createdAt: '2025-03-07',
-        status: '원금상환',
-        dueDate: '2025-09-07',
-        interestRate: '6.6%',
-      },
-      {
-        id: 1008,
-        contractId: 5004,
-        investmentId: 2,
-        amount: '792000',
-        createdAt: '2025-03-07',
-        status: '이자상환',
-        dueDate: '2025-09-07',
-        interestRate: '6.6%',
-      },
-      {
-        id: 1009,
-        contractId: 5005,
-        investmentId: 3,
-        amount: '20000000',
-        createdAt: '2025-03-10',
-        status: '원금상환',
-        dueDate: '2025-09-10',
-        interestRate: '6.7%',
-      },
-      {
-        id: 1010,
-        contractId: 5005,
-        investmentId: 3,
-        amount: '1340000',
-        createdAt: '2025-03-10',
-        status: '이자상환',
-        dueDate: '2025-09-10',
-        interestRate: '6.7%',
-      },
-      {
-        id: 1011,
-        contractId: 5006,
-        investmentId: 3,
-        amount: '18000000',
-        createdAt: '2025-03-12',
-        status: '원금상환',
-        dueDate: '2025-09-12',
-        interestRate: '6.7%',
-      },
-      {
-        id: 1012,
-        contractId: 5006,
-        investmentId: 3,
-        amount: '1206000',
-        createdAt: '2025-03-12',
-        status: '이자상환',
-        dueDate: '2025-09-12',
-        interestRate: '6.7%',
-      },
-      {
-        id: 1013,
-        contractId: 5007,
-        investmentId: 4,
-        amount: '25000000',
-        createdAt: '2025-03-15',
-        status: '원금상환',
-        dueDate: '2025-09-15',
-        interestRate: '6.8%',
-      },
-      {
-        id: 1014,
-        contractId: 5007,
-        investmentId: 4,
-        amount: '1700000',
-        createdAt: '2025-03-15',
-        status: '이자상환',
-        dueDate: '2025-09-15',
-        interestRate: '6.8%',
-      },
-      {
-        id: 1015,
-        contractId: 5008,
-        investmentId: 4,
-        amount: '500000',
-        createdAt: '2025-03-18',
-        status: '환급',
-        dueDate: '2025-09-18',
-        interestRate: '6.8%',
-      },
-      {
-        id: 1016,
-        contractId: 5009,
-        investmentId: 5,
-        amount: '30000000',
-        createdAt: '2025-03-20',
-        status: '원금상환',
-        dueDate: '2025-09-20',
-        interestRate: '6.9%',
-      },
-      {
-        id: 1017,
-        contractId: 5009,
-        investmentId: 5,
-        amount: '2010000',
-        createdAt: '2025-03-20',
-        status: '이자상환',
-        dueDate: '2025-09-20',
-        interestRate: '6.9%',
-      },
-      {
-        id: 1018,
-        contractId: 5010,
-        investmentId: 5,
-        amount: '22000000',
-        createdAt: '2025-03-22',
-        status: '원금상환',
-        dueDate: '2025-09-22',
-        interestRate: '6.9%',
-      },
-      {
-        id: 1019,
-        contractId: 5010,
-        investmentId: 5,
-        amount: '1474000',
-        createdAt: '2025-03-22',
-        status: '이자상환',
-        dueDate: '2025-09-22',
-        interestRate: '6.9%',
-      },
-      {
-        id: 1020,
-        contractId: 5011,
-        investmentId: 6,
-        amount: '700000',
-        createdAt: '2025-03-25',
-        status: '환급',
-        dueDate: '2025-09-25',
-        interestRate: '7.0%',
-      },
-      {
-        id: 1021,
-        contractId: 5012,
-        investmentId: 7,
-        amount: '18000000',
-        createdAt: '2025-03-27',
-        status: '원금상환',
-        dueDate: '2025-09-27',
-        interestRate: '7.0%',
-      },
-      {
-        id: 1022,
-        contractId: 5012,
-        investmentId: 7,
-        amount: '1188000',
-        createdAt: '2025-03-27',
-        status: '이자상환',
-        dueDate: '2025-09-27',
-        interestRate: '7.0%',
-      },
-      {
-        id: 1023,
-        contractId: 5013,
-        investmentId: 8,
-        amount: '15000000',
-        createdAt: '2025-03-29',
-        status: '원금상환',
-        dueDate: '2025-09-29',
-        interestRate: '7.1%',
-      },
-      {
-        id: 1024,
-        contractId: 5013,
-        investmentId: 8,
-        amount: '1005000',
-        createdAt: '2025-03-29',
-        status: '이자상환',
-        dueDate: '2025-09-29',
-        interestRate: '7.1%',
-      },
-      {
-        id: 1025,
-        contractId: 5014,
-        investmentId: 9,
-        amount: '28000000',
-        createdAt: '2025-03-30',
-        status: '원금상환',
-        dueDate: '2025-09-30',
-        interestRate: '7.2%',
-      },
-      {
-        id: 1026,
-        contractId: 5014,
-        investmentId: 9,
-        amount: '1904000',
-        createdAt: '2025-03-30',
-        status: '이자상환',
-        dueDate: '2025-09-30',
-        interestRate: '7.2%',
-      },
-      {
-        id: 1027,
-        contractId: 5015,
-        investmentId: 10,
-        amount: '32000000',
-        createdAt: '2025-03-31',
-        status: '원금상환',
-        dueDate: '2025-09-30',
-        interestRate: '7.2%',
-      },
-      {
-        id: 1028,
-        contractId: 5015,
-        investmentId: 10,
-        amount: '2144000',
-        createdAt: '2025-03-31',
-        status: '이자상환',
-        dueDate: '2025-09-30',
-        interestRate: '7.2%',
-      },
-      {
-        id: 1029,
-        contractId: 5016,
-        investmentId: 11,
-        amount: '900000',
-        createdAt: '2025-04-01',
-        status: '환급',
-        dueDate: '2025-10-01',
-        interestRate: '7.3%',
-      },
-      {
-        id: 1030,
-        contractId: 5017,
-        investmentId: 12,
-        amount: '800000',
-        createdAt: '2025-04-01',
-        status: '환급',
-        dueDate: '2025-10-01',
-        interestRate: '7.3%',
-      },
-    ];
+      const allTransactions: Transaction[] = [
+        {
+          id: 1001,
+          contractId: 5001,
+          investmentId: 1,
+          amount: '10000000',
+          createdAt: '2025-03-01',
+          status: '원금상환',
+          dueDate: '2025-09-01',
+          interestRate: '6.5%',
+        },
+        {
+          id: 1002,
+          contractId: 5001,
+          investmentId: 1,
+          amount: '650000',
+          createdAt: '2025-03-01',
+          status: '이자상환',
+          dueDate: '2025-09-01',
+          interestRate: '6.5%',
+        },
+        {
+          id: 1003,
+          contractId: 5002,
+          investmentId: 1,
+          amount: '15000000',
+          createdAt: '2025-03-02',
+          status: '원금상환',
+          dueDate: '2025-09-02',
+          interestRate: '6.5%',
+        },
+        {
+          id: 1004,
+          contractId: 5002,
+          investmentId: 1,
+          amount: '975000',
+          createdAt: '2025-03-02',
+          status: '이자상환',
+          dueDate: '2025-09-02',
+          interestRate: '6.5%',
+        },
+        {
+          id: 1005,
+          contractId: 5003,
+          investmentId: 2,
+          amount: '8000000',
+          createdAt: '2025-03-05',
+          status: '원금상환',
+          dueDate: '2025-09-05',
+          interestRate: '6.6%',
+        },
+        {
+          id: 1006,
+          contractId: 5003,
+          investmentId: 2,
+          amount: '528000',
+          createdAt: '2025-03-05',
+          status: '이자상환',
+          dueDate: '2025-09-05',
+          interestRate: '6.6%',
+        },
+        {
+          id: 1007,
+          contractId: 5004,
+          investmentId: 2,
+          amount: '12000000',
+          createdAt: '2025-03-07',
+          status: '원금상환',
+          dueDate: '2025-09-07',
+          interestRate: '6.6%',
+        },
+        {
+          id: 1008,
+          contractId: 5004,
+          investmentId: 2,
+          amount: '792000',
+          createdAt: '2025-03-07',
+          status: '이자상환',
+          dueDate: '2025-09-07',
+          interestRate: '6.6%',
+        },
+        {
+          id: 1009,
+          contractId: 5005,
+          investmentId: 3,
+          amount: '20000000',
+          createdAt: '2025-03-10',
+          status: '원금상환',
+          dueDate: '2025-09-10',
+          interestRate: '6.7%',
+        },
+        {
+          id: 1010,
+          contractId: 5005,
+          investmentId: 3,
+          amount: '1340000',
+          createdAt: '2025-03-10',
+          status: '이자상환',
+          dueDate: '2025-09-10',
+          interestRate: '6.7%',
+        },
+        {
+          id: 1011,
+          contractId: 5006,
+          investmentId: 3,
+          amount: '18000000',
+          createdAt: '2025-03-12',
+          status: '원금상환',
+          dueDate: '2025-09-12',
+          interestRate: '6.7%',
+        },
+        {
+          id: 1012,
+          contractId: 5006,
+          investmentId: 3,
+          amount: '1206000',
+          createdAt: '2025-03-12',
+          status: '이자상환',
+          dueDate: '2025-09-12',
+          interestRate: '6.7%',
+        },
+        {
+          id: 1013,
+          contractId: 5007,
+          investmentId: 4,
+          amount: '25000000',
+          createdAt: '2025-03-15',
+          status: '원금상환',
+          dueDate: '2025-09-15',
+          interestRate: '6.8%',
+        },
+        {
+          id: 1014,
+          contractId: 5007,
+          investmentId: 4,
+          amount: '1700000',
+          createdAt: '2025-03-15',
+          status: '이자상환',
+          dueDate: '2025-09-15',
+          interestRate: '6.8%',
+        },
+        {
+          id: 1015,
+          contractId: 5008,
+          investmentId: 4,
+          amount: '500000',
+          createdAt: '2025-03-18',
+          status: '환급',
+          dueDate: '2025-09-18',
+          interestRate: '6.8%',
+        },
+        {
+          id: 1016,
+          contractId: 5009,
+          investmentId: 5,
+          amount: '30000000',
+          createdAt: '2025-03-20',
+          status: '원금상환',
+          dueDate: '2025-09-20',
+          interestRate: '6.9%',
+        },
+        {
+          id: 1017,
+          contractId: 5009,
+          investmentId: 5,
+          amount: '2010000',
+          createdAt: '2025-03-20',
+          status: '이자상환',
+          dueDate: '2025-09-20',
+          interestRate: '6.9%',
+        },
+        {
+          id: 1018,
+          contractId: 5010,
+          investmentId: 5,
+          amount: '22000000',
+          createdAt: '2025-03-22',
+          status: '원금상환',
+          dueDate: '2025-09-22',
+          interestRate: '6.9%',
+        },
+        {
+          id: 1019,
+          contractId: 5010,
+          investmentId: 5,
+          amount: '1474000',
+          createdAt: '2025-03-22',
+          status: '이자상환',
+          dueDate: '2025-09-22',
+          interestRate: '6.9%',
+        },
+        {
+          id: 1020,
+          contractId: 5011,
+          investmentId: 6,
+          amount: '700000',
+          createdAt: '2025-03-25',
+          status: '환급',
+          dueDate: '2025-09-25',
+          interestRate: '7.0%',
+        },
+        {
+          id: 1021,
+          contractId: 5012,
+          investmentId: 7,
+          amount: '18000000',
+          createdAt: '2025-03-27',
+          status: '원금상환',
+          dueDate: '2025-09-27',
+          interestRate: '7.0%',
+        },
+        {
+          id: 1022,
+          contractId: 5012,
+          investmentId: 7,
+          amount: '1188000',
+          createdAt: '2025-03-27',
+          status: '이자상환',
+          dueDate: '2025-09-27',
+          interestRate: '7.0%',
+        },
+        {
+          id: 1023,
+          contractId: 5013,
+          investmentId: 8,
+          amount: '15000000',
+          createdAt: '2025-03-29',
+          status: '원금상환',
+          dueDate: '2025-09-29',
+          interestRate: '7.1%',
+        },
+        {
+          id: 1024,
+          contractId: 5013,
+          investmentId: 8,
+          amount: '1005000',
+          createdAt: '2025-03-29',
+          status: '이자상환',
+          dueDate: '2025-09-29',
+          interestRate: '7.1%',
+        },
+        {
+          id: 1025,
+          contractId: 5014,
+          investmentId: 9,
+          amount: '28000000',
+          createdAt: '2025-03-30',
+          status: '원금상환',
+          dueDate: '2025-09-30',
+          interestRate: '7.2%',
+        },
+        {
+          id: 1026,
+          contractId: 5014,
+          investmentId: 9,
+          amount: '1904000',
+          createdAt: '2025-03-30',
+          status: '이자상환',
+          dueDate: '2025-09-30',
+          interestRate: '7.2%',
+        },
+        {
+          id: 1027,
+          contractId: 5015,
+          investmentId: 10,
+          amount: '32000000',
+          createdAt: '2025-03-31',
+          status: '원금상환',
+          dueDate: '2025-09-30',
+          interestRate: '7.2%',
+        },
+        {
+          id: 1028,
+          contractId: 5015,
+          investmentId: 10,
+          amount: '2144000',
+          createdAt: '2025-03-31',
+          status: '이자상환',
+          dueDate: '2025-09-30',
+          interestRate: '7.2%',
+        },
+        {
+          id: 1029,
+          contractId: 5016,
+          investmentId: 11,
+          amount: '900000',
+          createdAt: '2025-04-01',
+          status: '환급',
+          dueDate: '2025-10-01',
+          interestRate: '7.3%',
+        },
+        {
+          id: 1030,
+          contractId: 5017,
+          investmentId: 12,
+          amount: '800000',
+          createdAt: '2025-04-01',
+          status: '환급',
+          dueDate: '2025-10-01',
+          interestRate: '7.3%',
+        },
+      ];
 
-    const filteredTransactions: Transaction[] = [...allTransactions];
+      const filteredTransactions: Transaction[] = [...allTransactions];
 
-    if (sort.length > 0) {
-      const { field, order } = sort[0];
+      if (sort.length > 0) {
+        const { field, order } = sort[0];
 
-      console.log(`MSW - 정렬 적용: ${field} ${order}`);
+        console.log(`MSW - 정렬 적용: ${field} ${order}`);
 
-      filteredTransactions.sort((a, b) => {
-        const valueA = a[field];
-        const valueB = b[field];
+        filteredTransactions.sort((a, b) => {
+          const valueA = a[field];
+          const valueB = b[field];
 
-        if (typeof valueA === 'string' && typeof valueB === 'string') {
-          if (valueA.includes('%') && valueB.includes('%')) {
-            const numA = parseFloat(valueA.replace('%', ''));
-            const numB = parseFloat(valueB.replace('%', ''));
-            return order === 'asc' ? numA - numB : numB - numA;
+          if (typeof valueA === 'string' && typeof valueB === 'string') {
+            if (valueA.includes('%') && valueB.includes('%')) {
+              const numA = parseFloat(valueA.replace('%', ''));
+              const numB = parseFloat(valueB.replace('%', ''));
+              return order === 'asc' ? numA - numB : numB - numA;
+            }
+
+            return order === 'asc'
+              ? valueA.localeCompare(valueB)
+              : valueB.localeCompare(valueA);
           }
 
+          if (typeof valueA === 'number' && typeof valueB === 'number') {
+            return order === 'asc' ? valueA - valueB : valueB - valueA;
+          }
+
+          const strA = String(valueA);
+          const strB = String(valueB);
           return order === 'asc'
-            ? valueA.localeCompare(valueB)
-            : valueB.localeCompare(valueA);
-        }
+            ? strA.localeCompare(strB)
+            : strB.localeCompare(strA);
+        });
+      }
 
-        if (typeof valueA === 'number' && typeof valueB === 'number') {
-          return order === 'asc' ? valueA - valueB : valueB - valueA;
-        }
+      const totalItemCount = filteredTransactions.length;
+      const totalPage = Math.ceil(totalItemCount / pageSize);
+      const startIndex = (page - 1) * pageSize;
+      const paginatedTransactions = filteredTransactions.slice(
+        startIndex,
+        startIndex + pageSize,
+      );
 
-        const strA = String(valueA);
-        const strB = String(valueB);
-        return order === 'asc'
-          ? strA.localeCompare(strB)
-          : strB.localeCompare(strA);
-      });
-    }
-
-    const totalItemCount = filteredTransactions.length;
-    const totalPage = Math.ceil(totalItemCount / pageSize);
-    const startIndex = (page - 1) * pageSize;
-    const paginatedTransactions = filteredTransactions.slice(
-      startIndex,
-      startIndex + pageSize,
-    );
-
-    return res(
-      ctx.status(200),
-      ctx.json({
-        pagination: {
-          page,
-          pageSize,
-          totalPage,
-          totalItemCount,
-        },
-        transactions: paginatedTransactions,
-      }),
-    );
-  }),
+      return res(
+        ctx.status(200),
+        ctx.json({
+          pagination: {
+            page,
+            pageSize,
+            totalPage,
+            totalItemCount,
+          },
+          transactions: paginatedTransactions,
+        }),
+      );
+    },
+  ),
   rest.post('/contract/investments/', async (req, res, ctx) => {
     const { principal, targetRate, targetWeeks } = await req.json();
 
@@ -815,11 +827,7 @@ const handlers = [
         balance: string;
         type: string;
       }[];
-      [key: string]:
-        | string
-        | number
-        | { date: string; amount: string; balance: string; type: string }[]
-        | undefined;
+      [key: string]: string | number | object[] | unknown;
     }
 
     const allTransactions: Transaction[] = [
@@ -1201,37 +1209,90 @@ const handlers = [
       },
     ];
 
-    const filteredTransactions: Transaction[] = [...allTransactions];
+    let filteredTransactions: Transaction[] = [...allTransactions];
+
+    if (startDate && endDate) {
+      filteredTransactions = filteredTransactions.filter((transaction) => {
+        const transactionDate = new Date(transaction.createdAt);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        start.setHours(0, 0, 0, 0);
+        end.setHours(23, 59, 59, 999);
+
+        return transactionDate >= start && transactionDate <= end;
+      });
+    }
+
+    if (types && types.length > 0) {
+      filteredTransactions = filteredTransactions.filter((transaction) => {
+        return types.includes(transaction.status);
+      });
+    }
 
     if (sort.length > 0) {
-      const { field, order } = sort[0];
+      filteredTransactions.sort((a, b) =>
+        sort.reduce((result, { field, order }) => {
+          if (result !== 0) return result;
 
-      filteredTransactions.sort((a, b) => {
-        const valueA = a[field];
-        const valueB = b[field];
+          const valueA = a[field];
+          const valueB = b[field];
 
-        if (typeof valueA === 'string' && typeof valueB === 'string') {
-          if (valueA.includes('%') && valueB.includes('%')) {
-            const numA = parseFloat(valueA.replace('%', ''));
-            const numB = parseFloat(valueB.replace('%', ''));
-            return order === 'asc' ? numA - numB : numB - numA;
+          let currentComparisonResult: number;
+
+          if (field === 'createdAt' || field === 'dueDate') {
+            const parseDate = (dateString: string) => {
+              const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})/);
+              if (match) {
+                return new Date(
+                  parseInt(match[1], 10),
+                  parseInt(match[2], 10) - 1,
+                  parseInt(match[3], 10),
+                );
+              }
+              return new Date(dateString);
+            };
+
+            const dateA =
+              valueA && typeof valueA === 'string'
+                ? parseDate(valueA)
+                : new Date(0);
+            const dateB =
+              valueB && typeof valueB === 'string'
+                ? parseDate(valueB)
+                : new Date(0);
+
+            currentComparisonResult =
+              order === 'asc'
+                ? dateA.getTime() - dateB.getTime()
+                : dateB.getTime() - dateA.getTime();
+          } else if (typeof valueA === 'string' && typeof valueB === 'string') {
+            if (valueA.includes('%') && valueB.includes('%')) {
+              const numA = parseFloat(valueA.replace('%', ''));
+              const numB = parseFloat(valueB.replace('%', ''));
+              currentComparisonResult =
+                order === 'asc' ? numA - numB : numB - numA;
+            } else {
+              currentComparisonResult =
+                order === 'asc'
+                  ? valueA.localeCompare(valueB)
+                  : valueB.localeCompare(valueA);
+            }
+          } else if (typeof valueA === 'number' && typeof valueB === 'number') {
+            currentComparisonResult =
+              order === 'asc' ? valueA - valueB : valueB - valueA;
+          } else {
+            const strA = String(valueA);
+            const strB = String(valueB);
+            currentComparisonResult =
+              order === 'asc'
+                ? strA.localeCompare(strB)
+                : strB.localeCompare(strA);
           }
 
-          return order === 'asc'
-            ? valueA.localeCompare(valueB)
-            : valueB.localeCompare(valueA);
-        }
-
-        if (typeof valueA === 'number' && typeof valueB === 'number') {
-          return order === 'asc' ? valueA - valueB : valueB - valueA;
-        }
-
-        const strA = String(valueA);
-        const strB = String(valueB);
-        return order === 'asc'
-          ? strA.localeCompare(strB)
-          : strB.localeCompare(strA);
-      });
+          return currentComparisonResult;
+        }, 0),
+      );
     }
 
     const totalItemCount = filteredTransactions.length;
@@ -1252,6 +1313,112 @@ const handlers = [
           totalItemCount,
         },
         transactions: paginatedTransactions,
+      }),
+    );
+  }),
+  // 대출 ID: loan-3 (연체 상태) 상세 정보
+  rest.get('/api/contract/loans/loan-3', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        transactions: [
+          {
+            contractId: 3,
+            loanId: 'loan-3',
+            amount: '₩ 15,000,000',
+            createdAt: '2024-03-10',
+            status: '대출실행',
+          },
+          {
+            contractId: 3,
+            loanId: 'loan-3',
+            amount: '₩ 120,000',
+            createdAt: '2024-04-10',
+            status: '원금상환',
+          },
+          {
+            contractId: 3,
+            loanId: 'loan-3',
+            amount: '₩ 120,000',
+            createdAt: '2024-05-10',
+            status: '원금상환',
+          },
+        ],
+      }),
+    );
+  }),
+
+  // 대출 ID: loan-9 (연체 상태) 상세 정보
+  rest.get('/api/contract/loans/loan-9', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        transactions: [
+          {
+            contractId: 9,
+            loanId: 'loan-9',
+            amount: '₩ 6,500,000',
+            createdAt: '2024-03-22',
+            status: '대출실행',
+          },
+          {
+            contractId: 9,
+            loanId: 'loan-9',
+            amount: '₩ 47,500',
+            createdAt: '2024-04-22',
+            status: '원금상환',
+          },
+        ],
+      }),
+    );
+  }),
+
+  // 대출 ID: loan-14 (연체 상태) 상세 정보
+  rest.get('/api/contract/loans/loan-14', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        transactions: [
+          {
+            contractId: 14,
+            loanId: 'loan-14',
+            amount: '₩ 40,000,000',
+            createdAt: '2024-06-22',
+            status: '대출실행',
+          },
+          {
+            contractId: 14,
+            loanId: 'loan-14',
+            amount: '₩ 300,000',
+            createdAt: '2024-07-22',
+            status: '원금상환',
+          },
+        ],
+      }),
+    );
+  }),
+
+  // 대출 ID: loan-19 (연체 상태) 상세 정보
+  rest.get('/api/contract/loans/loan-19', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        transactions: [
+          {
+            contractId: 19,
+            loanId: 'loan-19',
+            amount: '₩ 17,500,000',
+            createdAt: '2024-04-30',
+            status: '대출실행',
+          },
+          {
+            contractId: 19,
+            loanId: 'loan-19',
+            amount: '₩ 120,750',
+            createdAt: '2024-05-30',
+            status: '원금상환',
+          },
+        ],
       }),
     );
   }),

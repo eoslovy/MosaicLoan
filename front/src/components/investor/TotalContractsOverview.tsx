@@ -4,12 +4,8 @@ import React, { useState, useEffect } from 'react';
 import styles from '@/styles/investors/TotalContractsOverview.module.scss';
 import ProgressGroup from '@/components/common/ProgressGroup';
 import BasicCard from '@/components/common/BasicInfoCard';
-import type { ContractSummaryResponse } from '@/types/pages';
+import type { ContractResponse, InvestOverview } from '@/types/pages';
 import request from '@/service/apis/request';
-
-interface TotalContractsOverviewProps {
-  data: ContractSummaryResponse;
-}
 
 const statusMap = {
   completed: { label: '상환완료', color: '#00C851' },
@@ -19,7 +15,7 @@ const statusMap = {
 };
 
 const TotalContractsOverview: React.FC = () => {
-  const [data, setData] = useState<ContractSummaryResponse | null>(null);
+  const [data, setData] = useState<InvestOverview[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,10 +24,10 @@ const TotalContractsOverview: React.FC = () => {
       try {
         setIsLoading(true);
         // request.GET을 사용하여 API 요청
-        const summaryData = await request.GET<ContractSummaryResponse>(
-          '/contract/contracts/summary',
+        const summaryData = await request.GET<ContractResponse>(
+          '/contract/investments',
         );
-        setData(summaryData);
+        setData(summaryData.investOverview);
       } catch (err) {
         console.error('계약 요약 데이터를 불러오는 중 오류 발생:', err);
         setError('데이터를 불러오는 중 오류가 발생했습니다.');
@@ -52,7 +48,7 @@ const TotalContractsOverview: React.FC = () => {
   }
 
   const { statusDistribution, totalContractCount, totalProfit, totalLoss } =
-    data;
+    data[0];
 
   const totalStatusCount = Object.values(statusDistribution).reduce(
     (sum, count) => sum + count,

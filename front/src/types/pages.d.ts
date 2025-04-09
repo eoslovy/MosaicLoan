@@ -41,7 +41,20 @@ export interface InvestmentOverviewTableProps {
   profitHistory: ProfitItem[];
 }
 
-export interface ContractSummaryResponse {
+export interface Investment {
+  investmentId: number;
+  createdAt: string;
+  investStatus: 'COMPLETED' | 'IN_PROGRESS';
+  totalContractCount: number;
+  statusDistribution: {
+    completed: number;
+    active: number;
+    default: number;
+    transferred: number;
+  };
+}
+
+export interface InvestOverview {
   statusDistribution: {
     completed: number;
     active: number;
@@ -51,6 +64,32 @@ export interface ContractSummaryResponse {
   totalContractCount: number;
   totalProfit: number;
   totalLoss: number;
+}
+
+export interface ContractResponse {
+  investments: Investment[];
+  investOverview: InvestOverview[];
+}
+
+export interface Transaction {
+  id: number;
+  contractId: number;
+  investmentId: number;
+  amount: string;
+  createdAt: string;
+  status: string;
+  bondMaturity: string;
+  interestRate: string;
+}
+
+export interface ApiResponseData {
+  pagination: {
+    page: number;
+    pageSize: number;
+    totalPage: number;
+    totalItemCount: number;
+  };
+  transactions: Transaction[];
 }
 
 export interface ContractRow {
