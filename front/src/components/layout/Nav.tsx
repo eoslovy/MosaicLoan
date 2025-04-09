@@ -19,10 +19,10 @@ const Nav = () => {
     return null;
   }
 
-  const maskName = (name: string) => {
-    if (name.length <= 2) return `${name[0]} *`;
-    return `${name[0]} * ${name[name.length - 1]}`;
-  };
+  // const maskName = (name: string) => {
+  //   if (name.length <= 2) return `${name[0]} *`;
+  //   return `${name[0]} * ${name[name.length - 1]}`;
+  // };
 
   const handleLogout = async () => {
     try {
@@ -82,7 +82,7 @@ const Nav = () => {
           <>
             <Button
               label={{
-                text: `${maskName(user.username)}님`,
+                text: `${user.username}님`,
                 size: 'sm',
                 color: 'blue',
               }}
