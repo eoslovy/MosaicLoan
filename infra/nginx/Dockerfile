@@ -1,7 +1,7 @@
 ARG FRONTEND_IMAGE
 FROM ${FRONTEND_IMAGE} as frontend
 FROM nginx:1.25
-ARG NGINX=nginx.conf
+ARG NGINX=local_nginx.conf
 ENV NGINX_CONF=${NGINX}
 RUN rm -rf /usr/share/nginx/html/*
 
