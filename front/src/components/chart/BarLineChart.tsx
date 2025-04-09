@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useMemo } from 'react';
 import { Chart } from 'react-chartjs-2';
 import type { TooltipItem } from 'chart.js';
@@ -48,10 +50,9 @@ const BarLineChart: React.FC<BarLineChartProps> = ({
   dateUnit = 'day',
   displayCount = 10,
   barCategories,
-  // barLabel = '투자 상태별 금액',
-  lineLabel = '투자금 잔액',
-  barColors = ['#10B981', '#6366F1', '#FACC15', '#EF4444', '#9CA3AF'],
-  lineColor = '#EF4444',
+  lineLabel = '비율 (%)',
+  barColors = ['#1e88e5'],
+  lineColor = ['#ffc70e'],
 }) => {
   const processedBarData = useMemo(() => {
     return barCategories.map((category) => ({
@@ -81,14 +82,7 @@ const BarLineChart: React.FC<BarLineChartProps> = ({
   const data = {
     labels: slicedLabels,
     datasets: [
-      ...slicedBarData.map((category) => ({
-        type: 'bar' as const,
-        label: category.category,
-        data: category.data.map((d) => d.value),
-        backgroundColor: category.color,
-        borderRadius: 4,
-        stack: 'Stack 1',
-      })),
+      // 선 그래프를 먼저 배치하고 order를 0으로 설정
       {
         type: 'line' as const,
         label: lineLabel,
@@ -96,11 +90,24 @@ const BarLineChart: React.FC<BarLineChartProps> = ({
         borderColor: lineColor,
         backgroundColor: lineColor,
         fill: false,
-        pointRadius: 5,
-        tension: 0.4,
+        pointRadius: 4,
+        tension: 0.3,
         borderWidth: 2,
-        order: 1,
+        order: 0, // 선 그래프가 앞에 표시되도록 설정
+        zIndex: 10, // 높은 zIndex 설정
+        yAxisID: 'y1', // 오른쪽 y축 사용
       },
+      // 막대 그래프
+      ...slicedBarData.map((category) => ({
+        type: 'bar' as const,
+        label: category.category,
+        data: category.data.map((d) => d.value),
+        backgroundColor: category.color, // 카테고리별 색상 적용
+        borderRadius: 4,
+        stack: 'Stack 1',
+        order: 1,
+        yAxisID: 'y', // 왼쪽 y축 사용
+      })),
     ],
   };
 
@@ -109,7 +116,9 @@ const BarLineChart: React.FC<BarLineChartProps> = ({
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: 'bottom' as const,
+        align: 'center' as const,
+        margin: 25,
       },
       tooltip: {
         enabled: true,
@@ -139,7 +148,7 @@ const BarLineChart: React.FC<BarLineChartProps> = ({
             if (dataset.type === 'line') {
               const { raw } = tooltipItem;
               if (typeof raw === 'number') {
-                return `${dataset.label}: ${raw.toLocaleString()} 원`;
+                return `${dataset.label}: ${raw.toLocaleString()}%`;
               }
             }
 
@@ -153,10 +162,66 @@ const BarLineChart: React.FC<BarLineChartProps> = ({
         grid: {
           display: false,
         },
+        ticks: {
+          maxRotation: 0,
+          minRotation: 0,
+          autoSkip: false,
+          padding: 5,
+          font: {
+            size: 1,
+          },
+          callback: (value: unknown, index: number) => {
+            const label = slicedLabels[index];
+            if (!label) return '';
+
+            // 언더스코어로 구분된 라벨 처리
+            if (label.includes('_')) {
+              // 언더스코어를 기준으로 분리하고 각 부분을 짧게 만든 후 줄바꿈으로 결합
+              const parts = label.split('_');
+              if (parts.length > 1) {
+                return parts
+                  .map((part) =>
+                    part.length > 5 ? `${part.substring(0, 5)}.` : part,
+                  )
+                  .join('\n');
+              }
+            }
+
+            // 일반 라벨 처리
+            if (label.length > 8) {
+              return `${label.substring(0, 7)}.`;
+            }
+
+            return label;
+          },
+        },
       },
       y: {
+        position: 'left' as const,
         beginAtZero: true,
-        stacked: true,
+        grid: {
+          color: 'rgba(0, 0, 0, 0.05)',
+        },
+        ticks: {
+          font: {
+            size: 11,
+          },
+        },
+      },
+      y1: {
+        position: 'right' as const,
+        beginAtZero: true,
+        min: 0,
+        max: 100, // 비율은 0-100%로 고정
+        grid: {
+          display: false, // 두 번째 축의 그리드 라인 숨김
+        },
+        ticks: {
+          callback: (value: unknown) => `${value}%`,
+          font: {
+            size: 11,
+          },
+        },
       },
     },
   };

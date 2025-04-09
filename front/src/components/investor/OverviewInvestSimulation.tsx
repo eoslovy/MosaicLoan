@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from '@/styles/investors/OverviewInvestSimulation.module.scss';
 import InvestmentInputPanel from '@/components/ui/InvestmentInputPanel';
-import InvestmentResultPanel from '@/components/ui/InvestmentResultPanel';
 import ProfitDistributionChart from '@/components/ui/ProfitDistributionChart';
 import Text from '@/components/common/Text';
 import InvestmentModal from '@/components/ui/InvestmentModal';
@@ -25,7 +24,6 @@ const generateMockData = (mean: number, stdDev: number, count: number) => {
 const OverviewInvestSimulation = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [amount, setAmount] = useState(1000000);
-  const [duration, setDuration] = useState(12);
   const [rate, setRate] = useState(8.8);
   const [simulationData, setSimulationData] = useState<number[]>([]);
 

@@ -7,7 +7,6 @@ import request from '@/service/apis/request';
 import styles from '@/styles/investors/Statistics.module.scss';
 
 import IndustryTreemapChart from '@/components/chart/IndustryTreemapChart';
-// import IndustryHeatMapChart from '@/components/chart/IndustryHeatMapChart';
 import type {
   InvestmentStatisticsResponse,
   RawIndustryRatio,
@@ -68,58 +67,97 @@ const StatisticsPage = () => {
       <div className={styles.statusText}>데이터를 불러올 수 없습니다.</div>
     );
 
-  const renderBarLineSection = (
-    title: string,
-    items: { group: string; count: number; ratio: number }[],
-  ) => (
-    <section className={styles.chartSection}>
-      <h2 className={styles.sectionTitle}>{title}</h2>
-      <BarLineChart
-        labels={items.map((i) => i.group)}
-        rawBarData={{ 거래건수: items.map((i) => i.count) }}
-        rawLineData={items.map((i) => i.ratio)}
-        barCategories={['거래건수']}
-        lineLabel='비율 (%)'
-      />
-    </section>
-  );
-
-  const renderBarSection = (
-    title: string,
-    items: { group: string; amount: number }[],
-  ) => (
-    <section className={styles.chartSection}>
-      <h3 className={styles.sectionSubtitle}>{title}</h3>
-      <BarChart
-        labels={items.map((i) => i.group)}
-        values={items.map((i) => i.amount)}
-        title='총 거래 금액'
-      />
-    </section>
-  );
-
   return (
     <main className={styles.statisticsPage}>
       <h1 className={styles.pageTitle}>채권 통계</h1>
 
-      {renderBarLineSection('연령대별 거래 건수 및 비율', data.byAge)}
-      {renderBarSection('연령대별 거래 금액', data.byAge)}
+      {/* 연령별 섹션 */}
+      <div>
+        <h2 className={styles.categoryTitle}>나이대별 거래 현황</h2>
+        <div className={styles.categoryContent}>
+          <div className={styles.chartRow}>
+            <div className={styles.chartColumn}>
+              <BarLineChart
+                labels={data.byAge.map((i) => i.group)}
+                rawBarData={{ 거래건수: data.byAge.map((i) => i.count) }}
+                rawLineData={data.byAge.map((i) => i.ratio)}
+                barCategories={['거래건수']}
+                lineLabel='비율 (%)'
+              />
+            </div>
+            <div className={styles.chartColumn}>
+              <BarChart
+                labels={data.byAge.map((i) => i.group)}
+                values={data.byAge.map((i) => i.amount)}
+                title='거래 금액'
+              />
+            </div>
+          </div>
+        </div>
+      </div>
 
-      {renderBarLineSection(
-        '가구 유형별 거래 건수 및 비율',
-        data.byFamilyStatus,
-      )}
-      {renderBarSection('가구 유형별 거래 금액', data.byFamilyStatus)}
+      {/* 가구유형별 섹션 */}
+      <div>
+        <h2 className={styles.categoryTitle}>가구유형별 거래 현황</h2>
+        <div className={styles.categoryContent}>
+          <div className={styles.chartRow}>
+            <div className={styles.chartColumn}>
+              <BarLineChart
+                labels={data.byFamilyStatus.map((i) => i.group)}
+                rawBarData={{
+                  거래건수: data.byFamilyStatus.map((i) => i.count),
+                }}
+                rawLineData={data.byFamilyStatus.map((i) => i.ratio)}
+                barCategories={['거래건수']}
+                lineLabel='비율 (%)'
+              />
+            </div>
+            <div className={styles.chartColumn}>
+              <BarChart
+                labels={data.byFamilyStatus.map((i) => i.group)}
+                values={data.byFamilyStatus.map((i) => i.amount)}
+                title='거래 금액'
+              />
+            </div>
+          </div>
+        </div>
+      </div>
 
-      {renderBarLineSection('주거 형태별 거래 건수 및 비율', data.byResidence)}
-      {renderBarSection('주거 형태별 거래 금액', data.byResidence)}
+      {/* 주거형태별 섹션 */}
+      <div>
+        <h2 className={styles.categoryTitle}>주택유형별 거래 현황</h2>
+        <div className={styles.categoryContent}>
+          <div className={styles.chartRow}>
+            <div className={styles.chartColumn}>
+              <BarLineChart
+                labels={data.byResidence.map((i) => i.group)}
+                rawBarData={{ 거래건수: data.byResidence.map((i) => i.count) }}
+                rawLineData={data.byResidence.map((i) => i.ratio)}
+                barCategories={['거래건수']}
+                lineLabel='비율 (%)'
+              />
+            </div>
+            <div className={styles.chartColumn}>
+              <BarChart
+                labels={data.byResidence.map((i) => i.group)}
+                values={data.byResidence.map((i) => i.amount)}
+                title='거래 금액'
+              />
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <IndustryTreemapChart
-        data={data.byIndustry.map((item: RawIndustryRatio) => ({
-          industry: getIndustryLabel(item.industry),
-          ratio: item.ratio,
-        }))}
-      />
+      {/* 산업별 트리맵 */}
+      <div className={styles.treeMapContainer}>
+        <h2 className={styles.treeMapTitle}>산업별 비율</h2>
+        <IndustryTreemapChart
+          data={data.byIndustry.map((item: RawIndustryRatio) => ({
+            industry: getIndustryLabel(item.industry),
+            ratio: item.ratio,
+          }))}
+        />
+      </div>
     </main>
   );
 };

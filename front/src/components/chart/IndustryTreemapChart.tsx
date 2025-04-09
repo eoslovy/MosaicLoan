@@ -22,9 +22,9 @@ const IndustryTreemapChart: React.FC<IndustryTreemapChartProps> = ({
   ];
 
   const options = {
-    minColor: '#cbd5e1',
-    midColor: '#a78bfa',
-    maxColor: '#7c3aed',
+    minColor: '#bbdefb', // 더 연한 밝은 파란색
+    midColor: '#42a5f5', // 중간 톤의 파란색
+    maxColor: '#1565c0', // 진한 파란색 유지
     headerHeight: 0,
     fontColor: 'white',
     showScale: false,

@@ -5,6 +5,10 @@ export type InvestSectionTabNavProps = {
 
 export interface EmptyStateProps {
   message?: string;
+  className?: string;
+  isComponentLevel?: boolean;
+  preserveHeight?: boolean;
+  minHeight?: string;
 }
 
 export interface InvestmentSummary {
@@ -31,17 +35,30 @@ export interface ProfitItem {
 // 이건 /api/investments/overview 전체 응답의 타입
 export interface InvestmentOverviewResponse {
   summary: InvestmentSummary;
-  investlist: InvestmentItem[];
+  investmentlist: InvestmentItem[];
   profitHistory: ProfitItem[];
   simulation: Record<string, number[]>;
 }
 
 export interface InvestmentOverviewTableProps {
-  investlist: InvestmentItem[];
+  investmentlist: InvestmentItem[];
   profitHistory: ProfitItem[];
 }
 
-export interface ContractSummaryResponse {
+export interface Investment {
+  investmentId: number;
+  createdAt: string;
+  investStatus: 'COMPLETED' | 'IN_PROGRESS';
+  contractCount: number;
+  statusDistribution: {
+    completed: number;
+    active: number;
+    default: number;
+    transferred: number;
+  };
+}
+
+export interface InvestOverview {
   statusDistribution: {
     completed: number;
     active: number;
@@ -51,6 +68,31 @@ export interface ContractSummaryResponse {
   totalContractCount: number;
   totalProfit: number;
   totalLoss: number;
+}
+
+export interface ContractResponse {
+  investments: Investment[];
+  investOverview: InvestOverview[];
+}
+
+export interface Transaction {
+  contractId: number;
+  investmentId: number;
+  amount: string;
+  createdAt: string;
+  status: string;
+  dueDate: string;
+  interestRate: string;
+}
+
+export interface ApiResponseData {
+  pagination: {
+    page: number;
+    pageSize: number;
+    totalPage: number;
+    totalItemCount: number;
+  };
+  transactions: Transaction[];
 }
 
 export interface ContractRow {

@@ -14,6 +14,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.investment.dto.InvestmentTransactionResponse;
 import com.mosaic.investment.dto.InvestmentTransactionSearchRequest;
 import com.mosaic.investment.dto.RequestInvestmentDto;
+import com.mosaic.investment.dto.InvestmentSummaryResponse;
+import com.mosaic.investment.dto.InvestmentListResponse;
+import com.mosaic.investment.dto.ProfitHistoryResponse;
 import com.mosaic.investment.repository.InvestmentQueryRepository;
 import com.mosaic.investment.service.InvestmentService;
 
@@ -52,15 +55,48 @@ public class InvestmentController {
         }
     }
 
+    // 투자 요약 정보 조회 API
+    @GetMapping("/summary")
+    public ResponseEntity<InvestmentSummaryResponse> getInvestmentSummary(@RequestHeader("X-MEMBER-ID") Integer memberId) {
+        try {
+            InvestmentSummaryResponse response = investmentQueryRepository.getInvestmentSummary(memberId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error fetching investment summary: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    
+    // 최근 투자 목록 조회 API
+    @GetMapping("/recent")
+    public ResponseEntity<InvestmentListResponse> getRecentInvestments(@RequestHeader("X-MEMBER-ID") Integer memberId) {
+        try {
+            InvestmentListResponse response = investmentQueryRepository.getRecentInvestments(memberId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error fetching recent investments: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    
+    // 수익 내역 조회 API
+    @GetMapping("/profits")
+    public ResponseEntity<ProfitHistoryResponse> getProfitHistory(@RequestHeader("X-MEMBER-ID") Integer memberId) {
+        try {
+            ProfitHistoryResponse response = investmentQueryRepository.getProfitHistory(memberId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error fetching profit history: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     //TODO 내 개별 투자의 거래내역 확인
     @GetMapping("/transactions/search")
     public ResponseEntity<InvestmentTransactionResponse> getInvestmentTransactions(
         @RequestBody InvestmentTransactionSearchRequest request) {
         return ResponseEntity.ok(investmentQueryRepository.searchTransactions(request));
     }
-
-
-
 
     //TODO 종료하고 계좌로 환급하기
     //TODO 돈 환급(스케쥴러)
