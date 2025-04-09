@@ -15,19 +15,8 @@ const Nav = () => {
   const { user, isFetched } = useUser();
   const router = useRouter();
 
-  // 1초 대기 상태
-  const [isDelayDone, setIsDelayDone] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsDelayDone(true);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!isFetched || !isDelayDone) {
-    return null; // 사용자 정보 로딩 전이거나 1초 대기 중일 때
+  if (!isFetched) {
+    return null;
   }
 
   const maskName = (name: string) => {
