@@ -1,4 +1,4 @@
-package com.mosaic.core.util;
+package com.creditservice.util;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -21,7 +21,6 @@ public class TimeUtil {
 	private static final LocalDateTime DEFAULT_BOT_START = LocalDateTime.of(2022, 1, 1, 0, 0);
 
 	private final StringRedisTemplate redisTemplate;
-	private final BotTimeTriggerManager botTimeTriggerManager;
 
 	public LocalDateTime now(boolean isBot) {
 		if (!isBot) {
@@ -32,9 +31,7 @@ public class TimeUtil {
 			throw new IllegalStateException("봇 타임스탬프는 현재 트리거 작업 중입니다.");
 		}
 
-		LocalDateTime botTime = getBotTimestamp();
-		botTimeTriggerManager.triggerIfNeeded(botTime);
-		return botTime;
+		return getBotTimestamp();
 	}
 
 	private boolean isLocked() {
@@ -42,19 +39,13 @@ public class TimeUtil {
 	}
 
 	private LocalDateTime getBotTimestamp() {
-		String key = BOT_TIMESTAMP_KEY;
 		long increment = ThreadLocalRandom.current().nextLong(30_000, 180_000);
+		Long updated = redisTemplate.opsForValue().increment(BOT_TIMESTAMP_KEY, increment);
 
-		// 키가 없을 경우 초기값 설정
-		if (Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
+		if (updated == null || updated == 1L) {
 			long initial = DEFAULT_BOT_START.atZone(ZONE_ID).toInstant().toEpochMilli();
-			redisTemplate.opsForValue().set(key, String.valueOf(initial));
-		}
-
-		Long updated = redisTemplate.opsForValue().increment(key, increment);
-
-		if (updated == null) {
-			throw new IllegalStateException("Redis에서 bot timestamp 증가에 실패했습니다.");
+			redisTemplate.opsForValue().set(BOT_TIMESTAMP_KEY, String.valueOf(initial));
+			updated = initial;
 		}
 
 		return LocalDateTime.ofInstant(Instant.ofEpochMilli(updated), ZONE_ID);
@@ -68,4 +59,3 @@ public class TimeUtil {
 		return baseTime.toLocalDate().plusWeeks(weeks);
 	}
 }
-

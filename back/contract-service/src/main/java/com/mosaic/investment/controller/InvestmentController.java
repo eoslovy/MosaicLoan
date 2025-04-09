@@ -29,14 +29,15 @@ public class InvestmentController {
     private final InvestmentService investmentService;
     private final InvestmentQueryRepository investmentQueryRepository;
 
-    //TODO 투자하기
-    @PostMapping("")
-    public ResponseEntity<Void> requestInvestment(@RequestBody RequestInvestmentDto requestDto) throws
-            JsonProcessingException {
-        log.info("{}의 투자신청 요청 실행", requestDto.id());
-        investmentService.publishInvestmentRequest(requestDto);
-        return ResponseEntity.accepted().build();
-    }
+	//TODO 투자하기
+	@PostMapping("")
+	public ResponseEntity<Void> requestInvestment(@RequestBody RequestInvestmentDto requestDto,
+		@RequestHeader("X-MEMBER-ID") Integer memberId, @RequestHeader("X-IS-BOT") Boolean isBot) throws
+		JsonProcessingException {
+		log.info("{}의 투자신청 요청 실행", memberId);
+		investmentService.publishInvestmentRequest(requestDto, memberId, isBot);
+		return ResponseEntity.accepted().build();
+	}
 
     //TODO 내 투자내역 확인
     // 헤더까보고 memberId 확인해서 내 투자 상품들 리스트로 다 가져오기
@@ -68,6 +69,6 @@ public class InvestmentController {
     //error: 미상환 계약 여부 확인 및 자동 이전처리
     //pub: 계좌기준으로 kafka 이벤트 발행
 
-    //sub: 계좌에 돈 입금 처리 완료 확인
-    //approve: 계약 status 종료
+	//sub: 계좌에 돈 입금 처리 완료 확인
+	//approve: 계약 status 종료
 }
