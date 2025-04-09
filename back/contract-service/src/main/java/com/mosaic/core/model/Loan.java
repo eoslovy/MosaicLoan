@@ -92,7 +92,7 @@ public class Loan {
 		this.status = LoanStatus.COMPLETED;
 	}
 
-	public void delinquentLoan() {
+	public void setStatusDelinquent() {
 		this.status = LoanStatus.DELINQUENT;
 	}
 
@@ -106,4 +106,6 @@ public class Loan {
 			this.contracts.add(contract);
 		}
 	}
+
+	public void setStatusComplete() { this.status = LoanStatus.COMPLETED;}
 }
