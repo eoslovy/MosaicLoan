@@ -168,6 +168,7 @@ services:
     ports:
       - "3310:3306"
     volumes:
+      - ./sql-script/mydata:/opt/init-sql
       - mydata-db-data:/var/lib/mysql
   credit-db:
     container_name: credit-db
