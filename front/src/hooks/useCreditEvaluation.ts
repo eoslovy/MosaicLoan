@@ -38,7 +38,7 @@ const useCreditEvaluation = ({ onCompleted }: { onCompleted: () => void }) => {
         return;
       }
 
-      const ws = new WebSocket(`${process.env.CREDIT_WEBSOCKET_URL}?memberId=${user.id}`);
+      const ws = new WebSocket(`${process.env.NEXT_PUBLIC_CREDIT_WEBSOCKET_URL}?memberId=${user.id}`);
       wsRef.current = ws;
 
       ws.onopen = () => {
