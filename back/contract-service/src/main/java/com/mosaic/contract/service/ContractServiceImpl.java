@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.mosaic.core.model.Contract;
 import com.mosaic.core.model.ContractTransaction;
 import com.mosaic.core.model.Investment;
+import com.mosaic.core.model.Loan;
 
 public class ContractServiceImpl implements ContractService {
 	@Override
@@ -38,5 +39,13 @@ public class ContractServiceImpl implements ContractService {
 	@Override
 	public Contract adjustCurrentRateWhenLiquidate(Contract contract) {
 		return null;
+	}
+
+	@Override
+	public void addDelinquentMarginInterest(Loan loan) {
+		if(loan.getContracts()== null) { throw new IllegalArgumentException("Loan is null"); }
+		for(Contract contract : loan.getContracts()) {
+			contract.addExtraInterestDaily();
+		}
 	}
 }
