@@ -13,8 +13,8 @@ const withAuthProtection = <P extends object>(
     const router = useRouter();
 
     useEffect(() => {
-      if (isFetched && !user) {
-        router.push('/');
+      if (!isFetched && !user) {
+        router.push('/borrower');
       }
     }, [isFetched, user]);
 
