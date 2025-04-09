@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 
@@ -46,8 +45,8 @@ public class CalculationServiceImpl implements CalculationService {
 	}
 
 	// 전일 경제 심리지수를 조회하는 메서드
-	private double getYesterdaySentiment() {
-		LocalDate yesterday = LocalDate.now().minusDays(1);
+	private double getYesterdaySentiment(LocalDateTime now) {
+		LocalDate yesterday = now.toLocalDate().minusDays(1);
 		Optional<EconomySentiment> sentimentOpt = economySentimentRepository.findBySentimentDate(yesterday);
 
 		if (sentimentOpt.isPresent()) {
@@ -66,8 +65,15 @@ public class CalculationServiceImpl implements CalculationService {
 		// 2. 이자율 계산 (무위험 이자율 4%, 손실률 0.5 가정)
 		double riskFreeRate = 0.04;
 
+		// 3. DSR 기반 대출 한도 계산
+		// Redis에서 데이터 가져오기rm
+		String caseIdStr = String.valueOf(caseId);
+		EvaluationResultDto demographicData = evaluationRedisService.getPayload(caseIdStr, "demographic");
+		EvaluationResultDto creditData = evaluationRedisService.getPayload(caseIdStr, "credit");
+
+		LocalDateTime createdAt = demographicData.getCreatedAt();
 		// 전날의 경제 심리지수를 가져와 이자율에 반영
-		double sentiment = getYesterdaySentiment();
+		double sentiment = getYesterdaySentiment(createdAt);
 		riskFreeRate -= sentiment * 0.0025; // 범위에 따라 ±0.25% 조정
 
 		double lossGivenDefault = 0.5;
@@ -81,25 +87,10 @@ public class CalculationServiceImpl implements CalculationService {
 		Integer interestRate = (int)(riskFreeRate * 10000) + assignedInterest.add(BigDecimal.valueOf(riskFreeRate))
 			.multiply(BigDecimal.valueOf(10000))
 			.intValue();
-
-		// 3. DSR 기반 대출 한도 계산
-		// Redis에서 데이터 가져오기rm
-		String caseIdStr = String.valueOf(caseId);
-		Optional<EvaluationResultDto> demographicData = evaluationRedisService.getPayload(caseIdStr, "demographic");
-		Optional<EvaluationResultDto> creditData = evaluationRedisService.getPayload(caseIdStr, "credit");
-		Optional<EvaluationResultDto> behaviorData = evaluationRedisService.getPayload(caseIdStr, "behavior");
-		Optional<EvaluationResultDto> timeseriesData = evaluationRedisService.getPayload(caseIdStr, "timeseries");
-
-		LocalDateTime createdAt = Stream.of(demographicData, creditData, behaviorData, timeseriesData)
-			.filter(Optional::isPresent)
-			.map(opt -> opt.get().getCreatedAt())
-			.findFirst()
-			.orElseThrow(() -> new IllegalStateException("모든 평가 데이터가 비어 있습니다."));
 		// DSR 계산이 가능한 경우에만 수행
-		if (demographicData.isPresent() && creditData.isPresent()) {
-			Map<String, Object> demographicPayload = demographicData.get().getPayload();
-			Map<String, Object> creditPayload = creditData.get().getPayload();
-
+		if (demographicData.getPayload() != null && creditData.getPayload() != null) {
+			Map<String, Object> demographicPayload = demographicData.getPayload();
+			Map<String, Object> creditPayload = creditData.getPayload();
 			if (demographicPayload.containsKey("total_income") && creditPayload.containsKey(
 				"totaldebtoverduevalue_178A")) {
 				Double totalIncome = Double.parseDouble(demographicPayload.get("total_income").toString());
@@ -123,7 +114,7 @@ public class CalculationServiceImpl implements CalculationService {
 
 				// DSR에 따른 대출 한도 계산 (남은 DSR 여유분 * 월소득 * 12)
 				int maxLoanLimit = (int)((0.4 - dsr) * monthlyIncome * 12);
-				return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, maxLoanLimit, expectedYield,
+				return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, expectedYield, maxLoanLimit,
 					EvaluationStatus.APPROVED, createdAt);
 			}
 		}
@@ -131,7 +122,7 @@ public class CalculationServiceImpl implements CalculationService {
 		// DSR 계산이 불가능한 경우 기본 대출 한도 설정
 		log.info("DSR 계산 불가: caseId={}, memberId={}, 기본 대출 한도 적용", caseId, memberId);
 		// 이 경우 시간 못줌
-		return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, 1000000, expectedYield,
+		return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, expectedYield, 1000000,
 			EvaluationStatus.APPROVED, createdAt);
 	}
 }
