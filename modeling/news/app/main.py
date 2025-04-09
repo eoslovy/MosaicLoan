@@ -72,7 +72,7 @@ def get_db_connection():
         load_dotenv()
         
         # 환경 변수에서 연결 정보 가져오기
-        db_url = os.getenv('CREDIT_DATASOURCE_URL')
+        db_url = os.getenv('CREDIT_DATASOURCE_URL_FOR_NEWS')
         username = os.getenv('CREDIT_DATASOURCE_USERNAME')
         password = os.getenv('CREDIT_DATASOURCE_PASSWORD')
         
@@ -260,6 +260,11 @@ async def shutdown_event():
 @app.get("/")
 async def root():
     global model_service
+    try :
+        conn = get_db_connection()
+
+    except Exception as e:
+        logger.error(f"감정 점수 분석 및 저장 중 오류: {e}", exc_info=True)
     
     return {
         "status": "active", 
@@ -291,7 +296,7 @@ async def analyze_articles():
         # 각 기사 분석
         logger.info(f"총 {len(articles)}개 기사 분석 시작")
         
-        for i, article in enumerate(articles):
+        for i, article in enumerate(articles[:100]):
             # 진행 상황 로깅 (로그가 너무 많이 출력되지 않도록 일정 간격으로)
             if i % 10 == 0 or i == len(articles) - 1:
                 logger.info(f"진행 상황: {i+1}/{len(articles)} 기사 처리 중 ({((i+1)/len(articles)*100):.1f}%)")
