@@ -25,6 +25,7 @@ EXPOSE 8001
 
 # 환경 변수 설정
 ENV PYTHONPATH=/app
+ENV _JAVA_OPTIONS="-Xmx12g -Xms4g"
 
 # 실행
 ENTRYPOINT ["/app/scripts/entrypoint.sh"]
