@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 
@@ -29,14 +30,14 @@ public class CalculationServiceImpl implements CalculationService {
 	private final EconomySentimentRepository economySentimentRepository;
 
 	public CreditEvaluation createAndSaveEvaluation(Integer caseId, Integer memberId, Integer defaultRate,
-		Integer interestRate, Integer expectedYield, Integer maxLoanLimit, EvaluationStatus status) {
+		Integer interestRate, Integer expectedYield, Integer maxLoanLimit, EvaluationStatus status, LocalDateTime now) {
 		CreditEvaluation evaluation = CreditEvaluation.builder()
 			.memberId(memberId)
 			.defaultRate(defaultRate)
 			.interestRate(interestRate)
 			.expectedYield(expectedYield)
 			.maxLoanLimit(maxLoanLimit)
-			.createdAt(LocalDateTime.now())
+			.createdAt(now)
 			.caseId(caseId)
 			.status(status)
 			.build();
@@ -86,7 +87,14 @@ public class CalculationServiceImpl implements CalculationService {
 		String caseIdStr = String.valueOf(caseId);
 		Optional<EvaluationResultDto> demographicData = evaluationRedisService.getPayload(caseIdStr, "demographic");
 		Optional<EvaluationResultDto> creditData = evaluationRedisService.getPayload(caseIdStr, "credit");
+		Optional<EvaluationResultDto> behaviorData = evaluationRedisService.getPayload(caseIdStr, "behavior");
+		Optional<EvaluationResultDto> timeseriesData = evaluationRedisService.getPayload(caseIdStr, "timeseries");
 
+		LocalDateTime createdAt = Stream.of(demographicData, creditData, behaviorData, timeseriesData)
+			.filter(Optional::isPresent)
+			.map(opt -> opt.get().getCreatedAt())
+			.findFirst()
+			.orElseThrow(() -> new IllegalStateException("모든 평가 데이터가 비어 있습니다."));
 		// DSR 계산이 가능한 경우에만 수행
 		if (demographicData.isPresent() && creditData.isPresent()) {
 			Map<String, Object> demographicPayload = demographicData.get().getPayload();
@@ -108,20 +116,22 @@ public class CalculationServiceImpl implements CalculationService {
 
 				// DSR이 40%를 넘으면 대출 불가
 				if (dsr > 0.4) {
+
 					return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, 0, 0,
-						EvaluationStatus.DSR_EXCEEDED);
+						EvaluationStatus.DSR_EXCEEDED, createdAt);
 				}
 
 				// DSR에 따른 대출 한도 계산 (남은 DSR 여유분 * 월소득 * 12)
 				int maxLoanLimit = (int)((0.4 - dsr) * monthlyIncome * 12);
 				return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, maxLoanLimit, expectedYield,
-					EvaluationStatus.APPROVED);
+					EvaluationStatus.APPROVED, createdAt);
 			}
 		}
 
 		// DSR 계산이 불가능한 경우 기본 대출 한도 설정
 		log.info("DSR 계산 불가: caseId={}, memberId={}, 기본 대출 한도 적용", caseId, memberId);
+		// 이 경우 시간 못줌
 		return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, 1000000, expectedYield,
-			EvaluationStatus.APPROVED);
+			EvaluationStatus.APPROVED, createdAt);
 	}
 }

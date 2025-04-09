@@ -16,20 +16,27 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(DataProcessingException.class)
-    public ResponseEntity<ErrorResponse> handleDataProcessingException(
-            DataProcessingException e, HttpServletRequest request) {
-        log.error("DataProcessingException: {}", e.getMessage());
-        return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e.getErrorCode(), request);
-    }
+	@ExceptionHandler(DataProcessingException.class)
+	public ResponseEntity<ErrorResponse> handleDataProcessingException(
+		DataProcessingException e, HttpServletRequest request) {
+		log.error("DataProcessingException: {}", e.getMessage());
+		return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e.getErrorCode(), request);
+	}
 
-    private ResponseEntity<ErrorResponse> createErrorResponse(
-            HttpStatus status, String message, ErrorCode errorCode, HttpServletRequest request) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(errorCode)
-                .message(message)
-                .build();
+	@ExceptionHandler(BotTimestampLockedException.class)
+	public ResponseEntity<ErrorResponse> handleBotTimestampLockedException(
+		BotTimestampLockedException exception, HttpServletRequest request) {
+		return createErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage(), ErrorCode.BOT_TIMESTAMP,
+			request);
+	}
 
-        return ResponseEntity.status(status).body(errorResponse);
-    }
+	private ResponseEntity<ErrorResponse> createErrorResponse(
+		HttpStatus status, String message, ErrorCode errorCode, HttpServletRequest request) {
+		ErrorResponse errorResponse = ErrorResponse.builder()
+			.code(errorCode)
+			.message(message)
+			.build();
+
+		return ResponseEntity.status(status).body(errorResponse);
+	}
 } 

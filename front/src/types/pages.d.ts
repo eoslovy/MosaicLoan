@@ -5,6 +5,10 @@ export type InvestSectionTabNavProps = {
 
 export interface EmptyStateProps {
   message?: string;
+  className?: string;
+  isComponentLevel?: boolean;
+  preserveHeight?: boolean;
+  minHeight?: string;
 }
 
 export interface InvestmentSummary {

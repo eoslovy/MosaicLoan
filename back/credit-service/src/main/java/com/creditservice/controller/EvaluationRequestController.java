@@ -24,8 +24,9 @@ public class EvaluationRequestController {
 	private final CreditEvaluationService creditEvaluationService;
 
 	@PostMapping
-	public ResponseEntity<String> requestEvaluation(@RequestHeader("X-MEMBER-ID") Integer memberId) {
-		evaluationRequestService.requestEvaluation(memberId);
+	public ResponseEntity<String> requestEvaluation(@RequestHeader("X-MEMBER-ID") Integer memberId,
+		@RequestHeader("X-IS-BOT") Boolean isBot) {
+		evaluationRequestService.requestEvaluation(memberId, isBot);
 		return ResponseEntity.ok("신용평가 요청이 완료되었습니다.");
 	}
 

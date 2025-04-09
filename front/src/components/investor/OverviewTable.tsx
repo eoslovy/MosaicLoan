@@ -2,6 +2,7 @@
 
 import React from 'react';
 import BasicTable from '@/components/common/BasicTable';
+import EmptyState from '@/components/empty/investor/EmptyState';
 import styles from '@/styles/investors/OverviewTable.module.scss';
 import type { BasicTableRow, PillVariant } from '@/types/components';
 import fillEmptyRows from '@/utils/fillEmptyRows';
@@ -25,66 +26,98 @@ const OverviewTable: React.FC<InvestmentOverviewTableProps> = ({
   investmentlist,
   profitHistory,
 }) => {
-  const investmentRows: BasicTableRow[] = investmentlist.map((item, idx) => ({
-    key: `investment-${idx}`,
-    cells: [
-      { key: `name-${idx}`, content: item.투자명 },
-      {
-        key: `amount-${idx}`,
-        content: `₩ ${Number(item.투자금액).toLocaleString()}`,
-      },
-      { key: `rate-${idx}`, content: `${item.금리} %` },
-      { key: `date-${idx}`, content: item.상환일 },
-      {
-        key: `status-${idx}`,
-        content: <Pill variant={getStatusVariant(item.상태)}>{item.상태}</Pill>,
-      },
-    ],
-  }));
+  // 투자 리스트가 비어있는지 확인
+  const isInvestListEmpty = !investlist || investlist.length === 0;
 
-  const filledInvestmentRows = fillEmptyRows(investmentRows, 7, 5);
+  // 수익 내역이 비어있는지 확인
+  const isProfitHistoryEmpty = !profitHistory || profitHistory.length === 0;
 
-  const profitRows: BasicTableRow[] = profitHistory.map((item, idx) => ({
-    key: `profit-${idx}`,
-    cells: [
-      {
-        key: `label-${idx}`,
-        content: (
-          <div className={styles.labelWithDate}>
-            <p>{item.수익명}</p>
-            <span className={styles.date}>{item.날짜}</span>
-          </div>
-        ),
-      },
-      {
-        key: `amount-${idx}`,
-        content: (
-          <p className={styles.amount}>{Number(item.금액).toLocaleString()}₩</p>
-        ),
-      },
-    ],
-  }));
+  const investmentRows: BasicTableRow[] = isInvestListEmpty
+    ? []
+    : investlist.map((item, idx) => ({
+        key: `investment-${idx}`,
+        cells: [
+          { key: `name-${idx}`, content: item.투자명 },
+          {
+            key: `amount-${idx}`,
+            content: `₩ ${Number(item.투자금액).toLocaleString()}`,
+          },
+          { key: `rate-${idx}`, content: `${item.금리} %` },
+          { key: `date-${idx}`, content: item.상환일 },
+          {
+            key: `status-${idx}`,
+            content: (
+              <Pill variant={getStatusVariant(item.상태)}>{item.상태}</Pill>
+            ),
+          },
+        ],
+      }));
 
-  const filledProfitRows = fillEmptyRows(profitRows, 7, 2);
+  const filledInvestmentRows = isInvestListEmpty
+    ? []
+    : fillEmptyRows(investmentRows, 7, 5);
+
+  const profitRows: BasicTableRow[] = isProfitHistoryEmpty
+    ? []
+    : profitHistory.map((item, idx) => ({
+        key: `profit-${idx}`,
+        cells: [
+          {
+            key: `label-${idx}`,
+            content: (
+              <div className={styles.labelWithDate}>
+                <p>{item.수익명}</p>
+                <span className={styles.date}>{item.날짜}</span>
+              </div>
+            ),
+          },
+          {
+            key: `amount-${idx}`,
+            content: (
+              <p className={styles.amount}>
+                {Number(item.금액).toLocaleString()}₩
+              </p>
+            ),
+          },
+        ],
+      }));
+
+  const filledProfitRows = isProfitHistoryEmpty
+    ? []
+    : fillEmptyRows(profitRows, 7, 2);
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.leftTable}>
-        <BasicTable
-          title='투자 현황'
-          columns={['투자명', '투자금액', '금리', '상환일', '상태']}
-          rows={filledInvestmentRows}
-          viewAllLink='/investor/contracts'
-        />
+        {isInvestListEmpty ? (
+          <div className={styles.tableContainer}>
+            <h3 className={styles.tableTitle}>투자 현황</h3>
+            <EmptyState message='투자 내역이 없습니다.' isComponentLevel />
+          </div>
+        ) : (
+          <BasicTable
+            title='투자 현황'
+            columns={['투자명', '투자금액', '금리', '상환일', '상태']}
+            rows={filledInvestmentRows}
+            viewAllLink='/investor/contracts'
+          />
+        )}
       </div>
       <div className={styles.rightTable}>
-        <BasicTable
-          title='최근 수익 내역'
-          columns={['', '']}
-          rows={filledProfitRows}
-          viewAllLink='/investor/earnings'
-          showHeader={false}
-        />
+        {isProfitHistoryEmpty ? (
+          <div className={styles.tableContainer}>
+            <h3 className={styles.tableTitle}>최근 수익 내역</h3>
+            <EmptyState message='수익 내역이 없습니다.' isComponentLevel />
+          </div>
+        ) : (
+          <BasicTable
+            title='최근 수익 내역'
+            columns={['', '']}
+            rows={filledProfitRows}
+            viewAllLink='/investor/earnings'
+            showHeader={false}
+          />
+        )}
       </div>
     </div>
   );

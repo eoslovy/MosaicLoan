@@ -31,53 +31,56 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "contract_transaction", schema = "mosaic_contract")
 public class ContractTransaction {
-    @Id
-    @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+	@Id
+	@Column(name = "id", nullable = false)
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "contract_id", nullable = false)
     private Contract contract;
 
-    @Column(name = "amount")
-    private BigDecimal amount;
+	@Column(name = "amount")
+	private BigDecimal amount;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private ContractTransactionType type;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "type")
+	private ContractTransactionType type;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+	@Column(name = "created_at")
+	private LocalDateTime createdAt;
 
-    public void setContract(Contract contract) {
-        this.contract = contract;
-    }
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
 
-    public static ContractTransaction buildRepayPrincipalTransaction(Contract contract, BigDecimal repaidAmount) {
-        return ContractTransaction.builder()
-                .contract(contract)
-                .amount(repaidAmount)
-                .createdAt(TimeUtil.now())
-                .type(ContractTransactionType.PRINCIPAL)
-                .build();
-    }
+	public static ContractTransaction buildRepayPrincipalTransaction(Contract contract, BigDecimal repaidAmount,
+		LocalDateTime now) {
+		return ContractTransaction.builder()
+			.contract(contract)
+			.amount(repaidAmount)
+			.createdAt(now)
+			.type(ContractTransactionType.PRINCIPAL)
+			.build();
+	}
 
-    public static ContractTransaction buildRepayInterestTransaction(Contract contract, BigDecimal repaidAmount) {
-        return ContractTransaction.builder()
-                .contract(contract)
-                .amount(repaidAmount)
-                .createdAt(TimeUtil.now())
-                .type(ContractTransactionType.INTEREST)
-                .build();
-    }
+	public static ContractTransaction buildRepayInterestTransaction(Contract contract, BigDecimal repaidAmount,
+		LocalDateTime now) {
+		return ContractTransaction.builder()
+			.contract(contract)
+			.amount(repaidAmount)
+			.createdAt(now)
+			.type(ContractTransactionType.INTEREST)
+			.build();
+	}
 
-    public static ContractTransaction buildLoanCreateTransaction(Contract contract, BigDecimal amount) {
-        return ContractTransaction.builder()
-                .contract(contract)
-                .amount(amount)
-                .type(ContractTransactionType.LOAN)
-                .createdAt(LocalDateTime.now())
-                .build();
-    }
+	public static ContractTransaction buildLoanCreateTransaction(Contract contract, BigDecimal amount,
+		LocalDateTime now) {
+		return ContractTransaction.builder()
+			.contract(contract)
+			.amount(amount)
+			.type(ContractTransactionType.LOAN)
+			.createdAt(now)
+			.build();
+	}
 }

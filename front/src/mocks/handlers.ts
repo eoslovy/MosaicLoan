@@ -140,11 +140,22 @@ const handlers = [
           completed: 42,
           active: 78,
           default: 12,
+          default: 12,
           transferred: 5,
         },
       })),
       investOverview: Array.from({ length: 1 }, (_, idx) => ({
         statusDistribution: {
+          completed: 42,
+          active: 78,
+          default: 12,
+          transferred: 5,
+        },
+        totalContractCount: 137,
+        totalProfit: 28750000,
+        totalLoss: 3400000,
+      })),
+    };
           completed: 42,
           active: 78,
           default: 12,
@@ -346,6 +357,26 @@ const handlers = [
       pageSize?: number;
       sort?: Array<{ field: string; order: string }>;
     };
+  rest.post(
+    '/api/contract/investments/transactions/search',
+    (req, res, ctx) => {
+      const {
+        startDate,
+        endDate,
+        types,
+        investmentIds,
+        page = 1,
+        pageSize = 15,
+        sort = [],
+      } = req.body as {
+        startDate?: string;
+        endDate?: string;
+        types?: string[];
+        investmentIds?: number[];
+        page?: number;
+        pageSize?: number;
+        sort?: Array<{ field: string; order: string }>;
+      };
 
     interface Transaction {
       contractId: number;
@@ -647,62 +678,63 @@ const handlers = [
           : true;
       });
 
-    if (sort.length > 0) {
-      const { field, order } = sort[0];
+      if (sort.length > 0) {
+        const { field, order } = sort[0];
 
-      console.log(`MSW - 정렬 적용: ${field} ${order}`);
+        console.log(`MSW - 정렬 적용: ${field} ${order}`);
 
-      filteredTransactions.sort((a, b) => {
-        const valueA = a[field];
-        const valueB = b[field];
+        filteredTransactions.sort((a, b) => {
+          const valueA = a[field];
+          const valueB = b[field];
 
-        if (typeof valueA === 'string' && typeof valueB === 'string') {
-          if (valueA.includes('%') && valueB.includes('%')) {
-            const numA = parseFloat(valueA.replace('%', ''));
-            const numB = parseFloat(valueB.replace('%', ''));
-            return order === 'asc' ? numA - numB : numB - numA;
+          if (typeof valueA === 'string' && typeof valueB === 'string') {
+            if (valueA.includes('%') && valueB.includes('%')) {
+              const numA = parseFloat(valueA.replace('%', ''));
+              const numB = parseFloat(valueB.replace('%', ''));
+              return order === 'asc' ? numA - numB : numB - numA;
+            }
+
+            return order === 'asc'
+              ? valueA.localeCompare(valueB)
+              : valueB.localeCompare(valueA);
           }
 
+          if (typeof valueA === 'number' && typeof valueB === 'number') {
+            return order === 'asc' ? valueA - valueB : valueB - valueA;
+          }
+
+          const strA = String(valueA);
+          const strB = String(valueB);
           return order === 'asc'
-            ? valueA.localeCompare(valueB)
-            : valueB.localeCompare(valueA);
-        }
+            ? strA.localeCompare(strB)
+            : strB.localeCompare(strA);
+        });
+      }
 
-        if (typeof valueA === 'number' && typeof valueB === 'number') {
-          return order === 'asc' ? valueA - valueB : valueB - valueA;
-        }
+      const totalItemCount = filteredTransactions.length;
+      const totalPage = Math.ceil(totalItemCount / pageSize);
+      const startIndex = (page - 1) * pageSize;
+      const paginatedTransactions = filteredTransactions.slice(
+        startIndex,
+        startIndex + pageSize,
+      );
 
-        const strA = String(valueA);
-        const strB = String(valueB);
-        return order === 'asc'
-          ? strA.localeCompare(strB)
-          : strB.localeCompare(strA);
-      });
-    }
-
-    const totalItemCount = filteredTransactions.length;
-    const totalPage = Math.ceil(totalItemCount / pageSize);
-    const startIndex = (page - 1) * pageSize;
-    const paginatedTransactions = filteredTransactions.slice(
-      startIndex,
-      startIndex + pageSize,
-    );
-
-    return res(
-      ctx.status(200),
-      ctx.json({
-        pagination: {
-          page,
-          pageSize,
-          totalPage,
-          totalItemCount,
-        },
-        transactions: paginatedTransactions,
-      }),
-    );
-  }),
+      return res(
+        ctx.status(200),
+        ctx.json({
+          pagination: {
+            page,
+            pageSize,
+            totalPage,
+            totalItemCount,
+          },
+          transactions: paginatedTransactions,
+        }),
+      );
+    },
+  ),
   rest.post('/contract/investments/', async (req, res, ctx) => {
-    const { principal, targetRate, targetWeeks } = await req.json();
+    const { principal } = await req.json();
 
     // 예시: 최소 금액 미만일 때 400 에러
     if (principal < 10000) {
