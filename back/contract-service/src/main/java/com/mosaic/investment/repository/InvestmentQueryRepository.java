@@ -14,13 +14,6 @@ import com.mosaic.investment.dto.InvestmentListResponse;
 import com.mosaic.investment.dto.ProfitHistoryResponse;
 
 public interface InvestmentQueryRepository {
-    List<Investment> findQualifiedInvestments(BigDecimal minimumAmount, Loan loan);
-    
-    // 한 번의 쿼리로 투자 목록과 통계 개요 함께 조회
-    Map<String, Object> findInvestmentsWithOverview(Integer memberId);
-    
-    // 투자 거래 내역을 검색 조건에 따라 조회
-    InvestmentTransactionResponse searchTransactions(InvestmentTransactionSearchRequest request);
 
     // 투자 요약 정보 조회 (계약 만기일이 현재 시간보다 앞인 투자만)
     InvestmentSummaryResponse getInvestmentSummary(Integer memberId);

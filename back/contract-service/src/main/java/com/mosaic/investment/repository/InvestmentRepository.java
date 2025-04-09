@@ -6,7 +6,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.mosaic.core.model.Investment;
+import com.mosaic.statistics.repository.RateStatProjection;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
