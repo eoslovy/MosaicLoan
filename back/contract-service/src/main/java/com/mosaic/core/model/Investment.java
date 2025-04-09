@@ -35,75 +35,80 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "investment", schema = "mosaic_contract")
 public class Investment {
-    @Id
-    @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+	@Id
+	@Column(name = "id", nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 
-    @Column(name = "account_id", nullable = false)
-    private Integer accountId;
+	@Column(name = "account_id", nullable = false)
+	private Integer accountId;
 
-    @Column(name = "target_rate")
-    private Integer targetRate;
+	@Column(name = "target_rate")
+	private Integer targetRate;
 
-    @Column(name = "current_rate")
-    private Integer currentRate;
+	@Column(name = "current_rate")
+	private Integer currentRate;
 
-    @Column(name = "amount", precision = 18, scale = 5)
-    private BigDecimal amount;
+	@Column(name = "amount", precision = 18, scale = 5)
+	private BigDecimal amount;
 
-    @Column(name = "due_date")
-    private LocalDate dueDate;
+	@Column(name = "due_date")
+	private LocalDate dueDate;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+	@Column(name = "created_at")
+	private LocalDateTime createdAt;
 
-    @Column(name = "principal", precision = 18, scale = 5)
-    private BigDecimal principal;
+	@Column(name = "principal", precision = 18, scale = 5)
+	private BigDecimal principal;
 
     @Builder.Default
     @OneToMany(mappedBy = "investment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Contract> contracts = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private InvestmentStatus status;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
+	private InvestmentStatus status;
 
-    public static Investment requestOnlyFormInvestment(RequestInvestmentDto requestDto) {
-        return Investment.builder()
-                .status(InvestmentStatus.REQUESTED)
-                .targetRate(requestDto.targetRate())
-                .currentRate(0)
-                .dueDate(TimeUtil.dueDate(TimeUtil.nowDate(), requestDto.targetWeeks()))
-                .accountId(requestDto.id())
-                .principal(requestDto.principal())
-                .amount(BigDecimal.valueOf(0))
-                .createdAt(TimeUtil.now())
-                .build();
-    }
+	public static Investment requestOnlyFormInvestment(RequestInvestmentDto requestDto, Integer memberId,
+		LocalDateTime now) {
+		return Investment.builder()
+			.status(InvestmentStatus.REQUESTED)
+			.targetRate(requestDto.targetRate())
+			.currentRate(0)
+			.dueDate(TimeUtil.dueDate(now, requestDto.targetWeeks()))
+			.accountId(memberId)
+			.principal(requestDto.principal())
+			.amount(BigDecimal.valueOf(0))
+			.createdAt(now)
+			.build();
+	}
 
-    public void completeRequest(AccountTransactionPayload transactionPayload) {
-        this.amount = transactionPayload.amount();
-        this.principal = transactionPayload.amount();
-        this.status = InvestmentStatus.ACTIVE;
-    }
-    public void finishInvestment() {
-        this.status = InvestmentStatus.COMPLETED;
-    }
-    public void unFinishInvestment() {
-        this.status = InvestmentStatus.ACTIVE;
-    }
-    public BigDecimal withdrawAll(){
-        BigDecimal amount = this.amount;
-        this.amount = BigDecimal.ZERO;
-        return amount;
-    }
-    public void rollBack(BigDecimal amount){
-        this.amount = amount;
-    }
+	public void completeRequest(AccountTransactionPayload transactionPayload) {
+		this.amount = transactionPayload.amount();
+		this.principal = transactionPayload.amount();
+		this.status = InvestmentStatus.ACTIVE;
+	}
 
-    public void investAmount(Contract contract) {
-        this.contracts.add(contract);
-        this.amount = amount.subtract(contract.getAmount());
-    }
+	public void finishInvestment() {
+		this.status = InvestmentStatus.COMPLETED;
+	}
+
+	public void unFinishInvestment() {
+		this.status = InvestmentStatus.ACTIVE;
+	}
+
+	public BigDecimal withdrawAll() {
+		BigDecimal amount = this.amount;
+		this.amount = BigDecimal.ZERO;
+		return amount;
+	}
+
+	public void rollBack(BigDecimal amount) {
+		this.amount = amount;
+	}
+
+	public void investAmount(Contract contract) {
+		this.contracts.add(contract);
+		this.amount = amount.subtract(contract.getAmount());
+	}
 }
