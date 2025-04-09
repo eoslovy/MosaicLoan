@@ -15,10 +15,14 @@ const SortableTableHeader: React.FC<SortableTableHeaderProps> = ({
   const isActive = !!sortState;
   const isAscending = sortState?.ascending;
 
+  const handleSort = () => {
+    onSort(sortKey);
+  };
+
   return (
     <button
       type='button'
-      onClick={() => onSort(sortKey)}
+      onClick={handleSort}
       className={styles.sortableHeader}
     >
       {label}

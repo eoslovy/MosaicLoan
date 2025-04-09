@@ -1,12 +1,16 @@
+# build artifacts
 node_modules
-.git
 .next
 dist
+out
+.cache
+
+# system files
 .vscode
 *.log
 *.tsbuildinfo
 .cache
 .storybook
-pnpm-lock.yaml
+# pnpm-lock.yaml
 Dockerfile
 docker-compose.yml

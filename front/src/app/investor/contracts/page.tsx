@@ -30,6 +30,18 @@ interface ApiResponseData {
   transactions: Transaction[];
 }
 
+interface SearchParams extends Record<string, unknown> {
+  startDate?: string;
+  endDate?: string;
+  types?: string[];
+  investmentIds?: number[];
+}
+
+interface SortState {
+  field: string;
+  order: string;
+}
+
 const ContractsPage = () => {
   const [summaryData, setSummaryData] =
     useState<ContractSummaryResponse | null>(null);
@@ -77,23 +89,20 @@ const ContractsPage = () => {
     fetchData();
   }, []);
 
-  const handleSearch = async (searchParams: Record<string, unknown>) => {
+  const fetchTransactions = async (
+    params: SearchParams & {
+      page: number;
+      pageSize: number;
+      sort: SortState[];
+    },
+  ) => {
     setIsLoadingTransactions(true);
     setTransactionsError(null);
 
-    const finalParams = {
-      ...searchParams,
-      page: currentPage,
-      pageSize,
-      sort: sortState,
-    };
-
-    setCurrentSearchParams(searchParams);
-
     try {
       const response = await request.POST<ApiResponseData>(
-        '/contract/investments/transactions/search',
-        finalParams,
+        '/api/contract/investments/transactions/search',
+        params,
       );
 
       if (response && response.transactions) {
@@ -120,24 +129,45 @@ const ContractsPage = () => {
     }
   };
 
+  const handleSearch = (searchParams: SearchParams) => {
+    const finalParams = {
+      ...searchParams,
+      page: 1,
+      pageSize,
+      sort: sortState,
+    };
+
+    setCurrentPage(1);
+    setCurrentSearchParams(searchParams);
+    fetchTransactions(finalParams);
+  };
+
   const handleSortChange = (
     newSortState: { field: string; order: string }[],
   ) => {
     setSortState(newSortState);
 
-    handleSearch({
+    const finalParams = {
       ...currentSearchParams,
+      page: 1,
+      pageSize,
       sort: newSortState,
-    });
+    };
+
+    setCurrentPage(1);
+    fetchTransactions(finalParams);
   };
 
   const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-
-    handleSearch({
+    const finalParams = {
       ...currentSearchParams,
       page: newPage,
-    });
+      pageSize,
+      sort: sortState,
+    };
+
+    setCurrentPage(newPage);
+    fetchTransactions(finalParams);
   };
 
   if (isLoadingSummary) {

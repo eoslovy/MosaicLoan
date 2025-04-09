@@ -7,14 +7,58 @@ import LoanOverview from '@/components/borrower/LoanOverview';
 import LoanFilter from '@/components/borrower/LoanFilter';
 import LoanList from '@/components/borrower/LoanList';
 import { getLoanOverview, LoanOverviewResponse } from '@/service/apis/borrow';
+import request from '@/service/apis/request';
+import { LoanTransaction, LoanSearchParams } from '@/types/components';
+import { format } from 'date-fns';
+
+export interface LoanSearchResponse {
+  transactions: LoanTransaction[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    totalPage: number;
+    totalItemCount: number;
+  };
+}
 
 const BorrowerPage = () => {
   const [loanData, setLoanData] = useState<LoanOverviewResponse | null>(null);
-  const [error, setError] = useState(false);
+  const [searchedLoans, setSearchedLoans] = useState<LoanTransaction[]>([]);
+  const [pagination, setPagination] = useState<
+    LoanSearchResponse['pagination']
+  >({
+    page: 1,
+    pageSize: 10,
+    totalPage: 0,
+    totalItemCount: 0,
+  });
+  // const [error, setError] = useState(false);
   const [creditKey, setCreditKey] = useState(0);
 
   const handleEvaluationComplete = () => {
     setCreditKey((prev) => prev + 1); // 신용평가 한 다음에 화면 리렌더링하기 위함.
+  };
+
+  const handleLoanSearch = async (searchParams: LoanSearchParams) => {
+    try {
+      const defaultSort = [{ field: 'createdAt', order: 'desc' as const }];
+
+      const response = await request.POST<LoanSearchResponse>(
+        '/api/contract/loans/transactions/search',
+        {
+          ...searchParams,
+          page: searchParams.page || 1,
+          pageSize: searchParams.pageSize || 10,
+          sort: searchParams.sort || defaultSort,
+        },
+      );
+      // console.log;
+      setSearchedLoans(response.transactions);
+      setPagination(response.pagination);
+    } catch (err) {
+      console.error('대출 검색 데이터 불러오기 실패:', err);
+      // setError(true);
+    }
   };
 
   useEffect(() => {
@@ -24,7 +68,7 @@ const BorrowerPage = () => {
         setLoanData(data);
       } catch (err) {
         console.error('대출 요약 데이터 불러오기 실패:', err);
-        setError(true);
+        // setError(true);
       }
     };
 
@@ -50,8 +94,19 @@ const BorrowerPage = () => {
         activeLoanAmount={activeLoanAmount}
         averageInterestRate={averageInterestRate}
       />
-      <LoanFilter />
-      <LoanList />
+      <LoanFilter onSearch={handleLoanSearch} />
+      <LoanList
+        loans={searchedLoans}
+        pagination={pagination}
+        onPageChange={(page) =>
+          handleLoanSearch({
+            startDate: format(new Date(), 'yyyy-MM-dd'),
+            endDate: format(new Date(), 'yyyy-MM-dd'),
+            types: ['상환중', '상환완료'],
+            page,
+          })
+        }
+      />
     </>
   );
 };

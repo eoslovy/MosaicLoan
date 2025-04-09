@@ -17,7 +17,7 @@ interface Props {
   type: 'charge' | 'withdraw';
   openChargeModal?: () => void;
   setToast?: (msg: string | null) => void;
-  refetchBalance?: () => void; // 🔥 추가
+  refetchBalance?: () => void;
 }
 
 const formatBalance = (amount: number): string => {
@@ -80,7 +80,45 @@ const AccountModal = ({
     setErrorMessage(null);
   };
 
+  const handleAmountBlur = () => {
+    setIsBlurred(true);
+
+    if (!amount) {
+      setErrorMessage('금액을 입력해주세요');
+    } else if (amount % 1000 !== 0) {
+      setErrorMessage('1000원 단위로만 입력 가능합니다');
+    } else if (type === 'withdraw' && amount > balance) {
+      setErrorMessage('잔액이 부족합니다');
+    }
+  };
+
+  const handleAmountKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      inputRef.current?.blur();
+    }
+  };
+
+  const isValidAmount =
+    amount > 0 &&
+    amount % 1000 === 0 &&
+    (type === 'charge' || amount <= balance);
+  const rawAccountNumber = accountNumber.replace(/-/g, '');
+
+  const isValidAccountNumber =
+    rawAccountNumber.length > 0 &&
+    rawAccountNumber.length <= 14 &&
+    /^[0-9]+$/.test(rawAccountNumber);
+
+  const isValidWithdraw =
+    type === 'withdraw'
+      ? isValidAmount && isValidAccountNumber && bankCode !== ''
+      : true;
+
   const handleSubmit = async () => {
+    if (!isValidAmount || (type === 'withdraw' && !isValidWithdraw)) {
+      return;
+    }
+
     try {
       if (type === 'charge') {
         if (!user?.id) {
@@ -89,7 +127,7 @@ const AccountModal = ({
         }
 
         const res = await request.POST<{ redirectUrl: string }>(
-          `/account/external/deposit/ready?memberId=${user.id}`,
+          `/account/external/deposit/ready`,
           { amount },
         );
 
@@ -101,7 +139,7 @@ const AccountModal = ({
       } else {
         await request.POST('/account/external/withdrawal', {
           amount,
-          accountNumber: accountNumber.replace(/-/g, ''),
+          accountNumber: rawAccountNumber,
           bankCode,
         });
         refetchBalance?.();
@@ -119,7 +157,6 @@ const AccountModal = ({
   const formattedBalance = isFetched
     ? formatBalance(balance)
     : '잔액을 불러오는 중...';
-
   const expectedBalance =
     type === 'charge' ? balance + amount : balance - amount;
 
@@ -137,7 +174,7 @@ const AccountModal = ({
         }}
       >
         <Text text={`현재 잔액: ${formattedBalance}`} size='lg' weight='bold' />
-        {/* 금액 입력 */}
+
         <div className={styles.inputWrapper}>
           <div className={styles.inputWithUnit}>
             <input
@@ -147,10 +184,32 @@ const AccountModal = ({
               className={styles.input}
               value={inputValue}
               onChange={(e) => handleAmountChange(e.target.value)}
+              onBlur={handleAmountBlur}
+              onKeyDown={handleAmountKeyDown}
               placeholder='금액을 입력하세요'
             />
             <span className={styles.unit}>원</span>
           </div>
+
+          {errorMessage === '잔액이 부족합니다' ? (
+            <div className={styles.error}>
+              <p>{errorMessage}</p>
+              {type === 'withdraw' && openChargeModal && (
+                <button
+                  type='button'
+                  className={styles.chargeLink}
+                  onClick={() => {
+                    onClose();
+                    openChargeModal?.();
+                  }}
+                >
+                  충전하러 가기 →
+                </button>
+              )}
+            </div>
+          ) : (
+            errorMessage && <div className={styles.error}>{errorMessage}</div>
+          )}
         </div>
 
         {type === 'withdraw' && (
@@ -182,6 +241,18 @@ const AccountModal = ({
               </select>
             </div>
           </>
+        )}
+
+        {isBlurred && isValidAmount && !errorMessage && (
+          <div className={styles.expectedBalance}>
+            <Text
+              text={`${
+                type === 'charge' ? '충전 후 잔액' : '출금 후 잔액'
+              }: ${expectedBalance.toLocaleString()} 원`}
+              size='sm'
+              color='gray'
+            />
+          </div>
         )}
 
         <Button

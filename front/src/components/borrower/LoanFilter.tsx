@@ -6,10 +6,11 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Select, { MultiValue, StylesConfig } from 'react-select';
 import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
-import FilterSelectTable from '@/components/common/FilterSelectTable';
-import { subYears, isBefore } from 'date-fns';
-import Pill from '@/components/common/Pill';
-import { ContractRow } from '@/types/components';
+// import FilterSelectTable from '@/components/common/FilterSelectTable';
+import { subYears, isBefore, format } from 'date-fns';
+// import Pill from '@/components/common/Pill';
+// import { ContractRow } from '@/types/components';
+import { LoanSearchParams } from '@/types/components';
 
 const typeOptions = [
   { value: 'repaid', label: '상환완료' },
@@ -26,7 +27,11 @@ const customSelectStyles: StylesConfig<{ label: string; value: string }, true> =
     }),
   };
 
-const LoanFilter = () => {
+interface LoanFilterProps {
+  onSearch: (params: LoanSearchParams) => void;
+}
+
+const LoanFilter: React.FC<LoanFilterProps> = ({ onSearch }) => {
   const today = new Date();
   const oneYearAgo = subYears(today, 1);
 
@@ -64,15 +69,27 @@ const LoanFilter = () => {
     setSelectedIds((prev) => prev.filter((selectedId) => selectedId !== id));
   };
 
-  const data: ContractRow[] = Array.from({ length: 10 }, (_, idx) => ({
-    id: `loan-${idx + 1}`,
-    name: `대출 ${idx + 1}`,
-    startDate: `2024-0${(idx % 9) + 1}-01`,
-    endDate: `2025-0${(idx % 9) + 1}-01`,
-    status: idx % 2 === 0 ? '상환중' : '상환완료',
-  }));
+  const handleSearch = () => {
+    if (!startDate || !endDate) return;
 
-  const selectedData = data.filter((row) => selectedIds.includes(row.id));
+    const typeMap: { [key: string]: string } = {
+      repaid: '상환완료',
+      inProgress: '상환중',
+      defaulted: '부실확정',
+      delayed: '연체',
+    };
+
+    const searchParams: LoanSearchParams = {
+      startDate: format(startDate, 'yyyy-MM-dd'),
+      endDate: format(endDate, 'yyyy-MM-dd'),
+      types: selectedTypes.map((type) => typeMap[type.value] || type.value),
+      page: 1,
+      pageSize: 10,
+      sort: [{ field: 'createdAt', order: 'desc' }],
+    };
+
+    onSearch(searchParams);
+  };
 
   return (
     <div className={styles.filterContainer}>
@@ -108,7 +125,11 @@ const LoanFilter = () => {
         </div>
 
         <div className={styles.rightButtons}>
-          <button type='button' className={styles.searchButton}>
+          <button
+            type='button'
+            className={styles.searchButton}
+            onClick={handleSearch}
+          >
             검색하기
           </button>
         </div>
