@@ -5,18 +5,18 @@ import { useEffect } from 'react';
 import useUser from '@/hooks/useUser';
 import type { FC, ComponentType } from 'react';
 
-const withAuthProtection = <P extends object>(
+const borrowerAuthProtection = <P extends object>(
   Component: ComponentType<P>,
 ): FC<P> => {
   const Wrapper: FC<P> = (props) => {
     const { user, isFetched } = useUser();
     const router = useRouter();
 
-    // useEffect(() => {
-    //   if (!isFetched && !user) {
-    //     router.push('/investor');
-    //   }
-    // }, [isFetched, user]);
+    useEffect(() => {
+      if (!isFetched && !user) {
+        router.push('/borrower');
+      }
+    }, [isFetched, user]);
 
     if (!isFetched || !user) return null;
 
@@ -26,4 +26,4 @@ const withAuthProtection = <P extends object>(
   return Wrapper;
 };
 
-export default withAuthProtection;
+export default borrowerAuthProtection;

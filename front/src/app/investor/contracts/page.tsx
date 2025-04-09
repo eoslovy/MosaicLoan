@@ -7,6 +7,7 @@ import ContractsList from '@/components/investor/ContractsList';
 import { fetchContractSummary } from '@/service/apis/investments';
 import EmptyState from '@/components/empty/investor/EmptyState';
 import request from '@/service/apis/request';
+import useAuthRedirect from '@/hooks/useAuthRedirect';
 import type {
   InvestOverview,
   Transaction,
@@ -26,6 +27,8 @@ interface SortState {
 }
 
 const ContractsPage = () => {
+  useAuthRedirect('/borrower'); // 로그인 안 된 경우 리디렉션 경로
+
   const [summaryData, setSummaryData] = useState<InvestOverview | null>(null);
   const [isLoadingSummary, setIsLoadingSummary] = useState(true);
   const [isSummaryError, setIsSummaryError] = useState(false);
@@ -40,13 +43,9 @@ const ContractsPage = () => {
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
 
-  const [sortState, setSortState] = useState<
-    { field: string; order: string }[]
-  >([]);
+  const [sortState, setSortState] = useState<SortState[]>([]);
 
-  const [currentSearchParams, setCurrentSearchParams] = useState<
-    Record<string, unknown>
-  >({
+  const [currentSearchParams, setCurrentSearchParams] = useState<SearchParams>({
     startDate: '',
     endDate: '',
     types: [],
@@ -124,9 +123,7 @@ const ContractsPage = () => {
     fetchTransactions(finalParams);
   };
 
-  const handleSortChange = (
-    newSortState: { field: string; order: string }[],
-  ) => {
+  const handleSortChange = (newSortState: SortState[]) => {
     setSortState(newSortState);
 
     const finalParams = {
@@ -162,7 +159,7 @@ const ContractsPage = () => {
 
   return (
     <>
-      <TotalContractsOverview />
+      <TotalContractsOverview data={summaryData} />
       <ContractsFilter onSearch={handleSearch} />
       <ContractsList
         transactions={transactions}

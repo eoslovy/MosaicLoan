@@ -6,8 +6,10 @@ import MyAccountTransactionFilter from '@/components/my/MyAccountTransactionFilt
 import MyAccountTransactionList from '@/components/my/MyAccountTransactionList';
 import useAccountTransactionStore from '@/stores/useAccountTransactionStore';
 import { format } from 'date-fns';
+import useAuthRedirect from '@/hooks/useAuthRedirect';
 
 const MyAccountPage = () => {
+  useAuthRedirect('/my/myAccount');
   const fetchTransactions = useAccountTransactionStore(
     (state) => state.fetchTransactions,
   );

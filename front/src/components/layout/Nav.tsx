@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -15,13 +16,13 @@ const Nav = () => {
   const router = useRouter();
 
   if (!isFetched) {
-    return null; // 아직 사용자 정보 받아오는 중이면 아무것도 렌더하지 않음
+    return null;
   }
 
-  const maskName = (name: string) => {
-    if (name.length <= 2) return `${name[0]} *`;
-    return `${name[0]} * ${name[name.length - 1]}`;
-  };
+  // const maskName = (name: string) => {
+  //   if (name.length <= 2) return `${name[0]} *`;
+  //   return `${name[0]} * ${name[name.length - 1]}`;
+  // };
 
   const handleLogout = async () => {
     try {
@@ -81,7 +82,7 @@ const Nav = () => {
           <>
             <Button
               label={{
-                text: `${maskName(user.username)}님`,
+                text: `${user.username}님`,
                 size: 'sm',
                 color: 'blue',
               }}
