@@ -239,6 +239,7 @@ services:
     ports:
       - "3310:3306"
     volumes:
+      - ./infra/rdbms/mydata/credit_data.sql:/opt/init-sql/credit_data.sql
       - mydata-db-data:/var/lib/mysql
   credit-db:
     container_name: credit-db
