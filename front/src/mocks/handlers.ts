@@ -721,7 +721,7 @@ const handlers = [
     },
   ),
   rest.post('/contract/investments/', async (req, res, ctx) => {
-    const { principal, targetRate, targetWeeks } = await req.json();
+    const { principal } = await req.json();
 
     // 예시: 최소 금액 미만일 때 400 에러
     if (principal < 10000) {

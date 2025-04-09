@@ -16,3 +16,9 @@
 
   justify-items: center;
 }
+
+.emptyStateContainer {
+  width: 100%;
+  grid-column: 1 / -1; // 모든 열을 차지하도록 설정
+  min-height: 150px; // 적절한 높이 설정
+}
