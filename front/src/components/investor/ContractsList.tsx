@@ -14,13 +14,12 @@ import type {
 import Pill from '@/components/common/Pill';
 
 interface Transaction {
-  id: number;
   contractId: number;
   investmentId: number;
   amount: string;
   createdAt: string;
   status: string;
-  bondMaturity: string;
+  dueDate: string;
   interestRate: string;
 }
 
@@ -28,7 +27,7 @@ const apiToSortKeyMapping: Record<string, string> = {
   product: 'investmentId',
   bond: 'contractId',
   transactionDate: 'createdAt',
-  maturityDate: 'bondMaturity',
+  dueDate: 'dueDate',
   interestRate: 'interestRate',
 };
 
@@ -100,34 +99,34 @@ const ContractsList = ({
 
   const formatTransactionForDisplay = (transaction: Transaction) => {
     return {
-      key: `transaction-${transaction.id}`,
+      key: `transaction-${transaction.contractId}`,
       cells: [
         {
-          key: `product-${transaction.id}`,
+          key: `product-${transaction.contractId}`,
           content: `INVEST-${transaction.investmentId}`,
         },
         {
-          key: `bond-${transaction.id}`,
+          key: `bond-${transaction.contractId}`,
           content: `BOND-${transaction.contractId}`,
         },
         {
-          key: `date-${transaction.id}`,
+          key: `date-${transaction.contractId}`,
           content: transaction.createdAt,
         },
         {
-          key: `maturity-${transaction.id}`,
-          content: transaction.bondMaturity,
+          key: `dueDate-${transaction.contractId}`,
+          content: transaction.dueDate,
         },
         {
-          key: `amount-${transaction.id}`,
+          key: `amount-${transaction.contractId}`,
           content: `+W ${transaction.amount}`,
         },
         {
-          key: `rate-${transaction.id}`,
+          key: `rate-${transaction.contractId}`,
           content: transaction.interestRate,
         },
         {
-          key: `type-${transaction.id}`,
+          key: `type-${transaction.contractId}`,
           content: (
             <Pill variant={getTypeVariant(transaction.status)}>
               {transaction.status}
@@ -165,9 +164,9 @@ const ContractsList = ({
       onSort={handleSort}
     />,
     <SortableTableHeader
-      key='maturityDate'
+      key='dueDate'
       label='채권 만기일'
-      sortKey='maturityDate'
+      sortKey='dueDate'
       sortStates={sortStates}
       onSort={handleSort}
     />,

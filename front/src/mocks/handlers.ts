@@ -34,7 +34,7 @@ const handlers = [
           평균수익률: 8.5,
           투자건수: 5,
         },
-        investlist: [
+        investmentlist: [
           {
             투자명: '부동산 담보 대출 A',
             투자금액: '5000000',
@@ -135,24 +135,26 @@ const handlers = [
         createdAt:
           idx % 2 === 0 ? '2024-01-01T00:00:00Z' : '2024-02-01T00:00:00Z',
         investStatus: idx % 2 === 0 ? 'IN_PROGRESS' : 'COMPLETED',
+        contractCount: idx * 2 + 1,
         statusDistribution: {
           completed: 42,
           active: 78,
-          default: 12,                
+          default: 12,
           transferred: 5,
         },
       })),
       investOverview: Array.from({ length: 1 }, (_, idx) => ({
         statusDistribution: {
-        completed: 42,
-        active: 78,
-        default: 12,                
-        transferred: 5,
-      },
-      totalContractCount: 137,
-      totalProfit: 28750000,
-      totalLoss: 3400000}),
-      )}
+          completed: 42,
+          active: 78,
+          default: 12,
+          transferred: 5,
+        },
+        totalContractCount: 137,
+        totalProfit: 28750000,
+        totalLoss: 3400000,
+      })),
+    };
     return res(ctx.status(200), ctx.json(mockData));
   }),
   rest.get('/credit/evaluations/recent', (req, res, ctx) => {
@@ -326,7 +328,7 @@ const handlers = [
       }),
     );
   }),
-  rest.post('/api/contract/investments/transactions/search', (req, res, ctx) => {
+  rest.post('/contract/investments/transactions/search', (req, res, ctx) => {
     const {
       startDate,
       endDate,
@@ -346,7 +348,6 @@ const handlers = [
     };
 
     interface Transaction {
-      id: number;
       contractId: number;
       investmentId: number;
       amount: string;
@@ -359,7 +360,6 @@ const handlers = [
 
     const allTransactions: Transaction[] = [
       {
-        id: 1001,
         contractId: 5001,
         investmentId: 1,
         amount: '10000000',
@@ -369,7 +369,6 @@ const handlers = [
         interestRate: '6.5%',
       },
       {
-        id: 1002,
         contractId: 5001,
         investmentId: 1,
         amount: '650000',
@@ -379,7 +378,6 @@ const handlers = [
         interestRate: '6.5%',
       },
       {
-        id: 1003,
         contractId: 5002,
         investmentId: 1,
         amount: '15000000',
@@ -389,7 +387,6 @@ const handlers = [
         interestRate: '6.5%',
       },
       {
-        id: 1004,
         contractId: 5002,
         investmentId: 1,
         amount: '975000',
@@ -399,7 +396,6 @@ const handlers = [
         interestRate: '6.5%',
       },
       {
-        id: 1005,
         contractId: 5003,
         investmentId: 2,
         amount: '8000000',
@@ -409,7 +405,6 @@ const handlers = [
         interestRate: '6.6%',
       },
       {
-        id: 1006,
         contractId: 5003,
         investmentId: 2,
         amount: '528000',
@@ -419,7 +414,6 @@ const handlers = [
         interestRate: '6.6%',
       },
       {
-        id: 1007,
         contractId: 5004,
         investmentId: 2,
         amount: '12000000',
@@ -429,7 +423,6 @@ const handlers = [
         interestRate: '6.6%',
       },
       {
-        id: 1008,
         contractId: 5004,
         investmentId: 2,
         amount: '792000',
@@ -439,7 +432,6 @@ const handlers = [
         interestRate: '6.6%',
       },
       {
-        id: 1009,
         contractId: 5005,
         investmentId: 3,
         amount: '20000000',
@@ -449,7 +441,6 @@ const handlers = [
         interestRate: '6.7%',
       },
       {
-        id: 1010,
         contractId: 5005,
         investmentId: 3,
         amount: '1340000',
@@ -459,7 +450,6 @@ const handlers = [
         interestRate: '6.7%',
       },
       {
-        id: 1011,
         contractId: 5006,
         investmentId: 3,
         amount: '18000000',
@@ -469,7 +459,6 @@ const handlers = [
         interestRate: '6.7%',
       },
       {
-        id: 1012,
         contractId: 5006,
         investmentId: 3,
         amount: '1206000',
@@ -479,7 +468,6 @@ const handlers = [
         interestRate: '6.7%',
       },
       {
-        id: 1013,
         contractId: 5007,
         investmentId: 4,
         amount: '25000000',
@@ -489,7 +477,6 @@ const handlers = [
         interestRate: '6.8%',
       },
       {
-        id: 1014,
         contractId: 5007,
         investmentId: 4,
         amount: '1700000',
@@ -499,7 +486,6 @@ const handlers = [
         interestRate: '6.8%',
       },
       {
-        id: 1015,
         contractId: 5008,
         investmentId: 4,
         amount: '500000',
@@ -509,7 +495,6 @@ const handlers = [
         interestRate: '6.8%',
       },
       {
-        id: 1016,
         contractId: 5009,
         investmentId: 5,
         amount: '30000000',
@@ -519,7 +504,6 @@ const handlers = [
         interestRate: '6.9%',
       },
       {
-        id: 1017,
         contractId: 5009,
         investmentId: 5,
         amount: '2010000',
@@ -529,7 +513,6 @@ const handlers = [
         interestRate: '6.9%',
       },
       {
-        id: 1018,
         contractId: 5010,
         investmentId: 5,
         amount: '22000000',
@@ -539,7 +522,6 @@ const handlers = [
         interestRate: '6.9%',
       },
       {
-        id: 1019,
         contractId: 5010,
         investmentId: 5,
         amount: '1474000',
@@ -549,7 +531,6 @@ const handlers = [
         interestRate: '6.9%',
       },
       {
-        id: 1020,
         contractId: 5011,
         investmentId: 6,
         amount: '700000',
@@ -559,7 +540,6 @@ const handlers = [
         interestRate: '7.0%',
       },
       {
-        id: 1021,
         contractId: 5012,
         investmentId: 7,
         amount: '18000000',
@@ -569,7 +549,6 @@ const handlers = [
         interestRate: '7.0%',
       },
       {
-        id: 1022,
         contractId: 5012,
         investmentId: 7,
         amount: '1188000',
@@ -579,7 +558,6 @@ const handlers = [
         interestRate: '7.0%',
       },
       {
-        id: 1023,
         contractId: 5013,
         investmentId: 8,
         amount: '15000000',
@@ -589,7 +567,6 @@ const handlers = [
         interestRate: '7.1%',
       },
       {
-        id: 1024,
         contractId: 5013,
         investmentId: 8,
         amount: '1005000',
@@ -599,7 +576,6 @@ const handlers = [
         interestRate: '7.1%',
       },
       {
-        id: 1025,
         contractId: 5014,
         investmentId: 9,
         amount: '28000000',
@@ -609,7 +585,6 @@ const handlers = [
         interestRate: '7.2%',
       },
       {
-        id: 1026,
         contractId: 5014,
         investmentId: 9,
         amount: '1904000',
@@ -619,7 +594,6 @@ const handlers = [
         interestRate: '7.2%',
       },
       {
-        id: 1027,
         contractId: 5015,
         investmentId: 10,
         amount: '32000000',
@@ -629,7 +603,6 @@ const handlers = [
         interestRate: '7.2%',
       },
       {
-        id: 1028,
         contractId: 5015,
         investmentId: 10,
         amount: '2144000',
@@ -639,7 +612,6 @@ const handlers = [
         interestRate: '7.2%',
       },
       {
-        id: 1029,
         contractId: 5016,
         investmentId: 11,
         amount: '900000',
@@ -649,7 +621,6 @@ const handlers = [
         interestRate: '7.3%',
       },
       {
-        id: 1030,
         contractId: 5017,
         investmentId: 12,
         amount: '800000',
@@ -657,10 +628,24 @@ const handlers = [
         status: '환급',
         dueDate: '2025-10-01',
         interestRate: '7.3%',
-      },
+      }
     ];
 
-    const filteredTransactions: Transaction[] = [...allTransactions];
+    const filteredTransactions: Transaction[] = [...allTransactions]
+      .filter((tx) => {
+        const txDate = new Date(tx.createdAt);
+        const afterStart = startDate ? txDate >= new Date(startDate) : true;
+        const beforeEnd = endDate ? txDate <= new Date(endDate) : true;
+        return afterStart && beforeEnd;
+      })
+      .filter((tx) => {
+        return types && types.length > 0 ? types.includes(tx.status) : true;
+      })
+      .filter((tx) => {
+        return investmentIds && investmentIds.length > 0
+          ? investmentIds.includes(tx.investmentId)
+          : true;
+      });
 
     if (sort.length > 0) {
       const { field, order } = sort[0];
@@ -792,7 +777,7 @@ const handlers = [
       }),
     );
   }),
-  rest.post('/api/contract/loans/transactions/search', (req, res, ctx) => {
+  rest.post('/contract/loans/transactions/search', (req, res, ctx) => {
     const {
       startDate,
       endDate,

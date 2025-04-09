@@ -1,7 +1,4 @@
-import type {
-  InvestmentOverviewResponse,
-  ContractSummaryResponse,
-} from '@/types/pages';
+import type { InvestmentOverviewResponse, InvestOverview } from '@/types/pages';
 
 export const mockInvestorOverview: InvestmentOverviewResponse = {
   summary: {
@@ -57,7 +54,7 @@ export const mockInvestorOverview: InvestmentOverviewResponse = {
   },
 };
 
-export const mockContractSummary: ContractSummaryResponse = {
+export const mockContractSummary: InvestOverview = {
   statusDistribution: {
     completed: 30,
     active: 120,

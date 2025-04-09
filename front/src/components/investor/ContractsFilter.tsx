@@ -71,7 +71,9 @@ const ContractsFilter = ({ onSearch }: ContractsFilterProps) => {
     setError(null);
 
     try {
-      const response = await request.GET<ContractResponse>('/contract/investments');
+      const response = await request.GET<ContractResponse>(
+        '/contract/investments',
+      );
 
       if (response?.investments && Array.isArray(response.investments)) {
         setInvestmentData(response.investments);

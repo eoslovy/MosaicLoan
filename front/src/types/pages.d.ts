@@ -31,13 +31,13 @@ export interface ProfitItem {
 // 이건 /api/investments/overview 전체 응답의 타입
 export interface InvestmentOverviewResponse {
   summary: InvestmentSummary;
-  investlist: InvestmentItem[];
+  investmentlist: InvestmentItem[];
   profitHistory: ProfitItem[];
   simulation: Record<string, number[]>;
 }
 
 export interface InvestmentOverviewTableProps {
-  investlist: InvestmentItem[];
+  investmentlist: InvestmentItem[];
   profitHistory: ProfitItem[];
 }
 
@@ -45,7 +45,7 @@ export interface Investment {
   investmentId: number;
   createdAt: string;
   investStatus: 'COMPLETED' | 'IN_PROGRESS';
-  totalContractCount: number;
+  contractCount: number;
   statusDistribution: {
     completed: number;
     active: number;
@@ -72,13 +72,12 @@ export interface ContractResponse {
 }
 
 export interface Transaction {
-  id: number;
   contractId: number;
   investmentId: number;
   amount: string;
   createdAt: string;
   status: string;
-  bondMaturity: string;
+  dueDate: string;
   interestRate: string;
 }
 

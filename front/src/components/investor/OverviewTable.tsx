@@ -22,10 +22,10 @@ const getStatusVariant = (status: string): PillVariant => {
 };
 
 const OverviewTable: React.FC<InvestmentOverviewTableProps> = ({
-  investlist,
+  investmentlist,
   profitHistory,
 }) => {
-  const investmentRows: BasicTableRow[] = investlist.map((item, idx) => ({
+  const investmentRows: BasicTableRow[] = investmentlist.map((item, idx) => ({
     key: `investment-${idx}`,
     cells: [
       { key: `name-${idx}`, content: item.투자명 },

@@ -7,7 +7,11 @@ import ContractsList from '@/components/investor/ContractsList';
 import { fetchContractSummary } from '@/service/apis/investments';
 import EmptyState from '@/components/empty/investor/EmptyState';
 import request from '@/service/apis/request';
-import type { InvestOverview, Transaction, ApiResponseData } from '@/types/pages';
+import type {
+  InvestOverview,
+  Transaction,
+  ApiResponseData,
+} from '@/types/pages';
 
 interface SearchParams extends Record<string, unknown> {
   startDate?: string;
@@ -22,8 +26,7 @@ interface SortState {
 }
 
 const ContractsPage = () => {
-  const [summaryData, setSummaryData] =
-    useState<InvestOverview | null>(null);
+  const [summaryData, setSummaryData] = useState<InvestOverview | null>(null);
   const [isLoadingSummary, setIsLoadingSummary] = useState(true);
   const [isSummaryError, setIsSummaryError] = useState(false);
 

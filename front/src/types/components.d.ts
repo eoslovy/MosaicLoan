@@ -212,7 +212,7 @@ export type SortKey =
   | 'product'
   | 'bond'
   | 'transactionDate'
-  | 'maturityDate'
+  | 'dueDate'
   | 'interestRate'
   | 'loan'
   | 'amount'

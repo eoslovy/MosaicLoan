@@ -22,6 +22,7 @@ const OverviewPage = () => {
           '/contract/investments/overview',
         );
         setData(result);
+        
       } catch (e: unknown) {
         if (process.env.NODE_ENV === 'development') {
           if (e instanceof Error) {
@@ -38,7 +39,7 @@ const OverviewPage = () => {
 
     fetchOverview();
   }, []);
-
+  
   if (isLoading) {
     return <InvestorOverviewSkeleton />;
   }
@@ -52,7 +53,7 @@ const OverviewPage = () => {
       <InvestButton />
       <Overview summary={data.summary} />
       <OverviewTable
-        investlist={data.investlist}
+        investmentlist={data.investmentlist}
         profitHistory={data.profitHistory}
       />
       <OverviewInvestSimulation />
