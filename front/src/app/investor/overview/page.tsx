@@ -5,7 +5,6 @@ import Overview from '@/components/investor/Overview';
 import OverviewTable from '@/components/investor/OverviewTable';
 import OverviewInvestSimulation from '@/components/investor/OverviewInvestSimulation';
 import InvestButton from '@/components/investor/InvestButton';
-import EmptyState from '@/components/empty/investor/EmptyState';
 import InvestorOverviewSkeleton from '@/components/loading/InvestorOverviewSkeleton';
 import type { InvestmentOverviewResponse } from '@/types/pages';
 import request from '@/service/apis/request';
@@ -13,7 +12,6 @@ import request from '@/service/apis/request';
 const OverviewPage = () => {
   const [data, setData] = useState<InvestmentOverviewResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     const fetchOverview = async () => {
@@ -30,7 +28,18 @@ const OverviewPage = () => {
             console.error('알 수 없는 오류 발생', e);
           }
         }
-        setIsError(true);
+        // 에러가 발생해도 빈 데이터 구조를 설정
+        setData({
+          summary: {
+            총투자금액: '',
+            누적수익금: '',
+            평균수익률: 0,
+            투자건수: 0,
+          },
+          investmentlist: [],
+          profitHistory: [],
+          simulation: {},
+        });
       } finally {
         setIsLoading(false);
       }
@@ -39,20 +48,25 @@ const OverviewPage = () => {
     fetchOverview();
   }, []);
 
-  if (isLoading) {
+  if (isLoading || data === null) {
     return <InvestorOverviewSkeleton />;
-  }
-
-  if (isError || !data) {
-    return <EmptyState message='투자 개요 정보를 불러올 수 없습니다.' />;
   }
 
   return (
     <>
       <InvestButton />
-      <Overview summary={data.summary} />
+      <Overview
+        summary={
+          data?.summary || {
+            총투자금액: '',
+            누적수익금: '',
+            평균수익률: 0,
+            투자건수: 0,
+          }
+        }
+      />
       <OverviewTable
-        investlist={data.investlist}
+        investmentlist={data.investmentlist}
         profitHistory={data.profitHistory}
       />
       <OverviewInvestSimulation />

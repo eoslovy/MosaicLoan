@@ -2,6 +2,7 @@ package com.mosaic.investment.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,11 +11,13 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mosaic.contract.service.ContractService;
 import com.mosaic.core.exception.InternalSystemException;
 import com.mosaic.core.model.Contract;
 import com.mosaic.core.model.ContractTransaction;
 import com.mosaic.core.model.Investment;
 import com.mosaic.core.model.Loan;
+import com.mosaic.core.model.status.ContractStatus;
 import com.mosaic.core.model.status.LoanStatus;
 import com.mosaic.core.util.TimeUtil;
 import com.mosaic.investment.dto.RequestInvestmentDto;
@@ -42,6 +45,7 @@ public class InvestmentServiceImpl implements InvestmentService {
 	private final LoanRepository loanRepository;
 	private final InvestmentKafkaProducer investmentProducer;
 	private final TimeUtil timeUtil;
+	private final ContractService contractService;
 
 	//입금
 	@Override
@@ -70,9 +74,38 @@ public class InvestmentServiceImpl implements InvestmentService {
 		investment.completeRequest(completeInvestmentRequest);
 	}
 
-	//투자 종료
 	@Override
-	public void finishActiveInvestment(Investment investment) {
+	public void executeCompleteInvestment(LocalDate date, Boolean isBot) throws JsonProcessingException {
+		List<Investment> investments = investmentRepository.findAllByDueDate(date);
+		for (Investment investment : investments) {
+			Boolean isDone = finishActiveInvestment(investment, isBot);
+			if (isDone) {
+				BigDecimal withdrawnAmount = investment.withdrawAll();
+				investment.finishInvestment();
+				LocalDateTime now = timeUtil.now(isBot);
+				AccountTransactionPayload investWithdrawalPayload = AccountTransactionPayload.buildInvestWithdrawal(
+					investment,
+					withdrawnAmount, now);
+
+				investmentProducer.sendInvestmentWithdrawalRequest(investWithdrawalPayload);
+			}
+		}
+	}
+
+	//투자 종료 강제 유동화
+	@Override
+	public Boolean finishActiveInvestment(Investment investment, Boolean isBot) {
+		LocalDateTime now = timeUtil.now(isBot);
+		for (Contract contract : investment.getContracts()) {
+			if (contract.getStatus().equals(ContractStatus.DELINQUENT)) {
+				contractService.liquidateContract(contract, now);
+			}
+		}
+		for (Contract contract : investment.getContracts()) {
+			if (!Contract.isComeplete(contract))
+				return false;
+		}
+		return true;
 	}
 
 	//출금
@@ -119,7 +152,8 @@ public class InvestmentServiceImpl implements InvestmentService {
 		BigDecimal minimumPerInvestment = BigDecimal.valueOf(100);
 
 		// 3. 조건에 맞는 투자자 조회
-		List<Investment> candidates = investmentQueryRepository.findQualifiedInvestments(minimumPerInvestment, loan);
+		List<Investment> candidates = investmentQueryRepository.findQualifiedInvestments(minimumPerInvestment,
+			loanTransactionReq.expectYieldRate(), loan);
 
 		BigDecimal accumulated = BigDecimal.ZERO;
 		List<Contract> contracts = new ArrayList<>();
@@ -146,12 +180,14 @@ public class InvestmentServiceImpl implements InvestmentService {
 				loan,
 				investment,
 				allocated,
+				loanTransactionReq.expectYieldRate(),
 				loanTransactionReq.interestRate(),
 				250
 			);
 
 			contracts.add(contract);
 			accumulated = accumulated.add(allocated);
+			investment.addExpectYield(contract);
 			investment.investAmount(contract);
 		}
 

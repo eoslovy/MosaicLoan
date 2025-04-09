@@ -1,5 +1,7 @@
 package com.mosaic.investment.service;
 
+import java.time.LocalDate;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.core.exception.InternalSystemException;
 import com.mosaic.core.model.Investment;
@@ -15,7 +17,9 @@ public interface InvestmentService {
 
 	void completeInvestmentRequest(AccountTransactionPayload requestDto) throws Exception;
 
-	void finishActiveInvestment(Investment investment);
+	void executeCompleteInvestment(LocalDate date, Boolean isBot) throws JsonProcessingException;
+
+	Boolean finishActiveInvestment(Investment investment, Boolean isBot);
 
 	void publishInvestmentWithdrawal(WithdrawalInvestmentDto requestDto, Boolean isBot) throws JsonProcessingException;
 

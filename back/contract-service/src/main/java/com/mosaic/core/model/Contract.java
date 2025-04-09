@@ -66,6 +66,9 @@ public class Contract {
 	@Column(name = "delinquency_margin_rate")
 	private Integer delinquencyMarginRate;
 
+	@Column(name = "expect_yield")
+	private BigDecimal expectYield;
+
 	@Column(name = "interest_rate")
 	private Integer interestRate;
 
@@ -74,6 +77,16 @@ public class Contract {
 
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
+
+	public static boolean isComeplete(Contract contract) {
+		if (contract.getStatus().equals(ContractStatus.COMPLETED)) {
+			return true;
+		}
+		if (contract.getStatus().equals(ContractStatus.OWNERSHIP_TRANSFERRED)) {
+			return true;
+		}
+		return false;
+	}
 
 	public void addInterestAmountToOutstandingAmount(BigDecimal interest) {
 		this.outstandingAmount = this.outstandingAmount.add(interest);
@@ -89,6 +102,10 @@ public class Contract {
 		contractTransactions.add(transaction);
 	}
 
+	public void setStatusLiquidate() {
+		this.status = ContractStatus.OWNERSHIP_TRANSFERRED;
+	}
+
 	public void updateOutstandingAmountAfterPrincipalRepaid(ContractTransaction principalTransaction) {
 		this.outstandingAmount = this.outstandingAmount.subtract(principalTransaction.getAmount());
 	}
@@ -102,8 +119,8 @@ public class Contract {
 		Investment investment,
 		BigDecimal allocatedAmount,
 		int interestRate,
-		int delinquencyMarginRate
-	) {
+		int delinquencyMarginRate,
+		int expectYieldRate) {
 		return Contract.builder()
 			.loan(loan)
 			.investment(investment)
@@ -111,11 +128,27 @@ public class Contract {
 			.outstandingAmount(allocatedAmount)
 			.paidAmount(BigDecimal.ZERO)
 			.interestRate(interestRate)
+			.expectYield(
+				allocatedAmount.multiply(BigDecimal.valueOf(expectYieldRate)).divide(BigDecimal.valueOf(10000)))
 			.delinquencyMarginRate(delinquencyMarginRate)
 			.status(ContractStatus.IN_PROGRESS)
 			.dueDate(loan.getDueDate())
 			// Bot 여부 판정이 어려워 일단 loan + 1~2초 사용
 			.createdAt(loan.getCreatedAt().plusSeconds(1000 + (long)(Math.random() * 1000)))
 			.build();
+	}
+
+	public void setStatusDelinquent() {
+		this.status = ContractStatus.DELINQUENT;
+	}
+
+	public void setStatusComplete() {
+		this.status = ContractStatus.COMPLETED;
+	}
+
+	public void addExtraInterestDaily() {
+
+		Integer totalRate = (interestRate+delinquencyMarginRate)/365;
+		this.outstandingAmount = this.outstandingAmount.multiply(BigDecimal.valueOf(totalRate)).divide(BigDecimal.valueOf(10000));
 	}
 }

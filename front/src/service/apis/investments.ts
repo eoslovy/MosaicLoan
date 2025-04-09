@@ -1,7 +1,7 @@
 import type {
   InvestmentSummary,
   InvestmentOverviewResponse,
-  ContractSummaryResponse,
+  InvestOverview,
 } from '@/types/pages';
 import { mockInvestorOverview, mockContractSummary } from '@/data/mockData';
 
@@ -17,7 +17,6 @@ export const fetchInvestmentOverview =
     return mockInvestorOverview;
   };
 
-export const fetchContractSummary =
-  async (): Promise<ContractSummaryResponse> => {
-    return mockContractSummary;
-  };
+export const fetchContractSummary = async (): Promise<InvestOverview> => {
+  return mockContractSummary;
+};

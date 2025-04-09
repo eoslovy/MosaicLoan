@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { BarChartProps } from '@/types/components';
@@ -21,15 +23,9 @@ const BarChart: React.FC<BarChartProps> = ({ labels, values, title }) => {
     labels,
     datasets: [
       {
-        label: '상태별 금액',
+        label: '거래 금액',
         data: values,
-        backgroundColor: [
-          '#10B981',
-          '#6366F1',
-          '#F59E0B',
-          '#EF4444',
-          '#9CA3AF',
-        ],
+        backgroundColor: '#10B981', // 녹색으로 통일
         borderRadius: 4,
       },
     ],
@@ -40,7 +36,7 @@ const BarChart: React.FC<BarChartProps> = ({ labels, values, title }) => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false, // 범례 제거
+        display: false,
       },
       tooltip: {
         callbacks: {
@@ -57,7 +53,41 @@ const BarChart: React.FC<BarChartProps> = ({ labels, values, title }) => {
     scales: {
       x: {
         grid: {
-          display: false, // X축 격자 제거
+          display: false,
+        },
+        ticks: {
+          maxRotation: 0,
+          minRotation: 0,
+          autoSkip: false,
+          padding: 10, // 패딩 증가
+          font: {
+            size: 11, // 폰트 크기 조정
+            lineHeight: 1.2, // 줄 간격 설정
+          },
+          callback: (value: unknown, index: number) => {
+            const label = labels[index];
+            if (!label) return '';
+
+            // 언더스코어로 구분된 라벨 처리
+            if (label.includes('_')) {
+              // 언더스코어를 기준으로 분리하고 각 부분을 짧게 만든 후 줄바꿈으로 결합
+              const parts = label.split('_');
+              if (parts.length > 1) {
+                return parts
+                  .map((part) =>
+                    part.length > 5 ? `${part.substring(0, 5)}.` : part,
+                  )
+                  .join('\n');
+              }
+            }
+
+            // 일반 라벨 처리
+            if (label.length > 8) {
+              return `${label.substring(0, 7)}.`;
+            }
+
+            return label;
+          },
         },
       },
       y: {
@@ -81,10 +111,11 @@ const BarChart: React.FC<BarChartProps> = ({ labels, values, title }) => {
 
   return (
     <div className={styles.barChartContainer}>
-      {title && <h3 className={styles.chartTitle}>{title}</h3>}
       <div className={styles.chartWrapper}>
         <Bar data={data} options={options} />
       </div>
+
+      {title && <h3 className={styles.chartTitle}>{title}</h3>}
     </div>
   );
 };

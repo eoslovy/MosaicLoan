@@ -1,7 +1,12 @@
 # build artifacts
+# build artifacts
 node_modules
 .next
 dist
+out
+.cache
+
+# system files
 out
 .cache
 
@@ -14,3 +19,6 @@ out
 # pnpm-lock.yaml
 Dockerfile
 docker-compose.yml
+
+# git
+.git

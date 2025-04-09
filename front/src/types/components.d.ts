@@ -212,8 +212,13 @@ export type SortKey =
   | 'product'
   | 'bond'
   | 'transactionDate'
-  | 'maturityDate'
-  | 'interestRate';
+  | 'dueDate'
+  | 'interestRate'
+  | 'loan'
+  | 'amount'
+  | 'loanDate'
+  | 'loanMaturityDate'
+  | 'dueDate';
 
 export interface SortState {
   key: SortKey;
@@ -320,16 +325,14 @@ export interface LoanTransaction {
   status: string;
   dueDate: string;
   interestRate: number;
+  detail?: LoanTransactionDetail[];
 }
 
 export interface LoanSearchParams {
-  startDate: string;
-  endDate: string;
-  types: string[];
+  startDate?: string;
+  endDate?: string;
+  types?: string[];
   page?: number;
   pageSize?: number;
-  sort?: Array<{
-    field: string;
-    order: 'asc' | 'desc' | 'unsorted';
-  }>;
+  sort?: LoanSortState[];
 }

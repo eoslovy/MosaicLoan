@@ -39,7 +39,7 @@ const InvestmentModal = ({
   const [localAmount, setLocalAmount] = useState(initialAmount);
   const [localRate, setLocalRate] = useState(initialRate);
   const [selectedWeeks, setSelectedWeeks] = useState(DEFAULT_WEEKS);
-  const [maturityDate, setMaturityDate] = useState<Date | null>(null);
+  const [dueDate, setdueDate] = useState<Date | null>(null);
 
   // 유효성 검사 오류 상태
   const [amountError, setAmountError] = useState<string | null>(null);
@@ -108,7 +108,7 @@ const InvestmentModal = ({
       setSelectedWeeks(DEFAULT_WEEKS);
       const defaultDate = new Date();
       defaultDate.setDate(defaultDate.getDate() + DEFAULT_WEEKS * 7);
-      setMaturityDate(defaultDate);
+      setdueDate(defaultDate);
 
       // 오류 상태 초기화
       setAmountError(null);
@@ -140,7 +140,7 @@ const InvestmentModal = ({
 
   const handleWeeksChange = (weeks: number, endDate: Date) => {
     setSelectedWeeks(weeks);
-    setMaturityDate(endDate);
+    setdueDate(endDate);
   };
 
   const handleInvest = async () => {

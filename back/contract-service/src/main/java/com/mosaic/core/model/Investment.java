@@ -61,6 +61,9 @@ public class Investment {
 	@Column(name = "principal", precision = 18, scale = 5)
 	private BigDecimal principal;
 
+	@Column(name = "expect_yield", precision = 18, scale = 5)
+	private BigDecimal expectYield;
+
     @Builder.Default
     @OneToMany(mappedBy = "investment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private List<Contract> contracts = new ArrayList<>();
@@ -110,5 +113,21 @@ public class Investment {
 	public void investAmount(Contract contract) {
 		this.contracts.add(contract);
 		this.amount = amount.subtract(contract.getAmount());
+	}
+
+	public void subtractLiquidatedAmount(ContractTransaction transaction) {
+		this.amount = this.amount.add(transaction.getAmount());
+		this.currentRate = this.currentRate - transaction.getAmount().divide(this.principal).multiply(BigDecimal.valueOf(10000)).intValue();
+	}
+	public void subtractExpectYield(Contract contract) {
+		this.expectYield = this.expectYield.subtract(contract.getExpectYield());
+	}
+	public void addExpectYield(Contract contract) {
+		this.expectYield = this.expectYield.add(contract.getExpectYield());
+	}
+
+	public void addCurrentRate(ContractTransaction interestTransaction, Contract contract) {
+		Integer adjustedRate = interestTransaction.getAmount().divide(this.principal).multiply(BigDecimal.valueOf(10000)).intValue(); //원금대비 이자액을 비율로 환산
+		this.currentRate = this.currentRate + adjustedRate;
 	}
 }
