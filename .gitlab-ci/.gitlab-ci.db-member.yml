@@ -7,6 +7,8 @@ build_member-db:
   rules:
     - changes:
         - infra/rdbms/member/**/*
+      when: always
+    - when: never
 
 push_member-db:
   variables:

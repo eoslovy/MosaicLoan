@@ -20,6 +20,9 @@ include:
   - local: .gitlab-ci/.gitlab-ci.zookeeper.yml
   - local: .gitlab-ci/.gitlab-ci.redis.yml
   - local: .gitlab-ci/.gitlab-ci.springcloud-gateway.yml
+  # 모델링 서비스
+  - local: .gitlab-ci/.gitlab-ci.model-credit.yml
+  - local: .gitlab-ci/.gitlab-ci.model-news.yml
 stages:
   - build
   - test

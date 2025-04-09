@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.mosaic.core.model.status.ContractTransactionType;
+import com.mosaic.core.util.TimeUtil;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -34,9 +36,9 @@ public class ContractTransaction {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "contract_id", nullable = false)
-	private Contract contract;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "contract_id", nullable = false)
+    private Contract contract;
 
 	@Column(name = "amount")
 	private BigDecimal amount;

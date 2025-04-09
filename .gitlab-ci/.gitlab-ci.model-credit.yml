@@ -1,0 +1,49 @@
+build_model-credit:
+  variables:
+    SERVICE_NAME: model-credit
+    BUILD_CONTEXT: ./modeling/credit
+  extends: .backend-default-build
+  rules:
+    - changes:
+        - modeling/credit/**/*
+      when: always
+    - when: never
+
+push_model-credit:
+  variables:
+    SERVICE_NAME: model-credit
+    BUILD_CONTEXT: ./modeling/credit
+  extends: .backend-default-push
+  needs: [build_model-credit]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - modeling/credit/**/*
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - modeling/credit/**/*
+      when: manual
+    - when: never
+
+deploy_model-credit:
+  variables:
+    SERVICE_NAME: model-credit
+    BUILD_CONTEXT: ./modeling/credit
+  extends: .modeling-default-deploy
+  needs: [push_model-credit]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+      changes:
+        - modeling/credit/**/*
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"' # 수동 실행도 허용하려면
+      changes:
+        - modeling/credit/**/*
+      when: manual
+    - when: never
+#test_include_trigger:
+# tags:
+#  - $GITLAB_USER_EMAIL
+#script:
+#  - echo "CI 정상 작동 여부 확인"

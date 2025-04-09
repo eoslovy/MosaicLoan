@@ -1,5 +1,6 @@
 package com.creditservice.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -14,6 +15,7 @@ import com.creditservice.domain.EvaluationStatus;
 import com.creditservice.dto.EvaluationResultDto;
 import com.creditservice.repository.CreditEvaluationRepository;
 import com.creditservice.repository.EconomySentimentRepository;
+import com.creditservice.util.RiskBasedYieldCalculator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +30,12 @@ public class CalculationServiceImpl implements CalculationService {
 	private final EconomySentimentRepository economySentimentRepository;
 
 	public CreditEvaluation createAndSaveEvaluation(Integer caseId, Integer memberId, Integer defaultRate,
-		Integer interestRate, Integer maxLoanLimit, EvaluationStatus status, LocalDateTime now) {
+		Integer interestRate, Integer expectedYield, Integer maxLoanLimit, EvaluationStatus status, LocalDateTime now) {
 		CreditEvaluation evaluation = CreditEvaluation.builder()
 			.memberId(memberId)
 			.defaultRate(defaultRate)
 			.interestRate(interestRate)
+			.expectedYield(expectedYield)
 			.maxLoanLimit(maxLoanLimit)
 			.createdAt(now)
 			.caseId(caseId)
@@ -68,8 +71,16 @@ public class CalculationServiceImpl implements CalculationService {
 		riskFreeRate -= sentiment * 0.0025; // 범위에 따라 ±0.25% 조정
 
 		double lossGivenDefault = 0.5;
-		int interestRate = (int)Math.round(
-			(riskFreeRate + (probability * lossGivenDefault)) * 10000);
+		double adjustProbability = probability * 53;
+		BigDecimal assignedInterest = RiskBasedYieldCalculator.calculateAssignedRate(probability);
+
+		Integer expectedYield = RiskBasedYieldCalculator.calculateExpectedYield(probability)
+			.multiply(BigDecimal.valueOf(10000))
+			.intValue();
+
+		Integer interestRate = (int)(riskFreeRate * 10000) + assignedInterest.add(BigDecimal.valueOf(riskFreeRate))
+			.multiply(BigDecimal.valueOf(10000))
+			.intValue();
 
 		// 3. DSR 기반 대출 한도 계산
 		// Redis에서 데이터 가져오기rm
@@ -105,13 +116,14 @@ public class CalculationServiceImpl implements CalculationService {
 
 				// DSR이 40%를 넘으면 대출 불가
 				if (dsr > 0.4) {
-					return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, 0,
+
+					return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, 0, 0,
 						EvaluationStatus.DSR_EXCEEDED, createdAt);
 				}
 
 				// DSR에 따른 대출 한도 계산 (남은 DSR 여유분 * 월소득 * 12)
 				int maxLoanLimit = (int)((0.4 - dsr) * monthlyIncome * 12);
-				return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, maxLoanLimit,
+				return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, maxLoanLimit, expectedYield,
 					EvaluationStatus.APPROVED, createdAt);
 			}
 		}
@@ -119,7 +131,7 @@ public class CalculationServiceImpl implements CalculationService {
 		// DSR 계산이 불가능한 경우 기본 대출 한도 설정
 		log.info("DSR 계산 불가: caseId={}, memberId={}, 기본 대출 한도 적용", caseId, memberId);
 		// 이 경우 시간 못줌
-		return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, 1000000, EvaluationStatus.APPROVED,
-			createdAt);
+		return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, 1000000, expectedYield,
+			EvaluationStatus.APPROVED, createdAt);
 	}
 }

@@ -61,9 +61,9 @@ public class Investment {
 	@Column(name = "principal", precision = 18, scale = 5)
 	private BigDecimal principal;
 
-	@Builder.Default
-	@OneToMany(mappedBy = "investment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<Contract> contracts = new ArrayList<>();
+    @Builder.Default
+    @OneToMany(mappedBy = "investment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<Contract> contracts = new ArrayList<>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
