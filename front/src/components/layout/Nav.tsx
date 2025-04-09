@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -14,8 +15,19 @@ const Nav = () => {
   const { user, isFetched } = useUser();
   const router = useRouter();
 
-  if (!isFetched) {
-    return null; // 아직 사용자 정보 받아오는 중이면 아무것도 렌더하지 않음
+  // 1초 대기 상태
+  const [isDelayDone, setIsDelayDone] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsDelayDone(true);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!isFetched || !isDelayDone) {
+    return null; // 사용자 정보 로딩 전이거나 1초 대기 중일 때
   }
 
   const maskName = (name: string) => {

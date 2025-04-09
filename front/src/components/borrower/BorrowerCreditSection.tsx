@@ -50,12 +50,6 @@ const BorrowerCreditSection = ({ onComplete }: { onComplete: () => void }) => {
     <div className={styles.singleCardWrapper}>
       <StatCard
         icon='trendingUp'
-        value={data.creditScore.toLocaleString()}
-        label='나의 신용점수'
-        unitOverride='점'
-      />
-      <StatCard
-        icon='trendingUp'
         value={data.maxLoanLimit.toLocaleString()}
         label='대출한도'
         unitOverride='원'
