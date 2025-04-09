@@ -5,13 +5,16 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mosaic.contract.service.ContractService;
 import com.mosaic.core.model.Contract;
 import com.mosaic.core.model.ContractTransaction;
 import com.mosaic.core.model.Loan;
+import com.mosaic.core.model.status.ContractStatus;
 import com.mosaic.core.model.status.LoanStatus;
 import com.mosaic.core.util.InternalApiClient;
 import com.mosaic.core.util.TimeUtil;
@@ -39,6 +42,7 @@ public class LoanServiceImpl implements LoanService {
 	private final LoanRepository loanRepository;
 	private final InternalApiClient internalApiClient;
 	private final TimeUtil timeUtil;
+	private final ContractService contractService;
 
 	//투자 생성
 	@Override
@@ -61,6 +65,30 @@ public class LoanServiceImpl implements LoanService {
 			creditEvaluationResponseDto);
 		log.info("Create loan: {}", payload);
 		loanKafkaProducer.sendLoanCreatedRequest(payload);
+	}
+	@Override
+	public void manageInterestOfDelinquentLoans(LocalDateTime now){
+		List<Loan> loans = loanRepository.findByStatus(LoanStatus.DELINQUENT);
+		for(Loan loan : loans){
+			contractService.addDelinquentMarginInterest(loan);
+		}
+	}
+
+	@Override
+	public void liquidateScheduledDelinquentLoans(LocalDateTime now) throws Exception {
+		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate().minusMonths(3), LoanStatus.DELINQUENT);
+		for (Loan loan : loans) {
+			liquidateLoan(loan, now);
+		}
+	}
+
+	@Override
+	public void liquidateLoan(Loan loan, LocalDateTime now) throws Exception {
+		if(loan.getId() == null){return;}
+		for(Contract contract : loan.getContracts()){
+			Contract liquidatedContract = contractService.liquidateContract(contract, now);
+			if(!contract.getStatus().equals(ContractStatus.OWNERSHIP_TRANSFERRED)) throw new Exception("liquidateFail");
+		}
 	}
 
 	//상환입금

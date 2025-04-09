@@ -145,4 +145,10 @@ public class Contract {
 	public void setStatusComplete() {
 		this.status = ContractStatus.COMPLETED;
 	}
+
+	public void addExtraInterestDaily() {
+
+		Integer totalRate = (interestRate+delinquencyMarginRate)/365;
+		this.outstandingAmount = this.outstandingAmount.multiply(BigDecimal.valueOf(totalRate)).divide(BigDecimal.valueOf(10000));
+	}
 }

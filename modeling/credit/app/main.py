@@ -79,12 +79,7 @@ async def startup_event():
     logger.info("가벼운 Spark 세션 초기화 중...")
     spark = SparkSession.builder \
         .appName("FastAPI-PySpark-Lightweight") \
-        .config("spark.driver.cores", "1") \
-        .config("spark.executor.cores", "1") \
-        .config("spark.driver.memory", "512m") \
-        .config("spark.memory.offHeap.enabled", "true") \
-        .config("spark.memory.offHeap.size", "256m") \
-        .config("spark.driver.maxResultSize", "256m") \
+        .config("spark.driver.memory", "12g") \
         .config("spark.memory.fraction", "0.6") \
         .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer") \
         .config("spark.kryo.unsafe", "true") \

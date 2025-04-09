@@ -8,6 +8,8 @@ const useCreditEvaluation = ({ onCompleted }: { onCompleted: () => void }) => {
   const [step, setStep] = useState<0 | 1 | 2>(0);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
+  const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
   const { user } = useUserStore();
 
   const isMock = process.env.NEXT_PUBLIC_API_MOCKING === 'enabled';
@@ -36,23 +38,34 @@ const useCreditEvaluation = ({ onCompleted }: { onCompleted: () => void }) => {
         return;
       }
 
-      const ws = new WebSocket(`ws://localhost:8080/ws?memberId=${user.id}`);
+      const ws = new WebSocket(`${process.env.NEXT_PUBLIC_CREDIT_WEBSOCKET_URL}?memberId=${user.id}`);
       wsRef.current = ws;
 
       ws.onopen = () => {
         console.log('[WS] 연결 성공');
+
+        // ping 인터벌 시작
+        pingIntervalRef.current = setInterval(() => {
+          if (ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'ping' }));
+          }
+        }, 30000); // 30초마다 ping
       };
 
-      ws.onmessage = (event) => {
-        console.log('[WS] 메시지 수신:', event.data);
-        const data = JSON.parse(event.data);
-        if (data?.status === 'completed') {
+      ws.onmessage = ({ data }) => {
+        console.log('[WS] 메시지 수신:', data);
+        const parsed = JSON.parse(data);
+        if (parsed?.status === 'completed') {
           setStep(2);
           setTimeout(() => {
             setIsEvaluating(false);
             onCompleted?.();
             ws.close();
           }, 1000);
+        } else {
+          setStep(0);
+          setIsEvaluating(false);
+          ws.close();
         }
       };
 
@@ -60,10 +73,18 @@ const useCreditEvaluation = ({ onCompleted }: { onCompleted: () => void }) => {
         console.error('[WS] 오류 발생:', err);
         setStep(0);
         setIsEvaluating(false);
+        if (pingIntervalRef.current) {
+          clearInterval(pingIntervalRef.current);
+          pingIntervalRef.current = null;
+        }
       };
 
       ws.onclose = () => {
         console.log('[WS] 연결 종료');
+        if (pingIntervalRef.current) {
+          clearInterval(pingIntervalRef.current);
+          pingIntervalRef.current = null;
+        }
       };
     } catch (e) {
       console.error('신용평가 요청 실패:', e);
