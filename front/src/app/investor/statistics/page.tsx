@@ -70,7 +70,8 @@ const StatisticsPage = () => {
         Chart.register(LineController, BarController, CategoryScale, LinearScale, PointElement, LineElement, BarElement);
         setChartRegistered(true);
       } catch (error) {
-        console.error("차트 등록 중 오류 발생:", error);
+        // 차트 등록 중 오류 발생
+        setChartRegistered(false);
       }
     };
     registerChart();
