@@ -3,9 +3,10 @@ import request from '@/service/apis/request';
 import type { User } from '@/types/user';
 
 export const handleKakaoLogin = () => {
+  // 현재 페이지 경로를 저장
+  localStorage.setItem('redirectAfterLogin', window.location.pathname);
   window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/member/auth/kakao/login`;
 };
-
 export const handleLogout = async () => {
   await request.POST('/member/logout');
   const { setUser, setIsFetched } = useUserStore.getState();

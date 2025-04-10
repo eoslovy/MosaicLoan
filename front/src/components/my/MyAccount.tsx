@@ -42,7 +42,7 @@ const MyAccount = () => {
 
   useEffect(() => {
     refetchBalance();
-  });
+  }, []);
 
   // useEffect(() => {
   //   if (!toast) return;
