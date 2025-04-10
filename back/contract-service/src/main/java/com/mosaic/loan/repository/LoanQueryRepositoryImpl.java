@@ -21,6 +21,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -195,35 +196,28 @@ public class LoanQueryRepositoryImpl implements LoanQueryRepository {
 		}
 
 		// 4. 평균 금리 계산
-		List<Tuple> loans = queryFactory
-			.select(loan.amount, loan.requestAmount)
+		QContract subContract = new QContract("subContract");
+
+		// 이자율 계산 Expression (CASE WHEN + 서브쿼리)
+		NumberExpression<Integer> interestRateExpr = Expressions.numberTemplate(Integer.class,
+			"case when {0} = {1} then {2} else {3} end",
+			loan.status.stringValue(),
+			Expressions.constant("PENDING"),
+			Expressions.constant(0),
+			JPAExpressions
+				.select(subContract.interestRate.max())
+				.from(subContract)
+				.where(subContract.loan.eq(loan))
+		).as("interestRate");
+
+		// 활성화된 대출의 평균 이자율 계산
+		Integer avgInterestRate = queryFactory
+			.select(interestRateExpr.avg().intValue())
 			.from(loan)
 			.where(memberCondition.and(activeCondition))
-			.fetch();
+			.fetchOne();
 
-		int averageInterestRate = 0;
-		if (!loans.isEmpty()) {
-			BigDecimal totalAmount = BigDecimal.ZERO;
-			BigDecimal totalRequestAmount = BigDecimal.ZERO;
-
-			for (Tuple t : loans) {
-				BigDecimal amount = t.get(loan.amount);
-				BigDecimal requestAmount = t.get(loan.requestAmount);
-
-				if (amount != null && requestAmount != null && requestAmount.compareTo(BigDecimal.ZERO) > 0) {
-					totalAmount = totalAmount.add(amount);
-					totalRequestAmount = totalRequestAmount.add(requestAmount);
-				}
-			}
-
-			if (totalRequestAmount.compareTo(BigDecimal.ZERO) > 0) {
-				// (총 상환금액 - 총 원금) / 총 원금 * 10000
-				BigDecimal interestAmount = totalAmount.subtract(totalRequestAmount);
-				BigDecimal interestRate = interestAmount.divide(totalRequestAmount, 4, RoundingMode.HALF_UP)
-					.multiply(BigDecimal.valueOf(10000));
-				averageInterestRate = interestRate.intValue();
-			}
-		}
+		int averageInterestRate = (avgInterestRate != null) ? avgInterestRate : 0;
 
 		// 5. 최근 대출 목록 5개 조회
 		List<RecentLoanInfo> recentLoans = queryFactory
@@ -232,10 +226,7 @@ public class LoanQueryRepositoryImpl implements LoanQueryRepository {
 					RecentLoanInfo.class,
 					loan.dueDate,
 					loan.amount,
-					Expressions.numberTemplate(Integer.class,
-						"CAST((({0} - {1}) / {1} * 10000) AS INTEGER)",
-						loan.amount,
-						loan.requestAmount),
+					interestRateExpr,
 					loan.amount
 				)
 			)
