@@ -68,7 +68,7 @@ public class Loan {
 	public static Loan requestOnlyFormLoan(CreateLoanRequestDto request,
 		CreditEvaluationResponseDto creditEvaluationResponseDto, LocalDateTime now) {
 		return Loan.builder()
-			.accountId(request.id())
+			.accountId(creditEvaluationResponseDto.getMemberId())
 			.amount(BigDecimal.valueOf(0))
 			.createdAt(now)
 			.dueDate(now.plusWeeks(request.targetWeeks()).toLocalDate())

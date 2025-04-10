@@ -16,7 +16,6 @@ import com.mosaic.loan.dto.LoanOverviewResponse;
 import com.mosaic.loan.dto.LoanSearchRequest;
 import com.mosaic.loan.dto.LoanSearchResponse;
 import com.mosaic.loan.dto.LoanTransactionsResponse;
-import com.mosaic.loan.dto.RepayLoanDto;
 import com.mosaic.loan.repository.LoanQueryRepository;
 import com.mosaic.loan.service.LoanService;
 
@@ -33,11 +32,11 @@ public class LoanController {
 
 	@PostMapping
 	public ResponseEntity<Void> requestLoan(@RequestBody CreateLoanRequestDto createLoanRequestDto,
+		@RequestHeader("X-MEMBER-ID") Integer memberId,
 		@RequestHeader("X-IS-BOT") Boolean isBot) throws JsonProcessingException {
-		loanService.createLoan(createLoanRequestDto,timeUtil.now(isBot), isBot);
+		loanService.createLoan(createLoanRequestDto, memberId, timeUtil.now(isBot), isBot);
 		return ResponseEntity.accepted().build();
 	}
-
 
 	//TODO 내 대출내역 확인
 	@GetMapping("/overview")
