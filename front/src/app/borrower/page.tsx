@@ -9,7 +9,7 @@ import LoanList from '@/components/borrower/LoanList';
 import EmptyState from '@/components/empty/investor/EmptyState';
 import { getLoanOverview, LoanOverviewResponse } from '@/service/apis/borrow';
 import request from '@/service/apis/request';
-import { format } from 'date-fns';
+import { format, subMonths } from 'date-fns';
 import { LoanTransaction, LoanSearchParams } from '@/types/components';
 
 export interface LoanSortState {
@@ -56,7 +56,7 @@ const BorrowerPage = () => {
   const [creditKey, setCreditKey] = useState(0);
   const [currentSearchParams, setCurrentSearchParams] =
     useState<LoanSearchParams>({
-      startDate: format(new Date(), 'yyyy-MM-dd'),
+      startDate: format(subMonths(new Date(), 1), 'yyyy-MM-dd'),
       endDate: format(new Date(), 'yyyy-MM-dd'),
       types: ['상환중', '상환완료', '대출신청', '일부연체', '연체'].map(
         (type) => loanStatusMap[type],
@@ -84,7 +84,6 @@ const BorrowerPage = () => {
       { field: 'amount', order: 'asc' },
       { field: 'createdAt', order: 'desc' },
       { field: 'dueDate', order: 'asc' },
-      { field: 'interestRate', order: 'asc' },
     ];
 
     const mergedSort: LoanSortState[] = defaultSortFields.map((defaultSort) => {
