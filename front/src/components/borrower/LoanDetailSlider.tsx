@@ -30,7 +30,7 @@ const LoanDetailSlider = ({ recentLoans }: Props) => {
     const due = new Date(dueDate);
     const diffTime = -(due.getTime() - now.getTime());
     const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     return days > 0 ? `+${days}` : days.toString();
   };
 
