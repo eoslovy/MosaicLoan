@@ -71,14 +71,29 @@ const BorrowerPage = () => {
     setIsLoadingLoans(true);
     setLoansError(null);
 
+    const defaultSortFields: LoanSortState[] = [
+      { field: 'amount', order: 'asc' },
+      { field: 'createdAt', order: 'desc' },
+      { field: 'dueDate', order: 'asc' },
+      { field: 'interestRate', order: 'asc' },
+    ];
+
+    const mergedSort: LoanSortState[] = defaultSortFields.map((defaultSort) => {
+      const userSort = params.sort?.find((s) => s.field === defaultSort.field);
+      return {
+        field: defaultSort.field,
+        order: userSort?.order ?? defaultSort.order,
+      };
+    });
+
     try {
       const response = await request.POST<LoanSearchResponse>(
-        '/contract/loans/transactions/search',
+        '/contract/loans/search',
         {
           ...params,
           page: params.page || 1,
           pageSize: params.pageSize || 10,
-          sort: params.sort || [{ field: 'createdAt', order: 'desc' }],
+          sort: mergedSort,
         },
       );
 
