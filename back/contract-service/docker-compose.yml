@@ -1,5 +1,5 @@
 services:
-  zookeeperlocal :
+  zookeeperlocal:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeperlocal
     ports:

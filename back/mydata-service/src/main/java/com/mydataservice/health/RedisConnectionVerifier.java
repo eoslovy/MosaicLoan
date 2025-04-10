@@ -8,16 +8,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedisConnectionVerifier implements ApplicationRunner {
 
-    private final RedisTemplate<String, String> redisTemplate;
+	private final RedisTemplate<String, String> redisTemplate;
 
-    public RedisConnectionVerifier(RedisTemplate<String, String> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
+	public RedisConnectionVerifier(RedisTemplate<String, String> redisTemplate) {
+		this.redisTemplate = redisTemplate;
+	}
 
-    @Override
-    public void run(ApplicationArguments args) {
-        redisTemplate.opsForValue().set("ping", "pong");
-        String result = redisTemplate.opsForValue().get("ping");
-        System.out.println("✅ Redis test result: " + result);
-    }
+	@Override
+	public void run(ApplicationArguments args) {
+		redisTemplate.opsForValue().set("ping", "pong");
+		String result = redisTemplate.opsForValue().get("ping");
+		System.out.println("✅ Redis test result: " + result);
+	}
 }

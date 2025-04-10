@@ -4,10 +4,10 @@ import lombok.Getter;
 
 @Getter
 public class ModelingException extends RuntimeException {
-    private final ErrorCode errorCode;
+	private final ErrorCode errorCode;
 
-    public ModelingException(ErrorCode errorCode) {
-        super(errorCode.getDefaultMessage());
-        this.errorCode = errorCode;
-    }
+	public ModelingException(ErrorCode errorCode) {
+		super(errorCode.getDefaultMessage());
+		this.errorCode = errorCode;
+	}
 }

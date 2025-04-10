@@ -14,11 +14,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class EconomySentiment {
-    
-    @Id
-    @Column(name = "sentiment_date")
-    private LocalDate sentimentDate;
-    
-    @Column(name = "average_sentiment")
-    private double averageSentiment;
+
+	@Id
+	@Column(name = "sentiment_date")
+	private LocalDate sentimentDate;
+
+	@Column(name = "average_sentiment")
+	private double averageSentiment;
 }

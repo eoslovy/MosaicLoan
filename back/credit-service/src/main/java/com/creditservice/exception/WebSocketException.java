@@ -4,10 +4,10 @@ import lombok.Getter;
 
 @Getter
 public class WebSocketException extends RuntimeException {
-    private final ErrorCode errorCode;
+	private final ErrorCode errorCode;
 
-    public WebSocketException(ErrorCode errorCode, String message) {
-        super(message);
-        this.errorCode = errorCode;
-    }
+	public WebSocketException(ErrorCode errorCode, String message) {
+		super(message);
+		this.errorCode = errorCode;
+	}
 } 

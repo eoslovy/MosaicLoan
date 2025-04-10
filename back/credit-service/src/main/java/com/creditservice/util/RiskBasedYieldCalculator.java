@@ -24,7 +24,8 @@ public class RiskBasedYieldCalculator {
 		BigDecimal pd = BigDecimal.valueOf(probabilityOfDefault);
 		BigDecimal expectedLoss = pd.multiply(LGD); // PD × LGD
 
-		double premium = ALPHA.doubleValue() * Math.pow(expectedLoss.doubleValue(), GAMMA) + POLICY_MARGIN.doubleValue();
+		double premium =
+			ALPHA.doubleValue() * Math.pow(expectedLoss.doubleValue(), GAMMA) + POLICY_MARGIN.doubleValue();
 		BigDecimal assignedRate = BASE_RATE.add(BigDecimal.valueOf(premium));
 
 		if (assignedRate.compareTo(LEGAL_CAP) > 0) {
