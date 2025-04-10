@@ -130,10 +130,11 @@ const ContractsFilter = ({ onSearch }: ContractsFilterProps) => {
     const formattedStartDate = startDate ? format(startDate, 'yyyy-MM-dd') : '';
     const formattedEndDate = endDate ? format(endDate, 'yyyy-MM-dd') : '';
 
-    const types = selectedTypes.map(
-      (type) =>
-        typeValueToApiValue[type.value as keyof typeof typeValueToApiValue],
-    );
+    // const types = selectedTypes.map(
+    //   (type) =>
+    //     typeValueToApiValue[type.value as keyof typeof typeValueToApiValue],
+    // );
+    const types = selectedTypes.map((type) => type.value);
 
     const searchParams = {
       startDate: formattedStartDate,
