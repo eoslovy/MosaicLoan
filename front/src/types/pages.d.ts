@@ -72,7 +72,7 @@ export interface InvestOverview {
 
 export interface ContractResponse {
   investments: Investment[];
-  investOverview: InvestOverview[];
+  investOverview: InvestOverview;
 }
 
 export interface Transaction {
