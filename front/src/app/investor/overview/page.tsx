@@ -37,7 +37,7 @@ interface ProfitHistoryResponse {
   profitHistory: Array<{
     title: string;
     date: string;
-    amount: number;
+    amount: string;
   }>;
 }
 
@@ -95,7 +95,7 @@ const OverviewPage = () => {
         const mappedProfits = profitResult.profitHistory.map((item) => ({
           title: item.title,
           date: item.date,
-          amount: item.amount.toString(),
+          amount: item.amount,
         }));
         setProfitHistory(mappedProfits);
       } catch (e: unknown) {
