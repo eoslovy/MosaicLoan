@@ -80,6 +80,7 @@ public class Investment {
 			.currentRate(0)
 			.dueDate(TimeUtil.dueDate(now, requestDto.targetWeeks()))
 			.accountId(memberId)
+			.expectYield(BigDecimal.ZERO)
 			.principal(requestDto.principal())
 			.amount(BigDecimal.valueOf(0))
 			.createdAt(now)

@@ -49,6 +49,7 @@ public class LoanServiceImpl implements LoanService {
 			.id(request.id())
 			.interestRate(800)
 			.defaultRate(80)
+			.expectYieldRate(800)
 			.build();
 		//if (!evaluateLoanRequest(creditEvaluationResponseDto)) return;
 		// 시간 어떻게 쓸지 확정 필요

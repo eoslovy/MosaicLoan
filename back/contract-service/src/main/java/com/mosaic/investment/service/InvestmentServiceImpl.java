@@ -134,7 +134,7 @@ public class InvestmentServiceImpl implements InvestmentService {
 		// 3. 조건에 맞는 투자자 조회
 		List<Investment> candidates = investmentQueryRepository.findQualifiedInvestments(minimumPerInvestment,
 			loanTransactionReq.expectYieldRate(), loan);
-
+		log.info("{}명의 투자자 발견", candidates.size());
 		BigDecimal accumulated = BigDecimal.ZERO;
 		List<Contract> contracts = new ArrayList<>();
 		for (Investment investment : candidates) {
@@ -142,7 +142,7 @@ public class InvestmentServiceImpl implements InvestmentService {
 				break;
 
 			BigDecimal baseAmount = investment.getPrincipal()
-				.divide(new BigDecimal(500), 0, RoundingMode.DOWN); // 1/500
+				.divide(new BigDecimal(200), 0, RoundingMode.DOWN); // 1/200
 			BigDecimal truncated = baseAmount.divide(new BigDecimal(100), 0, RoundingMode.DOWN)
 				.multiply(new BigDecimal(100)); // 100원 단위 절사
 
@@ -172,6 +172,7 @@ public class InvestmentServiceImpl implements InvestmentService {
 		}
 
 		if (accumulated.compareTo(requiredAmount) < 0) {
+			log.info("투자금액 부족: {}원을 모집하려 했으나, {}을 모집하였습니다,", requiredAmount, accumulated);
 			throw new IllegalStateException("조건에 맞는 투자금 부족으로 매칭 실패");
 		}
 

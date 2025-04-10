@@ -71,7 +71,7 @@ public class Loan {
 			.accountId(request.id())
 			.amount(BigDecimal.valueOf(0))
 			.createdAt(now)
-			.dueDate(request.due_date())
+			.dueDate(now.plusWeeks(request.targetWeeks()).toLocalDate())
 			.evaluationId(creditEvaluationResponseDto.getId())
 			.requestAmount(request.requestAmount())
 			.status(LoanStatus.PENDING)
