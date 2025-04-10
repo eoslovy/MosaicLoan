@@ -97,7 +97,7 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
 			repaidAmountResidue = repaidAmountResidue.subtract(interestTransaction.getAmount());
 		}
 
-		BigDecimal returnPrincipalRatio = repaidAmountResidue.divide(originalMoneyToRepay, 18, RoundingMode.DOWN)
+		BigDecimal returnPrincipalRatio = repaidAmountResidue.divide(originalMoneyToRepay, 5, RoundingMode.DOWN)
 			.min(BigDecimal.ONE);
 		if (BigDecimal.ZERO.compareTo(returnPrincipalRatio) >= 0) {
 			loan.setStatusDelinquent();
