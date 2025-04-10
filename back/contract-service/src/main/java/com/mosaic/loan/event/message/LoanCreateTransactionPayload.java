@@ -12,7 +12,7 @@ public record LoanCreateTransactionPayload(
 	BigDecimal amount,
 	Integer interestRate,
 	Integer defaultRate,
-	Integer expectYieldRate,
+	Integer expectYield,
 	LocalDateTime createdAt
 ) {
 	public static LoanCreateTransactionPayload buildLoan(Loan newLoan,
@@ -23,7 +23,7 @@ public record LoanCreateTransactionPayload(
 			newLoan.getRequestAmount(),
 			creditEvaluationResponseDto.getInterestRate(),
 			creditEvaluationResponseDto.getDefaultRate(),
-			creditEvaluationResponseDto.getExpectYieldRate(),
+			creditEvaluationResponseDto.getExpectYield(),
 			newLoan.getCreatedAt());
 	}
 }
