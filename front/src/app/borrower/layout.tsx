@@ -2,7 +2,7 @@
 
 import React from 'react';
 import BorrowSectionTabNav from '@/components/layout/BorrowSectionTabNav';
-import borrowerAuthProtection from '@/components/auth/borrowerAuthProtection';
+import withAuthProtection from '@/components/auth/withAuthProtection';
 
 const BorrowerLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -13,4 +13,4 @@ const BorrowerLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default borrowerAuthProtection(BorrowerLayout);
+export default withAuthProtection(BorrowerLayout);
