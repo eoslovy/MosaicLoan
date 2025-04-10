@@ -22,6 +22,7 @@ import com.mosaic.loan.exception.LoanNotFoundException;
 import com.mosaic.loan.repository.LoanRepository;
 import com.mosaic.payload.AccountTransactionPayload;
 
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ public class LoanServiceImpl implements LoanService {
 	private final InternalApiClient internalApiClient;
 	private final LoanTransactionServiceImpl loanTransactionService;
 	private final ContractService contractService;
+	private final EntityManager em;
 
 	//투자 생성
 	@Override
@@ -131,7 +133,7 @@ public class LoanServiceImpl implements LoanService {
 	@Transactional
 	public void findRepaymentDueLoansAndRequestRepayment(LocalDateTime now, Boolean isBot) throws
 		JsonProcessingException {
-		log.info("시간 {}의 대상 대출 상환 준비를 시작합니다", now);
+		log.info("시간 [{}]의 대상 대출 상환 준비를 시작합니다", now);
 		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate(), LoanStatus.IN_PROGRESS);
 		log.info("{}개의 대출 계약 상환에 필요한 자금요청이 시작됩니다", loans.size());
 		for (Loan loan : loans) {
@@ -143,7 +145,7 @@ public class LoanServiceImpl implements LoanService {
 	@Override
 	@Transactional
 	public void executeDueLoanRepayments(LocalDateTime now, Boolean isBot) throws Exception {
-		log.info("시간 {}의 대상 대출 상환 실행을 시작합니다", now);
+		log.info("시간 [{}]의 대상 대출 상환 실행을 시작합니다", now);
 		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate(), LoanStatus.IN_PROGRESS);
 		log.info("{}개의 대출 계약 상환에 필요한 자금요청이 시작됩니다", loans.size());
 		for (Loan loan : loans) {
@@ -154,7 +156,7 @@ public class LoanServiceImpl implements LoanService {
 
 	@Override
 	public void executeLoanRepaymentsById(Integer loanId, LocalDateTime now, Boolean isBot) throws Exception {
-		log.info("대상계약 {}에 대한 대상 대출 상환을 실행합니다,", now);
+		log.info("대상계약 [{}]에 대한 대상 대출 상환을 실행합니다,", now);
 		Loan loan = loanRepository.findById(loanId).orElseThrow(() -> new LoanNotFoundException(loanId));
 		loanTransactionService.executeLoanRepay(loan, now, isBot);
 	}

@@ -20,6 +20,6 @@ public interface ContractService {
 	Contract adjustCurrentRateWhenRepay(Contract contract);
 
 	Contract adjustCurrentRateWhenLiquidate(Contract contract);
-	@Transactional
+
 	void addDelinquentMarginInterest(Loan loan);
 }

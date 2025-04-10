@@ -102,7 +102,6 @@ public class InvestmentServiceImpl implements InvestmentService {
 
 	//투자 종료 강제 유동화
 	@Override
-	@Transactional
 	public Boolean finishActiveInvestment(Investment investment, LocalDateTime now, Boolean isBot) {
 		for (Contract contract : investment.getContracts()) {
 			if (contract.getStatus().equals(ContractStatus.DELINQUENT)) {

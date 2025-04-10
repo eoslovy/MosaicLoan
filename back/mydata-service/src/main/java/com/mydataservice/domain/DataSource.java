@@ -1,4 +1,4 @@
-package com.mydataservice.config;
+package com.mydataservice.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
