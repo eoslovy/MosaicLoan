@@ -25,10 +25,11 @@ public class InvestmentKafkaProducer {
 
 	public void sendInvestmentWithdrawalRequest(AccountTransactionPayload payload) throws JsonProcessingException {
 		kafkaTemplate.send(INVEST_WITHDRAWAL_REQUESTED, kafkaObjectMapper.writeValueAsString((payload)));
-	};
+	}
+
 	public void sendInvestmentWithdrawalReject(AccountTransactionPayload payload) throws JsonProcessingException {
 		kafkaTemplate.send(INVEST_DEPOSIT_REJECTED, kafkaObjectMapper.writeValueAsString((payload)));
-	};
+	}
 
 	public void sendInvestmentDepositRequest(AccountTransactionPayload payload) throws JsonProcessingException {
 		kafkaTemplate.send(INVEST_DEPOSIT_REQUESTED, kafkaObjectMapper.writeValueAsString(payload));

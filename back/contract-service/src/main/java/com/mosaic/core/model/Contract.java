@@ -82,36 +82,7 @@ public class Contract {
 		if (contract.getStatus().equals(ContractStatus.COMPLETED)) {
 			return true;
 		}
-		if (contract.getStatus().equals(ContractStatus.OWNERSHIP_TRANSFERRED)) {
-			return true;
-		}
-		return false;
-	}
-
-	public void addInterestAmountToOutstandingAmount(BigDecimal interest) {
-		this.outstandingAmount = this.outstandingAmount.add(interest);
-	}
-
-	public void updateOutstandingAmountAfterInterestRepaid(BigDecimal calculatedTotalInterest,
-		BigDecimal repaidInterest) {
-		this.outstandingAmount = this.outstandingAmount.add(amount).subtract(repaidInterest);
-	}
-
-	public void putTransaction(ContractTransaction transaction) {
-		transaction.setContract(this);
-		contractTransactions.add(transaction);
-	}
-
-	public void setStatusLiquidate() {
-		this.status = ContractStatus.OWNERSHIP_TRANSFERRED;
-	}
-
-	public void updateOutstandingAmountAfterPrincipalRepaid(ContractTransaction principalTransaction) {
-		this.outstandingAmount = this.outstandingAmount.subtract(principalTransaction.getAmount());
-	}
-
-	public void setLoan(Loan loan) {
-		this.loan = loan;
+		return contract.getStatus().equals(ContractStatus.OWNERSHIP_TRANSFERRED);
 	}
 
 	public static Contract create(
@@ -138,6 +109,32 @@ public class Contract {
 			.build();
 	}
 
+	public void addInterestAmountToOutstandingAmount(BigDecimal interest) {
+		this.outstandingAmount = this.outstandingAmount.add(interest);
+	}
+
+	public void updateOutstandingAmountAfterInterestRepaid(BigDecimal calculatedTotalInterest,
+		BigDecimal repaidInterest) {
+		this.outstandingAmount = this.outstandingAmount.add(calculatedTotalInterest).subtract(repaidInterest);
+	}
+
+	public void putTransaction(ContractTransaction transaction) {
+		transaction.setContract(this);
+		contractTransactions.add(transaction);
+	}
+
+	public void setStatusLiquidate() {
+		this.status = ContractStatus.OWNERSHIP_TRANSFERRED;
+	}
+
+	public void updateOutstandingAmountAfterPrincipalRepaid(ContractTransaction principalTransaction) {
+		this.outstandingAmount = this.outstandingAmount.subtract(principalTransaction.getAmount());
+	}
+
+	public void setLoan(Loan loan) {
+		this.loan = loan;
+	}
+
 	public void setStatusDelinquent() {
 		this.status = ContractStatus.DELINQUENT;
 	}
@@ -148,7 +145,8 @@ public class Contract {
 
 	public void addExtraInterestDaily() {
 
-		Integer totalRate = (interestRate+delinquencyMarginRate)/365;
-		this.outstandingAmount = this.outstandingAmount.multiply(BigDecimal.valueOf(totalRate)).divide(BigDecimal.valueOf(10000));
+		Integer totalRate = (interestRate + delinquencyMarginRate) / 365;
+		this.outstandingAmount = this.outstandingAmount.multiply(BigDecimal.valueOf(totalRate))
+			.divide(BigDecimal.valueOf(10000));
 	}
 }

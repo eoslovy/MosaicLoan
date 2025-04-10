@@ -1,6 +1,7 @@
 package com.mosaic.core.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 import com.mosaic.core.model.status.ContractTransactionType;
@@ -52,14 +53,10 @@ public class ContractTransaction {
 	public static ContractTransaction buildLiquidateTransaction(Contract contract, LocalDateTime now) {
 		return builder()
 			.contract(contract)
-			.amount(contract.getOutstandingAmount().divide(BigDecimal.valueOf(2), 18, BigDecimal.ROUND_DOWN))
+			.amount(contract.getOutstandingAmount().divide(BigDecimal.valueOf(2), 18, RoundingMode.DOWN))
 			.createdAt(now)
 			.type(ContractTransactionType.OWNERSHIP_TRANSFER)
 			.build();
-	}
-
-	public void setContract(Contract contract) {
-		this.contract = contract;
 	}
 
 	public static ContractTransaction buildRepayPrincipalTransaction(Contract contract, BigDecimal repaidAmount,
@@ -90,5 +87,9 @@ public class ContractTransaction {
 			.type(ContractTransactionType.LOAN)
 			.createdAt(now)
 			.build();
+	}
+
+	public void setContract(Contract contract) {
+		this.contract = contract;
 	}
 }

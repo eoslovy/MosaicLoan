@@ -7,15 +7,19 @@ import org.springframework.stereotype.Service;
 import com.mosaic.core.model.Contract;
 import com.mosaic.core.model.Loan;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public interface ContractService {
-	public Contract liquidateContract(Contract contract, LocalDateTime now);
 
-	public Contract adjustCurrentRateWhenInvest(Contract contract);
+	@Transactional
+	Contract liquidateContract(Contract contract, LocalDateTime now);
 
-	public Contract adjustCurrentRateWhenRepay(Contract contract);
+	Contract adjustCurrentRateWhenInvest(Contract contract);
 
-	public Contract adjustCurrentRateWhenLiquidate(Contract contract);
+	Contract adjustCurrentRateWhenRepay(Contract contract);
+
+	Contract adjustCurrentRateWhenLiquidate(Contract contract);
 
 	void addDelinquentMarginInterest(Loan loan);
 }

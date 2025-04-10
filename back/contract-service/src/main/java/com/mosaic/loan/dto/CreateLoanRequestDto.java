@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record CreateLoanRequestDto(
-        Integer id,
-        BigDecimal requestAmount,
-        LocalDate due_date
+	Integer id,
+	BigDecimal requestAmount,
+	Integer targetWeeks
 ) {
 }

@@ -51,13 +51,14 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 			.goe(minimumAmount)
 			.and(investment.amount.goe(minimumAmount));
 
-		BooleanExpression rateCondition = investment.expectYield.divide(investment.principal).gt(expectYieldRate);
-		BooleanExpression dueDateCondition = investment.dueDate.lt(loan.getDueDate());
+		BooleanExpression rateCondition = investment.expectYield.divide(investment.principal).multiply(BigDecimal.valueOf(10000)).lt(expectYieldRate);
+		BooleanExpression dueDateCondition = investment.dueDate.gt(loan.getDueDate());
 
 		return queryFactory.selectFrom(investment)
 			.where(amountCondition, rateCondition, dueDateCondition)
 			.orderBy(investment.amount.desc())
 			.fetch();
+
 	}
 
 	@Override
