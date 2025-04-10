@@ -53,8 +53,8 @@ public class CreditEvaluationServiceImpl implements CreditEvaluationService {
 				if (hoursDiff >= 24) {
 					throw new EvaluationNotFoundException(ErrorCode.EVALUATION_EXPIRED, memberId);
 				}
-				if (evaluation.getStatus().equals(null)){
-					throw new EvaluationException(ErrorCode.EVALUATION_NOT_FOUND);
+				if (evaluation.getStatus().equals(EvaluationStatus.DECLINED)){
+					throw new EvaluationNotFoundException(ErrorCode.EVALUATION_NOT_FOUND, memberId);
 				}
 				return convertToDtoWithDefaultFlag(evaluation);
 			})

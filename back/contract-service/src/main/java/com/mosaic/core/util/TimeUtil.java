@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import com.mosaic.core.exception.BotTimestampLockedException;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -39,7 +41,7 @@ public class TimeUtil {
 		}
 
 		if (isLocked()) {
-			throw new IllegalStateException("봇 타임스탬프는 현재 트리거 작업 중입니다.");
+			throw new BotTimestampLockedException("봇 타임스탬프는 현재 트리거 작업 중입니다.");
 		}
 
 		LocalDateTime botTime = getBotTimestamp();
@@ -53,7 +55,7 @@ public class TimeUtil {
 
 	private LocalDateTime getBotTimestamp() {
 		String key = BOT_TIMESTAMP_KEY;
-		long increment = ThreadLocalRandom.current().nextLong(30_000_000, 180_000_000);
+		long increment = ThreadLocalRandom.current().nextLong(300_000, 1_800_000);
 
 		// 키가 없을 경우 초기값 설정
 		if (Boolean.FALSE.equals(redisTemplate.hasKey(key))) {

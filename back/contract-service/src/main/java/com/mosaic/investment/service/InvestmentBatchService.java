@@ -20,9 +20,10 @@ public class InvestmentBatchService {
 		// investment 도메인의 일일 처리 로직 등 실행
 		log.info("[InvestmentBatch] 실행됨 time: {} isBot: {}", time, isBot);
 		try {
+			log.info("투자 : Investment 만료로 종료 로직 실행");
 			investmentService.executeCompleteInvestmentByDueDate(time, isBot);
 		} catch (JsonProcessingException e) {
-			e.printStackTrace();
+			log.info("11시에 처리되는 업무가 제대로 처리되지 않았어요");
 		}
 	}
 }

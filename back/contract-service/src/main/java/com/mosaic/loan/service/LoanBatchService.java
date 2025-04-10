@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.mosaic.contract.service.ContractService;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,6 +19,7 @@ public class LoanBatchService {
 	private final ContractService contractService;
 
 	//22시 utc/seoul 트리거
+	@Transactional
 	public void runSchedulesAt21(LocalDateTime time, Boolean isBot) {
 		// loan 도메인의 일일 정산 로직 등 실행
 		log.info("[{}] 오후 9시에 실행되는 일괄 스케쥴러 실행", time);
@@ -29,18 +31,19 @@ public class LoanBatchService {
 			loanService.findRepaymentDueLoansAndRequestRepayment(time, isBot);
 			log.info("[{}] 오후 9시에 실행되는 일괄 상환잔액 입금 요청 완료", time);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.info("9시에 처리되는 업무가 제대로 처리되지 않았어요");
 		}
 
 		log.info("[LoanBatch] 실행됨 time: {} isBot: {}", time, isBot);
 	}
 
+	@Transactional
 	public void renSchedulesAt22(LocalDateTime time, Boolean isBot) throws Exception {
 		try {
 			loanService.executeDueLoanRepayments(time, isBot);
 			log.info("[{}] 오후 10시에 실행되는 대출 처리 완료", time);
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.info("10시에 처리되는 업무가 제대로 처리되지 않았어요");
 		}
 	}
 }

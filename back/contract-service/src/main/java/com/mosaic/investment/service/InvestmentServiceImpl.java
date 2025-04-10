@@ -77,8 +77,10 @@ public class InvestmentServiceImpl implements InvestmentService {
 	}
 
 	@Override
+	@Transactional
 	public void executeCompleteInvestmentByDueDate(LocalDateTime now, Boolean isBot) throws JsonProcessingException {
 		List<Investment> investments = investmentRepository.findAllByDueDate(now.toLocalDate());
+		Integer countSuccess = 0;
 		for (Investment investment : investments) {
 			//강제 유동화 실행후 결과
 			Boolean isDone = finishActiveInvestment(investment, now, isBot);
@@ -89,12 +91,18 @@ public class InvestmentServiceImpl implements InvestmentService {
 					investment,
 					withdrawnAmount, now);
 				investmentProducer.sendInvestmentWithdrawalRequest(investWithdrawalPayload);
+				log.info("투자의 상태가{}로 완료되어 {}의 계좌로 돈을 보냈습니다",investment.getStatus() ,investment.getAccountId());
+				countSuccess++;
+			}else{
+				log.info("투자의 상태가{}로 완료되지 못해 {}의 투자종료에 실패했습니다",investment.getStatus() ,investment.getAccountId());
 			}
 		}
+		log.info("[{}]개의 투자가 성공적으로 종료되었습니다", countSuccess);
 	}
 
 	//투자 종료 강제 유동화
 	@Override
+	@Transactional
 	public Boolean finishActiveInvestment(Investment investment, LocalDateTime now, Boolean isBot) {
 		for (Contract contract : investment.getContracts()) {
 			if (contract.getStatus().equals(ContractStatus.DELINQUENT)) {
@@ -102,9 +110,12 @@ public class InvestmentServiceImpl implements InvestmentService {
 			}
 		}
 		for (Contract contract : investment.getContracts()) {
-			if (!Contract.isComeplete(contract))
-				return false;
+			if (!Contract.isComeplete(contract)){
+				log.info("투자번호 {} 가 정상적으로 종료되지 못합니다", investment.getId());
+			return false;
+			}
 		}
+		log.info("투자번호 {}가 정상적으로 종료되었습니다", investment.getId());
 		return true;
 	}
 

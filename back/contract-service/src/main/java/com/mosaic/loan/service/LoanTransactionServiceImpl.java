@@ -130,6 +130,7 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
 		}
 	}
 
+	@Transactional
 	public BigDecimal calculateInterestAmount(Contract contract, BigDecimal amount, LocalDate now) {
 
 		long days = ChronoUnit.DAYS.between(now, contract.getCreatedAt().toLocalDate());

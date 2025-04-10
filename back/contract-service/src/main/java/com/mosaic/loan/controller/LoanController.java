@@ -34,7 +34,6 @@ public class LoanController {
 	@PostMapping
 	public ResponseEntity<Void> requestLoan(@RequestBody CreateLoanRequestDto createLoanRequestDto,
 		@RequestHeader("X-IS-BOT") Boolean isBot) throws JsonProcessingException {
-
 		loanService.createLoan(createLoanRequestDto,timeUtil.now(isBot), isBot);
 		return ResponseEntity.accepted().build();
 	}

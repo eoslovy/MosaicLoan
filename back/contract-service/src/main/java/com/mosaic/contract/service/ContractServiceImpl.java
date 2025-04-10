@@ -52,9 +52,10 @@ public class ContractServiceImpl implements ContractService {
 	}
 
 	@Override
+	@Transactional
 	public void addDelinquentMarginInterest(Loan loan) {
 		if (loan.getContracts() == null) {
-			throw new IllegalArgumentException("Loan is null");
+			throw new IllegalArgumentException("문제가 생겼어요!! Loan is null");
 		}
 		for (Contract contract : loan.getContracts()) {
 			contract.addExtraInterestDaily();
