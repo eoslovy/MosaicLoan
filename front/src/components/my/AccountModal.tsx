@@ -298,7 +298,6 @@ const AccountModal = ({
         onClose={handleCloseSuccessModal}
         title='출금 완료'
       >
-
         <div className={styles.modalContent}>
           <div className={styles.successIcon}>
             <svg
@@ -338,7 +337,7 @@ const AccountModal = ({
               text={`출금액: ${successAmount.toLocaleString()} 원`}
               size='md'
             />
-            <br></br>
+            <br />
             <Text
               text={`출금 후 잔액: ${(balance - successAmount).toLocaleString()} 원`}
               size='md'

@@ -52,7 +52,13 @@ const useAccountTransactionStore = create<AccountTransactionStore>(
       const pageSize = override.pageSize ?? state.pagination.pageSize;
 
       // 디버깅 로그 추가
-      console.log('fetchTransactions 요청 파라미터:', { startDate, endDate, types, page, pageSize });
+      console.log('fetchTransactions 요청 파라미터:', {
+        startDate,
+        endDate,
+        types,
+        page,
+        pageSize,
+      });
 
       set({
         isLoading: true,
@@ -81,7 +87,7 @@ const useAccountTransactionStore = create<AccountTransactionStore>(
           transactions: res.transactions,
           pagination: {
             ...res.pagination,
-            page: page, // 요청한 페이지 번호로 명시적 설정
+            page,
           },
           isLoading: false,
         });
