@@ -29,8 +29,7 @@ public class LoanController {
 	private final LoanService loanService;
 	private final LoanQueryRepository loanQueryRepository;
 
-	//TODO 돈 빌리기
-	@PostMapping("")
+	@PostMapping
 	public ResponseEntity<Void> requestLoan(@RequestBody CreateLoanRequestDto createLoanRequestDto,
 		@RequestHeader("X-IS-BOT") Boolean isBot) throws JsonProcessingException {
 		loanService.createLoan(createLoanRequestDto, isBot);
@@ -53,7 +52,7 @@ public class LoanController {
 
 	//TODO 내 개별 투자의 거래내역 확인
 	// 대출 거래 내역 조회
-	@GetMapping("/transactions/search")
+	@PostMapping("/transactions/search")
 	public ResponseEntity<LoanTransactionResponse> getLoanTransactions(
 		@RequestBody LoanTransactionSearchRequest request,
 		@RequestHeader("X-MEMBER-ID") Integer memberId) {
