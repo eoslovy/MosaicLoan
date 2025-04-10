@@ -248,7 +248,11 @@ const LoanList: React.FC<LoanListProps> = ({
                   <td>{loan.amount}</td>
                   <td>{loan.createdAt}</td>
                   <td>{loan.dueDate}</td>
-                  <td>{loan.interestRate}</td>
+                  <td>
+                    {loan.interestRate
+                      ? loan.interestRate.toLocaleString()
+                      : '-'}
+                  </td>
                   <td>
                     <div className={styles.statusWrapper}>
                       <Pill variant={getStatusVariant(loan.status)}>

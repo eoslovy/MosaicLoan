@@ -63,7 +63,9 @@ const LoanDetailSlider = ({ recentLoans }: Props) => {
                 <tr>
                   <td>금리</td>
                   <td colSpan={2}>
-                    {(currentLoan.interestRate / 100).toFixed(2)} %
+                    {typeof currentLoan.interestRate === 'number'
+                      ? `${(currentLoan.interestRate / 100).toFixed(2)} %`
+                      : '-'}
                   </td>
                 </tr>
                 <tr>
