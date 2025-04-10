@@ -17,29 +17,21 @@ const Home = () => {
     if (!isFetched || !user) return;
 
     const redirectPath = localStorage.getItem('redirectAfterLogin');
-    if (redirectPath) {
+    if (redirectPath && redirectPath !== '/') {
       localStorage.removeItem('redirectAfterLogin');
       router.replace(redirectPath);
     }
   }, [isFetched, user]);
 
   return (
-    <div className='w-full flex flex-col'>
-      {/* 메인 콘텐츠 */}
-      <main>
-        <Hero />
-        <StatsSection />
-        <ServiceInfosSection />
-        <div className='flex justify-center items-center px-4 py-20 bg-[#f9fafb]'>
-          <InvestmentCalculator />
-        </div>
-      </main>
-
-      {/* 푸터 */}
-      {/* <footer className='mt-auto flex gap-6 flex-wrap items-center justify-center py-6'>
-        ...
-      </footer> */}
-    </div>
+    <main>
+      <Hero />
+      <StatsSection />
+      <ServiceInfosSection />
+      <div className='flex justify-center items-center px-4 py-20 bg-[#f9fafb]'>
+        <InvestmentCalculator />
+      </div>
+    </main>
   );
 };
 
