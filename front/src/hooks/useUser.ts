@@ -12,7 +12,6 @@ const useUser = () => {
   const isFetched = useUserStore((state) => state.isFetched);
   const setIsFetched = useUserStore((state) => state.setIsFetched);
   const isHydrated = useUserStore((state) => state.isHydrated);
-  const setIsHydrated = useUserStore((state) => state.setIsHydrated);
 
   const [isApiLoading, setIsApiLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -21,12 +20,6 @@ const useUser = () => {
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    if (mounted && typeof window !== 'undefined') {
-      setIsHydrated(true);
-    }
-  }, [mounted, setIsHydrated]);
 
   useEffect(() => {
     if (!mounted || typeof window === 'undefined') return;

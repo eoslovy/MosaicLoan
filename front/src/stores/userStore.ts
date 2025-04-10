@@ -24,8 +24,9 @@ export const useUserStore = create<UserStore>()(
     {
       name: 'user-store',
       partialize: (state) => ({
-        userId: state.user?.id || null,
+        user: state.user,
         isFetched: state.isFetched,
+        isHydrated: state.isHydrated,
       }),
       storage: createJSONStorage(() => {
         // 서버사이드에서는 빈 스토리지 객체 반환
