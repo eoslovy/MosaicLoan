@@ -13,12 +13,13 @@ const borrowerAuthProtection = <P extends object>(
     const router = useRouter();
 
     useEffect(() => {
-      if (!isFetched && !user) {
+      if (isFetched && !user) {
         router.push('/borrower');
       }
     }, [isFetched, user]);
 
-    if (!isFetched || !user) return null;
+    if (!isFetched) return null;
+    if (!user) return null;
 
     return <Component {...props} />;
   };

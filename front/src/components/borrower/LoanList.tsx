@@ -196,7 +196,7 @@ const LoanList: React.FC<LoanListProps> = ({
 
   return (
     <div className={styles.tableContainer}>
-      {loans.length === 0 ? (
+      {!loans || loans.length === 0 ? (
         <div className='text-center py-4 text-gray-500'>
           검색 결과가 없습니다.
         </div>
