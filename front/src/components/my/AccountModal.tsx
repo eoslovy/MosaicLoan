@@ -49,6 +49,9 @@ const AccountModal = ({
   const [accountNumber, setAccountNumber] = useState('');
   const [bankCode, setBankCode] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // 성공 모달 상태 추가
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successAmount, setSuccessAmount] = useState<number>(0);
 
   useEffect(() => {
     if (isOpen) {
@@ -114,6 +117,12 @@ const AccountModal = ({
       ? isValidAmount && isValidAccountNumber && bankCode !== ''
       : true;
 
+  // 성공 모달 닫기 핸들러
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    refetchBalance?.();
+  };
+
   const handleSubmit = async () => {
     if (!isValidAmount || (type === 'withdraw' && !isValidWithdraw)) {
       return;
@@ -137,18 +146,28 @@ const AccountModal = ({
           setToast?.('결제 페이지 요청에 실패했습니다.');
         }
       } else {
+        // 출금 요청
         await request.POST('/account/external/withdrawal', {
           amount,
           accountNumber: rawAccountNumber,
           bankCode,
         });
-        refetchBalance?.();
+
+        // 출금 성공 시 성공 모달 표시 준비
+        setSuccessAmount(amount);
+        onClose(); // 기존 모달 닫기
+        setShowSuccessModal(true); // 성공 모달 열기
+        return; // 여기서 함수 종료 (아래 코드 실행 방지)
       }
     } catch (e) {
       console.error(`${type === 'charge' ? '충전' : '출금'} 요청 실패:`, e);
-      setToast?.(
-        `${type === 'charge' ? '충전' : '출금'} 중 오류가 발생했습니다.`,
-      );
+
+      // 출금 실패 시 토스트 메시지
+      if (type === 'withdraw') {
+        setToast?.('출금에 실패했습니다.');
+      } else {
+        setToast?.('충전 중 오류가 발생했습니다.');
+      }
     }
 
     onClose();
@@ -161,112 +180,182 @@ const AccountModal = ({
     type === 'charge' ? balance + amount : balance - amount;
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={type === 'charge' ? '충전하기' : '출금하기'}
-    >
-      <form
-        className={styles.modalContent}
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={type === 'charge' ? '충전하기' : '출금하기'}
       >
-        <Text text={`현재 잔액: ${formattedBalance}`} size='lg' weight='bold' />
+        <form
+          className={styles.modalContent}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
+          <Text
+            text={`현재 잔액: ${formattedBalance}`}
+            size='lg'
+            weight='bold'
+          />
 
-        <div className={styles.inputWrapper}>
-          <div className={styles.inputWithUnit}>
-            <input
-              ref={inputRef}
-              type='text'
-              inputMode='numeric'
-              className={styles.input}
-              value={inputValue}
-              onChange={(e) => handleAmountChange(e.target.value)}
-              onBlur={handleAmountBlur}
-              onKeyDown={handleAmountKeyDown}
-              placeholder='금액을 입력하세요'
-            />
-            <span className={styles.unit}>원</span>
-          </div>
-
-          {errorMessage === '잔액이 부족합니다' ? (
-            <div className={styles.error}>
-              <p>{errorMessage}</p>
-              {type === 'withdraw' && openChargeModal && (
-                <button
-                  type='button'
-                  className={styles.chargeLink}
-                  onClick={() => {
-                    onClose();
-                    openChargeModal?.();
-                  }}
-                >
-                  충전하러 가기 →
-                </button>
-              )}
-            </div>
-          ) : (
-            errorMessage && <div className={styles.error}>{errorMessage}</div>
-          )}
-        </div>
-
-        {type === 'withdraw' && (
-          <>
-            <div className={styles.inputWrapper}>
+          <div className={styles.inputWrapper}>
+            <div className={styles.inputWithUnit}>
               <input
+                ref={inputRef}
                 type='text'
                 inputMode='numeric'
                 className={styles.input}
-                placeholder='계좌번호를 입력하세요'
-                value={accountNumber}
-                onChange={(e) =>
-                  setAccountNumber(formatAccountNumber(e.target.value))
-                }
+                value={inputValue}
+                onChange={(e) => handleAmountChange(e.target.value)}
+                onBlur={handleAmountBlur}
+                onKeyDown={handleAmountKeyDown}
+                placeholder='금액을 입력하세요'
+              />
+              <span className={styles.unit}>원</span>
+            </div>
+
+            {errorMessage === '잔액이 부족합니다' ? (
+              <div className={styles.error}>
+                <p>{errorMessage}</p>
+                {type === 'withdraw' && openChargeModal && (
+                  <button
+                    type='button'
+                    className={styles.chargeLink}
+                    onClick={() => {
+                      onClose();
+                      openChargeModal?.();
+                    }}
+                  >
+                    충전하러 가기 →
+                  </button>
+                )}
+              </div>
+            ) : (
+              errorMessage && <div className={styles.error}>{errorMessage}</div>
+            )}
+          </div>
+
+          {type === 'withdraw' && (
+            <>
+              <div className={styles.inputWrapper}>
+                <input
+                  type='text'
+                  inputMode='numeric'
+                  className={styles.input}
+                  placeholder='계좌번호를 입력하세요'
+                  value={accountNumber}
+                  onChange={(e) =>
+                    setAccountNumber(formatAccountNumber(e.target.value))
+                  }
+                />
+              </div>
+              <div className={styles.inputWrapper}>
+                <select
+                  className={styles.select}
+                  value={bankCode}
+                  onChange={(e) => setBankCode(e.target.value)}
+                >
+                  <option value=''>은행을 선택하세요</option>
+                  {bankCodes.map((bank) => (
+                    <option key={bank.code} value={bank.code}>
+                      {bank.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
+
+          {isBlurred && isValidAmount && !errorMessage && (
+            <div className={styles.expectedBalance}>
+              <Text
+                text={`${
+                  type === 'charge' ? '충전 후 잔액' : '출금 후 잔액'
+                }: ${expectedBalance.toLocaleString()} 원`}
+                size='sm'
+                color='gray'
               />
             </div>
-            <div className={styles.inputWrapper}>
-              <select
-                className={styles.select}
-                value={bankCode}
-                onChange={(e) => setBankCode(e.target.value)}
-              >
-                <option value=''>은행을 선택하세요</option>
-                {bankCodes.map((bank) => (
-                  <option key={bank.code} value={bank.code}>
-                    {bank.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </>
-        )}
+          )}
 
-        {isBlurred && isValidAmount && !errorMessage && (
-          <div className={styles.expectedBalance}>
+          <Button
+            label={{
+              text: type === 'charge' ? '충전하기' : '출금하기',
+              size: 'md',
+              color: 'white',
+            }}
+            variant='filled'
+            size='large'
+            onClick={handleSubmit}
+          />
+        </form>
+      </Modal>
+
+      {/* 출금 성공 모달 */}
+      <Modal
+        isOpen={showSuccessModal}
+        onClose={handleCloseSuccessModal}
+        title='출금 완료'
+      >
+        <div className={styles.modalContent}>
+          <div className={styles.successIcon}>
+            <svg
+              width='64'
+              height='64'
+              viewBox='0 0 64 64'
+              fill='none'
+              xmlns='http://www.w3.org/2000/svg'
+            >
+              <circle
+                cx='32'
+                cy='32'
+                r='30'
+                fill='#4CAF50'
+                fillOpacity='0.1'
+                stroke='#4CAF50'
+                strokeWidth='2'
+              />
+              <path
+                d='M20 32L28 40L44 24'
+                stroke='#4CAF50'
+                strokeWidth='3'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+              />
+            </svg>
+          </div>
+
+          <Text
+            text='성공적으로 출금을 완료했습니다.'
+            size='lg'
+            weight='bold'
+          />
+
+          <div className={styles.successDetails}>
             <Text
-              text={`${
-                type === 'charge' ? '충전 후 잔액' : '출금 후 잔액'
-              }: ${expectedBalance.toLocaleString()} 원`}
-              size='sm'
-              color='gray'
+              text={`출금액: ${successAmount.toLocaleString()} 원`}
+              size='md'
+            />
+            <Text
+              text={`출금 후 잔액: ${(balance - successAmount).toLocaleString()} 원`}
+              size='md'
             />
           </div>
-        )}
 
-        <Button
-          label={{
-            text: type === 'charge' ? '충전하기' : '출금하기',
-            size: 'md',
-            color: 'white',
-          }}
-          variant='filled'
-          size='large'
-          onClick={handleSubmit}
-        />
-      </form>
-    </Modal>
+          <Button
+            label={{
+              text: '확인',
+              size: 'md',
+              color: 'white',
+            }}
+            variant='filled'
+            size='large'
+            onClick={handleCloseSuccessModal}
+          />
+        </div>
+      </Modal>
+    </>
   );
 };
 
