@@ -82,7 +82,7 @@ const ContractsPage = () => {
 
     try {
       const response = await request.POST<ApiResponseData>(
-        '/api/contract/investments/transactions/search',
+        '/contract/investments/transactions/search',
         params,
       );
 

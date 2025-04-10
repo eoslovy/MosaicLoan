@@ -65,9 +65,9 @@ const OverviewPage = () => {
         // 동시에 모든 API 요청 실행
         const [summaryResult, investmentResult, profitResult] =
           await Promise.all([
-            request.GET<SummaryResponse>('/investments/summary'),
-            request.GET<InvestmentListResponse>('/investments/recent'),
-            request.GET<ProfitHistoryResponse>('/investments/profits'),
+            request.GET<SummaryResponse>('/contract/investments/summary'),
+            request.GET<InvestmentListResponse>('/contract/investments/recent'),
+            request.GET<ProfitHistoryResponse>('/contract/investments/profits'),
           ]);
 
         // Summary 데이터 매핑
