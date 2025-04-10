@@ -10,7 +10,7 @@ import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 // import Pill from '@/components/common/Pill';
 // import { ContractRow } from '@/types/components';
 import FilterSelectTable from '@/components/common/FilterSelectTable';
-import { format, subYears, isBefore } from 'date-fns';
+import { format, subMonths, isBefore } from 'date-fns';
 import Pill from '@/components/common/Pill';
 import { LoanSearchParams } from '@/types/components';
 
@@ -36,9 +36,9 @@ interface LoanFilterProps {
 
 const LoanFilter: React.FC<LoanFilterProps> = ({ onSearch }) => {
   const today = new Date();
-  const oneYearAgo = subYears(today, 1);
+  const oneMonthAgo = subMonths(today, 1);
 
-  const [startDate, setStartDate] = useState<Date | null>(oneYearAgo);
+  const [startDate, setStartDate] = useState<Date | null>(oneMonthAgo);
   const [endDate, setEndDate] = useState<Date | null>(today);
   const [selectedTypes, setSelectedTypes] =
     useState<MultiValue<{ label: string; value: string }>>(typeOptions);

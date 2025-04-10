@@ -40,7 +40,7 @@ const getStatusVariant = (status: string): PillVariant => {
   }
 };
 
-const getKoreanStatus = (status:string) => {
+const getKoreanStatus = (status: string) => {
   switch (status) {
     case 'LOAN':
       return '대출';
@@ -53,7 +53,7 @@ const getKoreanStatus = (status:string) => {
     default:
       return '-';
   }
-}
+};
 
 const statusMap = (status: string) => {
   switch (status) {
@@ -144,7 +144,10 @@ const LoanList: React.FC<LoanListProps> = ({
         }
       }
 
-      if (transaction.status === 'PRINCIPAL' || transaction.status === 'INTEREST') {
+      if (
+        transaction.status === 'PRINCIPAL' ||
+        transaction.status === 'INTEREST'
+      ) {
         balance -= transactionAmount;
       }
 
@@ -193,7 +196,7 @@ const LoanList: React.FC<LoanListProps> = ({
 
       const detailsWithBalance = calculateBalance(
         response.transactions,
-        loan.amount,
+        loan.requestAmount,
       );
       setLoanDetails(detailsWithBalance);
       setIsModalOpen(true);
@@ -225,7 +228,7 @@ const LoanList: React.FC<LoanListProps> = ({
                 <th>
                   <SortableTableHeader
                     label='금액'
-                    sortKey='amount'
+                    sortKey='requestAmount'
                     sortStates={sortStates}
                     onSort={handleSort}
                   />
@@ -262,7 +265,7 @@ const LoanList: React.FC<LoanListProps> = ({
               {loans.map((loan) => (
                 <tr key={loan.id}>
                   <td>{loan.id}</td>
-                  <td>{loan.amount}</td>
+                  <td>{loan.requestAmount}</td>
                   <td>{loan.createdAt}</td>
                   <td>{loan.dueDate}</td>
                   <td>
