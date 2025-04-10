@@ -321,7 +321,7 @@ export interface LoanTransaction {
   id: number;
   requestAmount: string;
   createdAt: string;
-  status: string; //
+  status: string;
   dueDate: string;
   interestRate: number;
   detail?: LoanTransactionDetail[];
