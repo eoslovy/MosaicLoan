@@ -32,7 +32,8 @@ public class StatisticsController {
 			storedTarget.intValue(), resultDate);
 
 		List<RateCountDto> distribution = stats.stream()
-			.map(s -> new RateCountDto(BigDecimal.valueOf(s.getActualRate()).divide(BigDecimal.valueOf(100)), s.getCount()))
+			.map(s -> new RateCountDto(BigDecimal.valueOf(s.getActualRate()).divide(BigDecimal.valueOf(100)),
+				s.getCount()))
 			.toList();
 
 		return new StatisticsResponse(targetRate, resultDate, distribution);

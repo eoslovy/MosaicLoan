@@ -322,7 +322,7 @@ export interface LoanTransaction {
   contractId: number;
   amount: string;
   createdAt: string;
-  status: string;
+  status: string; //
   dueDate: string;
   interestRate: number;
   detail?: LoanTransactionDetail[];

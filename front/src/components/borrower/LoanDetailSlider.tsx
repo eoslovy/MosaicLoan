@@ -63,7 +63,9 @@ const LoanDetailSlider = ({ recentLoans }: Props) => {
                 <tr>
                   <td>금리</td>
                   <td colSpan={2}>
-                    {(currentLoan.interestRate / 100).toFixed(2)} %
+                    {typeof currentLoan.interestRate === 'number'
+                      ? `${(currentLoan.interestRate / 100).toFixed(2)} %`
+                      : '-'}
                   </td>
                 </tr>
                 <tr>
@@ -89,10 +91,6 @@ const LoanDetailSlider = ({ recentLoans }: Props) => {
             />
           </div>
         )}
-      </div>
-
-      <div className={styles.sliderfooter}>
-        <Text text='TOP 5 대출 현황' size='sm' weight='light' color='gray' />
       </div>
     </div>
   );

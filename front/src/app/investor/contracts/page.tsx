@@ -30,7 +30,9 @@ interface SortState {
 const ContractsPage = () => {
   useAuthRedirect('/borrower'); // 로그인 안 된 경우 리디렉션 경로
 
-  const [responseData, setResponseData] = useState<ContractResponse | null>(null);
+  const [responseData, setResponseData] = useState<ContractResponse | null>(
+    null,
+  );
   const [isLoadingSummary, setIsLoadingSummary] = useState(true);
   const [isSummaryError, setIsSummaryError] = useState(false);
 
@@ -57,7 +59,7 @@ const ContractsPage = () => {
     const fetchData = async () => {
       try {
         const result = await request.GET<ContractResponse>(
-          '/contract/investments'
+          '/contract/investments',
         );
         setResponseData(result);
       } catch (error) {

@@ -15,10 +15,11 @@ import Pill from '@/components/common/Pill';
 import { LoanSearchParams } from '@/types/components';
 
 const typeOptions = [
-  { value: 'repaid', label: '상환완료' },
-  { value: 'inProgress', label: '상환중' },
-  { value: 'defaulted', label: '부실확정' },
-  { value: 'delayed', label: '연체' },
+  { value: 'PENDING', label: '대출신청' },
+  { value: 'IN_PROGRESS', label: '진행중' },
+  { value: 'COMPLETED', label: '완료' },
+  { value: 'PARTIALLY_DELINQUENT', label: '일부연체' },
+  { value: 'DELINQUENT', label: '연체' },
 ];
 
 const customSelectStyles: StylesConfig<{ label: string; value: string }, true> =
@@ -74,17 +75,17 @@ const LoanFilter: React.FC<LoanFilterProps> = ({ onSearch }) => {
   const handleSearch = () => {
     if (!startDate || !endDate) return;
 
-    const typeMap: { [key: string]: string } = {
-      repaid: '상환완료',
-      inProgress: '상환중',
-      defaulted: '부실확정',
-      delayed: '연체',
-    };
+    // const typeMap: { [key: string]: string } = {
+    //   repaid: '상환완료',
+    //   inProgress: '상환중',
+    //   defaulted: '부실확정',
+    //   delayed: '연체',
+    // };
 
     const searchParams: LoanSearchParams = {
       startDate: format(startDate, 'yyyy-MM-dd'),
       endDate: format(endDate, 'yyyy-MM-dd'),
-      types: selectedTypes.map((type) => typeMap[type.value] || type.value),
+      types: selectedTypes.map((type) => type.value || ''),
       page: 1,
       pageSize: 10,
       sort: [{ field: 'createdAt', order: 'desc' }],

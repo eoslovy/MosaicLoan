@@ -2,12 +2,13 @@
 
 .statsSection {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); // 기본적으로 3개 컬럼
+  grid-template-columns: repeat(2, 1fr); // 기본적으로 3개 컬럼
   // gap: 1.25rem;
   width: 100%;
 
   max-width: 64.44rem;
   min-height: 470px;
+  margin-top: 10px;
   margin: auto;
 
   justify-content: center;
@@ -17,7 +18,7 @@
 
   @media (max-width: 1000px) {
     grid-template-columns: 1fr; // 모바일에서는 한 줄씩 배치
-    row-gap: 1.5rem; // 세로 간격 추가하기_카드 간격
+    row-gap: 1rem; // 세로 간격 추가하기_카드 간격
   }
 }
 
@@ -38,7 +39,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 470px;
+  min-height: 300px;
   // background-color: $light-blue;
   padding: 2rem 0;
   gap: 5rem;

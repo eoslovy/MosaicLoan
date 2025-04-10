@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useUserStore } from '@/stores/userStore';
 import styles from '@/styles/my/MyAccount.module.scss';
 import request from '@/service/apis/request';
 import useAccountStore from '@/stores/accountStore';
 import AccountModal from './AccountModal';
 // import useUserDelay from '@/hooks/useUserDelay';
-// import { useUserStore } from '@/stores/userStore';
 
 const formatBalance = (amount: number): string => {
   if (amount >= 1_0000_0000_0000)
@@ -20,7 +20,7 @@ const formatBalance = (amount: number): string => {
 
 const MyAccount = () => {
   // const { isReady } = useUserDelay(1000); // 로그인 여부 판단 후 1초 대기
-  // const username = useUserStore((state) => state.user?.username ?? '-');
+  const username = useUserStore((state) => state.user?.username ?? '-');
 
   const { balance, setBalance, setIsFetched } = useAccountStore();
   const [isChargeOpen, setIsChargeOpen] = useState(false);
@@ -40,10 +40,9 @@ const MyAccount = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (!isReady) return;
-  //   refetchBalance();
-  // }, [isReady]);
+  useEffect(() => {
+    refetchBalance();
+  }, []);
 
   // useEffect(() => {
   //   if (!toast) return;
@@ -78,7 +77,7 @@ const MyAccount = () => {
 
           <div className={styles.cardBack}>
             <p className={styles.backLabel}>사용자 이름</p>
-            {/* <p className={styles.username}>{username}</p> */}
+            <p className={styles.username}>{username}</p>
           </div>
         </div>
 
