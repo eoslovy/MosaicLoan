@@ -1,6 +1,7 @@
 package com.mosaic.core.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -134,7 +135,7 @@ public class Investment {
 
 	public void addCurrentRate(ContractTransaction interestTransaction, Contract contract) {
 		Integer adjustedRate = interestTransaction.getAmount()
-			.divide(this.principal)
+			.divide(this.principal, 5, RoundingMode.DOWN)
 			.multiply(BigDecimal.valueOf(10000))
 			.intValue(); //원금대비 이자액을 비율로 환산
 		this.currentRate = this.currentRate + adjustedRate;

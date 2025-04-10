@@ -27,7 +27,7 @@ public class LoanKafkaConsumer {
 	private final LoanService loanService;
 	private final LoanTransactionService loanTransactionService;
 
-	@KafkaListener(topics = LOAN_DEPOSIT_COMPLETE, groupId = "loan.repay.request.consumer")
+	@KafkaListener(topics = LOAN_DEPOSIT_COMPLETE, groupId = "loan.deposit.completed.consumer")
 	public void repayLoanRequestedCompleted(@Payload String payload) throws Exception {
 		AccountTransactionPayload accountTransactionComplete = objectMapper.readValue(payload,
 			AccountTransactionPayload.class);
@@ -36,7 +36,7 @@ public class LoanKafkaConsumer {
 		log.info("{}의 대출 상환이 이루어집니다", accountTransactionComplete.accountId());
 	}
 
-	@KafkaListener(topics = LOAN_WITHDRAW_REJECT, groupId = "investment.withdraw.fail.consumer")
+	@KafkaListener(topics = LOAN_WITHDRAW_REJECT, groupId = "loan.withdrawal.rejected.consumer")
 	public void rollbackDepositLoanRequested(@Payload String payload) throws JsonProcessingException {
 		AccountTransactionPayload accountTransactionFail = objectMapper.readValue(payload,
 			AccountTransactionPayload.class);
@@ -45,7 +45,7 @@ public class LoanKafkaConsumer {
 		log.info("{}의 투자 계좌 생성이 실패했습니다", accountTransactionFail.accountId());
 	}
 
-	@KafkaListener(topics = LOAN_DEPOSIT_REJECT, groupId = "loan.repay.request.consumer")
+	@KafkaListener(topics = LOAN_DEPOSIT_REJECT, groupId = "loan.deposit.rejected.consumer")
 	public void repayLoanRequestedFailed(@Payload String payload) throws Exception {
 		AccountTransactionPayload accountTransactionFail = objectMapper.readValue(payload,
 			AccountTransactionPayload.class);

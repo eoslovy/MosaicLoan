@@ -38,7 +38,7 @@ public class LoanBatchService {
 	}
 
 	@Transactional
-	public void renSchedulesAt22(LocalDateTime time, Boolean isBot) throws Exception {
+	public void runSchedulesAt22(LocalDateTime time, Boolean isBot) {
 		try {
 			loanService.executeDueLoanRepayments(time, isBot);
 			log.info("[{}] 오후 10시에 실행되는 대출 처리 완료", time);

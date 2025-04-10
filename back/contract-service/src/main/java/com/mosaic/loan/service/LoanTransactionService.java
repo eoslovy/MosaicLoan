@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.core.model.Loan;
-import com.mosaic.investment.dto.WithdrawalInvestmentDto;
 import com.mosaic.payload.AccountTransactionPayload;
 
 import jakarta.transaction.Transactional;

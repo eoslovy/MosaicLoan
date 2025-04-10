@@ -115,7 +115,7 @@ public class Contract {
 
 	public void updateOutstandingAmountAfterInterestRepaid(BigDecimal calculatedTotalInterest,
 		BigDecimal repaidInterest) {
-		this.outstandingAmount = this.outstandingAmount.add(amount).subtract(repaidInterest);
+		this.outstandingAmount = this.outstandingAmount.add(calculatedTotalInterest).subtract(repaidInterest);
 	}
 
 	public void putTransaction(ContractTransaction transaction) {

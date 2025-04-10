@@ -14,12 +14,14 @@ import com.mosaic.investment.repository.InvestmentRepository;
 import com.mosaic.payload.AccountTransactionPayload;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class InvestmentTransactionalServiceImpl implements InvestmentTransactionalService {
 
-	InvestmentKafkaProducer investmentProducer;
-	InvestmentRepository investmentRepository;
+	private final InvestmentKafkaProducer investmentProducer;
+	private final InvestmentRepository investmentRepository;
 
 	@Transactional
 	@Override

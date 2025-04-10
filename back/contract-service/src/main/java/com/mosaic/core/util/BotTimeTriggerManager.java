@@ -29,16 +29,16 @@ public class BotTimeTriggerManager {
 		if (isLocked()) {
 			throw new BotTimestampLockedException("트리거 작업 중입니다.");
 		}
-		if (botTime.getHour() >= 22 && !hasTriggered(loanKey(date))) {
+		if (botTime.getHour() >= 21 && !hasTriggered(loanProduceKey(date))) {
 			runWithLock(() -> {
 				loanBatchService.runSchedulesAt21(botTime, Boolean.TRUE);
-				markTriggered(loanKey(date));
+				markTriggered(loanProduceKey(date));
 			});
 		}
-		if (botTime.getHour() >= 22 && !hasTriggered(loanKey(date))) {
+		if (botTime.getHour() >= 22 && !hasTriggered(loanConsumeKey(date))) {
 			runWithLock(() -> {
-				loanBatchService.runSchedulesAt21(botTime, Boolean.TRUE);
-				markTriggered(loanKey(date));
+				loanBatchService.runSchedulesAt22(botTime, Boolean.TRUE);
+				markTriggered(loanConsumeKey(date));
 			});
 		}
 
@@ -71,8 +71,12 @@ public class BotTimeTriggerManager {
 		redisTemplate.opsForValue().set(key, "done");
 	}
 
-	private String loanKey(LocalDate date) {
-		return "bot:trigger:loan:" + date;
+	private String loanProduceKey(LocalDate date) {
+		return "bot:trigger:loan-produce:" + date;
+	}
+
+	private String loanConsumeKey(LocalDate date) {
+		return "bot:trigger:loan-consume:" + date;
 	}
 
 	private String investmentKey(LocalDate date) {

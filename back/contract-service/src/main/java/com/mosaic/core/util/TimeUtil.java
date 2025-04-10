@@ -55,7 +55,7 @@ public class TimeUtil {
 
 	private LocalDateTime getBotTimestamp() {
 		String key = BOT_TIMESTAMP_KEY;
-		long increment = ThreadLocalRandom.current().nextLong(300_000, 1_800_000);
+		long increment = ThreadLocalRandom.current().nextLong(400_000, 500_000);
 
 		// 키가 없을 경우 초기값 설정
 		if (Boolean.FALSE.equals(redisTemplate.hasKey(key))) {

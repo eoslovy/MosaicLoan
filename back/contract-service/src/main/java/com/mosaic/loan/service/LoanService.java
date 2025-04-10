@@ -29,8 +29,7 @@ public interface LoanService {
 	@Transactional
 	void findRepaymentDueLoansAndRequestRepayment(LocalDateTime time, Boolean isBot) throws JsonProcessingException;
 
-	@Transactional
 	void executeDueLoanRepayments(LocalDateTime time, Boolean isBot) throws Exception;
 
-	void executeLoanRepaymentsById(Integer loanId, LocalDateTime now, Boolean isBot) throws Exception;
+	// void executeLoanRepaymentsById(Integer loanId, LocalDateTime now, Boolean isBot) throws Exception;
 }

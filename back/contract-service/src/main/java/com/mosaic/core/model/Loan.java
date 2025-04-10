@@ -115,4 +115,8 @@ public class Loan {
 	public void addAmount(AccountTransactionPayload accountTransactionComplete) {
 		this.amount = this.amount.add(accountTransactionComplete.amount());
 	}
+
+	public void repay(BigDecimal repaidAmountResidue) {
+		this.amount = repaidAmountResidue;
+	}
 }

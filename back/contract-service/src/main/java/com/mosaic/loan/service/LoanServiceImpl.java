@@ -115,6 +115,7 @@ public class LoanServiceImpl implements LoanService {
 	}
 
 	@Override
+	@Transactional
 	public void completeLoanDepositRequest(AccountTransactionPayload accountTransactionComplete) throws
 		JsonProcessingException {
 		Loan loan = loanRepository.findById(accountTransactionComplete.targetId())
@@ -130,7 +131,6 @@ public class LoanServiceImpl implements LoanService {
 	//대출금 출
 
 	@Override
-	@Transactional
 	public void findRepaymentDueLoansAndRequestRepayment(LocalDateTime now, Boolean isBot) throws
 		JsonProcessingException {
 		log.info("시간 [{}]의 대상 대출 상환 준비를 시작합니다", now);
@@ -143,23 +143,26 @@ public class LoanServiceImpl implements LoanService {
 	}
 
 	@Override
-	@Transactional
 	public void executeDueLoanRepayments(LocalDateTime now, Boolean isBot) throws Exception {
 		log.info("시간 [{}]의 대상 대출 상환 실행을 시작합니다", now);
 		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate(), LoanStatus.IN_PROGRESS);
 		log.info("{}개의 대출 계약 상환에 필요한 자금요청이 시작됩니다", loans.size());
 		for (Loan loan : loans) {
-			loanTransactionService.executeLoanRepay(loan, now, isBot);
+			try {
+				loanTransactionService.executeLoanRepay(loan, now, isBot);
+			} catch (Exception e) {
+				log.error("Loan {} 처리 실패: {}", loan.getId(), e.getMessage(), e);
+			}
 		}
 		log.info("{}개의 대출 계약 상환의 자금처리가 완료되었습니다", loans.size());
 	}
 
-	@Override
-	public void executeLoanRepaymentsById(Integer loanId, LocalDateTime now, Boolean isBot) throws Exception {
-		log.info("대상계약 [{}]에 대한 대상 대출 상환을 실행합니다,", now);
-		Loan loan = loanRepository.findById(loanId).orElseThrow(() -> new LoanNotFoundException(loanId));
-		loanTransactionService.executeLoanRepay(loan, now, isBot);
-	}
+	// @Override
+	// public void executeLoanRepaymentsById(Integer loanId, LocalDateTime now, Boolean isBot) throws Exception {
+	// 	log.info("대상계약 [{}]에 대한 대상 대출 상환을 실행합니다,", now);
+	//
+	// 	loanTransactionService.executeLoanRepay(loanId, now, isBot);
+	// }
 
 	private Boolean evaluateLoanRequest(CreditEvaluationResponseDto creditEvaluationResponseDto) {
 		if (creditEvaluationResponseDto.getStatus().equals(EvaluationStatus.APPROVED))
