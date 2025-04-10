@@ -285,8 +285,8 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 			.fetchOne();
 
 		// 페이지네이션 적용하여 데이터 조회
-		int page = request.page();
-		int pageSize = request.pageSize();
+		int page = request.safePage();
+		int pageSize = request.safePageSize();
 
 		List<InvestmentTransactionResponse.TransactionInfo> transactions = queryFactory
 			.select(Projections.constructor(InvestmentTransactionResponse.TransactionInfo.class,
@@ -308,7 +308,7 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 		// 응답 생성
 		return InvestmentTransactionResponse.builder()
 			.pagination(InvestmentTransactionResponse.PaginationInfo.builder()
-				.page(page)
+				.page(page + 1)
 				.pageSize(pageSize)
 				.totalPage((int)Math.ceil((double)totalCount / pageSize))
 				.totalItemCount(totalCount)
