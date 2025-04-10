@@ -173,7 +173,7 @@ const LoanList: React.FC<LoanListProps> = ({
 
     try {
       const response = await request.GET<TransactionResponse>(
-        `/contract/loans/${loan.id}`,
+        `/contract/loans/${loan.id}/transactions`,
       );
       const detailsWithBalance = calculateBalance(
         response.transactions,
