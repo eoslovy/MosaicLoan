@@ -36,6 +36,27 @@ const getIndustryLabel = (code: number) => {
   return map[code] ?? `산업 ${code}`;
 };
 
+// 차트 데이터의 안전한 처리를 위한 유틸리티 함수
+const getSafeChartData = (dataArray: any[] = []) => {
+  // 데이터가 없거나 배열이 아니면 더미 데이터 반환
+  if (!Array.isArray(dataArray) || dataArray.length === 0) {
+    return {
+      labels: ["데이터 없음"],
+      counts: [0],
+      amounts: [0],
+      ratios: [0]
+    };
+  }
+
+  // 안전하게 데이터 추출
+  const labels = dataArray.map(item => (item?.group || "알 수 없음"));
+  const counts = dataArray.map(item => (isFinite(item?.count) ? item.count : 0));
+  const amounts = dataArray.map(item => (isFinite(item?.amount) ? item.amount : 0));
+  const ratios = dataArray.map(item => (isFinite(item?.ratio) ? item.ratio : 0));
+
+  return { labels, counts, amounts, ratios };
+};
+
 const StatisticsPage = () => {
   const { user, isFetched } = useUser();
   const [seedUserId, setSeedUserId] = useState<number>(42);
@@ -61,7 +82,7 @@ const StatisticsPage = () => {
     }
   }, [user, isFetched]);
 
-  const { data, isLoading } = useRandomData({
+  const { data, isLoading, refresh } = useRandomData({
     userId: seedUserId,
     refreshInterval: null,
   });
@@ -75,6 +96,19 @@ const StatisticsPage = () => {
       <div className={styles.statusText}>데이터를 불러올 수 없습니다.</div>
     );
 
+  // 차트 데이터 안전하게 준비
+  const ageData = getSafeChartData(data.byAge);
+  const familyData = getSafeChartData(data.byFamilyStatus);
+  const residenceData = getSafeChartData(data.byResidence);
+
+  // 산업 데이터 안전하게 처리
+  const industryData = Array.isArray(data.byIndustry) && data.byIndustry.length > 0
+    ? data.byIndustry.map((item: RawIndustryRatio) => ({
+        industry: getIndustryLabel(item.industry || 0),
+        ratio: typeof item.ratio === 'number' ? item.ratio : 0,
+      }))
+    : [{ industry: '데이터 없음', ratio: 0 }];
+
   return (
     <main className={styles.statisticsPage}>
       <h1 className={styles.pageTitle}>채권 통계</h1>
@@ -86,17 +120,17 @@ const StatisticsPage = () => {
           <div className={styles.chartRow}>
             <div className={styles.chartColumn}>
               <BarLineChart
-                labels={data.byAge.map((i) => i.group)}
-                rawBarData={{ 거래건수: data.byAge.map((i) => i.count ?? 0) }}
-                rawLineData={data.byAge.map((i) => typeof i.ratio === 'number' ? i.ratio : 0)}
+                labels={ageData.labels}
+                rawBarData={{ 거래건수: ageData.counts }}
+                rawLineData={ageData.ratios}
                 barCategories={['거래건수']}
                 lineLabel='비율 (%)'
               />
             </div>
             <div className={styles.chartColumn}>
               <BarChart
-                labels={data.byAge.map((i) => i.group)}
-                values={data.byAge.map((i) => i.amount ?? 0)}
+                labels={ageData.labels}
+                values={ageData.amounts}
                 title='거래 금액'
               />
             </div>
@@ -111,19 +145,19 @@ const StatisticsPage = () => {
           <div className={styles.chartRow}>
             <div className={styles.chartColumn}>
               <BarLineChart
-                labels={data.byFamilyStatus.map((i) => i.group)}
+                labels={familyData.labels}
                 rawBarData={{
-                  거래건수: data.byFamilyStatus.map((i) => i.count ?? 0),
+                  거래건수: familyData.counts,
                 }}
-                rawLineData={data.byFamilyStatus.map((i) => typeof i.ratio === 'number' ? i.ratio : 0)}
+                rawLineData={familyData.ratios}
                 barCategories={['거래건수']}
                 lineLabel='비율 (%)'
               />
             </div>
             <div className={styles.chartColumn}>
               <BarChart
-                labels={data.byFamilyStatus.map((i) => i.group)}
-                values={data.byFamilyStatus.map((i) => i.amount ?? 0)}
+                labels={familyData.labels}
+                values={familyData.amounts}
                 title='거래 금액'
               />
             </div>
@@ -138,17 +172,17 @@ const StatisticsPage = () => {
           <div className={styles.chartRow}>
             <div className={styles.chartColumn}>
               <BarLineChart
-                labels={data.byResidence.map((i) => i.group)}
-                rawBarData={{ 거래건수: data.byResidence.map((i) => i.count ?? 0) }}
-                rawLineData={data.byResidence.map((i) => typeof i.ratio === 'number' ? i.ratio : 0)}
+                labels={residenceData.labels}
+                rawBarData={{ 거래건수: residenceData.counts }}
+                rawLineData={residenceData.ratios}
                 barCategories={['거래건수']}
                 lineLabel='비율 (%)'
               />
             </div>
             <div className={styles.chartColumn}>
               <BarChart
-                labels={data.byResidence.map((i) => i.group)}
-                values={data.byResidence.map((i) => i.amount ?? 0)}
+                labels={residenceData.labels}
+                values={residenceData.amounts}
                 title='거래 금액'
               />
             </div>
@@ -160,10 +194,7 @@ const StatisticsPage = () => {
       <div className={styles.treeMapContainer}>
         <h2 className={styles.treeMapTitle}>산업별 비율</h2>
         <IndustryTreemapChart
-          data={data.byIndustry.map((item: RawIndustryRatio) => ({
-            industry: getIndustryLabel(item.industry),
-            ratio: typeof item.ratio === 'number' ? item.ratio : 0,
-          }))}
+          data={industryData}
         />
       </div>
     </main>
