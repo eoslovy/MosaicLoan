@@ -1,5 +1,4 @@
-package com.mydataservice.;
-
+package com.mydataservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -9,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ImportAutoConfiguration(exclude = { DataSourceAutoConfiguration.class })
+@ImportAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 class MydataServiceApplicationTests {
 
 	@Test

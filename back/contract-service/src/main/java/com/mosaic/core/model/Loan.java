@@ -9,6 +9,7 @@ import java.util.List;
 import com.mosaic.core.model.status.LoanStatus;
 import com.mosaic.loan.dto.CreateLoanRequestDto;
 import com.mosaic.loan.dto.CreditEvaluationResponseDto;
+import com.mosaic.payload.AccountTransactionPayload;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -70,7 +71,7 @@ public class Loan {
 			.accountId(request.id())
 			.amount(BigDecimal.valueOf(0))
 			.createdAt(now)
-			.dueDate(request.due_date())
+			.dueDate(now.plusWeeks(request.targetWeeks()).toLocalDate())
 			.evaluationId(creditEvaluationResponseDto.getId())
 			.requestAmount(request.requestAmount())
 			.status(LoanStatus.PENDING)
@@ -107,5 +108,15 @@ public class Loan {
 		}
 	}
 
-	public void setStatusComplete() { this.status = LoanStatus.COMPLETED;}
+	public void setStatusComplete() {
+		this.status = LoanStatus.COMPLETED;
+	}
+
+	public void addAmount(AccountTransactionPayload accountTransactionComplete) {
+		this.amount = this.amount.add(accountTransactionComplete.amount());
+	}
+
+	public void repay(BigDecimal repaidAmountResidue) {
+		this.amount = repaidAmountResidue;
+	}
 }

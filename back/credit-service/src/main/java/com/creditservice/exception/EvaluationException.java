@@ -4,10 +4,10 @@ import lombok.Getter;
 
 @Getter
 public class EvaluationException extends RuntimeException {
-    private final ErrorCode errorCode;
+	private final ErrorCode errorCode;
 
-    public EvaluationException(ErrorCode errorCode) {
-        super(errorCode.getDefaultMessage());
-        this.errorCode = errorCode;
-    }
+	public EvaluationException(ErrorCode errorCode) {
+		super(errorCode.getDefaultMessage());
+		this.errorCode = errorCode;
+	}
 } 

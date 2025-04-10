@@ -10,6 +10,6 @@ import com.creditservice.domain.EconomySentiment;
 
 @Repository
 public interface EconomySentimentRepository extends JpaRepository<EconomySentiment, LocalDate> {
-    
-    Optional<EconomySentiment> findBySentimentDate(LocalDate date);
+
+	Optional<EconomySentiment> findBySentimentDate(LocalDate date);
 } 

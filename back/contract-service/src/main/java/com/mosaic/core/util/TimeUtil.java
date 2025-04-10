@@ -6,8 +6,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
+
+import com.mosaic.core.exception.BotTimestampLockedException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +24,16 @@ public class TimeUtil {
 	private static final LocalDateTime DEFAULT_BOT_START = LocalDateTime.of(2022, 1, 1, 0, 0);
 
 	private final StringRedisTemplate redisTemplate;
+	@Lazy
 	private final BotTimeTriggerManager botTimeTriggerManager;
+
+	public static LocalDate dueDate(LocalDate baseDate, int weeks) {
+		return baseDate.plusWeeks(weeks);
+	}
+
+	public static LocalDate dueDate(LocalDateTime baseTime, int weeks) {
+		return baseTime.toLocalDate().plusWeeks(weeks);
+	}
 
 	public LocalDateTime now(boolean isBot) {
 		if (!isBot) {
@@ -29,7 +41,7 @@ public class TimeUtil {
 		}
 
 		if (isLocked()) {
-			throw new IllegalStateException("봇 타임스탬프는 현재 트리거 작업 중입니다.");
+			throw new BotTimestampLockedException("봇 타임스탬프는 현재 트리거 작업 중입니다.");
 		}
 
 		LocalDateTime botTime = getBotTimestamp();
@@ -43,7 +55,7 @@ public class TimeUtil {
 
 	private LocalDateTime getBotTimestamp() {
 		String key = BOT_TIMESTAMP_KEY;
-		long increment = ThreadLocalRandom.current().nextLong(30_000, 180_000);
+		long increment = ThreadLocalRandom.current().nextLong(400_000, 500_000);
 
 		// 키가 없을 경우 초기값 설정
 		if (Boolean.FALSE.equals(redisTemplate.hasKey(key))) {
@@ -58,14 +70,6 @@ public class TimeUtil {
 		}
 
 		return LocalDateTime.ofInstant(Instant.ofEpochMilli(updated), ZONE_ID);
-	}
-
-	public static LocalDate dueDate(LocalDate baseDate, int weeks) {
-		return baseDate.plusWeeks(weeks);
-	}
-
-	public static LocalDate dueDate(LocalDateTime baseTime, int weeks) {
-		return baseTime.toLocalDate().plusWeeks(weeks);
 	}
 }
 

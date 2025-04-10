@@ -60,7 +60,7 @@ public class AccountTransaction {
 			|| content == null || cash == null) {
 			throw new IllegalArgumentException("모든 필드는 null일 수 없습니다.");
 		}
-		
+
 		if (type.isCompensation() && compensationTargetId == null) {
 			throw new IllegalArgumentException("보상 트랜잭션은 대상이 되는 id가 명시되어야 합니다.");
 		}

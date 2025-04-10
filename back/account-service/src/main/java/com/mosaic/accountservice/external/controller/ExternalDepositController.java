@@ -37,8 +37,8 @@ public class ExternalDepositController {
 	}
 
 	@GetMapping("/success")
-	public void handleExternalDepositSuccess (
-		@RequestParam(name = "pg_token") String pgToken, 
+	public void handleExternalDepositSuccess(
+		@RequestParam(name = "pg_token") String pgToken,
 		@RequestHeader("X-MEMBER-ID") Integer memberId,
 		HttpServletResponse response) throws JsonProcessingException, IOException {
 		kakaoPayService.approveKakaoPay(pgToken, memberId);

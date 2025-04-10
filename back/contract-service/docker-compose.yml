@@ -1,5 +1,5 @@
 services:
-  zookeeperlocal :
+  zookeeperlocal:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeperlocal
     ports:
@@ -10,7 +10,7 @@ services:
 
   kafkalocal:
     image: confluentinc/cp-kafka:7.5.0
-    container_name: kafka
+    container_name: kafkalocal
     ports:
       - "9092:9092"
     environment:
@@ -20,7 +20,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
-      - zookeeper
+      - zookeeperlocal
 
   kafdrop:
     image: obsidiandynamics/kafdrop
@@ -30,7 +30,7 @@ services:
     environment:
       KAFKA_BROKER_CONNECT: kafka:9092
     depends_on:
-      - kafka
+      - kafkalocal
 
   mysql:
     image: mysql:8.0
@@ -42,3 +42,8 @@ services:
       MYSQL_PASSWORD: 608
     ports:
       - "3309:3306"
+  redis:
+    image: redis:5.0
+    restart: always
+    ports:
+      - "6379:6379"

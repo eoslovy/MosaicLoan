@@ -9,8 +9,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class InvestmentOverviewDto {
-    private Map<String, Long> statusDistribution;
-    private Integer totalContractCount;
-    private BigDecimal totalProfit;
-    private BigDecimal totalLoss;
+	private Map<String, Long> statusDistribution;
+	private Integer totalContractCount;
+	private BigDecimal totalProfit;
+	private BigDecimal totalLoss;
 } 
