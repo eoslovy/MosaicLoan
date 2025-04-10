@@ -25,7 +25,6 @@ import com.mosaic.investment.exception.InvestmentNotFoundException;
 import com.mosaic.investment.repository.InvestmentQueryRepository;
 import com.mosaic.investment.repository.InvestmentRepository;
 import com.mosaic.loan.event.message.LoanCreateTransactionPayload;
-import com.mosaic.loan.event.producer.LoanKafkaProducer;
 import com.mosaic.loan.exception.LoanNotFoundException;
 import com.mosaic.loan.repository.LoanRepository;
 import com.mosaic.loan.service.LoanTransactionServiceImpl;
@@ -91,10 +90,10 @@ public class InvestmentServiceImpl implements InvestmentService {
 					investment,
 					withdrawnAmount, now);
 				investmentProducer.sendInvestmentWithdrawalRequest(investWithdrawalPayload);
-				log.info("투자의 상태가{}로 완료되어 {}의 계좌로 돈을 보냈습니다",investment.getStatus() ,investment.getAccountId());
+				log.info("투자의 상태가{}로 완료되어 {}의 계좌로 돈을 보냈습니다", investment.getStatus(), investment.getAccountId());
 				countSuccess++;
-			}else{
-				log.info("투자의 상태가{}로 완료되지 못해 {}의 투자종료에 실패했습니다",investment.getStatus() ,investment.getAccountId());
+			} else {
+				log.info("투자의 상태가{}로 완료되지 못해 {}의 투자종료에 실패했습니다", investment.getStatus(), investment.getAccountId());
 			}
 		}
 		log.info("[{}]개의 투자가 성공적으로 종료되었습니다", countSuccess);
@@ -109,9 +108,9 @@ public class InvestmentServiceImpl implements InvestmentService {
 			}
 		}
 		for (Contract contract : investment.getContracts()) {
-			if (!Contract.isComeplete(contract)){
+			if (!Contract.isComeplete(contract)) {
 				log.info("투자번호 {} 가 정상적으로 종료되지 못합니다", investment.getId());
-			return false;
+				return false;
 			}
 		}
 		log.info("투자번호 {}가 정상적으로 종료되었습니다", investment.getId());
@@ -148,7 +147,7 @@ public class InvestmentServiceImpl implements InvestmentService {
 
 		// 3. 조건에 맞는 투자자 조회
 		List<Investment> candidates = investmentQueryRepository.findQualifiedInvestments(minimumPerInvestment,
-			loanTransactionReq.expectYieldRate(), loan);
+			loanTransactionReq.expectYield(), loan);
 		log.info("{}명의 투자자 발견", candidates.size());
 		BigDecimal accumulated = BigDecimal.ZERO;
 		List<Contract> contracts = new ArrayList<>();
@@ -175,7 +174,7 @@ public class InvestmentServiceImpl implements InvestmentService {
 				loan,
 				investment,
 				allocated,
-				loanTransactionReq.expectYieldRate(),
+				loanTransactionReq.expectYield(),
 				loanTransactionReq.interestRate(),
 				250
 			);

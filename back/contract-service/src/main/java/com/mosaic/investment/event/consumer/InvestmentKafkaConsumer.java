@@ -49,7 +49,7 @@ public class InvestmentKafkaConsumer {
 			LoanCreateTransactionPayload.class);
 		//TODO 웹소켓을 통한 투자 시작 메세지 전달
 		log.info("[{}] {}의 {}상품 대출 {}% 적합자 검색이 시작되었습니다", accountTransaction.createdAt(), accountTransaction.loanId(),
-			accountTransaction.interestRate(), accountTransaction.expectYieldRate());
+			accountTransaction.interestRate(), accountTransaction.expectYield());
 		investmentService.searchLoanAptInvestor(accountTransaction);
 	}
 }

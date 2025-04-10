@@ -1,6 +1,7 @@
 package com.mosaic.core.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public class Contract {
 		BigDecimal allocatedAmount,
 		int interestRate,
 		int delinquencyMarginRate,
-		int expectYieldRate) {
+		int expectYield) {
 		return Contract.builder()
 			.loan(loan)
 			.investment(investment)
@@ -100,7 +101,8 @@ public class Contract {
 			.paidAmount(BigDecimal.ZERO)
 			.interestRate(interestRate)
 			.expectYield(
-				allocatedAmount.multiply(BigDecimal.valueOf(expectYieldRate)).divide(BigDecimal.valueOf(10000)))
+				allocatedAmount.multiply(BigDecimal.valueOf(expectYield))
+					.divide(BigDecimal.valueOf(10000), 5, RoundingMode.DOWN))
 			.delinquencyMarginRate(delinquencyMarginRate)
 			.status(ContractStatus.IN_PROGRESS)
 			.dueDate(loan.getDueDate())

@@ -44,14 +44,17 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<Investment> findQualifiedInvestments(BigDecimal minimumAmount, Integer expectYieldRate, Loan loan) {
+	public List<Investment> findQualifiedInvestments(BigDecimal minimumAmount, Integer expectYield, Loan loan) {
 		QInvestment investment = QInvestment.investment;
 		//돈에 대한 조건, 최소금액보다 분산금액이 커야할것, 최소금액보다 잔액이 커야할것
 		BooleanExpression amountCondition = investment.principal.multiply(1.0 / 500)
 			.goe(minimumAmount)
 			.and(investment.amount.goe(minimumAmount));
 
-		BooleanExpression rateCondition = investment.expectYield.divide(investment.principal).multiply(BigDecimal.valueOf(10000)).lt(expectYieldRate);
+		BooleanExpression rateCondition = investment.expectYield.divide(investment.principal)
+			.multiply(BigDecimal.valueOf(10000))
+			.lt(
+				expectYield);
 		BooleanExpression dueDateCondition = investment.dueDate.gt(loan.getDueDate());
 
 		return queryFactory.selectFrom(investment)

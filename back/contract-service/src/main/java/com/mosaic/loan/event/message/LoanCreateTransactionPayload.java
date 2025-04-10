@@ -12,7 +12,7 @@ public record LoanCreateTransactionPayload(
 	BigDecimal amount,
 	Integer interestRate,
 	Integer defaultRate,
-	Integer expectYieldRate,
+	Integer expectYield,
 	LocalDateTime createdAt
 ) {
 	public static LoanCreateTransactionPayload buildLoan(Loan newLoan,
