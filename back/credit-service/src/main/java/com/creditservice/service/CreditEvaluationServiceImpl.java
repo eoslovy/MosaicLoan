@@ -14,7 +14,6 @@ import com.creditservice.domain.CreditEvaluation;
 import com.creditservice.domain.EvaluationStatus;
 import com.creditservice.dto.CreditEvaluationResponseDto;
 import com.creditservice.exception.ErrorCode;
-import com.creditservice.exception.EvaluationException;
 import com.creditservice.exception.EvaluationNotFoundException;
 import com.creditservice.repository.CreditEvaluationRepository;
 
@@ -53,7 +52,7 @@ public class CreditEvaluationServiceImpl implements CreditEvaluationService {
 				if (hoursDiff >= 24) {
 					throw new EvaluationNotFoundException(ErrorCode.EVALUATION_EXPIRED, memberId);
 				}
-				if (evaluation.getStatus().equals(EvaluationStatus.DECLINED)){
+				if (evaluation.getStatus().equals(EvaluationStatus.DECLINED)) {
 					throw new EvaluationNotFoundException(ErrorCode.EVALUATION_NOT_FOUND, memberId);
 				}
 				return convertToDtoWithDefaultFlag(evaluation);
@@ -74,6 +73,7 @@ public class CreditEvaluationServiceImpl implements CreditEvaluationService {
 			.caseId(evaluation.getCaseId())
 			.status(evaluation.getStatus())
 			.defaultFlag(evaluation.getDefaultFlag())
+			.expectYield(evaluation.getExpectYield())
 			.build();
 	}
 } 
