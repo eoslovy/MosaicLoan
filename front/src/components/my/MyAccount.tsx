@@ -40,10 +40,9 @@ const MyAccount = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (!isReady) return;
-  //   refetchBalance();
-  // }, [isReady]);
+  useEffect(() => {
+    refetchBalance();
+  });
 
   // useEffect(() => {
   //   if (!toast) return;
