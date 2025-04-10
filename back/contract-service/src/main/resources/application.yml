@@ -1,5 +1,5 @@
 server:
-  port: 58080
+  port: 8080
 
 spring:
   profiles:
@@ -9,14 +9,9 @@ spring:
     name: contract-service
   #
   datasource:
-    url: jdbc:mysql://localhost:3309/mosaic_contract
-    username: contract
-    password: 608
-
-  data:
-    redis:
-      host: localhost
-      port: 6379
+    url: ${CONTRACT_DATASOURCE_URL}
+    username: ${CONTRACT_DATASOURCE_USERNAME}
+    password: ${CONTRACT_DATASOURCE_PASSWORD}
 
   jpa:
     hibernate:
@@ -31,9 +26,13 @@ spring:
         order_inserts: true
         order_updates: true
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
 
   kafka:
-    bootstrap-servers: localhost:29092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     consumer:
       properties:
         spring.json.trusted.packages: "com.mosaic.payload"
