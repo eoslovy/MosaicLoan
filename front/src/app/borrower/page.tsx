@@ -18,7 +18,7 @@ export interface LoanSortState {
 }
 
 export interface LoanSearchResponse {
-  transactions: LoanTransaction[];
+  loans: LoanTransaction[];
   pagination: {
     page: number;
     pageSize: number;
@@ -102,7 +102,7 @@ const BorrowerPage = () => {
         },
       );
 
-      setSearchedLoans(response.transactions);
+      setSearchedLoans(response.loans);
       setPagination(response.pagination);
       setCurrentSearchParams({
         startDate: params.startDate,

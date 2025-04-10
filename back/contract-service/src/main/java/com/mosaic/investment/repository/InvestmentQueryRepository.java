@@ -23,7 +23,7 @@ public interface InvestmentQueryRepository {
 	// 수익 내역 조회 (만기일 지난 투자, 최대 10개)
 	ProfitHistoryResponse getProfitHistory(Integer memberId);
 
-	List<Investment> findQualifiedInvestments(BigDecimal minimumAmount, Integer expectYieldRate, Loan loan);
+	List<Investment> findQualifiedInvestments(BigDecimal minimumAmount, Integer expectYield, Loan loan);
 
 	// 한 번의 쿼리로 투자 목록과 통계 개요 함께 조회
 	Map<String, Object> findInvestmentsWithOverview(Integer memberId);

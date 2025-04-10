@@ -11,6 +11,6 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ErrorResponse {
-    private final ErrorCode code;
-    private final String message;
+	private final ErrorCode code;
+	private final String message;
 } 

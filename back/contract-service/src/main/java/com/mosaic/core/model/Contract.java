@@ -1,6 +1,7 @@
 package com.mosaic.core.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -82,10 +83,32 @@ public class Contract {
 		if (contract.getStatus().equals(ContractStatus.COMPLETED)) {
 			return true;
 		}
-		if (contract.getStatus().equals(ContractStatus.OWNERSHIP_TRANSFERRED)) {
-			return true;
-		}
-		return false;
+		return contract.getStatus().equals(ContractStatus.OWNERSHIP_TRANSFERRED);
+	}
+
+	public static Contract create(
+		Loan loan,
+		Investment investment,
+		BigDecimal allocatedAmount,
+		int interestRate,
+		int delinquencyMarginRate,
+		int expectYield) {
+		return Contract.builder()
+			.loan(loan)
+			.investment(investment)
+			.amount(allocatedAmount)
+			.outstandingAmount(allocatedAmount)
+			.paidAmount(BigDecimal.ZERO)
+			.interestRate(interestRate)
+			.expectYield(
+				allocatedAmount.multiply(BigDecimal.valueOf(expectYield))
+					.divide(BigDecimal.valueOf(10000), 5, RoundingMode.DOWN))
+			.delinquencyMarginRate(delinquencyMarginRate)
+			.status(ContractStatus.IN_PROGRESS)
+			.dueDate(loan.getDueDate())
+			// Bot 여부 판정이 어려워 일단 loan + 1~2초 사용
+			.createdAt(loan.getCreatedAt().plusSeconds(1000 + (long)(Math.random() * 1000)))
+			.build();
 	}
 
 	public void addInterestAmountToOutstandingAmount(BigDecimal interest) {
@@ -94,7 +117,7 @@ public class Contract {
 
 	public void updateOutstandingAmountAfterInterestRepaid(BigDecimal calculatedTotalInterest,
 		BigDecimal repaidInterest) {
-		this.outstandingAmount = this.outstandingAmount.add(amount).subtract(repaidInterest);
+		this.outstandingAmount = this.outstandingAmount.add(calculatedTotalInterest).subtract(repaidInterest);
 	}
 
 	public void putTransaction(ContractTransaction transaction) {
@@ -114,30 +137,6 @@ public class Contract {
 		this.loan = loan;
 	}
 
-	public static Contract create(
-		Loan loan,
-		Investment investment,
-		BigDecimal allocatedAmount,
-		int interestRate,
-		int delinquencyMarginRate,
-		int expectYieldRate) {
-		return Contract.builder()
-			.loan(loan)
-			.investment(investment)
-			.amount(allocatedAmount)
-			.outstandingAmount(allocatedAmount)
-			.paidAmount(BigDecimal.ZERO)
-			.interestRate(interestRate)
-			.expectYield(
-				allocatedAmount.multiply(BigDecimal.valueOf(expectYieldRate)).divide(BigDecimal.valueOf(10000)))
-			.delinquencyMarginRate(delinquencyMarginRate)
-			.status(ContractStatus.IN_PROGRESS)
-			.dueDate(loan.getDueDate())
-			// Bot 여부 판정이 어려워 일단 loan + 1~2초 사용
-			.createdAt(loan.getCreatedAt().plusSeconds(1000 + (long)(Math.random() * 1000)))
-			.build();
-	}
-
 	public void setStatusDelinquent() {
 		this.status = ContractStatus.DELINQUENT;
 	}
@@ -148,7 +147,8 @@ public class Contract {
 
 	public void addExtraInterestDaily() {
 
-		Integer totalRate = (interestRate+delinquencyMarginRate)/365;
-		this.outstandingAmount = this.outstandingAmount.multiply(BigDecimal.valueOf(totalRate)).divide(BigDecimal.valueOf(10000));
+		Integer totalRate = (interestRate + delinquencyMarginRate) / 365;
+		this.outstandingAmount = this.outstandingAmount.multiply(BigDecimal.valueOf(totalRate))
+			.divide(BigDecimal.valueOf(10000));
 	}
 }

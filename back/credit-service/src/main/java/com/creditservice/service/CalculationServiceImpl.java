@@ -37,7 +37,7 @@ public class CalculationServiceImpl implements CalculationService {
 			.memberId(memberId)
 			.defaultRate(defaultRate)
 			.interestRate(interestRate)
-			.expectedYield(expectedYield)
+			.expectYield(expectedYield)
 			.maxLoanLimit(maxLoanLimit)
 			.createdAt(now)
 			.caseId(caseId)

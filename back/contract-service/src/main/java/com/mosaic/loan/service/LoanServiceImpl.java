@@ -1,10 +1,7 @@
 package com.mosaic.loan.service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.time.Year;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -12,23 +9,20 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.contract.service.ContractService;
 import com.mosaic.core.model.Contract;
-import com.mosaic.core.model.ContractTransaction;
 import com.mosaic.core.model.Loan;
 import com.mosaic.core.model.status.ContractStatus;
 import com.mosaic.core.model.status.LoanStatus;
 import com.mosaic.core.util.InternalApiClient;
-import com.mosaic.core.util.TimeUtil;
-import com.mosaic.investment.dto.WithdrawalInvestmentDto;
 import com.mosaic.loan.dto.CreateLoanRequestDto;
 import com.mosaic.loan.dto.CreditEvaluationResponseDto;
 import com.mosaic.loan.dto.EvaluationStatus;
-import com.mosaic.loan.dto.RepayLoanDto;
 import com.mosaic.loan.event.message.LoanCreateTransactionPayload;
 import com.mosaic.loan.event.producer.LoanKafkaProducer;
 import com.mosaic.loan.exception.LoanNotFoundException;
 import com.mosaic.loan.repository.LoanRepository;
 import com.mosaic.payload.AccountTransactionPayload;
 
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,24 +35,21 @@ public class LoanServiceImpl implements LoanService {
 	private final LoanKafkaProducer loanKafkaProducer;
 	private final LoanRepository loanRepository;
 	private final InternalApiClient internalApiClient;
-	private final TimeUtil timeUtil;
+	private final LoanTransactionServiceImpl loanTransactionService;
 	private final ContractService contractService;
+	private final EntityManager em;
 
 	//투자 생성
 	@Override
 	@Transactional
-	public void createLoan(CreateLoanRequestDto request, Boolean isBot) throws JsonProcessingException {
+	public void createLoan(CreateLoanRequestDto request, Integer memberId, LocalDateTime now, Boolean isBot) throws
+		JsonProcessingException {
 		//Todo 내부 신용평가 확인후 예외처리(없음, 시간지남 등등)
-		//CreditEvaluationResponseDto creditEvaluationResponseDto = internalApiClient.getMemberCreditEvaluation(request);
-		//예시용
-		CreditEvaluationResponseDto creditEvaluationResponseDto = CreditEvaluationResponseDto.builder()
-			.id(request.id())
-			.interestRate(800)
-			.defaultRate(80)
-			.build();
-		//if (!evaluateLoanRequest(creditEvaluationResponseDto)) return;
+		CreditEvaluationResponseDto creditEvaluationResponseDto = internalApiClient.getMemberCreditEvaluation(memberId);
+		if (!evaluateLoanRequest(creditEvaluationResponseDto))
+			return;
 		// 시간 어떻게 쓸지 확정 필요
-		LocalDateTime now = timeUtil.now(isBot);
+		log.info("[{}] 시에 대출이 시작되었습니다", now);
 		Loan newLoan = Loan.requestOnlyFormLoan(request, creditEvaluationResponseDto, now);
 		loanRepository.save(newLoan);
 		LoanCreateTransactionPayload payload = LoanCreateTransactionPayload.buildLoan(newLoan,
@@ -66,173 +57,110 @@ public class LoanServiceImpl implements LoanService {
 		log.info("Create loan: {}", payload);
 		loanKafkaProducer.sendLoanCreatedRequest(payload);
 	}
+
 	@Override
-	public void manageInterestOfDelinquentLoans(LocalDateTime now){
+	@Transactional
+	public void manageInterestOfDelinquentLoans(LocalDateTime now, Boolean isBot) {
 		List<Loan> loans = loanRepository.findByStatus(LoanStatus.DELINQUENT);
-		for(Loan loan : loans){
+		for (Loan loan : loans) {
 			contractService.addDelinquentMarginInterest(loan);
 		}
+		log.info("{}개의 대출에 에 가산이자 적용 완료되었습니다", loans.size());
 	}
 
 	@Override
-	public void liquidateScheduledDelinquentLoans(LocalDateTime now) throws Exception {
-		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate().minusMonths(3), LoanStatus.DELINQUENT);
+	@Transactional
+	public void liquidateScheduledDelinquentLoans(LocalDateTime now, Boolean isBot) throws Exception {
+		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate().minusMonths(3),
+			LoanStatus.DELINQUENT);
 		for (Loan loan : loans) {
-			liquidateLoan(loan, now);
+			liquidateDelinquentLoan(loan, now);
 		}
+		log.info("{}개의 대출을 유동화햇습니다", loans.size());
 	}
 
-	@Override
-	public void liquidateLoan(Loan loan, LocalDateTime now) throws Exception {
-		if(loan.getId() == null){return;}
-		for(Contract contract : loan.getContracts()){
+	@Transactional
+	public void liquidateDelinquentLoan(Loan loan, LocalDateTime now) throws Exception {
+		if (loan.getId() == null) {
+			return;
+		}
+		for (Contract contract : loan.getContracts()) {
 			Contract liquidatedContract = contractService.liquidateContract(contract, now);
-			if(!contract.getStatus().equals(ContractStatus.OWNERSHIP_TRANSFERRED)) throw new Exception("liquidateFail");
+			if (!contract.getStatus().equals(ContractStatus.OWNERSHIP_TRANSFERRED))
+				throw new Exception("liquidateFail");
 		}
 	}
 
 	//상환입금
 	@Override
 	@Transactional
-	public void publishAndCalculateLoanRepayRequest(RepayLoanDto requestDto,
-		Boolean isBot) throws JsonProcessingException {
-		Loan loan = loanRepository.findByIdAndStatus(requestDto.id(), LoanStatus.IN_PROGRESS)
-			.orElseThrow(() -> new LoanNotFoundException(requestDto.id()));
+	public void publishAndCalculateLoanRepayRequest(Loan loan,
+		Boolean isBot, LocalDateTime now) throws JsonProcessingException {
 		BigDecimal moneyToRepay = BigDecimal.ZERO;
 		for (Contract contract : loan.getContracts()) {
 			moneyToRepay = moneyToRepay.add(contract.getOutstandingAmount());
-			BigDecimal interestOfContract = calculateInterestAmount(contract, contract.getOutstandingAmount());
+			BigDecimal interestOfContract = loanTransactionService.calculateInterestAmount(contract,
+				contract.getOutstandingAmount(),
+				now.toLocalDate());
 			//contract.addInterestAmountToOutstandingAmount(interestOfContract);
 			moneyToRepay = moneyToRepay.add(interestOfContract);
 		}
-		LocalDateTime now = timeUtil.now(isBot);
 		loanKafkaProducer.sendLoanRepayRequestEvent(AccountTransactionPayload.buildLoanRepay(loan, moneyToRepay, now));
 	}
 
-	private BigDecimal calculateInterestAmount(Contract contract, BigDecimal amount) {
-		long days = ChronoUnit.DAYS.between(contract.getDueDate(), contract.getCreatedAt().toLocalDate());
-		BigDecimal dailyRate = BigDecimal.valueOf(contract.getInterestRate())
-			.divide(BigDecimal.valueOf(365 + (Year.isLeap(contract.getCreatedAt().getYear()) ? 1 : 0)), 18,
-				RoundingMode.DOWN);
-		BigDecimal dailyInterest = amount
-			.multiply(dailyRate)
-			.divide(BigDecimal.valueOf(10000), 18, RoundingMode.DOWN);
-		return dailyInterest
-			.multiply(BigDecimal.valueOf(days))
-			.setScale(5, RoundingMode.DOWN);
+	@Override
+	@Transactional
+	public void completeLoanDepositRequest(AccountTransactionPayload accountTransactionComplete) throws
+		JsonProcessingException {
+		Loan loan = loanRepository.findById(accountTransactionComplete.targetId())
+			.orElse(null);
+		if (loan == null) {
+			loanKafkaProducer.sendLoanDepositFailEvent(accountTransactionComplete);
+			throw new LoanNotFoundException(accountTransactionComplete.targetId());
+		}
+		loan.addAmount(accountTransactionComplete);
 	}
 
 	//상환 필요금과 실 상환금 비율 맞춰 분배
+	//대출금 출
+
 	@Override
-	@Transactional
-	public void completeLoanRepayRequest(AccountTransactionPayload payload) throws Exception {
-		Loan loan = loanRepository.findByIdAndStatus(payload.targetId(), LoanStatus.IN_PROGRESS)
-			.orElseThrow(() -> new LoanNotFoundException(payload.targetId()));
-		BigDecimal repaidAmountResidue = payload.amount();
-		BigDecimal originalMoneyToRepay = BigDecimal.ZERO;
-		BigDecimal interestToRepay = BigDecimal.ZERO;
-		for (Contract contract : loan.getContracts()) {
-			originalMoneyToRepay = originalMoneyToRepay.add(contract.getOutstandingAmount());
-			BigDecimal interestOfContract = calculateInterestAmount(contract, contract.getOutstandingAmount());
-			interestToRepay = interestToRepay.add(interestOfContract);
-		}
-		//총 상환 비율
-		BigDecimal returnInterestRatio = repaidAmountResidue.divide(interestToRepay, 18, RoundingMode.DOWN)
-			.min(BigDecimal.ONE);
-		if (BigDecimal.ZERO.compareTo(returnInterestRatio) >= 0) {
-			return; //상환비율 0 처리불가능
-		}
-
-		for (Contract contract : loan.getContracts()) {
-			BigDecimal calculatedTotalInterest = calculateInterestAmount(contract, contract.getOutstandingAmount());
-			ContractTransaction interestTransaction = ContractTransaction.buildRepayInterestTransaction(contract,
-				// 여기도 시간 Bot 처리 어려워서 일단 payload꺼 그대로 넣음
-				calculatedTotalInterest.multiply(returnInterestRatio), payload.createdAt());
-			contract.updateOutstandingAmountAfterInterestRepaid(calculatedTotalInterest,
-				interestTransaction.getAmount());
-			contract.putTransaction(interestTransaction);
-
-			contract.getInvestment().addCurrentRate(interestTransaction, contract);
-
-			repaidAmountResidue = repaidAmountResidue.subtract(interestTransaction.getAmount());
-		}
-
-		BigDecimal returnPrincipalRatio = repaidAmountResidue.divide(originalMoneyToRepay, 18, RoundingMode.DOWN)
-			.min(BigDecimal.ONE);
-		if (BigDecimal.ZERO.compareTo(returnPrincipalRatio) >= 0) {
-			for (Contract contract : loan.getContracts()) {
-				contract.setStatusDelinquent();
-			}
-			return; //상환비율 0 처리불가능
-		}
-		for (Contract contract : loan.getContracts()) {
-			BigDecimal calculatedTotalPrincipal = contract.getOutstandingAmount();
-			ContractTransaction principalTransaction = ContractTransaction.buildRepayPrincipalTransaction(contract,
-				calculatedTotalPrincipal.multiply(returnPrincipalRatio), payload.createdAt());
-			contract.updateOutstandingAmountAfterPrincipalRepaid(principalTransaction);
-			contract.putTransaction(principalTransaction);
-
-			repaidAmountResidue = repaidAmountResidue.subtract(principalTransaction.getAmount());
-		}
-
-		if (repaidAmountResidue.compareTo(BigDecimal.ZERO) < 0) {
-			throw new IllegalStateException("받은 돈보다 더 많이 분배했습니다.");
-		}
-		if (repaidAmountResidue.compareTo(BigDecimal.ZERO) > 0) {
-			loan.setStatusDelinquent();
-			for (Contract contract : loan.getContracts()) {
-				contract.setStatusDelinquent();
-			}
-			log.info("{}의 대출금액 상환 미달로 부분상환 후 상태 {}로 변경", loan.getId(), loan.getStatus());
-		}
-		if (repaidAmountResidue.compareTo(BigDecimal.ZERO) == 0) {
-			loan.setStatusComplete();
-			for (Contract contract : loan.getContracts()) {
-				contract.setStatusComplete();
-				contract.getInvestment().subtractExpectYield(contract);
-			}
-			log.info("{}의 대출완납으로 상태 완료로 변경", loan.getId());
-		}
-	}
-
-	//대출금 출금
-	@Override
-	@Transactional
-	public void publishLoanWithdrawalRequest(WithdrawalInvestmentDto requestDto, Boolean isBot) throws
+	public void findRepaymentDueLoansAndRequestRepayment(LocalDateTime now, Boolean isBot) throws
 		JsonProcessingException {
-		Loan loan = loanRepository.findById(requestDto.id())
-			.orElseThrow(() -> new LoanNotFoundException(requestDto.id()));
-		BigDecimal withdrawnAmount = loan.withdrawAll();
-		LocalDateTime now = timeUtil.now(isBot);
-		AccountTransactionPayload withdrawalEventPayload = AccountTransactionPayload.buildLoanWithdrawal(loan,
-			withdrawnAmount, now);
-		loanKafkaProducer.sendLoanWithdrawalRequest(withdrawalEventPayload);
+		log.info("시간 [{}]의 대상 대출 상환 준비를 시작합니다", now);
+		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate(), LoanStatus.IN_PROGRESS);
+		log.info("{}개의 대출 계약 상환에 필요한 자금요청이 시작됩니다", loans.size());
+		for (Loan loan : loans) {
+			publishAndCalculateLoanRepayRequest(loan, isBot, now);
+		}
+		log.info("{}대출 계약의 상환 처리가 완료되었습니다", loans.size());
 	}
 
 	@Override
-	@Transactional
-	public void rollbackLoanWithdrawal(AccountTransactionPayload payload) {
-		Loan loan = loanRepository.findById(payload.targetId())
-			.orElseThrow(() -> new LoanNotFoundException(payload.targetId()));
-		loan.rollBack(payload.amount());
+	public void executeDueLoanRepayments(LocalDateTime now, Boolean isBot) throws Exception {
+		log.info("시간 [{}]의 대상 대출 상환 실행을 시작합니다", now);
+		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate(), LoanStatus.IN_PROGRESS);
+		log.info("{}개의 대출 계약 상환에 필요한 자금요청이 시작됩니다", loans.size());
+		for (Loan loan : loans) {
+			try {
+				loanTransactionService.executeLoanRepay(loan, now, isBot);
+			} catch (Exception e) {
+				log.error("Loan {} 처리 실패: {}", loan.getId(), e.getMessage(), e);
+			}
+		}
+		log.info("{}개의 대출 계약 상환의 자금처리가 완료되었습니다", loans.size());
 	}
 
-	@Override
-	@Transactional
-	public void failLoanRepayRequest(AccountTransactionPayload payload) {
-		Loan loan = loanRepository.findByIdAndStatus(payload.targetId(), LoanStatus.IN_PROGRESS)
-			.orElseThrow(() -> new LoanNotFoundException(payload.targetId()));
-		log.info("{}의 대출이 연체상태로 변경되었습니다 연체금 : {}", payload.targetId(), loan.getAmount());
-		loan.setStatusDelinquent();
-	}
+	// @Override
+	// public void executeLoanRepaymentsById(Integer loanId, LocalDateTime now, Boolean isBot) throws Exception {
+	// 	log.info("대상계약 [{}]에 대한 대상 대출 상환을 실행합니다,", now);
+	//
+	// 	loanTransactionService.executeLoanRepay(loanId, now, isBot);
+	// }
 
 	private Boolean evaluateLoanRequest(CreditEvaluationResponseDto creditEvaluationResponseDto) {
 		if (creditEvaluationResponseDto.getStatus().equals(EvaluationStatus.APPROVED))
 			return Boolean.TRUE;
 		return Boolean.FALSE;
-	}
-
-	public void completeLoan() {
-		//Todo loanConumser에서 완료 수신 후 loan증가
 	}
 }

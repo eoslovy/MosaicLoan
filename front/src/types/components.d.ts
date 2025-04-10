@@ -217,7 +217,8 @@ export type SortKey =
   | 'amount'
   | 'loanDate'
   | 'loanMaturityDate'
-  | 'dueDate';
+  | 'dueDate'
+  | 'requestAmount';
 
 export interface SortState {
   key: SortKey;
@@ -318,8 +319,7 @@ export interface IndustryRatio {
 
 export interface LoanTransaction {
   id: number;
-  contractId: number;
-  amount: string;
+  requestAmount: string;
   createdAt: string;
   status: string; //
   dueDate: string;

@@ -175,6 +175,7 @@ services:
     ports:
       - "3307:3306"
     volumes:
+      - ./infra/rdbms/member/member_inserts.sql:/opt/init-sql/insert.sql
       - member-db-data:/var/lib/mysql
 
   account-db:
@@ -198,6 +199,7 @@ services:
     ports:
       - "3308:3306"
     volumes:
+      - ./infra\rdbms\account\account_inserts.sql:/opt/init-sql/insert.sql
       - account-db-data:/var/lib/mysql
 
   contract-db:

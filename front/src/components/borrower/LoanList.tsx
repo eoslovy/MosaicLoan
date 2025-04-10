@@ -14,7 +14,7 @@ const apiToSortKeyMapping: Record<string, string> = {
   loan: 'contractId',
   amount: 'amount',
   loanDate: 'createdAt',
-  loanMaturityDate: 'dueDate',
+  dueDate: 'dueDate',
   interestRate: 'interestRate',
 };
 
@@ -37,6 +37,21 @@ const getStatusVariant = (status: string): PillVariant => {
       return 'overdue';
     default:
       return 'defaulted';
+  }
+};
+
+const getKoreanStatus = (status: string) => {
+  switch (status) {
+    case 'LOAN':
+      return '대출';
+    case 'INTEREST':
+      return '이자';
+    case 'PRINCIPAL':
+      return '원금';
+    case 'OWNERSHIP_TRANSFER':
+      return '소유권 이전';
+    default:
+      return '-';
   }
 };
 
@@ -110,8 +125,8 @@ const LoanList: React.FC<LoanListProps> = ({
     let initialLoanAmount = 0;
 
     const sortedTransactions = [...transactions].sort((a, b) => {
-      if (a.status === '대출실행') return -1;
-      if (b.status === '대출실행') return 1;
+      if (a.status === 'LOAN') return -1;
+      if (b.status === 'LOAN') return 1;
 
       return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     });
@@ -119,8 +134,8 @@ const LoanList: React.FC<LoanListProps> = ({
     return sortedTransactions.map((transaction, index) => {
       const transactionAmount = extractAmount(transaction.amount);
 
-      if (index === 0 || transaction.status === '대출실행') {
-        if (transaction.status === '대출실행') {
+      if (index === 0 || transaction.status === 'LOAN') {
+        if (transaction.status === 'LOAN') {
           initialLoanAmount = transactionAmount;
           balance = initialLoanAmount;
         } else {
@@ -129,7 +144,10 @@ const LoanList: React.FC<LoanListProps> = ({
         }
       }
 
-      if (transaction.status === '원금상환') {
+      if (
+        transaction.status === 'PRINCIPAL' ||
+        transaction.status === 'INTEREST'
+      ) {
         balance -= transactionAmount;
       }
 
@@ -175,9 +193,10 @@ const LoanList: React.FC<LoanListProps> = ({
       const response = await request.GET<TransactionResponse>(
         `/contract/loans/${loan.id}/transactions`,
       );
+
       const detailsWithBalance = calculateBalance(
         response.transactions,
-        loan.amount,
+        loan.requestAmount,
       );
       setLoanDetails(detailsWithBalance);
       setIsModalOpen(true);
@@ -209,7 +228,7 @@ const LoanList: React.FC<LoanListProps> = ({
                 <th>
                   <SortableTableHeader
                     label='금액'
-                    sortKey='amount'
+                    sortKey='requestAmount'
                     sortStates={sortStates}
                     onSort={handleSort}
                   />
@@ -245,8 +264,8 @@ const LoanList: React.FC<LoanListProps> = ({
             <tbody>
               {loans.map((loan) => (
                 <tr key={loan.id}>
-                  <td>{loan.contractId}</td>
-                  <td>{loan.amount}</td>
+                  <td>{loan.id}</td>
+                  <td>{loan.requestAmount}</td>
                   <td>{loan.createdAt}</td>
                   <td>{loan.dueDate}</td>
                   <td>
@@ -259,7 +278,7 @@ const LoanList: React.FC<LoanListProps> = ({
                       <Pill variant={getStatusVariant(loan.status)}>
                         {statusMap(loan.status)}
                       </Pill>
-                      {loan.status === 'DELIQUENT' && (
+                      {loan.status === 'DELINQUENT  ' && (
                         <button
                           className={styles.toggleButton}
                           onClick={() => handleToggleClick(loan)}
@@ -323,7 +342,7 @@ const LoanList: React.FC<LoanListProps> = ({
                         <td>{detail.createdAt}</td>
                         <td>{detail.amount}</td>
                         <td>{detail.balance}</td>
-                        <td>{detail.status}</td>
+                        <td>{getKoreanStatus(detail.status)}</td>
                       </tr>
                     ))}
                   </tbody>
