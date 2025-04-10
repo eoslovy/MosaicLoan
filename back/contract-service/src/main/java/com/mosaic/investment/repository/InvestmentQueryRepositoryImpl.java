@@ -308,7 +308,7 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 		// 응답 생성
 		return InvestmentTransactionResponse.builder()
 			.pagination(InvestmentTransactionResponse.PaginationInfo.builder()
-				.page(page)
+				.page(page + 1)
 				.pageSize(pageSize)
 				.totalPage((int)Math.ceil((double)totalCount / pageSize))
 				.totalItemCount(totalCount)

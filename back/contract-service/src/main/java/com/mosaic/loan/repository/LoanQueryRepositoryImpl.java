@@ -124,7 +124,7 @@ public class LoanQueryRepositoryImpl implements LoanQueryRepository {
 		// 응답 생성
 		return LoanSearchResponse.builder()
 			.pagination(LoanSearchResponse.PaginationInfo.builder()
-				.page(page)
+				.page(page + 1)
 				.pageSize(pageSize)
 				.totalPage((int)Math.ceil((double)totalCount / pageSize))
 				.totalItemCount(totalCount)

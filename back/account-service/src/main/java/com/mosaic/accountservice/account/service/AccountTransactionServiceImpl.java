@@ -163,7 +163,7 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
 			.transactions(transactionDtos)
 			.pagination(
 				AccountTransactionSearchResponse.Pagination.builder()
-					.page(request.safePage())
+					.page(request.safePage() + 1)
 					.pageSize(request.safePageSize())
 					.totalItemCount(total)
 					.totalPage(totalPage)
