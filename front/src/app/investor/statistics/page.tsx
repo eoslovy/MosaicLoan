@@ -83,6 +83,8 @@ const StatisticsPage = () => {
     refreshInterval: null,
   });
 
+  console.log(data)
+
   useAuthRedirect('/investor/statistics');
 
   if (isLoading || !isFetched || !chartRegistered)

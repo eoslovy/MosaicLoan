@@ -91,7 +91,7 @@ const BarLineChart: React.FC<BarLineChartProps> = ({
         backgroundColor: lineColor,
         fill: false,
         pointRadius: 4,
-        tension: 0.3,
+        tension: 0,
         borderWidth: 2,
         order: 0, // 선 그래프가 앞에 표시되도록 설정
         zIndex: 10, // 높은 zIndex 설정
