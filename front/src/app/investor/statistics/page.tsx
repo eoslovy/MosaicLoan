@@ -88,7 +88,7 @@ const StatisticsPage = () => {
               <BarLineChart
                 labels={data.byAge.map((i) => i.group)}
                 rawBarData={{ 거래건수: data.byAge.map((i) => i.count ?? 0) }}
-                rawLineData={data.byAge.map((i) => typeof i.ratio === 'number' ? i.ratio : 0)}
+                rawLineData={data.byAge.map((i) => typeof i.ratio === 'number' && !isNaN(i.ratio) ? i.ratio : 0)}
                 barCategories={['거래건수']}
                 lineLabel='비율 (%)'
               />
@@ -96,7 +96,7 @@ const StatisticsPage = () => {
             <div className={styles.chartColumn}>
               <BarChart
                 labels={data.byAge.map((i) => i.group)}
-                values={data.byAge.map((i) => i.amount ?? 0)}
+                values={data.byAge.map((i) => (i.amount !== null && i.amount !== undefined && !isNaN(i.amount)) ? i.amount : 0)}
                 title='거래 금액'
               />
             </div>
@@ -115,7 +115,7 @@ const StatisticsPage = () => {
                 rawBarData={{
                   거래건수: data.byFamilyStatus.map((i) => i.count ?? 0),
                 }}
-                rawLineData={data.byFamilyStatus.map((i) => typeof i.ratio === 'number' ? i.ratio : 0)}
+                rawLineData={data.byFamilyStatus.map((i) => typeof i.ratio === 'number' && !isNaN(i.ratio) ? i.ratio : 0)}
                 barCategories={['거래건수']}
                 lineLabel='비율 (%)'
               />
@@ -140,7 +140,7 @@ const StatisticsPage = () => {
               <BarLineChart
                 labels={data.byResidence.map((i) => i.group)}
                 rawBarData={{ 거래건수: data.byResidence.map((i) => i.count ?? 0) }}
-                rawLineData={data.byResidence.map((i) => typeof i.ratio === 'number' ? i.ratio : 0)}
+                rawLineData={data.byResidence.map((i) => typeof i.ratio === 'number' && !isNaN(i.ratio) ? i.ratio : 0)}
                 barCategories={['거래건수']}
                 lineLabel='비율 (%)'
               />
@@ -162,7 +162,7 @@ const StatisticsPage = () => {
         <IndustryTreemapChart
           data={data.byIndustry.map((item: RawIndustryRatio) => ({
             industry: getIndustryLabel(item.industry),
-            ratio: typeof item.ratio === 'number' ? item.ratio : 0,
+            ratio: typeof item.ratio === 'number' && !isNaN(item.ratio) ? item.ratio : 0,
           }))}
         />
       </div>
