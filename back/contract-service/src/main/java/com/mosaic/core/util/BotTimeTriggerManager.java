@@ -31,14 +31,20 @@ public class BotTimeTriggerManager {
 		}
 		if (botTime.getHour() >= 22 && !hasTriggered(loanKey(date))) {
 			runWithLock(() -> {
-				loanBatchService.run(botTime, Boolean.TRUE);
+				loanBatchService.runSchedulesAt21(botTime, Boolean.TRUE);
+				markTriggered(loanKey(date));
+			});
+		}
+		if (botTime.getHour() >= 22 && !hasTriggered(loanKey(date))) {
+			runWithLock(() -> {
+				loanBatchService.runSchedulesAt21(botTime, Boolean.TRUE);
 				markTriggered(loanKey(date));
 			});
 		}
 
 		if (botTime.getHour() >= 23 && !hasTriggered(investmentKey(date))) {
 			runWithLock(() -> {
-				investmentBatchService.run(botTime, Boolean.TRUE);
+				investmentBatchService.runSchedulesAt23(botTime, Boolean.TRUE);
 				markTriggered(investmentKey(date));
 			});
 		}

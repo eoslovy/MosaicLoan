@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ public class TimeUtil {
 	private static final LocalDateTime DEFAULT_BOT_START = LocalDateTime.of(2022, 1, 1, 0, 0);
 
 	private final StringRedisTemplate redisTemplate;
+	@Lazy
 	private final BotTimeTriggerManager botTimeTriggerManager;
 
 	public LocalDateTime now(boolean isBot) {

@@ -9,6 +9,7 @@ import java.util.List;
 import com.mosaic.core.model.status.LoanStatus;
 import com.mosaic.loan.dto.CreateLoanRequestDto;
 import com.mosaic.loan.dto.CreditEvaluationResponseDto;
+import com.mosaic.payload.AccountTransactionPayload;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -108,4 +109,8 @@ public class Loan {
 	}
 
 	public void setStatusComplete() { this.status = LoanStatus.COMPLETED;}
+
+	public void addAmount(AccountTransactionPayload accountTransactionComplete) {
+		this.amount= this.amount.add(accountTransactionComplete.amount());
+	}
 }
