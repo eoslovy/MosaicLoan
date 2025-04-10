@@ -5,8 +5,19 @@ import { useEffect, useState } from 'react';
 import useUser from '@/hooks/useUser';
 import type { FC, ComponentType } from 'react';
 
+const AuthLoadingSkeleton: FC = () => {
+  return (
+    <div className='flex flex-col items-center justify-center min-h-screen p-4'>
+      <div className='w-16 h-16 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin'>
+        <p className='mt-4 text-lg font-medium text-gray-600'>로딩 중...</p>
+      </div>
+    </div>
+  );
+};
+
 const withAuthProtection = <P extends object>(
   Component: ComponentType<P>,
+  redirectPath = '/',
 ): FC<P> => {
   const Wrapper: FC<P> = (props) => {
     const { user, isFetched, isLoading } = useUser();
@@ -19,13 +30,17 @@ const withAuthProtection = <P extends object>(
 
     useEffect(() => {
       if (mounted && !isLoading && isFetched && !user) {
-        router.push('/investor');
+        router.replace(redirectPath);
       }
-    }, [isFetched, user, isLoading, mounted, router]);
+    }, [user, isFetched, isLoading, mounted, router, redirectPath]);
 
-    if (!mounted) return null;
-    
-    if (isLoading || (!user && isFetched)) return null;
+    if (!mounted || isLoading) {
+      return <AuthLoadingSkeleton />;
+    }
+
+    if (!user && isFetched) {
+      return <AuthLoadingSkeleton />;
+    }
 
     return <Component {...props} />;
   };
