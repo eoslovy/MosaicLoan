@@ -3,14 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import BarLineChart from '@/components/chart/BarLineChart';
 import BarChart from '@/components/chart/BarChart';
-import request from '@/service/apis/request';
 import styles from '@/styles/investors/Statistics.module.scss';
 import useAuthRedirect from '@/hooks/useAuthRedirect';
 import IndustryTreemapChart from '@/components/chart/IndustryTreemapChart';
-import type {
-  InvestmentStatisticsResponse,
-  RawIndustryRatio,
-} from '@/types/components';
+import useRandomData from '@/hooks/useRandomData';
+import useUser from '@/hooks/useUser';
+import type { RawIndustryRatio } from '@/types/components';
 
 const getIndustryLabel = (code: number) => {
   const map: Record<number, string> = {
@@ -39,35 +37,24 @@ const getIndustryLabel = (code: number) => {
 };
 
 const StatisticsPage = () => {
-  const [data, setData] = useState<InvestmentStatisticsResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
+  const { user, isFetched } = useUser();
+  const [seedUserId, setSeedUserId] = useState<number>(42);
+
+  useEffect(() => {
+    if (isFetched && user?.id) {
+      setSeedUserId(user.id);
+    }
+  }, [user, isFetched]);
+  
+  const { data, isLoading } = useRandomData({
+    userId: seedUserId,
+    refreshInterval: null
+  });
 
   useAuthRedirect('/investor/statistics');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await request.GET<InvestmentStatisticsResponse>(
-          '/contract/investments/statistics',
-        );
-        setData(res);
-      } catch (e) {
-        console.error('통계 데이터를 불러오는 중 오류 발생', e);
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (isLoading) return <div className={styles.statusText}>로딩 중...</div>;
-  if (isError || !data)
-    return (
-      <div className={styles.statusText}>데이터를 불러올 수 없습니다.</div>
-    );
+  if (isLoading || !isFetched) return <div className={styles.statusText}>로딩 중...</div>;
+  if (!data) return <div className={styles.statusText}>데이터를 불러올 수 없습니다.</div>;
 
   return (
     <main className={styles.statisticsPage}>
