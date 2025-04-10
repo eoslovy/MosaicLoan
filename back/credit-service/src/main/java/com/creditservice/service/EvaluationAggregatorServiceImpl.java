@@ -6,8 +6,8 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.creditservice.dto.EvaluationResultDto;
-import com.creditservice.exception.EvaluationException;
 import com.creditservice.exception.ErrorCode;
+import com.creditservice.exception.EvaluationException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,15 +55,16 @@ public class EvaluationAggregatorServiceImpl implements EvaluationAggregatorServ
 				double probability = modelingClientService.getRepaymentProbability(mergedPayload);
 				long endTime = System.currentTimeMillis();
 				long duration = endTime - startTime;
-				
-				log.info("모델링 서버 호출 시간: caseId={}, memberId={}, duration={}ms", 
+
+				log.info("모델링 서버 호출 시간: caseId={}, memberId={}, duration={}ms",
 					caseId, memberId, duration);
 
 				// 계산 및 저장
-				calculationService.evaluateCredit(Integer.valueOf(caseId), Integer.valueOf(memberId), probability);
+				var evaluation = calculationService.evaluateCredit(Integer.valueOf(caseId), Integer.valueOf(memberId),
+					probability);
 
 				// WebSocket으로 완료 알림 전송
-				webSocketService.sendEvaluationComplete(Integer.valueOf(memberId));
+				webSocketService.sendEvaluationComplete(Integer.valueOf(memberId), evaluation.getStatus());
 
 				// 데이터 정리
 				dataService.cleanup(caseId, EXPECTED_SOURCES);
