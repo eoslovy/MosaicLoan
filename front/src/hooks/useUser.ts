@@ -13,15 +13,23 @@ const useUser = () => {
   const setIsFetched = useUserStore((state) => state.setIsFetched);
   const [isLoading, setIsLoading] = useState(!isFetched);
   const [error, setError] = useState<Error | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // mock service worker실행할 때는 아래꺼 주석처리 하고, 실제로 할때는 주석 풀어야함..
-    if (typeof window === 'undefined' || isFetched) return;
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || typeof window === 'undefined') return;
+
+    const hasFullUserInfo = user && Object.keys(user).length > 1;
+    
+    if (isFetched && hasFullUserInfo) return;
 
     const fetchUser = async () => {
+      setIsLoading(true);
       try {
         const response = await request.GET<UserResponse['data']>('/member/me');
-        // console.log('[useUser] 응답:', response);
 
         if (response) {
           const convertedUser: User = {
@@ -52,7 +60,7 @@ const useUser = () => {
     };
 
     fetchUser();
-  }, [isFetched]);
+  }, [mounted, isFetched, user, setIsFetched, setUser]);
 
   return { user, isFetched, isLoading, error };
 };
