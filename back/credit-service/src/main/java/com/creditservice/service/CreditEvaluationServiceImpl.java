@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -60,7 +59,6 @@ public class CreditEvaluationServiceImpl implements CreditEvaluationService {
 
 	private CreditEvaluationResponseDto convertToDtoWithDefaultFlag(CreditEvaluation evaluation) {
 		// 외부 DB에서 defaultFlag 값을 조회
-		Boolean defaultFlag = getDefaultFlagForCaseId(evaluation.getCaseId());
 
 		return CreditEvaluationResponseDto.builder()
 			.id(evaluation.getId())
@@ -71,79 +69,7 @@ public class CreditEvaluationServiceImpl implements CreditEvaluationService {
 			.createdAt(evaluation.getCreatedAt())
 			.caseId(evaluation.getCaseId())
 			.status(evaluation.getStatus())
-			.defaultFlag(defaultFlag)
+			.defaultFlag(evaluation.getDefaultFlag())
 			.build();
-	}
-
-	private Boolean getDefaultFlagForCaseId(Integer caseId) {
-		try {
-			// behavior_analysis DB에서 조회
-			Optional<Integer> behaviorDefaultFlag = getDefaultFlagFromBehaviorAnalysis(caseId);
-			if (behaviorDefaultFlag.isPresent()) {
-				return convertToBoolean(behaviorDefaultFlag.get());
-			}
-
-			// credit_evaluation DB에서 조회
-			Optional<Integer> creditDefaultFlag = getDefaultFlagFromCreditEvaluation(caseId);
-			if (creditDefaultFlag.isPresent()) {
-				return convertToBoolean(creditDefaultFlag.get());
-			}
-
-			// demographics DB에서 조회
-			Optional<Integer> demographicsDefaultFlag = getDefaultFlagFromDemographics(caseId);
-			if (demographicsDefaultFlag.isPresent()) {
-				return convertToBoolean(demographicsDefaultFlag.get());
-			}
-
-			// timeseries_feature DB에서 조회
-			Optional<Integer> timeseriesDefaultFlag = getDefaultFlagFromTimeseriesFeature(caseId);
-			if (timeseriesDefaultFlag.isPresent()) {
-				return convertToBoolean(timeseriesDefaultFlag.get());
-			}
-		} catch (Exception e) {
-			log.error("caseId {}에 대한 defaultFlag 값 조회 중 오류 발생: {}", caseId, e.getMessage());
-		}
-
-		return false;
-	}
-
-	private Boolean convertToBoolean(Integer value) {
-		return value != null && value == 1;
-	}
-
-	private Optional<Integer> getDefaultFlagFromBehaviorAnalysis(Integer caseId) {
-		try {
-			String sql = "SELECT target FROM behavior_analysis WHERE case_id = ?";
-			return Optional.ofNullable(jdbcTemplate.queryForObject(sql, Integer.class, caseId));
-		} catch (Exception e) {
-			return Optional.empty();
-		}
-	}
-
-	private Optional<Integer> getDefaultFlagFromCreditEvaluation(Integer caseId) {
-		try {
-			String sql = "SELECT target FROM credit_evaluation WHERE case_id = ?";
-			return Optional.ofNullable(jdbcTemplate.queryForObject(sql, Integer.class, caseId));
-		} catch (Exception e) {
-			return Optional.empty();
-		}
-	}
-
-	private Optional<Integer> getDefaultFlagFromDemographics(Integer caseId) {
-		try {
-			String sql = "SELECT target FROM demographics WHERE case_id = ?";
-			return Optional.ofNullable(jdbcTemplate.queryForObject(sql, Integer.class, caseId));
-		} catch (Exception e) {
-			return Optional.empty();
-		}
-	}
-
-	private Optional<Integer> getDefaultFlagFromTimeseriesFeature(Integer caseId) {
-		try {
-			String sql = "SELECT target FROM timeseries_feature WHERE case_id = ?";
-			return Optional.ofNullable(jdbcTemplate.queryForObject(sql, Integer.class, caseId));
-		} catch (Exception e) {
-			return Optional.empty();
-		}
 	}
 } 
