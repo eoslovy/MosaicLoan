@@ -1,14 +1,12 @@
 package com.mosaic.loan.service;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-
 import com.mosaic.contract.service.ContractService;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @Slf4j
@@ -33,7 +31,11 @@ public class LoanBatchService {
 		} catch (Exception e) {
 			log.info("9시에 처리되는 업무가 제대로 처리되지 않았어요");
 		}
+		try {
+			Thread.sleep(20000);
+		} catch (InterruptedException e) {
 
+		}
 		log.info("[LoanBatch] 실행됨 time: {} isBot: {}", time, isBot);
 	}
 

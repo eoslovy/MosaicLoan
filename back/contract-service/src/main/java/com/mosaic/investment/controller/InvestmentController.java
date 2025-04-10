@@ -28,7 +28,7 @@ public class InvestmentController {
 		@RequestHeader("X-MEMBER-ID") Integer memberId, @RequestHeader("X-IS-BOT") Boolean isBot) throws
 		JsonProcessingException {
 		LocalDateTime now = timeUtil.now(isBot);
-		//log.info("[{}] - {}의 투자신청 요청 실행",now, memberId);
+		log.info("[{}] - {}의 투자신청 요청 실행",now, memberId);
 		investmentService.publishInvestmentRequest(requestDto, now, memberId, isBot);
 		return ResponseEntity.accepted().build();
 	}
