@@ -13,6 +13,7 @@ import type {
 } from '@/types/pages';
 import request from '@/service/apis/request';
 import useAuthRedirect from '@/hooks/useAuthRedirect';
+import type { PillVariant } from '@/types/components';
 
 // 새로운 API 응답 타입 정의
 interface SummaryResponse {
@@ -36,7 +37,7 @@ interface ProfitHistoryResponse {
   profitHistory: Array<{
     title: string;
     date: string;
-    amount: number;
+    amount: string;
   }>;
 }
 
@@ -72,29 +73,29 @@ const OverviewPage = () => {
 
         // Summary 데이터 매핑
         setSummaryData({
-          총투자금액: summaryResult.totalInvestmentAmount.toString(),
-          누적수익금: summaryResult.totalProfitAmount.toString(),
-          평균수익률: summaryResult.averageProfitRate,
-          투자건수: summaryResult.investmentCount,
+          totalInvestmentAmount: summaryResult.totalInvestmentAmount.toString(),
+          totalProfitAmount: summaryResult.totalProfitAmount.toString(),
+          averageProfitRate: summaryResult.averageProfitRate,
+          investmentCount: summaryResult.investmentCount,
         });
 
         // Investment 리스트 매핑
         const mappedInvestments = investmentResult.investmentList.map(
           (item) => ({
-            투자명: `투자 #${item.investmentId}`,
-            투자금액: item.investmentAmount.toString(),
-            금리: item.rate.toString(),
-            상환일: item.dueDate,
-            상태: item.status as '상환완료' | '상환중' | '부실',
+            investmentId: `투자 #${item.investmentId}`,
+            investmentAmount: item.investmentAmount.toString(),
+            rate: item.rate.toString(),
+            dueDate: item.dueDate,
+            status: item.status as 'REQUESTED' | 'ACTIVE' | 'COMPLETED',
           }),
         );
         setInvestmentList(mappedInvestments);
 
         // Profit 히스토리 매핑
         const mappedProfits = profitResult.profitHistory.map((item) => ({
-          수익명: item.title,
-          날짜: item.date,
-          금액: item.amount.toString(),
+          title: item.title,
+          date: item.date,
+          amount: item.amount,
         }));
         setProfitHistory(mappedProfits);
       } catch (e: unknown) {
@@ -108,10 +109,10 @@ const OverviewPage = () => {
 
         // 에러 발생 시 기본값 설정
         setSummaryData({
-          총투자금액: '',
-          누적수익금: '',
-          평균수익률: 0,
-          투자건수: 0,
+          totalInvestmentAmount: '',
+          totalProfitAmount: '',
+          averageProfitRate: 0,
+          investmentCount: 0,
         });
         setInvestmentList([]);
         setProfitHistory([]);

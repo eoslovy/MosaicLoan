@@ -7,9 +7,9 @@ import clsx from 'clsx';
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   const statusClass = {
-    상환완료: styles.success,
-    상환중: styles.warning,
-    부실: styles.danger,
+    COMPLETED: styles.success,
+    IN_PROGRESS: styles.warning,
+    DELINQUENT: styles.danger,
   }[status];
 
   return <span className={clsx(styles.badge, statusClass)}>{status}</span>;

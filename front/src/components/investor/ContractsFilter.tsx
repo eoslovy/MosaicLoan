@@ -14,15 +14,17 @@ import request from '@/service/apis/request';
 import type { ContractResponse, Investment } from '@/types/pages';
 
 const typeOptions = [
-  { value: 'repayment', label: '상환' },
-  { value: 'delayed', label: '연체' },
-  { value: 'defaulted', label: '부실' },
+  { value: 'LOAN', label: '대출' },
+  { value: 'INTEREST', label: '이자' },
+  { value: 'PRINCIPAL', label: '원금' },
+  { value: 'OWNERSHIP_TRANSFER', label: '소유권 이전' },
 ];
 
 const typeValueToApiValue = {
-  repayment: '원금상환',
-  delayed: '이자상환',
-  defaulted: '환급',
+  LOAN: '대출',
+  INTEREST: '이자',
+  PRINCIPAL: '원금',
+  OWNERSHIP_TRANSFER: '소유권 이전',
 };
 
 const customSelectStyles: StylesConfig<{ label: string; value: string }, true> =

@@ -9,7 +9,11 @@ import { ContractRow } from '@/types/components';
 interface Investment {
   investmentId: number;
   createdAt: string;
-  investStatus: 'COMPLETED' | 'IN_PROGRESS';
+  investStatus:
+    | 'COMPLETED'
+    | 'IN_PROGRESS'
+    | 'DELINQUENT'
+    | 'OWNERSHIP_TRANSFERRED';
   contractCount: number;
   statusDistribution: {
     completed: number;
@@ -28,15 +32,16 @@ interface FilterSelectTableProps {
 
 const getStatusVariant = (status: string | undefined): PillVariant => {
   switch (status) {
-    case '완료':
-    case '상환완료':
     case 'COMPLETED':
-      return 'repayment-complete';
-    case '진행중':
+      return 'completed';
     case 'IN_PROGRESS':
-      return 'repayment-in-progress';
+      return 'investing';
+    case 'DELINQUENT':
+      return 'danger';
+    case 'OWNERSHIP_TRANSFERRED':
+      return 'investment-refund';
     default:
-      return 'repayment-in-progress';
+      return 'default';
   }
 };
 
