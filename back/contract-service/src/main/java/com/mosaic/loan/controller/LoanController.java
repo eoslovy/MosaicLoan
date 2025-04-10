@@ -23,21 +23,21 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("loans")
+@RequestMapping("/loans")
 public class LoanController {
 
 	private final LoanService loanService;
 	private final LoanQueryRepository loanQueryRepository;
 
 	//TODO 돈 빌리기
-	@PostMapping("request/test")
+	@PostMapping("")
 	public ResponseEntity<Void> requestLoan(@RequestBody CreateLoanRequestDto createLoanRequestDto,
 		@RequestHeader("X-IS-BOT") Boolean isBot) throws JsonProcessingException {
 		loanService.createLoan(createLoanRequestDto, isBot);
 		return ResponseEntity.accepted().build();
 	}
 
-	@PostMapping("repay/test/{id}")
+	@PostMapping("/repay/test/{id}")
 	public ResponseEntity<Void> repayLoan(@RequestBody RepayLoanDto requestInvestmentDto,
 		@RequestHeader("X-IS-BOT") Boolean isBot) throws
 		JsonProcessingException {
@@ -46,7 +46,7 @@ public class LoanController {
 	}
 
 	//TODO 내 대출내역 확인
-	@GetMapping("overview")
+	@GetMapping("/overview")
 	public ResponseEntity<LoanOverviewResponse> getLoanOverview(@RequestHeader("X-MEMBER-ID") Integer memberId) {
 		return ResponseEntity.ok(loanQueryRepository.getLoanOverview(memberId));
 	}
