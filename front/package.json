@@ -9,7 +9,7 @@
     "build": "next build",
     "build:static": "cross-env STATIC_EXPORT=true NEXT_PUBLIC_API_MOCKING=disabled next build",
     "serve": "serve -s out",
-    "lint": "next lint",
+    "lint": "next lint --max-warnings=100",
     "lint:fix": "next lint --fix",
     "format": "prettier --write .",
     "test": "jest --coverage",
