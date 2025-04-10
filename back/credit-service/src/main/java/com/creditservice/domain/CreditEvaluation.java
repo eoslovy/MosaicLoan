@@ -37,8 +37,8 @@ public class CreditEvaluation {
 	@Column(name = "interest_rate", nullable = false)
 	private Integer interestRate;
 
-	@Column(name = "expected_yield", nullable = false)
-	private Integer expectedYield;
+	@Column(name = "expect_yield", nullable = false)
+	private Integer expectYield;
 
 	@Column(name = "max_loan_limit", nullable = false)
 	private Integer maxLoanLimit;
