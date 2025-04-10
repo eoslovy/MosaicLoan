@@ -318,7 +318,6 @@ export interface IndustryRatio {
 
 export interface LoanTransaction {
   id: number;
-  contractId: number;
   amount: string;
   createdAt: string;
   status: string; //
