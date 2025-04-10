@@ -7,7 +7,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Select, { MultiValue, StylesConfig } from 'react-select';
 import { ChevronDown, ChevronUp, Filter } from 'lucide-react';
 import FilterSelectTable from '@/components/common/FilterSelectTable';
-import { subYears, isBefore, format } from 'date-fns';
+import { subMonths, isBefore, format } from 'date-fns';
 import type { PillVariant } from '@/types/components';
 import Pill from '@/components/common/Pill';
 import request from '@/service/apis/request';
@@ -55,9 +55,9 @@ interface ContractsFilterProps {
 
 const ContractsFilter = ({ onSearch }: ContractsFilterProps) => {
   const today = new Date();
-  const oneYearAgo = subYears(today, 1);
+  const oneMonthAgo = subMonths(today, 1);
 
-  const [startDate, setStartDate] = useState<Date | null>(oneYearAgo);
+  const [startDate, setStartDate] = useState<Date | null>(oneMonthAgo);
   const [endDate, setEndDate] = useState<Date | null>(today);
   const [selectedTypes, setSelectedTypes] =
     useState<MultiValue<{ label: string; value: string }>>(typeOptions);

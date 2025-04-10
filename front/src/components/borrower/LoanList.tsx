@@ -8,6 +8,7 @@ import Pill from '@/components/common/Pill';
 import SortableTableHeader from '@/components/common/SortableTableHeader';
 import { LoanTransaction } from '@/types/components';
 import { Info } from 'lucide-react';
+import { format, parseISO } from 'date-fns';
 import request from '@/service/apis/request';
 
 const apiToSortKeyMapping: Record<string, string> = {
@@ -265,8 +266,14 @@ const LoanList: React.FC<LoanListProps> = ({
               {loans.map((loan) => (
                 <tr key={loan.id}>
                   <td>{loan.id}</td>
-                  <td>{loan.requestAmount}</td>
-                  <td>{loan.createdAt}</td>
+                  <td>
+                    {Math.round(
+                      Number(loan.requestAmount) || 0,
+                    ).toLocaleString()}
+                  </td>
+                  <td>
+                    {format(parseISO(loan.createdAt), 'yyyy-MM-dd') || '-'}
+                  </td>
                   <td>{loan.dueDate}</td>
                   <td>
                     {loan.interestRate
