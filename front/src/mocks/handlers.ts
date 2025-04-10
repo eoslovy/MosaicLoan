@@ -777,7 +777,7 @@ const handlers = [
       }),
     );
   }),
-  rest.post('/contract/loans/transactions/search', (req, res, ctx) => {
+  rest.post('/contract/loans/search', (req, res, ctx) => {
     const {
       startDate,
       endDate,
