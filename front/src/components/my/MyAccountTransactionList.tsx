@@ -1,6 +1,6 @@
 'use client';
 
-// import { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import useContractsFilterStore from '@/stores/useContractsFilterStore';
 import useAccountTransactionStore from '@/stores/useAccountTransactionStore';
@@ -95,10 +95,21 @@ const MyAccountTransactionList = () => {
   const { transactions, pagination, isLoading, fetchTransactions } =
     useAccountTransactionStore();
 
+  // 컴포넌트 마운트 시 첫 페이지 데이터 로드를 위한 useEffect 추가
+  useEffect(() => {
+    // 초기 데이터 로드, 페이지는 항상 1부터 시작
+    fetchTransactions({ page: 1 });
+  }, [fetchTransactions]);
+
   const tableColumns = ['거래일', '금액', '잔액', '내용', '유형', ''];
 
   const handlePageChange = (nextPage: number) => {
-    fetchTransactions({ page: nextPage });
+    // 페이지 변경 시 호출되는 함수
+    console.log(`페이지 변경 요청: ${nextPage}`); // 디버깅용 로그
+    if (nextPage >= 1 && nextPage <= pagination.totalPage) {
+      // 실제 데이터 로드 요청 실행
+      fetchTransactions({ page: nextPage });
+    }
   };
 
   return (
@@ -156,11 +167,20 @@ const MyAccountTransactionList = () => {
         }))}
       />
 
-      <Pagination
-        currentPage={pagination.page}
-        totalPages={pagination.totalPage}
-        onPageChange={handlePageChange}
-      />
+      {/* 페이지네이션 영역은 항상 유지하되, totalPages가 1보다 크지 않으면 빈 공간 표시 */}
+      <div className={styles.paginationContainer}>
+        {pagination.totalPage > 1 ? (
+          <Pagination
+            currentPage={pagination.page}
+            totalPages={pagination.totalPage}
+            onPageChange={handlePageChange}
+          />
+        ) : (
+          <div className={styles.emptyPagination}>
+            {/* 페이지네이션이 없을 때의 여백 유지 */}
+          </div>
+        )}
+      </div>
     </section>
   );
 };

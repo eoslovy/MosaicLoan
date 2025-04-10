@@ -8,17 +8,22 @@ interface PaginationProps {
   totalPages: number;
   onPageChange: (page: number) => void;
 }
+
 const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
   onPageChange,
 }) => {
+  // 현재 페이지와 전체 페이지 검증 및 보정
+  const validCurrentPage = Math.max(1, currentPage); // 현재 페이지가 0이하면 1로 설정
+  const validTotalPages = Math.max(1, totalPages); // 전체 페이지가 0이하면 1로 설정
+
   const handlePrev = () => {
-    if (currentPage > 1) onPageChange(currentPage - 1);
+    if (validCurrentPage > 1) onPageChange(validCurrentPage - 1);
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) onPageChange(currentPage + 1);
+    if (validCurrentPage < validTotalPages) onPageChange(validCurrentPage + 1);
   };
 
   return (
@@ -27,18 +32,18 @@ const Pagination: React.FC<PaginationProps> = ({
         type='button'
         className={styles.paginationButton}
         onClick={handlePrev}
-        disabled={currentPage === 1}
+        disabled={validCurrentPage === 1}
       >
         이전
       </button>
       <span className={styles.pageInfo}>
-        {currentPage} / {totalPages}
+        {validCurrentPage} / {validTotalPages}
       </span>
       <button
         type='button'
         className={styles.paginationButton}
         onClick={handleNext}
-        disabled={currentPage === totalPages}
+        disabled={validCurrentPage === validTotalPages}
       >
         다음
       </button>

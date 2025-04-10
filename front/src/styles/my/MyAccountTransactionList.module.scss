@@ -26,3 +26,16 @@
     background: rgba(20, 93, 160, 0.1);
   }
 }
+
+/* 페이지네이션 관련 스타일 */
+.paginationContainer {
+  margin-top: 20px;
+  min-height: 40px; // 페이지네이션 영역의 최소 높이를 설정
+  display: flex;
+  justify-content: flex-end; // 오른쪽 정렬로 변경
+  margin-bottom: 50px;
+}
+
+.emptyPagination {
+  min-height: 40px; // 페이지네이션이 없을 때의 여백 높이
+}
