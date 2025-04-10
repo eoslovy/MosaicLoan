@@ -42,18 +42,12 @@ public class LoanServiceImpl implements LoanService {
 	//투자 생성
 	@Override
 	@Transactional
-	public void createLoan(CreateLoanRequestDto request, LocalDateTime now, Boolean isBot) throws
+	public void createLoan(CreateLoanRequestDto request, Integer memberId, LocalDateTime now, Boolean isBot) throws
 		JsonProcessingException {
 		//Todo 내부 신용평가 확인후 예외처리(없음, 시간지남 등등)
-		//CreditEvaluationResponseDto creditEvaluationResponseDto = internalApiClient.getMemberCreditEvaluation(request);
-		//예시용
-		CreditEvaluationResponseDto creditEvaluationResponseDto = CreditEvaluationResponseDto.builder()
-			.id(request.id())
-			.interestRate(800)
-			.defaultRate(80)
-			.expectYieldRate(800)
-			.build();
-		//if (!evaluateLoanRequest(creditEvaluationResponseDto)) return;
+		CreditEvaluationResponseDto creditEvaluationResponseDto = internalApiClient.getMemberCreditEvaluation(memberId);
+		if (!evaluateLoanRequest(creditEvaluationResponseDto))
+			return;
 		// 시간 어떻게 쓸지 확정 필요
 		log.info("[{}] 시에 대출이 시작되었습니다", now);
 		Loan newLoan = Loan.requestOnlyFormLoan(request, creditEvaluationResponseDto, now);
@@ -139,7 +133,7 @@ public class LoanServiceImpl implements LoanService {
 		for (Loan loan : loans) {
 			publishAndCalculateLoanRepayRequest(loan, isBot, now);
 		}
-		log.info("{}대출 계약약의 상환 처리가 완료되었습니다", loans.size());
+		log.info("{}대출 계약의 상환 처리가 완료되었습니다", loans.size());
 	}
 
 	@Override

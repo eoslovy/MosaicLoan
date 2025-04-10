@@ -10,7 +10,7 @@ import com.mosaic.payload.AccountTransactionPayload;
 import jakarta.transaction.Transactional;
 
 public interface LoanService {
-	void createLoan(CreateLoanRequestDto request, LocalDateTime now, Boolean isBot) throws
+	void createLoan(CreateLoanRequestDto request, Integer memberId, LocalDateTime now, Boolean isBot) throws
 		JsonProcessingException;
 
 	@Transactional
