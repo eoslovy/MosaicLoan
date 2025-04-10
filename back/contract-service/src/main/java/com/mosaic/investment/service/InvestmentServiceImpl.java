@@ -2,7 +2,6 @@ package com.mosaic.investment.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,6 @@ import com.mosaic.core.model.Investment;
 import com.mosaic.core.model.Loan;
 import com.mosaic.core.model.status.ContractStatus;
 import com.mosaic.core.model.status.LoanStatus;
-import com.mosaic.core.util.TimeUtil;
 import com.mosaic.investment.dto.RequestInvestmentDto;
 import com.mosaic.investment.dto.WithdrawalInvestmentDto;
 import com.mosaic.investment.event.producer.InvestmentKafkaProducer;
@@ -44,17 +42,16 @@ public class InvestmentServiceImpl implements InvestmentService {
 	private final InvestmentQueryRepository investmentQueryRepository;
 	private final LoanRepository loanRepository;
 	private final InvestmentKafkaProducer investmentProducer;
-	private final TimeUtil timeUtil;
 	private final ContractService contractService;
 
 	//입금
 	@Override
 	@Transactional
-	public void publishInvestmentRequest(RequestInvestmentDto requestDto, Integer memberId, Boolean isBot) throws
+	public void publishInvestmentRequest(RequestInvestmentDto requestDto, LocalDateTime now, Integer memberId,
+		Boolean isBot) throws
 		InternalSystemException, JsonProcessingException {
 		//TODO 멱등성 : 시간기준 UUID 및 요청별 request막는 ttl 발행
 		Integer idempotencyKey = requestDto.hashCode();
-		LocalDateTime now = timeUtil.now(isBot);
 		Investment newInvestment = Investment.requestOnlyFormInvestment(requestDto, memberId, now);
 		Investment saved = investmentRepository.save(newInvestment);
 		AccountTransactionPayload requestEvent = AccountTransactionPayload.buildInvest(saved, requestDto, now);
@@ -75,18 +72,17 @@ public class InvestmentServiceImpl implements InvestmentService {
 	}
 
 	@Override
-	public void executeCompleteInvestment(LocalDate date, Boolean isBot) throws JsonProcessingException {
-		List<Investment> investments = investmentRepository.findAllByDueDate(date);
+	public void executeCompleteInvestmentByDueDate(LocalDateTime now, Boolean isBot) throws JsonProcessingException {
+		List<Investment> investments = investmentRepository.findAllByDueDate(now.toLocalDate());
 		for (Investment investment : investments) {
-			Boolean isDone = finishActiveInvestment(investment, isBot);
+			//강제 유동화 실행후 결과
+			Boolean isDone = finishActiveInvestment(investment, now, isBot);
 			if (isDone) {
 				BigDecimal withdrawnAmount = investment.withdrawAll();
 				investment.finishInvestment();
-				LocalDateTime now = timeUtil.now(isBot);
 				AccountTransactionPayload investWithdrawalPayload = AccountTransactionPayload.buildInvestWithdrawal(
 					investment,
 					withdrawnAmount, now);
-
 				investmentProducer.sendInvestmentWithdrawalRequest(investWithdrawalPayload);
 			}
 		}
@@ -94,8 +90,7 @@ public class InvestmentServiceImpl implements InvestmentService {
 
 	//투자 종료 강제 유동화
 	@Override
-	public Boolean finishActiveInvestment(Investment investment, Boolean isBot) {
-		LocalDateTime now = timeUtil.now(isBot);
+	public Boolean finishActiveInvestment(Investment investment, LocalDateTime now, Boolean isBot) {
 		for (Contract contract : investment.getContracts()) {
 			if (contract.getStatus().equals(ContractStatus.DELINQUENT)) {
 				contractService.liquidateContract(contract, now);
@@ -111,14 +106,13 @@ public class InvestmentServiceImpl implements InvestmentService {
 	//출금
 	@Override
 	@Transactional
-	public void publishInvestmentWithdrawal(WithdrawalInvestmentDto requestDto, Boolean isBot) throws
+	public void publishInvestmentWithdrawal(WithdrawalInvestmentDto requestDto, LocalDateTime now, Boolean isBot) throws
 		JsonProcessingException {
 		Investment investment = investmentRepository.findById(requestDto.id())
 			.orElseThrow(() -> new InvestmentNotFoundException(requestDto.id()));
 
 		BigDecimal withdrawnAmount = investment.withdrawAll();
 		investment.finishInvestment();
-		LocalDateTime now = timeUtil.now(isBot);
 		AccountTransactionPayload investWithdrawalPayload = AccountTransactionPayload.buildInvestWithdrawal(investment,
 			withdrawnAmount, now);
 

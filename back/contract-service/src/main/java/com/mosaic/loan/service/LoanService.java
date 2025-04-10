@@ -6,28 +6,28 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.core.model.Loan;
 import com.mosaic.investment.dto.WithdrawalInvestmentDto;
 import com.mosaic.loan.dto.CreateLoanRequestDto;
-import com.mosaic.loan.dto.RepayLoanDto;
 import com.mosaic.payload.AccountTransactionPayload;
 
-public interface LoanService {
-	void createLoan(CreateLoanRequestDto request, Boolean isBot) throws JsonProcessingException;
+import jakarta.transaction.Transactional;
 
-	void publishLoanWithdrawalRequest(WithdrawalInvestmentDto requestDto, Boolean isBot) throws
+public interface LoanService {
+	public void createLoan(CreateLoanRequestDto request, LocalDateTime now, Boolean isBot) throws
 		JsonProcessingException;
 
-	void manageInterestOfDelinquentLoans(LocalDateTime now);
+	void manageInterestOfDelinquentLoans(LocalDateTime now, Boolean isBot);
 
-	void liquidateScheduledDelinquentLoans(LocalDateTime now) throws Exception;
-
-	void liquidateLoan(Loan loan, LocalDateTime now) throws Exception;
+	void liquidateScheduledDelinquentLoans(LocalDateTime now, Boolean isBot) throws Exception;
 
 	//상환입금
-	void publishAndCalculateLoanRepayRequest(RepayLoanDto requestDto, Boolean isBot) throws
+	void publishAndCalculateLoanRepayRequest(Loan loan,
+		Boolean isBot, LocalDateTime now) throws JsonProcessingException;
+
+	void completeLoanDepositRequest(AccountTransactionPayload accountTransactionComplete) throws
 		JsonProcessingException;
 
-	void completeLoanRepayRequest(AccountTransactionPayload requestDto) throws Exception;
+	void findRepaymentDueLoansAndRequestRepayment(LocalDateTime time, Boolean isBot) throws JsonProcessingException;
 
-	void rollbackLoanWithdrawal(AccountTransactionPayload payload);
+	void executeDueLoanRepayments(LocalDateTime time, Boolean isBot) throws Exception;
 
-	void failLoanRepayRequest(AccountTransactionPayload accountTransactionFail);
+	void executeLoanRepaymentsById(Integer loanId, LocalDateTime now, Boolean isBot) throws Exception;
 }

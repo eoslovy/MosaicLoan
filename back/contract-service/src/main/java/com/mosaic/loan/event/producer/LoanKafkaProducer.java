@@ -1,5 +1,7 @@
 package com.mosaic.loan.event.producer;
 
+import java.util.function.Supplier;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mosaic.loan.event.message.LoanCreateTransactionPayload;
@@ -17,6 +19,7 @@ public class LoanKafkaProducer {
     private static final String LOAN_CREATE = "loan.created.requested";
     private static final String LOAN_WITHDRAWAL_REQUEST = "loan.withdrawal.requested";
     private static final String LOAN_DEPOSIT_REQUEST = "loan.deposit.requested";
+    private static final String LOAN_DEPOSIT_FAIL = "loan.deposit.failed";
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
@@ -31,5 +34,10 @@ public class LoanKafkaProducer {
 
     public void sendLoanRepayRequestEvent(AccountTransactionPayload repayEventPayload) throws JsonProcessingException {
         kafkaTemplate.send(LOAN_DEPOSIT_REQUEST, objectMapper.writeValueAsString(repayEventPayload));
+    }
+
+	public void sendLoanDepositFailEvent(AccountTransactionPayload accountTransactionComplete) throws
+		JsonProcessingException {
+	    kafkaTemplate.send(LOAN_DEPOSIT_FAIL, objectMapper.writeValueAsString(accountTransactionComplete));
     }
 }

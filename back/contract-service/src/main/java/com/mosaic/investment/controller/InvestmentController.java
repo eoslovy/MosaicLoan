@@ -1,5 +1,6 @@
 package com.mosaic.investment.controller;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mosaic.core.util.TimeUtil;
 import com.mosaic.investment.dto.InvestmentTransactionResponse;
 import com.mosaic.investment.dto.InvestmentTransactionSearchRequest;
 import com.mosaic.investment.dto.RequestInvestmentDto;
@@ -31,6 +33,7 @@ public class InvestmentController {
 
     private final InvestmentService investmentService;
     private final InvestmentQueryRepository investmentQueryRepository;
+    private final TimeUtil timeUtil;
 
 	//TODO 투자하기
 	@PostMapping("")
@@ -38,7 +41,8 @@ public class InvestmentController {
 		@RequestHeader("X-MEMBER-ID") Integer memberId, @RequestHeader("X-IS-BOT") Boolean isBot) throws
 		JsonProcessingException {
 		log.info("{}의 투자신청 요청 실행", memberId);
-		investmentService.publishInvestmentRequest(requestDto, memberId, isBot);
+        LocalDateTime now = timeUtil.now(isBot);
+		investmentService.publishInvestmentRequest(requestDto,now, memberId, isBot);
 		return ResponseEntity.accepted().build();
 	}
 

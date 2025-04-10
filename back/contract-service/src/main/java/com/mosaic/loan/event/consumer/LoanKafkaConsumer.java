@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mosaic.loan.service.LoanService;
+import com.mosaic.loan.service.LoanTransactionService;
 import com.mosaic.payload.AccountTransactionPayload;
 
 import lombok.RequiredArgsConstructor;
@@ -24,13 +25,14 @@ public class LoanKafkaConsumer {
 	private final ObjectMapper objectMapper;
 
 	private final LoanService loanService;
+	private final LoanTransactionService loanTransactionService;
 
 	@KafkaListener(topics = LOAN_DEPOSIT_COMPLETE, groupId = "loan.repay.request.consumer")
 	public void repayLoanRequestedCompleted(@Payload String payload) throws Exception {
 		AccountTransactionPayload accountTransactionComplete = objectMapper.readValue(payload,
 			AccountTransactionPayload.class);
 		//TODO 웹소켓을 통한 성공 메세지 전달
-		loanService.completeLoanRepayRequest(accountTransactionComplete);
+		loanService.completeLoanDepositRequest(accountTransactionComplete);
 		log.info("{}의 대출 상환이 이루어집니다", accountTransactionComplete.accountId());
 	}
 
@@ -38,7 +40,7 @@ public class LoanKafkaConsumer {
 	public void rollbackDepositLoanRequested(@Payload String payload) throws JsonProcessingException {
 		AccountTransactionPayload accountTransactionFail = objectMapper.readValue(payload,
 			AccountTransactionPayload.class);
-		loanService.rollbackLoanWithdrawal(accountTransactionFail);
+		loanTransactionService.rollbackLoanWithdrawal(accountTransactionFail);
 		//TODO 웹소켓을 통한 실패 메세지 전달
 		log.info("{}의 투자 계좌 생성이 실패했습니다", accountTransactionFail.accountId());
 	}
@@ -48,7 +50,7 @@ public class LoanKafkaConsumer {
 		AccountTransactionPayload accountTransactionFail = objectMapper.readValue(payload,
 			AccountTransactionPayload.class);
 		//TODO 웹소켓을 통한 성공 메세지 전달
-		loanService.failLoanRepayRequest(accountTransactionFail);
+		loanTransactionService.failLoanRepayRequest(accountTransactionFail);
 		log.info("{}의 대출 상환이 실패했습니다", accountTransactionFail.accountId());
 	}
 }
