@@ -26,10 +26,8 @@ const Nav = () => {
   }, []);
 
   if (!isFetched || !isDelayDone) {
+    // 아직 로그인 여부 판단이 안됨 + 500ms 지연 대기중일 경우 -> 화면 렌더링 안하도록 null 반환
     return null;
-
-    // if (!isFetched) {
-    //   return null;
   }
 
   // const maskName = (name: string) => {
@@ -49,12 +47,15 @@ const Nav = () => {
   };
 
   const handleProtectedRoute = (path: string) => {
+    if (!isFetched) return;
     if (user) {
       router.push(path);
     } else {
       handleKakaoLogin();
     }
   };
+
+  if (!isFetched) return null;
 
   return (
     <nav className={styles.nav}>

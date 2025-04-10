@@ -45,5 +45,5 @@ export const getLoanOverview = async () => {
 };
 
 export const postLoanRequest = async (data: PostLoanRequestBody) => {
-  return request.POST('/contract/loans/', data);
+  return request.POST('/contract/loans', data);
 };

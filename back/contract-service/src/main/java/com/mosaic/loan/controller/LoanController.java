@@ -18,6 +18,7 @@ import com.mosaic.loan.dto.LoanOverviewResponse;
 import com.mosaic.loan.dto.LoanTransactionResponse;
 import com.mosaic.loan.dto.LoanTransactionSearchRequest;
 import com.mosaic.loan.dto.LoanTransactionsResponse;
+import com.mosaic.loan.dto.RepayLoanDto;
 import com.mosaic.loan.repository.LoanQueryRepository;
 import com.mosaic.loan.service.LoanService;
 
