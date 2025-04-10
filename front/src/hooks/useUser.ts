@@ -11,7 +11,10 @@ const useUser = () => {
   const setUser = useUserStore((state) => state.setUser);
   const isFetched = useUserStore((state) => state.isFetched);
   const setIsFetched = useUserStore((state) => state.setIsFetched);
-  const [isLoading, setIsLoading] = useState(!isFetched);
+  const isHydrated = useUserStore((state) => state.isHydrated);
+  const setIsHydrated = useUserStore((state) => state.setIsHydrated);
+
+  const [isApiLoading, setIsApiLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -20,14 +23,19 @@ const useUser = () => {
   }, []);
 
   useEffect(() => {
+    if (mounted && typeof window !== 'undefined') {
+      setIsHydrated(true);
+    }
+  }, [mounted, setIsHydrated]);
+
+  useEffect(() => {
     if (!mounted || typeof window === 'undefined') return;
 
     const hasFullUserInfo = user && Object.keys(user).length > 1;
-    
     if (isFetched && hasFullUserInfo) return;
 
     const fetchUser = async () => {
-      setIsLoading(true);
+      setIsApiLoading(true);
       try {
         const response = await request.GET<UserResponse['data']>('/member/me');
 
@@ -55,14 +63,24 @@ const useUser = () => {
         setError(err as Error);
       } finally {
         setIsFetched(true);
-        setIsLoading(false);
+        setIsApiLoading(false);
       }
     };
 
-    fetchUser();
-  }, [mounted, isFetched, user, setIsFetched, setUser]);
+    if (isHydrated) {
+      fetchUser();
+    }
+  }, [mounted, isFetched, user, setIsFetched, setUser, isHydrated]);
 
-  return { user, isFetched, isLoading, error };
+  const isLoading = !isHydrated || isApiLoading;
+
+  return {
+    user,
+    isFetched,
+    isLoading,
+    isHydrated,
+    error,
+  };
 };
 
 export default useUser;

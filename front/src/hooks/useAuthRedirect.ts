@@ -1,19 +1,23 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import useUserDelay from './useUserDelay';
+import useUser from '@/hooks/useUser';
 
-const useAuthRedirect = (redirectPath: string) => {
-  const { user, isReady } = useUserDelay(0); // 1초 대기 + 로그인 체크
+const useAuthRedirect = (redirectPath = '/') => {
   const router = useRouter();
+  const { user, isFetched, isLoading } = useUser();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!isReady) return;
-    if (!user) {
-      router.replace(redirectPath);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !isLoading && isFetched && !user) {
+      router.push(redirectPath);
     }
-  }, [user, isReady, router]);
+  }, [isFetched, user, isLoading, router, redirectPath, mounted]);
 };
 
 export default useAuthRedirect;
