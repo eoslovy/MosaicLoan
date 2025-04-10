@@ -28,7 +28,7 @@ const LoanDetailSlider = ({ recentLoans }: Props) => {
   const getDDay = (dueDate: string) => {
     const now = new Date();
     const due = new Date(dueDate);
-    const diffTime = due.getTime() - now.getTime();
+    const diffTime = -(due.getTime() - now.getTime());
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
@@ -58,7 +58,7 @@ const LoanDetailSlider = ({ recentLoans }: Props) => {
                       <>
                         {currentLoan.dueDate}
                         <span className={styles.badge}>
-                          D-{getDDay(currentLoan.dueDate)}
+                          D{getDDay(currentLoan.dueDate)}
                         </span>
                       </>
                     ) : (
