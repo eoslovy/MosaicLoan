@@ -98,7 +98,7 @@ public class InvestmentController {
 
 	@PostMapping("/transactions/search")
 	public ResponseEntity<InvestmentTransactionResponse> getInvestmentTransactions(
-		@RequestBody InvestmentTransactionSearchRequest request) {
-		return ResponseEntity.ok(investmentQueryRepository.searchTransactions(request));
+		@RequestBody InvestmentTransactionSearchRequest request, @RequestHeader("X-MEMBER-ID") Integer memberId) {
+		return ResponseEntity.ok(investmentQueryRepository.searchTransactions(request, memberId));
 	}
 }

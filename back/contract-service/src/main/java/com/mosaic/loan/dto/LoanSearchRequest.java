@@ -1,23 +1,20 @@
-package com.mosaic.investment.dto;
+package com.mosaic.loan.dto;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import com.mosaic.core.model.status.ContractTransactionType;
+import com.mosaic.core.model.status.LoanStatus;
 
 import lombok.Builder;
 
 @Builder
-public record InvestmentTransactionSearchRequest(
+public record LoanSearchRequest(
 	LocalDate startDate,
 	LocalDate endDate,
-	List<ContractTransactionType> types,
-	List<Integer> investmentIds,
+	List<LoanStatus> types,
 	int page,
 	int pageSize,
-	List<SortCriteria> sort,
-	Integer interestRate,
-	LocalDate dueDate
+	List<SortCriteria> sort
 ) {
 	public int safePage() {
 		return page <= 0 ? 0 : page - 1;
@@ -27,7 +24,6 @@ public record InvestmentTransactionSearchRequest(
 		return pageSize <= 0 ? 10 : pageSize;
 	}
 
-	@Builder
 	public record SortCriteria(String field, String order) {
 	}
 } 

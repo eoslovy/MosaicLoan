@@ -60,10 +60,11 @@ public class EvaluationAggregatorServiceImpl implements EvaluationAggregatorServ
 					caseId, memberId, duration);
 
 				// 계산 및 저장
-				calculationService.evaluateCredit(Integer.valueOf(caseId), Integer.valueOf(memberId), probability);
+				var evaluation = calculationService.evaluateCredit(Integer.valueOf(caseId), Integer.valueOf(memberId),
+					probability);
 
 				// WebSocket으로 완료 알림 전송
-				webSocketService.sendEvaluationComplete(Integer.valueOf(memberId));
+				webSocketService.sendEvaluationComplete(Integer.valueOf(memberId), evaluation.getStatus());
 
 				// 데이터 정리
 				dataService.cleanup(caseId, EXPECTED_SOURCES);

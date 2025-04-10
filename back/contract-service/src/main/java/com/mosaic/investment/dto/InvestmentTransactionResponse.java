@@ -2,6 +2,8 @@ package com.mosaic.investment.dto;
 
 import java.util.List;
 
+import com.mosaic.core.model.status.ContractTransactionType;
+
 import lombok.Builder;
 
 @Builder
@@ -20,12 +22,11 @@ public record InvestmentTransactionResponse(
 
 	@Builder
 	public record TransactionInfo(
-		Integer id,
 		Integer contractId,
 		Integer investmentId,
 		String amount,
 		String createdAt,
-		String status,
+		ContractTransactionType status,
 		Integer interestRate,
 		String dueDate
 	) {

@@ -29,5 +29,5 @@ public interface InvestmentQueryRepository {
 	Map<String, Object> findInvestmentsWithOverview(Integer memberId);
 
 	// 투자 거래 내역을 검색 조건에 따라 조회
-	InvestmentTransactionResponse searchTransactions(InvestmentTransactionSearchRequest request);
+	InvestmentTransactionResponse searchTransactions(InvestmentTransactionSearchRequest request, Integer memberId);
 }

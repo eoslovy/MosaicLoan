@@ -2,7 +2,7 @@ package com.mosaic.loan.dto;
 
 import java.util.List;
 
-import com.mosaic.core.model.status.ContractStatus;
+import com.mosaic.core.model.status.ContractTransactionType;
 
 import lombok.Builder;
 
@@ -16,7 +16,7 @@ public record LoanTransactionsResponse(
 		Integer loanId,
 		String amount,
 		String createdAt,
-		ContractStatus status
+		ContractTransactionType status
 	) {
 	}
 } 

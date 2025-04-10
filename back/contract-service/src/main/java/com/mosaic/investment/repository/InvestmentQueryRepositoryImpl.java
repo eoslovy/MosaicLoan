@@ -8,12 +8,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
 import com.mosaic.core.model.Investment;
 import com.mosaic.core.model.Loan;
 import com.mosaic.core.model.QContract;
+import com.mosaic.core.model.QContractTransaction;
 import com.mosaic.core.model.QInvestment;
 import com.mosaic.core.model.status.ContractStatus;
 import com.mosaic.investment.dto.InvestmentListResponse;
@@ -211,30 +213,44 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 		}
 	}
 
-	@Override
-	public InvestmentTransactionResponse searchTransactions(InvestmentTransactionSearchRequest request) {
+	private List<Investment> findInvestmentsByMemberId(Integer memberId) {
 		QInvestment investment = QInvestment.investment;
-		QContract contract = QContract.contract;
+
+		return queryFactory.selectFrom(investment).where(investment.accountId.eq(memberId)).fetch();
+	}
+
+	@Override
+	public InvestmentTransactionResponse searchTransactions(InvestmentTransactionSearchRequest request,
+		Integer memberId) {
+		QInvestment investment = QInvestment.investment;
+		QContractTransaction tx = QContractTransaction.contractTransaction;
+
+		List<Integer> investmentIdsToSearch;
+		BooleanExpression conditions = tx.contract.investment.isNotNull();
+
+		if (request.investmentIds() != null && !request.investmentIds().isEmpty()) {
+			investmentIdsToSearch = request.investmentIds();
+		} else {
+			investmentIdsToSearch = findInvestmentsByMemberId(memberId).stream()
+				.map(Investment::getId)
+				.collect(Collectors.toList());
+		}
+
+		conditions = conditions.and(tx.contract.investment.id.in(investmentIdsToSearch));
 
 		// 기본 조건 설정
-		BooleanExpression conditions = contract.investment.isNotNull();
 
 		// 날짜 범위 조건
 		if (request.startDate() != null) {
-			conditions = conditions.and(investment.createdAt.goe(request.startDate().atStartOfDay()));
+			conditions = conditions.and(tx.createdAt.goe(request.startDate().atStartOfDay()));
 		}
 		if (request.endDate() != null) {
-			conditions = conditions.and(investment.createdAt.loe(request.endDate().atTime(23, 59, 59)));
-		}
-
-		// 투자 ID 필터링
-		if (request.investmentIds() != null && !request.investmentIds().isEmpty()) {
-			conditions = conditions.and(investment.id.in(request.investmentIds()));
+			conditions = conditions.and(tx.createdAt.loe(request.endDate().atTime(23, 59, 59)));
 		}
 
 		// 계약 상태 필터링
 		if (request.types() != null && !request.types().isEmpty()) {
-			conditions = conditions.and(contract.status.in(request.types()));
+			conditions = conditions.and(tx.type.in(request.types()));
 		}
 
 		// 정렬 조건 설정
@@ -248,11 +264,11 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 						break;
 					case "contractId":
 						orders.add(sort.order().equals("asc") ?
-							contract.id.asc() : contract.id.desc());
+							tx.contract.id.asc() : tx.contract.id.desc());
 						break;
 					case "createdAt":
 						orders.add(sort.order().equals("asc") ?
-							investment.createdAt.asc() : investment.createdAt.desc());
+							tx.createdAt.asc() : tx.createdAt.desc());
 						break;
 				}
 			}
@@ -263,9 +279,9 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 
 		// 전체 아이템 수 조회
 		long totalCount = queryFactory
-			.select(contract.count())
-			.from(contract)
-			.join(contract.investment, investment)
+			.select(tx.count())
+			.from(tx)
+			.join(tx.contract.investment, investment)
 			.where(conditions)
 			.fetchOne();
 
@@ -275,16 +291,15 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 
 		List<InvestmentTransactionResponse.TransactionInfo> transactions = queryFactory
 			.select(Projections.constructor(InvestmentTransactionResponse.TransactionInfo.class,
+				tx.contract.id,
 				investment.id,
-				contract.id,
-				investment.id,
-				contract.amount.stringValue(),
-				contract.createdAt.stringValue(),
-				contract.status.stringValue(),
-				contract.interestRate,
-				contract.dueDate.stringValue()))
-			.from(contract)
-			.join(contract.investment, investment)
+				tx.contract.amount.stringValue(),
+				tx.contract.createdAt.stringValue(),
+				tx.contract.status.stringValue(),
+				tx.contract.interestRate,
+				tx.contract.dueDate.stringValue()))
+			.from(tx)
+			.join(tx.contract.investment, investment)
 			.where(conditions)
 			.orderBy(orders.toArray(new OrderSpecifier[0]))
 			.offset((long)page * pageSize)

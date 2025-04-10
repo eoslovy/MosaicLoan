@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import useContractsFilterStore from '@/stores/useContractsFilterStore';
 import useAccountTransactionStore from '@/stores/useAccountTransactionStore';
 import BasicTable from '@/components/common/BasicTable';
 import Pagination from '@/components/common/Pagination';
@@ -46,37 +48,47 @@ const getTypeVariant = (type: string): PillVariant => {
   }
 };
 
-const getActionButton = (type: string, targetId: number) => {
-  switch (type) {
-    case 'INVESTMENT_IN':
-    case 'INVESTMENT_OUT':
-      return (
-        <button
-          type='button'
-          className={styles.detailButton}
-          onClick={() => {
-            console.log(`Navigate to investment detail: ${targetId}`);
-          }}
-        >
-          투자상품 상세
-        </button>
-      );
-    case 'LOAN_IN':
-    case 'LOAN_OUT':
-      return (
-        <button
-          type='button'
-          className={styles.detailButton}
-          onClick={() => {
-            console.log(`Navigate to loan detail: ${targetId}`);
-          }}
-        >
-          대출정보 상세
-        </button>
-      );
-    default:
-      return null;
+const ActionButton = ({
+  type,
+  targetId,
+}: {
+  type: string;
+  targetId: number;
+}) => {
+  const router = useRouter();
+  const { setFilter } = useContractsFilterStore();
+
+  if (type === 'INVESTMENT_IN' || type === 'INVESTMENT_OUT') {
+    return (
+      <button
+        type='button'
+        className={styles.detailButton}
+        onClick={() => {
+          setFilter([targetId]);
+          router.push('/investor/contracts');
+        }}
+      >
+        투자상품 상세
+      </button>
+    );
   }
+
+  if (type === 'LOAN_IN' || type === 'LOAN_OUT') {
+    return (
+      <button
+        type='button'
+        className={styles.detailButton}
+        onClick={() => {
+          setFilter([targetId]);
+          router.push('/borrower');
+        }}
+      >
+        대출정보 상세
+      </button>
+    );
+  }
+
+  return null;
 };
 
 const MyAccountTransactionList = () => {
@@ -136,7 +148,7 @@ const MyAccountTransactionList = () => {
               key: `action-${idx}`,
               content: (
                 <div className={styles.cellWrap}>
-                  {getActionButton(tx.type, tx.targetId)}
+                  <ActionButton type={tx.type} targetId={tx.targetId} />
                 </div>
               ),
             },

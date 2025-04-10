@@ -25,17 +25,35 @@ const sortOrderMapping: { [key: string]: string } = {
 
 const getStatusVariant = (status: string): PillVariant => {
   switch (status) {
-    case '상환완료':
-      return 'repayment-complete';
-    case '상환중':
-      return 'repayment-in-progress';
-    case '부실':
-    case '부실확정':
-      return 'defaulted';
-    case '연체':
+    case 'PENDING':
+      return 'info';
+    case 'IN_PROGRESS':
+      return 'investing';
+    case 'COMPLETED':
+      return 'success';
+    case 'PARTIALLY_DELINQUENT':
+      return 'overdue';
+    case 'DELINQUENT':
       return 'overdue';
     default:
-      return 'repayment-in-progress';
+      return 'defaulted';
+  }
+};
+
+const statusMap = (status: string) => {
+  switch (status) {
+    case 'PENDING':
+      return '대출 신청';
+    case 'IN_PROGRESS':
+      return '진행중';
+    case 'COMPLETED':
+      return '완료';
+    case 'PARTIALLY_DELINQUENT':
+      return '일부연체';
+    case 'DELINQUENT':
+      return '연체';
+    default:
+      return '';
   }
 };
 
@@ -155,7 +173,7 @@ const LoanList: React.FC<LoanListProps> = ({
 
     try {
       const response = await request.GET<TransactionResponse>(
-        `/contract/loans/${loan.id}`,
+        `/contract/loans/${loan.id}/transactions`,
       );
       const detailsWithBalance = calculateBalance(
         response.transactions,
@@ -230,13 +248,17 @@ const LoanList: React.FC<LoanListProps> = ({
                   <td>{loan.amount}</td>
                   <td>{loan.createdAt}</td>
                   <td>{loan.dueDate}</td>
-                  <td>{loan.interestRate}</td>
+                  <td>
+                    {loan.interestRate
+                      ? loan.interestRate.toLocaleString()
+                      : '-'}
+                  </td>
                   <td>
                     <div className={styles.statusWrapper}>
                       <Pill variant={getStatusVariant(loan.status)}>
-                        {loan.status}
+                        {statusMap(loan.status)}
                       </Pill>
-                      {loan.status === '연체' && (
+                      {loan.status === 'DELIQUENT' && (
                         <button
                           className={styles.toggleButton}
                           onClick={() => handleToggleClick(loan)}
