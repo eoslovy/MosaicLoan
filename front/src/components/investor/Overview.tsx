@@ -27,22 +27,22 @@ const Overview: React.FC<OverviewProps> = ({ summary }) => {
           <>
             <BasicInfoCard
               icon='creditCard'
-              value={`₩ ${Number(summary.총투자금액).toLocaleString()}`}
+              value={`₩ ${Number(summary.totalInvestmentAmount).toLocaleString()}`}
               label='총 투자 금액'
             />
             <BasicInfoCard
               icon='trendingUp'
-              value={`₩ ${Number(summary.누적수익금).toLocaleString()}`}
+              value={`₩ ${Number(summary.totalProfitAmount).toLocaleString()}`}
               label='누적 수익금'
             />
             <BasicInfoCard
               icon='clock'
-              value={`${summary.평균수익률} %`}
+              value={`${summary.averageProfitRate} %`}
               label='평균 수익률'
             />
             <BasicInfoCard
               icon='arrowUpRight'
-              value={`${summary.투자건수}건`}
+              value={`${summary.investmentCount}건`}
               label='투자 건수'
             />
           </>

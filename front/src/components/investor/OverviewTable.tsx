@@ -9,16 +9,46 @@ import fillEmptyRows from '@/utils/fillEmptyRows';
 import { InvestmentOverviewTableProps } from '@/types/pages';
 import Pill from '@/components/common/Pill';
 
-const getStatusVariant = (status: string): PillVariant => {
+// const getStatusVariant = (status: string): PillVariant => {
+//   switch (status) {
+//     case '상환완료':
+//       return 'repayment-complete';
+//     case '상환중':
+//       return 'repayment-in-progress';
+//     case '부실':
+//       return 'defaulted';
+//     default:
+//       return 'repayment-in-progress';
+//   }
+// };
+
+const getStatusLabel = (
+  status: 'REQUESTED' | 'ACTIVE' | 'COMPLETED',
+): string => {
   switch (status) {
-    case '상환완료':
-      return 'repayment-complete';
-    case '상환중':
-      return 'repayment-in-progress';
-    case '부실':
-      return 'defaulted';
+    case 'REQUESTED':
+      return '대기';
+    case 'ACTIVE':
+      return '진행중';
+    case 'COMPLETED':
+      return '종료';
     default:
-      return 'repayment-in-progress';
+      return '기타';
+  }
+};
+
+const getStatusVariant = (
+  status: 'REQUESTED' | 'ACTIVE' | 'COMPLETED',
+): PillVariant => {
+  switch (status) {
+    case 'REQUESTED':
+      return 'info';
+    case 'ACTIVE':
+      return 'investing';
+    case 'COMPLETED':
+      return 'danger';
+    default:
+      return 'default';
   }
 };
 
@@ -37,17 +67,19 @@ const OverviewTable: React.FC<InvestmentOverviewTableProps> = ({
     : investmentlist.map((item, idx) => ({
         key: `investment-${idx}`,
         cells: [
-          { key: `name-${idx}`, content: item.투자명 },
+          { key: `name-${idx}`, content: item.investmentId },
           {
             key: `amount-${idx}`,
-            content: `₩ ${Number(item.투자금액).toLocaleString()}`,
+            content: `₩ ${Number(item.investmentAmount).toLocaleString()}`,
           },
-          { key: `rate-${idx}`, content: `${item.금리} %` },
-          { key: `date-${idx}`, content: item.상환일 },
+          { key: `rate-${idx}`, content: `${item.rate} %` },
+          { key: `date-${idx}`, content: item.dueDate },
           {
             key: `status-${idx}`,
             content: (
-              <Pill variant={getStatusVariant(item.상태)}>{item.상태}</Pill>
+              <Pill variant={getStatusVariant(item.status)}>
+                {getStatusLabel(item.status)}
+              </Pill>
             ),
           },
         ],
@@ -66,8 +98,8 @@ const OverviewTable: React.FC<InvestmentOverviewTableProps> = ({
             key: `label-${idx}`,
             content: (
               <div className={styles.labelWithDate}>
-                <p>{item.수익명}</p>
-                <span className={styles.date}>{item.날짜}</span>
+                <p>{item.title}</p>
+                <span className={styles.date}>{item.date}</span>
               </div>
             ),
           },
@@ -75,7 +107,7 @@ const OverviewTable: React.FC<InvestmentOverviewTableProps> = ({
             key: `amount-${idx}`,
             content: (
               <p className={styles.amount}>
-                {Number(item.금액).toLocaleString()}₩
+                {Number(item.amount).toLocaleString()}₩
               </p>
             ),
           },
@@ -97,7 +129,7 @@ const OverviewTable: React.FC<InvestmentOverviewTableProps> = ({
         ) : (
           <BasicTable
             title='투자 현황'
-            columns={['투자명', '투자금액', '금리', '상환일', '상태']}
+            columns={['투자명', '투자금액', '기대수익률', '상환일', '상태']}
             rows={filledInvestmentRows}
             viewAllLink='/investor/contracts'
           />

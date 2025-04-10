@@ -205,7 +205,7 @@ export interface ProgressGroupProps {
 }
 
 export interface StatusBadgeProps {
-  status: '상환완료' | '상환중' | '부실';
+  status: 'COMPLETED' | 'IN_PROGRESS' | 'DELINQUENT';
 }
 
 export type SortKey =

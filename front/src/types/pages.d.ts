@@ -12,24 +12,24 @@ export interface EmptyStateProps {
 }
 
 export interface InvestmentSummary {
-  총투자금액: string;
-  누적수익금: string;
-  평균수익률: number;
-  투자건수: number;
+  totalInvestmentAmount: string;
+  totalProfitAmount: string;
+  averageProfitRate: number;
+  investmentCount: number;
 }
 
 export interface InvestmentItem {
-  투자명: string;
-  투자금액: string;
-  금리: string;
-  상환일: string;
-  상태: '상환완료' | '상환중' | '부실';
+  investmentId: string;
+  investmentAmount: string;
+  rate: string;
+  dueDate: string;
+  status: 'REQUESTED' | 'ACTIVE' | 'COMPLETED'; // 신청됨_대기상태, 진행중_계약체졀됨, 만기 또는 종료
 }
 
 export interface ProfitItem {
-  수익명: string; // 예: '환급', '원금상환', '이자수익'
-  날짜: string; // YYYY-MM-DD
-  금액: string;
+  title: string; // 예: '환급', '원금상환', '이자수익'
+  date: string; // YYYY-MM-DD
+  amount: string;
 }
 
 // 이건 /api/investments/overview 전체 응답의 타입
