@@ -31,7 +31,7 @@ public class InvestmentKafkaConsumer {
 			AccountTransactionPayload.class);
 		//TODO 웹소켓을 통한 성공 메세지 전달
 		investmentService.completeInvestmentRequest(accountTransactionComplete);
-		log.info("{}의 투자 계좌 생성이 정상적으로 처리되었습니다", accountTransactionComplete.accountId());
+		log.info("[{}] {}의 투자 계좌 생성이 정상적으로 처리되었습니다",accountTransactionComplete.createdAt(), accountTransactionComplete.accountId());
 	}
 
 	@KafkaListener(topics = INVEST_CREATE_REJECTED, groupId = "investment.deposit.rejected.consumer")
@@ -39,7 +39,7 @@ public class InvestmentKafkaConsumer {
 		AccountTransactionPayload accountTransactionFail = objectMapper.readValue(payload,
 			AccountTransactionPayload.class);
 		//TODO 웹소켓을 통한 실패 메세지 전달
-		log.info("{}의 투자 계좌 생성이 실패했습니다", accountTransactionFail.accountId());
+		log.info("[{}] {}의 투자 계좌 생성이 실패했습니다",accountTransactionFail.createdAt(), accountTransactionFail.accountId());
 	}
 
 	@KafkaListener(topics = LOAN_CREATE_EXECUTE, groupId = "loan.investor.consumer")
@@ -47,7 +47,7 @@ public class InvestmentKafkaConsumer {
 		LoanCreateTransactionPayload accountTransaction = objectMapper.readValue(payload,
 			LoanCreateTransactionPayload.class);
 		//TODO 웹소켓을 통한 투자 시작 메세지 전달
-		log.info("{}의 {}상품 대출 {}% 적합자 검색이 시작되었습니다", accountTransaction.loanId(), accountTransaction.interestRate(), accountTransaction.expectYieldRate());
+		log.info("[{}] {}의 {}상품 대출 {}% 적합자 검색이 시작되었습니다",accountTransaction.createdAt(), accountTransaction.loanId(), accountTransaction.interestRate(), accountTransaction.expectYieldRate());
 		investmentService.searchLoanAptInvestor(accountTransaction);
 	}
 }
