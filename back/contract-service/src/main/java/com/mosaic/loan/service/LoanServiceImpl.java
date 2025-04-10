@@ -69,7 +69,7 @@ public class LoanServiceImpl implements LoanService {
 	@Override
 	@Transactional
 	public void liquidateScheduledDelinquentLoans(LocalDateTime now, Boolean isBot) throws Exception {
-		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate().plusDays(1),
+		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate().minusDays(1),
 			LoanStatus.DELINQUENT);
 		for (Loan loan : loans) {
 			liquidateDelinquentLoan(loan, now);
@@ -82,6 +82,7 @@ public class LoanServiceImpl implements LoanService {
 			return;
 		}
 		for (Contract contract : loan.getContracts()) {
+			loan.liquidate();
 			Contract liquidatedContract = contractService.liquidateContract(contract, now);
 			if (!contract.getStatus().equals(ContractStatus.OWNERSHIP_TRANSFERRED))
 				throw new Exception("liquidateFail");
@@ -90,7 +91,6 @@ public class LoanServiceImpl implements LoanService {
 
 	//상환입금
 	@Override
-	@Transactional
 	public void publishAndCalculateLoanRepayRequest(Loan loan,
 		Boolean isBot, LocalDateTime now) throws JsonProcessingException {
 		BigDecimal moneyToRepay = BigDecimal.ZERO;
@@ -122,6 +122,7 @@ public class LoanServiceImpl implements LoanService {
 	//대출금 출
 
 	@Override
+	@Transactional
 	public void findRepaymentDueLoansAndRequestRepayment(LocalDateTime now, Boolean isBot) throws
 		JsonProcessingException {
 		log.info("시간 [{}]의 대상 대출 상환 준비를 시작합니다", now);

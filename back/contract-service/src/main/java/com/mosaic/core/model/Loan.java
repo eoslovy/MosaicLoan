@@ -1,32 +1,17 @@
 package com.mosaic.core.model;
 
+import com.mosaic.core.model.status.LoanStatus;
+import com.mosaic.loan.dto.CreateLoanRequestDto;
+import com.mosaic.loan.dto.CreditEvaluationResponseDto;
+import com.mosaic.payload.AccountTransactionPayload;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.mosaic.core.model.status.LoanStatus;
-import com.mosaic.loan.dto.CreateLoanRequestDto;
-import com.mosaic.loan.dto.CreditEvaluationResponseDto;
-import com.mosaic.payload.AccountTransactionPayload;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -118,5 +103,9 @@ public class Loan {
 
 	public void repay(BigDecimal repaidAmountResidue) {
 		this.amount = repaidAmountResidue;
+	}
+
+	public void liquidate() {
+		this.status = LoanStatus.TRANSFERRED;
 	}
 }
