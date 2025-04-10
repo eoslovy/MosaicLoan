@@ -83,7 +83,7 @@ const StatisticsPage = () => {
     refreshInterval: null,
   });
 
-  console.log(data)
+  console.log(data);
 
   useAuthRedirect('/investor/statistics');
 
