@@ -39,6 +39,17 @@ const getIndustryLabel = (code: number) => {
 const StatisticsPage = () => {
   const { user, isFetched } = useUser();
   const [seedUserId, setSeedUserId] = useState<number>(42);
+  const [chartRegistered, setChartRegistered] = useState(false);
+
+  // Chart.js 등록을 클라이언트 사이드에서만 실행
+  useEffect(() => {
+    const registerChart = async () => {
+      const { Chart, LineController, BarController, CategoryScale, LinearScale, PointElement, LineElement, BarElement } = await import('chart.js');
+      Chart.register(LineController, BarController, CategoryScale, LinearScale, PointElement, LineElement, BarElement);
+      setChartRegistered(true);
+    };
+    registerChart();
+  }, []);
 
   useEffect(() => {
     if (isFetched && user?.id) {
@@ -53,7 +64,7 @@ const StatisticsPage = () => {
 
   useAuthRedirect('/investor/statistics');
 
-  if (isLoading || !isFetched)
+  if (isLoading || !isFetched || !chartRegistered)
     return <div className={styles.statusText}>로딩 중...</div>;
   if (!data)
     return (
