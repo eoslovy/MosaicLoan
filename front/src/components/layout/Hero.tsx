@@ -48,16 +48,16 @@ const Hero = () => {
 
           {/* 버튼 영역 */}
           <div className='flex flex-wrap gap-4 justify-center md:justify-start'>
-            <Link href='/borrower'>
+            <Link href='/investor'>
               <Button
-                label={{ text: '대출하기', size: 'sm', color: 'white' }}
+                label={{ text: '투자하기', size: 'sm', color: 'white' }}
                 variant='filled'
                 size='normal'
               />
             </Link>
-            <Link href='/investor'>
+            <Link href='/borrower'>
               <Button
-                label={{ text: '투자하기', size: 'sm', color: 'blue' }}
+                label={{ text: '대출하기', size: 'sm', color: 'blue' }}
                 variant='outlined'
                 size='normal'
               />
