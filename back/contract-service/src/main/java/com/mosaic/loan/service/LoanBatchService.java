@@ -20,10 +20,14 @@ public class LoanBatchService {
 	//22시 utc/seoul 트리거
 	public void runSchedulesAt21(LocalDateTime time, Boolean isBot) {
 		// loan 도메인의 일일 정산 로직 등 실행
+		log.info("[{}] 오후 9시에 실행되는 일괄 스케쥴러 실행", time);
 		try {
 			loanService.manageInterestOfDelinquentLoans(time, isBot);
+			log.info("[{}] 오후 9시에 실행되는 연체 이자 적용 완료", time);
 			loanService.liquidateScheduledDelinquentLoans(time, isBot);
+			log.info("[{}] 오후 9시에 실행되는 연쳬 대출 소유권 이전 완료", time);
 			loanService.findRepaymentDueLoansAndRequestRepayment(time, isBot);
+			log.info("[{}] 오후 9시에 실행되는 일괄 상환잔액 입금 요청 완료", time);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -34,6 +38,7 @@ public class LoanBatchService {
 	public void renSchedulesAt22(LocalDateTime time, Boolean isBot) throws Exception {
 		try {
 			loanService.executeDueLoanRepayments(time, isBot);
+			log.info("[{}] 오후 10시에 실행되는 대출 처리 완료", time);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
