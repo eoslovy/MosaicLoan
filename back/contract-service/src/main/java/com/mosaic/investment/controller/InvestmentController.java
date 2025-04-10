@@ -1,32 +1,17 @@
 package com.mosaic.investment.controller;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.core.util.TimeUtil;
-import com.mosaic.investment.dto.InvestmentListResponse;
-import com.mosaic.investment.dto.InvestmentSummaryResponse;
-import com.mosaic.investment.dto.InvestmentTransactionResponse;
-import com.mosaic.investment.dto.InvestmentTransactionSearchRequest;
-import com.mosaic.investment.dto.RequestInvestmentDto;
-import com.mosaic.investment.dto.InvestmentSummaryResponse;
-import com.mosaic.investment.dto.InvestmentListResponse;
-import com.mosaic.investment.dto.ProfitHistoryResponse;
-import com.mosaic.investment.dto.RequestInvestmentDto;
+import com.mosaic.investment.dto.*;
 import com.mosaic.investment.repository.InvestmentQueryRepository;
 import com.mosaic.investment.service.InvestmentService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,7 +28,7 @@ public class InvestmentController {
 		@RequestHeader("X-MEMBER-ID") Integer memberId, @RequestHeader("X-IS-BOT") Boolean isBot) throws
 		JsonProcessingException {
 		LocalDateTime now = timeUtil.now(isBot);
-		log.info("[{}] - {}의 투자신청 요청 실행",now, memberId);
+		//log.info("[{}] - {}의 투자신청 요청 실행",now, memberId);
 		investmentService.publishInvestmentRequest(requestDto, now, memberId, isBot);
 		return ResponseEntity.accepted().build();
 	}

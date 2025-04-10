@@ -1,14 +1,5 @@
 package com.mosaic.loan.service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Year;
-import java.time.temporal.ChronoUnit;
-
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.core.model.Contract;
 import com.mosaic.core.model.ContractTransaction;
@@ -18,10 +9,17 @@ import com.mosaic.loan.event.producer.LoanKafkaProducer;
 import com.mosaic.loan.exception.LoanNotFoundException;
 import com.mosaic.loan.repository.LoanRepository;
 import com.mosaic.payload.AccountTransactionPayload;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Year;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @Slf4j
@@ -76,7 +74,12 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
 		BigDecimal returnInterestRatio = repaidAmountResidue.divide(interestToRepay, 5, RoundingMode.DOWN)
 			.min(BigDecimal.ONE);
 		if (BigDecimal.ZERO.compareTo(returnInterestRatio) >= 0) {
-			throw new Exception("이자를 상환할 금액이 부족합니다.");
+			//for (Contract contract : loan.getContracts()) {
+			//	contract.setStatusDelinquent();
+			//}
+			loan.setStatusDelinquent();
+			//return;
+			//throw new Exception("이자를 상환할 금액이 부족합니다.");
 		}
 
 		for (Contract contract : loan.getContracts()) {
@@ -97,6 +100,7 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
 		BigDecimal returnPrincipalRatio = repaidAmountResidue.divide(originalMoneyToRepay, 18, RoundingMode.DOWN)
 			.min(BigDecimal.ONE);
 		if (BigDecimal.ZERO.compareTo(returnPrincipalRatio) >= 0) {
+			loan.setStatusDelinquent();
 			for (Contract contract : loan.getContracts()) {
 				contract.setStatusDelinquent();
 			}
@@ -136,7 +140,6 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
 		}
 		loan.repay(repaidAmountResidue);
 		log.info("{}의 대출완납으로 상태 완료로 변경", loan.getId());
-
 	}
 
 	public BigDecimal calculateInterestAmount(Contract contract, BigDecimal amount, LocalDate now) {
@@ -153,5 +156,4 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
 			.multiply(BigDecimal.valueOf(days))
 			.setScale(5, RoundingMode.DOWN);
 	}
-
 }

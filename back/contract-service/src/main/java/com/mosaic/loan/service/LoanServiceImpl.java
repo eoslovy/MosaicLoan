@@ -1,11 +1,5 @@
 package com.mosaic.loan.service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.contract.service.ContractService;
 import com.mosaic.core.model.Contract;
@@ -21,11 +15,15 @@ import com.mosaic.loan.event.producer.LoanKafkaProducer;
 import com.mosaic.loan.exception.LoanNotFoundException;
 import com.mosaic.loan.repository.LoanRepository;
 import com.mosaic.payload.AccountTransactionPayload;
-
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +52,7 @@ public class LoanServiceImpl implements LoanService {
 		loanRepository.save(newLoan);
 		LoanCreateTransactionPayload payload = LoanCreateTransactionPayload.buildLoan(newLoan,
 			creditEvaluationResponseDto);
-		log.info("Create loan: {}", payload);
+		//log.info("Create loan: {}", payload);
 		loanKafkaProducer.sendLoanCreatedRequest(payload);
 	}
 
@@ -71,7 +69,7 @@ public class LoanServiceImpl implements LoanService {
 	@Override
 	@Transactional
 	public void liquidateScheduledDelinquentLoans(LocalDateTime now, Boolean isBot) throws Exception {
-		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate().minusMonths(3),
+		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate().plusDays(1),
 			LoanStatus.DELINQUENT);
 		for (Loan loan : loans) {
 			liquidateDelinquentLoan(loan, now);
@@ -79,7 +77,6 @@ public class LoanServiceImpl implements LoanService {
 		log.info("{}개의 대출을 유동화햇습니다", loans.size());
 	}
 
-	@Transactional
 	public void liquidateDelinquentLoan(Loan loan, LocalDateTime now) throws Exception {
 		if (loan.getId() == null) {
 			return;
@@ -142,11 +139,8 @@ public class LoanServiceImpl implements LoanService {
 		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate(), LoanStatus.IN_PROGRESS);
 		log.info("{}개의 대출 계약 상환에 필요한 자금요청이 시작됩니다", loans.size());
 		for (Loan loan : loans) {
-			try {
-				loanTransactionService.executeLoanRepay(loan, now, isBot);
-			} catch (Exception e) {
-				log.error("Loan {} 처리 실패: {}", loan.getId(), e.getMessage(), e);
-			}
+			loanTransactionService.executeLoanRepay(loan, now, isBot);
+			//log.error("Loan {} 처리 실패: {}", loan.getId());
 		}
 		log.info("{}개의 대출 계약 상환의 자금처리가 완료되었습니다", loans.size());
 	}

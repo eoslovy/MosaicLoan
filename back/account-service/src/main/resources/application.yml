@@ -1,6 +1,7 @@
 server:
-  port: 8080
+  port: 8081
 ##
+---
 spring:
   application:
     name: account-service
@@ -24,5 +25,26 @@ spring:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     consumer:
       auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: "com.mosaic.payload"
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    url: jdbc:mysql://localhost:3308/mosaic_account
+    username: account
+    password: 608
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
       properties:
         spring.json.trusted.packages: "com.mosaic.payload"
