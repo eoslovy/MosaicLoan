@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.creditservice.domain.CreditEvaluation;
+import com.creditservice.domain.EvaluationStatus;
 import com.creditservice.dto.CreditEvaluationResponseDto;
 import com.creditservice.exception.ErrorCode;
+import com.creditservice.exception.EvaluationException;
 import com.creditservice.exception.EvaluationNotFoundException;
 import com.creditservice.repository.CreditEvaluationRepository;
 
@@ -51,7 +53,9 @@ public class CreditEvaluationServiceImpl implements CreditEvaluationService {
 				if (hoursDiff >= 24) {
 					throw new EvaluationNotFoundException(ErrorCode.EVALUATION_EXPIRED, memberId);
 				}
-
+				if (evaluation.getStatus().equals(null)){
+					throw new EvaluationException(ErrorCode.EVALUATION_NOT_FOUND);
+				}
 				return convertToDtoWithDefaultFlag(evaluation);
 			})
 			.orElseThrow(() -> new EvaluationNotFoundException(ErrorCode.LATEST_EVALUATION_NOT_FOUND, memberId));

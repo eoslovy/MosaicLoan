@@ -31,11 +31,10 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
 
 	@Transactional
 	@Override
-	public void publishLoanWithdrawalRequest(WithdrawalInvestmentDto requestDto, LocalDateTime now,
+	public void publishLoanWithdrawalRequest(Loan loan, LocalDateTime now, //WithdrawalInvestmentDto requestDto, LocalDateTime now,
 		Boolean isBot) throws
 		JsonProcessingException {
-		Loan loan = loanRepository.findById(requestDto.id())
-			.orElseThrow(() -> new LoanNotFoundException(requestDto.id()));
+		//Loan loan = loanRepository.findById(requestDto.id()).orElseThrow(() -> new LoanNotFoundException(requestDto.id()));
 		BigDecimal withdrawnAmount = loan.withdrawAll();
 		AccountTransactionPayload withdrawalEventPayload = AccountTransactionPayload.buildLoanWithdrawal(loan,
 			withdrawnAmount, now);

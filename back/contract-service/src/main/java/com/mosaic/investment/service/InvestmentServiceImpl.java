@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mosaic.contract.repository.ContractRepository;
 import com.mosaic.contract.service.ContractService;
 import com.mosaic.core.exception.InternalSystemException;
 import com.mosaic.core.model.Contract;
@@ -24,8 +25,10 @@ import com.mosaic.investment.exception.InvestmentNotFoundException;
 import com.mosaic.investment.repository.InvestmentQueryRepository;
 import com.mosaic.investment.repository.InvestmentRepository;
 import com.mosaic.loan.event.message.LoanCreateTransactionPayload;
+import com.mosaic.loan.event.producer.LoanKafkaProducer;
 import com.mosaic.loan.exception.LoanNotFoundException;
 import com.mosaic.loan.repository.LoanRepository;
+import com.mosaic.loan.service.LoanTransactionServiceImpl;
 import com.mosaic.payload.AccountTransactionPayload;
 
 import jakarta.transaction.Transactional;
@@ -43,6 +46,8 @@ public class InvestmentServiceImpl implements InvestmentService {
 	private final InvestmentKafkaProducer investmentProducer;
 	private final ContractService contractService;
 	private final InvestmentTransactionalService investmentTransactionalService;
+	private final ContractRepository contractRepository;
+	private final LoanTransactionServiceImpl loanTransactionServiceImpl;
 
 	//입금
 	@Override
@@ -116,7 +121,7 @@ public class InvestmentServiceImpl implements InvestmentService {
 
 	@Override
 	@Transactional
-	public void searchLoanAptInvestor(LoanCreateTransactionPayload loanTransactionReq) {
+	public void searchLoanAptInvestor(LoanCreateTransactionPayload loanTransactionReq) throws JsonProcessingException {
 		// 1. 대출 조회
 		Loan loan = loanRepository.findByIdAndStatus(loanTransactionReq.loanId(), LoanStatus.PENDING)
 			.orElseThrow(() -> new LoanNotFoundException(loanTransactionReq.loanId()));
@@ -183,7 +188,8 @@ public class InvestmentServiceImpl implements InvestmentService {
 
 		loan.startLoan(accumulated);
 
-		//loanRepository.save(loan); // 하위 엔티티까지 전부 저장
+		contractRepository.saveAll(contracts); // 하위 엔티티까지 전부 저장
+		loanTransactionServiceImpl.publishLoanWithdrawalRequest(loan, loan.getCreatedAt(), Boolean.TRUE);
 		log.info("{} 대출 진행에 성공했습니다", loan.getId());
 	}
 }

@@ -43,14 +43,14 @@ public class LoanServiceImpl implements LoanService {
 	public void createLoan(CreateLoanRequestDto request, LocalDateTime now, Boolean isBot) throws
 		JsonProcessingException {
 		//Todo 내부 신용평가 확인후 예외처리(없음, 시간지남 등등)
-		//CreditEvaluationResponseDto creditEvaluationResponseDto = internalApiClient.getMemberCreditEvaluation(request);
+		CreditEvaluationResponseDto creditEvaluationResponseDto = internalApiClient.getMemberCreditEvaluation(request);
 		//예시용
-		CreditEvaluationResponseDto creditEvaluationResponseDto = CreditEvaluationResponseDto.builder()
+		/*CreditEvaluationResponseDto creditEvaluationResponseDto = CreditEvaluationResponseDto.builder()
 			.id(request.id())
 			.interestRate(800)
 			.defaultRate(80)
 			.expectYieldRate(800)
-			.build();
+			.build();*/
 		//if (!evaluateLoanRequest(creditEvaluationResponseDto)) return;
 		// 시간 어떻게 쓸지 확정 필요
 		Loan newLoan = Loan.requestOnlyFormLoan(request, creditEvaluationResponseDto, now);

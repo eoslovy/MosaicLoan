@@ -14,17 +14,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class InternalApiClient {
 
-	public WebClient getWebClient(InternalApiTarget target) {
-		return WebClient.builder()
-			.baseUrl(target.getBaseUrl())
-			.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-			.build();
+	public WebClient getWebClient() {
+		return WebClient.create();
 	}
 
 	public CreditEvaluationResponseDto getMemberCreditEvaluation(CreateLoanRequestDto creditLoanRequestDto) {
-		return getWebClient(InternalApiTarget.MEMBER)
+		return getWebClient()
 			.get()
-			.uri("/{id}/latest")
+			.uri("http://credit-service:8080/evaluations/recent")
+			.header("X-MEMBER-ID", String.valueOf(creditLoanRequestDto.id()))
 			.retrieve()
 			.bodyToMono(CreditEvaluationResponseDto.class)
 			.block();

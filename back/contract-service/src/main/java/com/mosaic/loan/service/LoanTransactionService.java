@@ -11,7 +11,7 @@ import jakarta.transaction.Transactional;
 
 public interface LoanTransactionService {
 	@Transactional
-	void publishLoanWithdrawalRequest(WithdrawalInvestmentDto requestDto, LocalDateTime now, Boolean isBot) throws
+	void publishLoanWithdrawalRequest(Loan loan, LocalDateTime now, Boolean isBot) throws
 		JsonProcessingException;
 
 	@Transactional
