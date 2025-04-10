@@ -14,7 +14,7 @@ import LoanModal from './LoanModal';
 interface Props {
   recentLoans: {
     dueDate: string;
-    principal: number;
+    outstandingAmount: number;
     interestRate: number;
     amount: number;
   }[];

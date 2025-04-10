@@ -28,8 +28,8 @@ const LoanOverview = ({
       : activeLoanAmount;
   const safeAvgRate =
     Number.isNaN(averageInterestRate) || averageInterestRate < 1
-      ? '0.00'
-      : (averageInterestRate / 100).toFixed(2);
+      ? '-'
+      : (averageInterestRate / 10000).toFixed(2);
 
   return (
     <section className={styles.wrapper}>
