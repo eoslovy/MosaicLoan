@@ -6,13 +6,20 @@ import MyAccountTransactionFilter from '@/components/my/MyAccountTransactionFilt
 import MyAccountTransactionList from '@/components/my/MyAccountTransactionList';
 import useAccountTransactionStore from '@/stores/useAccountTransactionStore';
 import { format } from 'date-fns';
+// import useAuthRedirect from '@/hooks/useAuthRedirect';
+// import useUserDelay from '@/hooks/useUserDelay';
 
 const MyAccountPage = () => {
+  // const { user, isReady } = useUserDelay(1000);
+  // useAuthRedirect('/');
+
   const fetchTransactions = useAccountTransactionStore(
     (state) => state.fetchTransactions,
   );
 
   useEffect(() => {
+    // if (!isReady) return;
+
     const today = new Date();
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(today.getMonth() - 1);
@@ -35,6 +42,8 @@ const MyAccountPage = () => {
       pageSize: 10,
     });
   }, [fetchTransactions]);
+
+  // if (!isReady) return null;
 
   return (
     <main>

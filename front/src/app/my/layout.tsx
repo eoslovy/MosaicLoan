@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 import MyPageSectionTabNav from '@/components/my/MyPageSectionTabNav';
-import withAuthProtection from '@/components/auth/withAuthProtection';
+// import withAuthProtection from '@/components/auth/withAuthProtection';
 
 const tabPaths = ['/my/myInfo', '/my/myAccount'];
 
@@ -27,4 +27,5 @@ const MyPageLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default withAuthProtection(MyPageLayout);
+// export default withAuthProtection(MyPageLayout);
+export default MyPageLayout;

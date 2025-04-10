@@ -12,6 +12,7 @@ import type {
   ProfitItem,
 } from '@/types/pages';
 import request from '@/service/apis/request';
+import useAuthRedirect from '@/hooks/useAuthRedirect';
 
 // 새로운 API 응답 타입 정의
 interface SummaryResponse {
@@ -47,6 +48,16 @@ const OverviewPage = () => {
   const [investmentList, setInvestmentList] = useState<InvestmentItem[]>([]);
   const [profitHistory, setProfitHistory] = useState<ProfitItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // const router = useRouter();
+  //   const { user, isFetched } = useUser();
+
+  //   useEffect(() => {
+  //     if (isFetched && !user) {
+  //       router.push('/investor/overview');
+  //     }
+  //   }, [user, isFetched]);
+  useAuthRedirect('/investor/overview');
 
   useEffect(() => {
     const fetchAllData = async () => {

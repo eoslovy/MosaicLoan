@@ -15,25 +15,27 @@ const Nav = () => {
   const { user, isFetched } = useUser();
   const router = useRouter();
 
-  // 1초 대기 상태
   const [isDelayDone, setIsDelayDone] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsDelayDone(true);
-    }, 2000);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, []);
 
   if (!isFetched || !isDelayDone) {
-    return null; // 사용자 정보 로딩 전이거나 1초 대기 중일 때
+    return null;
+
+    // if (!isFetched) {
+    //   return null;
   }
 
-  const maskName = (name: string) => {
-    if (name.length <= 2) return `${name[0]} *`;
-    return `${name[0]} * ${name[name.length - 1]}`;
-  };
+  // const maskName = (name: string) => {
+  //   if (name.length <= 2) return `${name[0]} *`;
+  //   return `${name[0]} * ${name[name.length - 1]}`;
+  // };
 
   const handleLogout = async () => {
     try {
@@ -93,7 +95,7 @@ const Nav = () => {
           <>
             <Button
               label={{
-                text: `${maskName(user.username)}님`,
+                text: `${user.username}님`,
                 size: 'sm',
                 color: 'blue',
               }}
