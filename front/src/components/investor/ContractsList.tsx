@@ -171,13 +171,13 @@ const ContractsList = ({
       onSort={handleSort}
     />,
     '거래 금액',
-    <SortableTableHeader
-      key='interestRate'
-      label='금리'
-      sortKey='interestRate'
-      sortStates={sortStates}
-      onSort={handleSort}
-    />,
+    // <SortableTableHeader
+    //   key='interestRate'
+    //   label='금리'
+    //   sortKey='interestRate'
+    //   sortStates={sortStates}
+    //   onSort={handleSort}
+    // />,
     '분류',
   ];
 
