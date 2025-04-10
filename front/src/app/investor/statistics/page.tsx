@@ -45,11 +45,28 @@ const StatisticsPage = () => {
   useEffect(() => {
     const registerChart = async () => {
       try {
-        const { Chart, LineController, BarController, CategoryScale, LinearScale, PointElement, LineElement, BarElement } = await import('chart.js');
-        Chart.register(LineController, BarController, CategoryScale, LinearScale, PointElement, LineElement, BarElement);
+        const {
+          Chart,
+          LineController,
+          BarController,
+          CategoryScale,
+          LinearScale,
+          PointElement,
+          LineElement,
+          BarElement,
+        } = await import('chart.js');
+        Chart.register(
+          LineController,
+          BarController,
+          CategoryScale,
+          LinearScale,
+          PointElement,
+          LineElement,
+          BarElement,
+        );
         setChartRegistered(true);
       } catch (error) {
-        console.error("차트 등록 중 오류 발생:", error);
+        console.error('차트 등록 중 오류 발생:', error);
       }
     };
     registerChart();
@@ -88,7 +105,9 @@ const StatisticsPage = () => {
               <BarLineChart
                 labels={data.byAge.map((i) => i.group)}
                 rawBarData={{ 거래건수: data.byAge.map((i) => i.count ?? 0) }}
-                rawLineData={data.byAge.map((i) => typeof i.ratio === 'number' ? i.ratio : 0)}
+                rawLineData={data.byAge.map((i) =>
+                  typeof i.ratio === 'number' ? i.ratio : 0,
+                )}
                 barCategories={['거래건수']}
                 lineLabel='비율 (%)'
               />
@@ -115,7 +134,9 @@ const StatisticsPage = () => {
                 rawBarData={{
                   거래건수: data.byFamilyStatus.map((i) => i.count ?? 0),
                 }}
-                rawLineData={data.byFamilyStatus.map((i) => typeof i.ratio === 'number' ? i.ratio : 0)}
+                rawLineData={data.byFamilyStatus.map((i) =>
+                  typeof i.ratio === 'number' ? i.ratio : 0,
+                )}
                 barCategories={['거래건수']}
                 lineLabel='비율 (%)'
               />
@@ -139,8 +160,12 @@ const StatisticsPage = () => {
             <div className={styles.chartColumn}>
               <BarLineChart
                 labels={data.byResidence.map((i) => i.group)}
-                rawBarData={{ 거래건수: data.byResidence.map((i) => i.count ?? 0) }}
-                rawLineData={data.byResidence.map((i) => typeof i.ratio === 'number' ? i.ratio : 0)}
+                rawBarData={{
+                  거래건수: data.byResidence.map((i) => i.count ?? 0),
+                }}
+                rawLineData={data.byResidence.map((i) =>
+                  typeof i.ratio === 'number' ? i.ratio : 0,
+                )}
                 barCategories={['거래건수']}
                 lineLabel='비율 (%)'
               />
