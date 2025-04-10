@@ -10,6 +10,7 @@ import request from '@/service/apis/request';
 import useAuthRedirect from '@/hooks/useAuthRedirect';
 import type {
   InvestOverview,
+  ContractResponse,
   Transaction,
   ApiResponseData,
 } from '@/types/pages';
@@ -29,7 +30,7 @@ interface SortState {
 const ContractsPage = () => {
   useAuthRedirect('/borrower'); // 로그인 안 된 경우 리디렉션 경로
 
-  const [summaryData, setSummaryData] = useState<InvestOverview | null>(null);
+  const [responseData, setResponseData] = useState<ContractResponse | null>(null);
   const [isLoadingSummary, setIsLoadingSummary] = useState(true);
   const [isSummaryError, setIsSummaryError] = useState(false);
 
@@ -55,8 +56,10 @@ const ContractsPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await fetchContractSummary();
-        setSummaryData(result);
+        const result = await request.GET<ContractResponse>(
+          '/contract/investments'
+        );
+        setResponseData(result);
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
           console.error('채권 요약 정보 요청 실패', error);
@@ -153,13 +156,13 @@ const ContractsPage = () => {
     return <EmptyState message='채권 정보를 불러오는 중입니다' />;
   }
 
-  if (isSummaryError || !summaryData) {
+  if (isSummaryError || !responseData) {
     return <EmptyState message='채권 요약 정보를 불러올 수 없습니다.' />;
   }
 
   return (
     <>
-      <TotalContractsOverview data={summaryData} />
+      <TotalContractsOverview data={responseData.investOverview} />
       <ContractsFilter onSearch={handleSearch} />
       <ContractsList
         transactions={transactions}
