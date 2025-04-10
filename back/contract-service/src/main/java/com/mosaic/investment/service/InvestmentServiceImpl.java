@@ -19,7 +19,6 @@ import com.mosaic.core.model.Loan;
 import com.mosaic.core.model.status.ContractStatus;
 import com.mosaic.core.model.status.LoanStatus;
 import com.mosaic.investment.dto.RequestInvestmentDto;
-import com.mosaic.investment.dto.WithdrawalInvestmentDto;
 import com.mosaic.investment.event.producer.InvestmentKafkaProducer;
 import com.mosaic.investment.exception.InvestmentNotFoundException;
 import com.mosaic.investment.repository.InvestmentQueryRepository;
@@ -43,6 +42,7 @@ public class InvestmentServiceImpl implements InvestmentService {
 	private final LoanRepository loanRepository;
 	private final InvestmentKafkaProducer investmentProducer;
 	private final ContractService contractService;
+	private final InvestmentTransactionalService investmentTransactionalService;
 
 	//입금
 	@Override
@@ -104,20 +104,6 @@ public class InvestmentServiceImpl implements InvestmentService {
 	}
 
 	//출금
-	@Override
-	@Transactional
-	public void publishInvestmentWithdrawal(WithdrawalInvestmentDto requestDto, LocalDateTime now, Boolean isBot) throws
-		JsonProcessingException {
-		Investment investment = investmentRepository.findById(requestDto.id())
-			.orElseThrow(() -> new InvestmentNotFoundException(requestDto.id()));
-
-		BigDecimal withdrawnAmount = investment.withdrawAll();
-		investment.finishInvestment();
-		AccountTransactionPayload investWithdrawalPayload = AccountTransactionPayload.buildInvestWithdrawal(investment,
-			withdrawnAmount, now);
-
-		investmentProducer.sendInvestmentWithdrawalRequest(investWithdrawalPayload);
-	}
 
 	@Override
 	@Transactional

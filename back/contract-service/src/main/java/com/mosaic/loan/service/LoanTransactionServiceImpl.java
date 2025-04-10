@@ -146,5 +146,4 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
 			.setScale(5, RoundingMode.DOWN);
 	}
 
-
 }

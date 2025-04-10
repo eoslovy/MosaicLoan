@@ -9,8 +9,11 @@ import com.mosaic.core.model.ContractTransaction;
 import com.mosaic.core.model.Investment;
 import com.mosaic.core.model.Loan;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class ContractServiceImpl implements ContractService {
+	@Transactional
 	@Override
 	public Contract liquidateContract(Contract contract, LocalDateTime now) {
 		if (contract == null) {

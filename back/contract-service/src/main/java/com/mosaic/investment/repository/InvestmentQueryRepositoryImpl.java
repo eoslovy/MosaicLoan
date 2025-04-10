@@ -16,11 +16,15 @@ import com.mosaic.core.model.Loan;
 import com.mosaic.core.model.QContract;
 import com.mosaic.core.model.QInvestment;
 import com.mosaic.core.model.status.ContractStatus;
+import com.mosaic.investment.dto.InvestmentListResponse;
+import com.mosaic.investment.dto.InvestmentListResponse.InvestmentInfo;
 import com.mosaic.investment.dto.InvestmentOverviewDto;
+import com.mosaic.investment.dto.InvestmentSummaryResponse;
 import com.mosaic.investment.dto.InvestmentTransactionResponse;
 import com.mosaic.investment.dto.InvestmentTransactionSearchRequest;
 import com.mosaic.investment.dto.InvestmentWithStatusDto;
-import com.mosaic.investment.dto.InvestmentSummaryResponse;
+import com.mosaic.investment.dto.ProfitHistoryResponse;
+import com.mosaic.investment.dto.ProfitHistoryResponse.ProfitInfo;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -29,11 +33,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import com.mosaic.investment.dto.InvestmentListResponse;
-import com.mosaic.investment.dto.InvestmentListResponse.InvestmentInfo;
-import com.mosaic.investment.dto.ProfitHistoryResponse;
-import com.mosaic.investment.dto.ProfitHistoryResponse.ProfitInfo;
 
 @Slf4j
 @Repository
@@ -287,7 +286,7 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 			.join(contract.investment, investment)
 			.where(conditions)
 			.orderBy(orders.toArray(new OrderSpecifier[0]))
-			.offset(page * pageSize)
+			.offset((long)page * pageSize)
 			.limit(pageSize)
 			.fetch();
 
@@ -306,43 +305,43 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 	@Override
 	public InvestmentSummaryResponse getInvestmentSummary(Integer memberId) {
 		QInvestment investment = QInvestment.investment;
-		
+
 		// 현재 날짜 기준 만기일이 지난 투자만 조회
 		LocalDate now = LocalDate.now();
 		BooleanExpression dueDateCondition = investment.dueDate.lt(now);
 		BooleanExpression memberCondition = investment.accountId.eq(memberId);
-		
+
 		// 총 투자 금액 (principal 합계)
 		BigDecimal totalInvestmentAmount = queryFactory
 			.select(investment.principal.sum())
 			.from(investment)
 			.where(memberCondition.and(dueDateCondition))
 			.fetchOne();
-		
+
 		if (totalInvestmentAmount == null) {
 			totalInvestmentAmount = BigDecimal.ZERO;
 		}
-		
+
 		// 투자 건수
 		long investmentCount = queryFactory
 			.select(investment.count())
 			.from(investment)
 			.where(memberCondition.and(dueDateCondition))
 			.fetchOne();
-		
+
 		// 투자별 수익금 (principal * current_rate / 10000) 계산을 위한 모든 투자 데이터 조회
 		List<Tuple> investments = queryFactory
 			.select(investment.principal, investment.currentRate)
 			.from(investment)
 			.where(memberCondition.and(dueDateCondition))
 			.fetch();
-		
+
 		// 누적 수익금 계산
 		BigDecimal totalProfitAmount = BigDecimal.ZERO;
 		for (Tuple t : investments) {
 			BigDecimal principal = t.get(investment.principal);
 			Integer currentRate = t.get(investment.currentRate);
-			
+
 			if (principal != null && currentRate != null) {
 				// 만분율이므로 10000으로 나눔
 				BigDecimal profitRate = BigDecimal.valueOf(currentRate)
@@ -351,7 +350,7 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 				totalProfitAmount = totalProfitAmount.add(profit);
 			}
 		}
-		
+
 		// 평균 수익률 계산 (퍼센트로 표시)
 		double averageProfitRate = 0.0;
 		if (totalInvestmentAmount.compareTo(BigDecimal.ZERO) > 0) {
@@ -360,7 +359,7 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 				.multiply(BigDecimal.valueOf(100)) // 100을 곱해 퍼센트로 변환
 				.doubleValue();
 		}
-		
+
 		return InvestmentSummaryResponse.builder()
 			.totalInvestmentAmount(totalInvestmentAmount)
 			.totalProfitAmount(totalProfitAmount)
@@ -372,9 +371,9 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 	@Override
 	public InvestmentListResponse getRecentInvestments(Integer memberId) {
 		QInvestment investment = QInvestment.investment;
-		
+
 		BooleanExpression memberCondition = investment.accountId.eq(memberId);
-		
+
 		// 해당 회원의 투자 목록 조회 (최신순 10개)
 		List<Investment> investments = queryFactory
 			.selectFrom(investment)
@@ -382,7 +381,7 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 			.orderBy(investment.createdAt.desc())
 			.limit(10)
 			.fetch();
-		
+
 		// 투자 정보를 DTO로 변환
 		List<InvestmentInfo> investmentInfoList = investments.stream()
 			.map(inv -> {
@@ -391,10 +390,10 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 				if (inv.getTargetRate() != null) {
 					ratePercent = inv.getTargetRate() / 100.0; // 만분율을 퍼센트로 변환 (800 -> 8.0)
 				}
-				
+
 				// 상태 값 한글로 변환
 				String statusText = getStatusText(inv.getStatus());
-				
+
 				return InvestmentInfo.builder()
 					.investmentId(inv.getId())
 					.investmentAmount(inv.getPrincipal())
@@ -404,7 +403,7 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 					.build();
 			})
 			.toList();
-		
+
 		return InvestmentListResponse.builder()
 			.investmentList(investmentInfoList)
 			.build();
@@ -415,7 +414,7 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 		if (status == null) {
 			return "알 수 없음";
 		}
-		
+
 		return switch (status) {
 			case REQUESTED -> "신청됨";
 			case ACTIVE -> "상환중";
@@ -426,20 +425,20 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 	@Override
 	public ProfitHistoryResponse getProfitHistory(Integer memberId) {
 		QInvestment investment = QInvestment.investment;
-		
+
 		LocalDate now = LocalDate.now();
 		BooleanExpression memberCondition = investment.accountId.eq(memberId);
 		BooleanExpression dueDateCondition = investment.dueDate.lt(now);
-		
+
 		// 만기일이 지난 투자 조회
 		List<Investment> investments = queryFactory
 			.selectFrom(investment)
 			.where(memberCondition.and(dueDateCondition))
 			.orderBy(investment.dueDate.desc())
 			.fetch();
-		
+
 		List<ProfitInfo> allProfits = new ArrayList<>();
-		
+
 		// 각 투자에 대한 수익 정보 생성
 		for (Investment inv : investments) {
 			if (inv.getCurrentRate() != null && inv.getPrincipal() != null && inv.getDueDate() != null) {
@@ -458,11 +457,11 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 						.date(inv.getDueDate())
 						.amount(inv.getPrincipal())
 						.build());
-					
+
 					// 2. 이자수익
 					BigDecimal interestAmount = inv.getPrincipal()
 						.multiply(BigDecimal.valueOf(inv.getCurrentRate() / 10000.0));
-					
+
 					allProfits.add(ProfitInfo.builder()
 						.title("이자수익")
 						.date(inv.getDueDate())
@@ -471,13 +470,13 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 				}
 			}
 		}
-		
+
 		// 날짜 기준 내림차순 정렬 후 최대 10개만 선택
 		List<ProfitInfo> limitedProfits = allProfits.stream()
 			.sorted(Comparator.comparing(ProfitInfo::date).reversed())
 			.limit(10)
 			.toList();
-		
+
 		return ProfitHistoryResponse.builder()
 			.profitHistory(limitedProfits)
 			.build();

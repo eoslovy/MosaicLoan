@@ -108,9 +108,11 @@ public class Loan {
 		}
 	}
 
-	public void setStatusComplete() { this.status = LoanStatus.COMPLETED;}
+	public void setStatusComplete() {
+		this.status = LoanStatus.COMPLETED;
+	}
 
 	public void addAmount(AccountTransactionPayload accountTransactionComplete) {
-		this.amount= this.amount.add(accountTransactionComplete.amount());
+		this.amount = this.amount.add(accountTransactionComplete.amount());
 	}
 }

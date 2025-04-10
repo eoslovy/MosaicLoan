@@ -8,14 +8,15 @@ import lombok.Builder;
 
 @Builder
 public record LoanTransactionsResponse(
-    List<TransactionInfo> transactions
+	List<TransactionInfo> transactions
 ) {
-    @Builder
-    public record TransactionInfo(
-        Integer contractId,
-        Integer loanId,
-        String amount,
-        String createdAt,
-        ContractStatus status
-    ) {}
+	@Builder
+	public record TransactionInfo(
+		Integer contractId,
+		Integer loanId,
+		String amount,
+		String createdAt,
+		ContractStatus status
+	) {
+	}
 } 

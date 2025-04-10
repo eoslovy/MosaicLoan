@@ -1,18 +1,17 @@
 package com.mosaic.investment.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.core.exception.InternalSystemException;
 import com.mosaic.core.model.Investment;
 import com.mosaic.investment.dto.RequestInvestmentDto;
-import com.mosaic.investment.dto.WithdrawalInvestmentDto;
 import com.mosaic.loan.event.message.LoanCreateTransactionPayload;
 import com.mosaic.payload.AccountTransactionPayload;
 
 public interface InvestmentService {
-	void publishInvestmentRequest(RequestInvestmentDto requestDto, LocalDateTime now, Integer memberId, Boolean isBot) throws
+	void publishInvestmentRequest(RequestInvestmentDto requestDto, LocalDateTime now, Integer memberId,
+		Boolean isBot) throws
 		InternalSystemException,
 		JsonProcessingException;
 
@@ -21,8 +20,6 @@ public interface InvestmentService {
 	void executeCompleteInvestmentByDueDate(LocalDateTime now, Boolean isBot) throws JsonProcessingException;
 
 	Boolean finishActiveInvestment(Investment investment, LocalDateTime now, Boolean isBot);
-
-	void publishInvestmentWithdrawal(WithdrawalInvestmentDto requestDto, LocalDateTime now,  Boolean isBot) throws JsonProcessingException;
 
 	void rollbackInvestmentWithdrawal(AccountTransactionPayload payload);
 

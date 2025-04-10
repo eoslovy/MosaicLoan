@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 
 import com.mosaic.contract.service.ContractService;
-import com.mosaic.loan.repository.LoanRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +16,7 @@ public class LoanBatchService {
 
 	private final LoanService loanService;
 	private final ContractService contractService;
-	
+
 	//22시 utc/seoul 트리거
 	public void runSchedulesAt21(LocalDateTime time, Boolean isBot) {
 		// loan 도메인의 일일 정산 로직 등 실행
@@ -31,6 +30,7 @@ public class LoanBatchService {
 
 		log.info("[LoanBatch] 실행됨 time: {} isBot: {}", time, isBot);
 	}
+
 	public void renSchedulesAt22(LocalDateTime time, Boolean isBot) throws Exception {
 		try {
 			loanService.executeDueLoanRepayments(time, isBot);

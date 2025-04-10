@@ -25,6 +25,14 @@ public class TimeUtil {
 	@Lazy
 	private final BotTimeTriggerManager botTimeTriggerManager;
 
+	public static LocalDate dueDate(LocalDate baseDate, int weeks) {
+		return baseDate.plusWeeks(weeks);
+	}
+
+	public static LocalDate dueDate(LocalDateTime baseTime, int weeks) {
+		return baseTime.toLocalDate().plusWeeks(weeks);
+	}
+
 	public LocalDateTime now(boolean isBot) {
 		if (!isBot) {
 			return LocalDateTime.now(ZONE_ID);
@@ -60,14 +68,6 @@ public class TimeUtil {
 		}
 
 		return LocalDateTime.ofInstant(Instant.ofEpochMilli(updated), ZONE_ID);
-	}
-
-	public static LocalDate dueDate(LocalDate baseDate, int weeks) {
-		return baseDate.plusWeeks(weeks);
-	}
-
-	public static LocalDate dueDate(LocalDateTime baseTime, int weeks) {
-		return baseTime.toLocalDate().plusWeeks(weeks);
 	}
 }
 

@@ -4,14 +4,11 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.core.model.Loan;
-import com.mosaic.investment.dto.WithdrawalInvestmentDto;
 import com.mosaic.loan.dto.CreateLoanRequestDto;
 import com.mosaic.payload.AccountTransactionPayload;
 
-import jakarta.transaction.Transactional;
-
 public interface LoanService {
-	public void createLoan(CreateLoanRequestDto request, LocalDateTime now, Boolean isBot) throws
+	void createLoan(CreateLoanRequestDto request, LocalDateTime now, Boolean isBot) throws
 		JsonProcessingException;
 
 	void manageInterestOfDelinquentLoans(LocalDateTime now, Boolean isBot);
