@@ -27,6 +27,14 @@ export interface LoanSearchResponse {
   };
 }
 
+const loanStatusMap: Record<string, string> = {
+  상환중: 'IN_PROGRESS',
+  상환완료: 'COMPLETED',
+  대출신청: 'PENDING',
+  일부연체: 'PARTIALLY_DELINQUENT',
+  연체: 'DELINQUENT',
+};
+
 const BorrowerPage = () => {
   const [loanData, setLoanData] = useState<LoanOverviewResponse | null>(null);
   const [isLoadingLoanData, setIsLoadingLoanData] = useState(true);
@@ -50,9 +58,10 @@ const BorrowerPage = () => {
     useState<LoanSearchParams>({
       startDate: format(new Date(), 'yyyy-MM-dd'),
       endDate: format(new Date(), 'yyyy-MM-dd'),
-      types: ['상환중', '상환완료'],
+      types: ['상환중', '상환완료', '대출신청', '일부연체', '연체'].map(
+        (type) => loanStatusMap[type],
+      ),
     });
-
   const [sortState, setSortState] = useState<
     { field: string; order: string }[]
   >([]);
@@ -91,6 +100,7 @@ const BorrowerPage = () => {
         '/contract/loans/search',
         {
           ...params,
+          types: params.types?.map((type) => loanStatusMap[type] ?? type),
           page: params.page || 1,
           pageSize: params.pageSize || 10,
           sort: mergedSort,
