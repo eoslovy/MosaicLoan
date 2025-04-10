@@ -90,12 +90,6 @@ const LoanDetailSlider = ({ recentLoans }: Props) => {
           </div>
         )}
       </div>
-
-      {hasLoans && (
-        <div className={styles.sliderfooter}>
-          <Text text='TOP 5 대출 현황' size='sm' weight='light' color='gray' />
-        </div>
-      )}
     </div>
   );
 };
