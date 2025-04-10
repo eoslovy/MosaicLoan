@@ -407,15 +407,12 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 					ratePercent = inv.getTargetRate() / 100.0; // 만분율을 퍼센트로 변환 (800 -> 8.0)
 				}
 
-				// 상태 값 한글로 변환
-				String statusText = getStatusText(inv.getStatus());
-
 				return InvestmentInfo.builder()
 					.investmentId(inv.getId())
 					.investmentAmount(inv.getPrincipal())
 					.rate(ratePercent)
 					.dueDate(inv.getDueDate())
-					.status(statusText)
+					.status(String.valueOf(inv.getStatus()))
 					.build();
 			})
 			.toList();
@@ -423,19 +420,6 @@ public class InvestmentQueryRepositoryImpl implements InvestmentQueryRepository 
 		return InvestmentListResponse.builder()
 			.investmentList(investmentInfoList)
 			.build();
-	}
-
-	// 투자 상태를 한글로 변환하는 메서드
-	private String getStatusText(com.mosaic.core.model.status.InvestmentStatus status) {
-		if (status == null) {
-			return "알 수 없음";
-		}
-
-		return switch (status) {
-			case REQUESTED -> "신청됨";
-			case ACTIVE -> "상환중";
-			case COMPLETED -> "상환완료";
-		};
 	}
 
 	@Override
