@@ -73,7 +73,7 @@ const BorrowerPage = () => {
 
     try {
       const response = await request.POST<LoanSearchResponse>(
-        '/api/contract/loans/transactions/search',
+        '/contract/loans/transactions/search',
         {
           ...params,
           page: params.page || 1,
