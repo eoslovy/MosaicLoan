@@ -73,8 +73,6 @@ public class LoanQueryRepositoryImpl implements LoanQueryRepository {
 					case "createdAt" ->
 						orders.add(sort.order().equals("asc") ? loan.createdAt.asc() : loan.createdAt.desc());
 					case "dueDate" -> orders.add(sort.order().equals("asc") ? loan.dueDate.asc() : loan.dueDate.desc());
-					case "interestRate" ->
-						orders.add(sort.order().equals("asc") ? interestRateExpr.asc() : interestRateExpr.desc());
 				}
 			}
 		}
