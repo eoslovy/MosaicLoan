@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 
@@ -29,7 +31,8 @@ public class CalculationServiceImpl implements CalculationService {
 	private final EconomySentimentRepository economySentimentRepository;
 
 	public CreditEvaluation createAndSaveEvaluation(Integer caseId, Integer memberId, Integer defaultRate,
-		Integer interestRate, Integer expectedYield, Integer maxLoanLimit, EvaluationStatus status, LocalDateTime now) {
+		Integer interestRate, Integer expectedYield, Integer maxLoanLimit, EvaluationStatus status, LocalDateTime now,
+		Boolean defaultFlag) {
 		CreditEvaluation evaluation = CreditEvaluation.builder()
 			.memberId(memberId)
 			.defaultRate(defaultRate)
@@ -39,6 +42,7 @@ public class CalculationServiceImpl implements CalculationService {
 			.createdAt(now)
 			.caseId(caseId)
 			.status(status)
+			.defaultFlag(defaultFlag)
 			.build();
 
 		return evaluationRepository.save(evaluation);
@@ -69,7 +73,19 @@ public class CalculationServiceImpl implements CalculationService {
 		// Redis에서 데이터 가져오기rm
 		String caseIdStr = String.valueOf(caseId);
 		EvaluationResultDto demographicData = evaluationRedisService.getPayload(caseIdStr, "demographic");
+		EvaluationResultDto behaviorData = evaluationRedisService.getPayload(caseIdStr, "behavior");
 		EvaluationResultDto creditData = evaluationRedisService.getPayload(caseIdStr, "credit");
+		EvaluationResultDto timeseriesData = evaluationRedisService.getPayload(caseIdStr, "timeseries");
+
+		Boolean defaultFlag = Stream.of(demographicData, creditData, behaviorData, timeseriesData)
+			.map(EvaluationResultDto::getPayload)       // Map<String, Object>
+			.filter(Objects::nonNull)                   // payload != null
+			.map(map -> map.get("target"))              // target 값 추출
+			.filter(Objects::nonNull)                   // target != null
+			.map(Object::toString)                      // "0" 또는 "1" 문자열로 변환
+			.map(val -> val.equals("1"))                // Boolean으로 매핑
+			.findFirst()
+			.orElseThrow(() -> new IllegalStateException("target이 있는 평가 데이터가 없습니다."));
 
 		LocalDateTime createdAt = demographicData.getCreatedAt();
 		// 전날의 경제 심리지수를 가져와 이자율에 반영
@@ -87,6 +103,14 @@ public class CalculationServiceImpl implements CalculationService {
 		Integer interestRate = (int)(riskFreeRate * 10000) + assignedInterest.add(BigDecimal.valueOf(riskFreeRate))
 			.multiply(BigDecimal.valueOf(10000))
 			.intValue();
+
+		if (interestRate > 2000) {
+			log.info("DSR 계산: caseId={}, memberId={}", caseId, memberId);
+
+			return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, expectedYield, 0,
+				EvaluationStatus.DECLINED, createdAt, defaultFlag);
+		}
+
 		// DSR 계산이 가능한 경우에만 수행
 		if (demographicData.getPayload() != null && creditData.getPayload() != null) {
 			Map<String, Object> demographicPayload = demographicData.getPayload();
@@ -109,13 +133,13 @@ public class CalculationServiceImpl implements CalculationService {
 				if (dsr > 0.4) {
 
 					return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, 0, 0,
-						EvaluationStatus.DSR_EXCEEDED, createdAt);
+						EvaluationStatus.DSR_EXCEEDED, createdAt, defaultFlag);
 				}
 
 				// DSR에 따른 대출 한도 계산 (남은 DSR 여유분 * 월소득 * 12)
 				int maxLoanLimit = (int)((0.4 - dsr) * monthlyIncome * 12);
 				return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, expectedYield, maxLoanLimit,
-					EvaluationStatus.APPROVED, createdAt);
+					EvaluationStatus.APPROVED, createdAt, defaultFlag);
 			}
 		}
 
@@ -123,6 +147,6 @@ public class CalculationServiceImpl implements CalculationService {
 		log.info("DSR 계산 불가: caseId={}, memberId={}, 기본 대출 한도 적용", caseId, memberId);
 		// 이 경우 시간 못줌
 		return createAndSaveEvaluation(caseId, memberId, defaultRate, interestRate, expectedYield, 1000000,
-			EvaluationStatus.APPROVED, createdAt);
+			EvaluationStatus.APPROVED, createdAt, defaultFlag);
 	}
 }

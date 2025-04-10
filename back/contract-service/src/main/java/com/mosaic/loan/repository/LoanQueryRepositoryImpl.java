@@ -21,6 +21,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -35,25 +36,35 @@ public class LoanQueryRepositoryImpl implements LoanQueryRepository {
 	@Override
 	public LoanSearchResponse searchLoans(LoanSearchRequest request, Integer memberId) {
 		QLoan loan = QLoan.loan;
-
-		// 🔍 Contract 서브쿼리 별칭
 		QContract subContract = new QContract("subContract");
 
-		// 기본 조건 설정 (회원 ID로 필터링)
+		// 기본 조건
 		BooleanExpression conditions = loan.accountId.eq(memberId);
-
 		if (request.startDate() != null) {
 			conditions = conditions.and(loan.createdAt.goe(request.startDate().atStartOfDay()));
 		}
 		if (request.endDate() != null) {
 			conditions = conditions.and(loan.createdAt.loe(request.endDate().atTime(23, 59, 59)));
 		}
-
 		if (request.types() != null && !request.types().isEmpty()) {
 			conditions = conditions.and(loan.status.in(request.types()));
 		}
 
-		// 🔄 정렬 조건 설정
+		// 이자율 계산 Expression (CASE WHEN + 서브쿼리)
+		StringExpression interestRateExpr = Expressions.stringTemplate(
+			"case when {0} = {1} then {2} else cast(({3}) as string) end",
+			loan.status.stringValue(),
+			Expressions.constant("PENDING"),
+			Expressions.constant("0"),
+			Expressions.stringTemplate("({0})",
+				JPAExpressions
+					.select(subContract.interestRate.max())
+					.from(subContract)
+					.where(subContract.loan.eq(loan))
+			)
+		).as("interestRate");
+
+		// 정렬 조건
 		List<OrderSpecifier<?>> orders = new ArrayList<>();
 		if (request.sort() != null) {
 			for (LoanSearchRequest.SortCriteria sort : request.sort()) {
@@ -62,60 +73,36 @@ public class LoanQueryRepositoryImpl implements LoanQueryRepository {
 					case "createdAt" ->
 						orders.add(sort.order().equals("asc") ? loan.createdAt.asc() : loan.createdAt.desc());
 					case "dueDate" -> orders.add(sort.order().equals("asc") ? loan.dueDate.asc() : loan.dueDate.desc());
-					case "interestRate" -> orders.add(sort.order().equals("asc") ?
-							Expressions.stringTemplate(
-								"case when {0} = {1} then {2} else {3} end",
-								loan.status,
-								Expressions.constant("PENDING"),
-								Expressions.constant("0"),
-								// 서브쿼리 사용했기 때문에 join한 contract의 interest_rate 사용
-								subContract.interestRate.stringValue()
-							).asc()
-							: Expressions.stringTemplate(
-							"case when {0} = {1} then {2} else {3} end",
-							loan.status,
-							Expressions.constant("PENDING"),
-							Expressions.constant("0"),
-							subContract.interestRate.stringValue()
-						).desc()
-					);
+					case "interestRate" ->
+						orders.add(sort.order().equals("asc") ? interestRateExpr.asc() : interestRateExpr.desc());
 				}
 			}
 		}
 		if (orders.isEmpty()) {
-			orders.add(loan.createdAt.desc()); // 기본 정렬
+			orders.add(loan.createdAt.desc());
 		}
 
-		// 전체 아이템 수 조회
+		// 전체 개수
 		long totalCount = queryFactory
 			.select(loan.count())
 			.from(loan)
 			.where(conditions)
 			.fetchOne();
 
-		int page = request.page();
-		int pageSize = request.pageSize();
+		int page = request.safePage();
+		int pageSize = request.safePageSize();
 
-		List<LoanSearchResponse.LoanInfo> loans = queryFactory
-			.select(Projections.constructor(LoanSearchResponse.LoanInfo.class,
-				loan.id,
+		// ✅ Tuple 조회
+		List<Tuple> results = queryFactory
+			.select(
 				loan.id,
 				loan.amount.stringValue(),
 				loan.requestAmount.stringValue(),
-				// PENDING 상태면 0, 아니면 서브쿼리 이자율
-				Expressions.stringTemplate(
-					"case when {0} = {1} then {2} else {3} end",
-					loan.status,
-					Expressions.constant("PENDING"),
-					Expressions.constant("0"),
-					JPAExpressions
-						.select(subContract.interestRate.max())
-						.from(subContract)
-						.where(subContract.loan.eq(loan))),
+				interestRateExpr,
 				loan.dueDate.stringValue(),
 				loan.createdAt.stringValue(),
 				loan.status.stringValue()
-			))
+			)
 			.from(loan)
 			.where(conditions)
 			.orderBy(orders.toArray(new OrderSpecifier[0]))
@@ -123,6 +110,20 @@ public class LoanQueryRepositoryImpl implements LoanQueryRepository {
 			.limit(pageSize)
 			.fetch();
 
+		// ✅ Tuple → DTO 매핑
+		List<LoanSearchResponse.LoanInfo> loans = results.stream()
+			.map(tuple -> new LoanSearchResponse.LoanInfo(
+				tuple.get(loan.id),
+				tuple.get(loan.amount.stringValue()),
+				tuple.get(loan.requestAmount.stringValue()),
+				tuple.get(interestRateExpr),
+				tuple.get(loan.dueDate.stringValue()),
+				tuple.get(loan.createdAt.stringValue()),
+				tuple.get(loan.status.stringValue())
+			))
+			.toList();
+
+		// 응답 생성
 		return LoanSearchResponse.builder()
 			.pagination(LoanSearchResponse.PaginationInfo.builder()
 				.page(page)

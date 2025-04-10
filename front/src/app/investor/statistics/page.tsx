@@ -39,22 +39,41 @@ const getIndustryLabel = (code: number) => {
 const StatisticsPage = () => {
   const { user, isFetched } = useUser();
   const [seedUserId, setSeedUserId] = useState<number>(42);
+  const [chartRegistered, setChartRegistered] = useState(false);
+
+  // Chart.js 등록을 클라이언트 사이드에서만 실행
+  useEffect(() => {
+    const registerChart = async () => {
+      try {
+        const { Chart, LineController, BarController, CategoryScale, LinearScale, PointElement, LineElement, BarElement } = await import('chart.js');
+        Chart.register(LineController, BarController, CategoryScale, LinearScale, PointElement, LineElement, BarElement);
+        setChartRegistered(true);
+      } catch (error) {
+        console.error("차트 등록 중 오류 발생:", error);
+      }
+    };
+    registerChart();
+  }, []);
 
   useEffect(() => {
     if (isFetched && user?.id) {
       setSeedUserId(user.id);
     }
   }, [user, isFetched]);
-  
+
   const { data, isLoading } = useRandomData({
     userId: seedUserId,
-    refreshInterval: null
+    refreshInterval: null,
   });
 
   useAuthRedirect('/investor/statistics');
 
-  if (isLoading || !isFetched) return <div className={styles.statusText}>로딩 중...</div>;
-  if (!data) return <div className={styles.statusText}>데이터를 불러올 수 없습니다.</div>;
+  if (isLoading || !isFetched || !chartRegistered)
+    return <div className={styles.statusText}>로딩 중...</div>;
+  if (!data)
+    return (
+      <div className={styles.statusText}>데이터를 불러올 수 없습니다.</div>
+    );
 
   return (
     <main className={styles.statisticsPage}>
@@ -68,8 +87,8 @@ const StatisticsPage = () => {
             <div className={styles.chartColumn}>
               <BarLineChart
                 labels={data.byAge.map((i) => i.group)}
-                rawBarData={{ 거래건수: data.byAge.map((i) => i.count) }}
-                rawLineData={data.byAge.map((i) => i.ratio)}
+                rawBarData={{ 거래건수: data.byAge.map((i) => i.count ?? 0) }}
+                rawLineData={data.byAge.map((i) => typeof i.ratio === 'number' ? i.ratio : 0)}
                 barCategories={['거래건수']}
                 lineLabel='비율 (%)'
               />
@@ -77,7 +96,7 @@ const StatisticsPage = () => {
             <div className={styles.chartColumn}>
               <BarChart
                 labels={data.byAge.map((i) => i.group)}
-                values={data.byAge.map((i) => i.amount)}
+                values={data.byAge.map((i) => i.amount ?? 0)}
                 title='거래 금액'
               />
             </div>
@@ -94,9 +113,9 @@ const StatisticsPage = () => {
               <BarLineChart
                 labels={data.byFamilyStatus.map((i) => i.group)}
                 rawBarData={{
-                  거래건수: data.byFamilyStatus.map((i) => i.count),
+                  거래건수: data.byFamilyStatus.map((i) => i.count ?? 0),
                 }}
-                rawLineData={data.byFamilyStatus.map((i) => i.ratio)}
+                rawLineData={data.byFamilyStatus.map((i) => typeof i.ratio === 'number' ? i.ratio : 0)}
                 barCategories={['거래건수']}
                 lineLabel='비율 (%)'
               />
@@ -104,7 +123,7 @@ const StatisticsPage = () => {
             <div className={styles.chartColumn}>
               <BarChart
                 labels={data.byFamilyStatus.map((i) => i.group)}
-                values={data.byFamilyStatus.map((i) => i.amount)}
+                values={data.byFamilyStatus.map((i) => i.amount ?? 0)}
                 title='거래 금액'
               />
             </div>
@@ -120,8 +139,8 @@ const StatisticsPage = () => {
             <div className={styles.chartColumn}>
               <BarLineChart
                 labels={data.byResidence.map((i) => i.group)}
-                rawBarData={{ 거래건수: data.byResidence.map((i) => i.count) }}
-                rawLineData={data.byResidence.map((i) => i.ratio)}
+                rawBarData={{ 거래건수: data.byResidence.map((i) => i.count ?? 0) }}
+                rawLineData={data.byResidence.map((i) => typeof i.ratio === 'number' ? i.ratio : 0)}
                 barCategories={['거래건수']}
                 lineLabel='비율 (%)'
               />
@@ -129,7 +148,7 @@ const StatisticsPage = () => {
             <div className={styles.chartColumn}>
               <BarChart
                 labels={data.byResidence.map((i) => i.group)}
-                values={data.byResidence.map((i) => i.amount)}
+                values={data.byResidence.map((i) => i.amount ?? 0)}
                 title='거래 금액'
               />
             </div>
@@ -143,7 +162,7 @@ const StatisticsPage = () => {
         <IndustryTreemapChart
           data={data.byIndustry.map((item: RawIndustryRatio) => ({
             industry: getIndustryLabel(item.industry),
-            ratio: item.ratio,
+            ratio: typeof item.ratio === 'number' ? item.ratio : 0,
           }))}
         />
       </div>
