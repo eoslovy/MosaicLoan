@@ -27,12 +27,12 @@ export interface LoanSearchResponse {
   };
 }
 
-const loanStatusMap: Record<string, string> = {
-  상환중: 'IN_PROGRESS',
-  상환완료: 'COMPLETED',
-  대출신청: 'PENDING',
-  일부연체: 'PARTIALLY_DELINQUENT',
-  연체: 'DELINQUENT',
+// 거래유형 매핑 (선택적)
+const loanTypeMap: Record<string, string> = {
+  대출: 'LOAN',
+  이자: 'INTEREST',
+  원금: 'PRINCIPAL',
+  양도: 'OWNERSHIP_TRANSFER',
 };
 
 const BorrowerPage = () => {
@@ -58,13 +58,10 @@ const BorrowerPage = () => {
     useState<LoanSearchParams>({
       startDate: format(subMonths(new Date(), 1), 'yyyy-MM-dd'),
       endDate: format(new Date(), 'yyyy-MM-dd'),
-      types: ['상환중', '상환완료', '대출신청', '일부연체', '연체'].map(
-        (type) => loanStatusMap[type],
-      ),
+      types: ['LOAN', 'INTEREST', 'PRINCIPAL', 'OWNERSHIP_TRANSFER'],
     });
-  const [sortState, setSortState] = useState<
-    { field: string; order: string }[]
-  >([]);
+
+  const [sortState, setSortState] = useState<LoanSortState[]>([]);
 
   const handleEvaluationComplete = () => {
     setCreditKey((prev) => prev + 1);
@@ -99,7 +96,6 @@ const BorrowerPage = () => {
         '/contract/loans/search',
         {
           ...params,
-          types: params.types?.map((type) => loanStatusMap[type] ?? type),
           page: params.page || 1,
           pageSize: params.pageSize || 10,
           sort: mergedSort,
@@ -133,9 +129,7 @@ const BorrowerPage = () => {
     });
   };
 
-  const handleSortChange = (
-    newSortState: { field: string; order: string }[],
-  ) => {
+  const handleSortChange = (newSortState: LoanSortState[]) => {
     setSortState(newSortState);
 
     fetchLoans({
