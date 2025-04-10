@@ -23,7 +23,7 @@ public record LoanCreateTransactionPayload(
 			newLoan.getRequestAmount(),
 			creditEvaluationResponseDto.getInterestRate(),
 			creditEvaluationResponseDto.getDefaultRate(),
-			creditEvaluationResponseDto.getExpectYieldRate(),
+			creditEvaluationResponseDto.getExpectYield(),
 			newLoan.getCreatedAt());
 	}
 }
