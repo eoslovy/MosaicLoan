@@ -58,7 +58,9 @@ const LoanDetailSlider = ({ recentLoans }: Props) => {
                 </tr>
                 <tr>
                   <td>원금</td>
-                  <td colSpan={2}>{currentLoan.principal.toLocaleString()}</td>
+                  <td colSpan={2}>
+                    {currentLoan?.principal?.toLocaleString()}
+                  </td>
                 </tr>
                 <tr>
                   <td>금리</td>
@@ -73,7 +75,7 @@ const LoanDetailSlider = ({ recentLoans }: Props) => {
                   <td colSpan={2}>
                     {(
                       currentLoan.principal + currentLoan.amount
-                    ).toLocaleString()}
+                    )?.toLocaleString()}
                   </td>
                 </tr>
               </tbody>

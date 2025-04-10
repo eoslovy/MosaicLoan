@@ -231,12 +231,13 @@ const LoanList: React.FC<LoanListProps> = ({
                   />
                 </th>
                 <th>
-                  <SortableTableHeader
+                  금리
+                  {/* <SortableTableHeader
                     label='금리'
                     sortKey='interestRate'
                     sortStates={sortStates}
                     onSort={handleSort}
-                  />
+                  /> */}
                 </th>
                 <th>분류</th>
               </tr>
