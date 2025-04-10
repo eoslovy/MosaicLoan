@@ -1,15 +1,15 @@
 import { useState, useEffect, useMemo } from 'react';
 import { UserData } from '@/types/seedRandom';
-import { generateRandomData } from '@/utils/dataGenerator';
+import generateRandomData from '@/utils/dataGenerator';
 
 interface UseRandomDataOptions {
   userId: number;
   refreshInterval?: number | null;
 }
 
-export default function useRandomData({ 
-  userId, 
-  refreshInterval = null 
+export default function useRandomData({
+  userId,
+  refreshInterval = null,
 }: UseRandomDataOptions): {
   data: UserData;
   refresh: () => void;
@@ -26,19 +26,21 @@ export default function useRandomData({
       setIsLoading(false);
     }, 10);
   };
-  
+
   useEffect(() => {
     generateData();
-    
+
     if (refreshInterval) {
       const interval = setInterval(generateData, refreshInterval);
       return () => clearInterval(interval);
     }
+
+    return undefined;
   }, [userId, refreshInterval]);
-  
+
   return {
     data: data as UserData,
     refresh: generateData,
-    isLoading
+    isLoading,
   };
 }

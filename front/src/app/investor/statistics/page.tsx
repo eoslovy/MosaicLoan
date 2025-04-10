@@ -45,16 +45,20 @@ const StatisticsPage = () => {
       setSeedUserId(user.id);
     }
   }, [user, isFetched]);
-  
+
   const { data, isLoading } = useRandomData({
     userId: seedUserId,
-    refreshInterval: null
+    refreshInterval: null,
   });
 
   useAuthRedirect('/investor/statistics');
 
-  if (isLoading || !isFetched) return <div className={styles.statusText}>로딩 중...</div>;
-  if (!data) return <div className={styles.statusText}>데이터를 불러올 수 없습니다.</div>;
+  if (isLoading || !isFetched)
+    return <div className={styles.statusText}>로딩 중...</div>;
+  if (!data)
+    return (
+      <div className={styles.statusText}>데이터를 불러올 수 없습니다.</div>
+    );
 
   return (
     <main className={styles.statisticsPage}>
