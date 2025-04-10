@@ -17,19 +17,6 @@ const Nav = () => {
 
   const [isDelayDone, setIsDelayDone] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsDelayDone(true);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (!isFetched || !isDelayDone) {
-    // 아직 로그인 여부 판단이 안됨 + 500ms 지연 대기중일 경우 -> 화면 렌더링 안하도록 null 반환
-    return null;
-  }
-
   // const maskName = (name: string) => {
   //   if (name.length <= 2) return `${name[0]} *`;
   //   return `${name[0]} * ${name[name.length - 1]}`;
