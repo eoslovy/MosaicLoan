@@ -195,38 +195,48 @@ public class LoanQueryRepositoryImpl implements LoanQueryRepository {
 			activeLoanAmount = BigDecimal.ZERO;
 		}
 
-		// 4. 평균 금리 계산
+		// 4. 평균 금리 계산 - 기존의 interestRateExpr 표현식을 활용
+		// 숫자 표현식으로 변환 (문자열 -> 숫자)
 		QContract subContract = new QContract("subContract");
+		
+		NumberExpression<Integer> numericInterestRateExpr = Expressions.cases()
+			.when(loan.status.eq(LoanStatus.PENDING))
+			.then(0)
+			.otherwise(
+				JPAExpressions
+					.select(subContract.interestRate.max())
+					.from(subContract)
+					.where(subContract.loan.id.eq(loan.id))
+			);
 
-		// 이자율 계산 Expression (CASE WHEN + 서브쿼리)
-		NumberExpression<Integer> interestRateExpr = Expressions.numberTemplate(Integer.class,
-			"case when {0} = {1} then {2} else {3} end",
-			loan.status.stringValue(),
-			Expressions.constant("PENDING"),
-			Expressions.constant(0),
-			JPAExpressions
-				.select(subContract.interestRate.max())
-				.from(subContract)
-				.where(subContract.loan.eq(loan))
-		).as("interestRate");
-
-		// 활성화된 대출의 평균 이자율 계산
-		Integer avgInterestRate = queryFactory
-			.select(interestRateExpr.avg().intValue())
+		// 평균 이자율 계산
+		Integer averageInterestRate = queryFactory
+			.select(numericInterestRateExpr.avg().intValue())
 			.from(loan)
 			.where(memberCondition.and(activeCondition))
 			.fetchOne();
 
-		int averageInterestRate = (avgInterestRate != null) ? avgInterestRate : 0;
+		// null 체크
+		if (averageInterestRate == null) {
+			averageInterestRate = 0;
+		}
 
-		// 5. 최근 대출 목록 5개 조회
+		// 5. 최근 대출 목록 5개 조회 - 동일한 표현식 사용하되 문자열 형태로
 		List<RecentLoanInfo> recentLoans = queryFactory
 			.select(
 				Projections.constructor(
 					RecentLoanInfo.class,
 					loan.dueDate,
 					loan.amount,
-					interestRateExpr,
+					Expressions.cases()
+						.when(loan.status.eq(LoanStatus.PENDING))
+						.then(0)
+						.otherwise(
+							JPAExpressions
+								.select(subContract.interestRate.max())
+								.from(subContract)
+								.where(subContract.loan.id.eq(loan.id))
+						),
 					loan.amount
 				)
 			)
