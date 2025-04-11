@@ -52,6 +52,26 @@ const templateData: UserData = {
   ],
 };
 
+function calculateRatiosFromCounts(items: GroupData[]): GroupData[] {
+  const totalCount = items.reduce((sum, item) => sum + item.count, 0);
+
+  let withRatios = items.map((item) => ({
+    ...item,
+    ratio: Math.round((item.count / totalCount) * 100),
+  }));
+
+  const totalRatio = withRatios.reduce((sum, item) => sum + item.ratio, 0);
+  if (totalRatio !== 100) {
+    withRatios = withRatios.map((item, index) =>
+      index === withRatios.length - 1
+        ? { ...item, ratio: item.ratio + (100 - totalRatio) }
+        : item,
+    );
+  }
+
+  return withRatios;
+}
+
 function generateRandomData(userId: string | number): UserData {
   const numericSeed =
     typeof userId === 'string'
@@ -115,26 +135,6 @@ function generateRandomData(userId: string | number): UserData {
     byResidence,
     byIndustry,
   };
-}
-
-function calculateRatiosFromCounts(items: GroupData[]): GroupData[] {
-  const totalCount = items.reduce((sum, item) => sum + item.count, 0);
-
-  let withRatios = items.map((item) => ({
-    ...item,
-    ratio: Math.round((item.count / totalCount) * 100),
-  }));
-
-  const totalRatio = withRatios.reduce((sum, item) => sum + item.ratio, 0);
-  if (totalRatio !== 100) {
-    withRatios = withRatios.map((item, index) =>
-      index === withRatios.length - 1
-        ? { ...item, ratio: item.ratio + (100 - totalRatio) }
-        : item,
-    );
-  }
-  
-  return withRatios;
 }
 
 export default generateRandomData;
