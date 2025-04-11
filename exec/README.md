@@ -21,5 +21,8 @@
 - 모델링 배포용 설정 = docker-compose.deploy.yml
 
 #배포 특이사항
-DOCKER-COMPSE를 통한 배포, DOCKER-COMPOSE의 환경변수(GITLAB-CI 기반) 및 배포용 DOCKER-COMPOSE파일 분리
+- GITLAB-CI 를 통한 배포
+- CI-CD파이프라인 Gitlab-runner사용 
+- DOCKER-COMPOSE의 환경변수(GITLAB-CI 기반) 
+- 배포용 DOCKER-COMPOSE파일 분리
 
