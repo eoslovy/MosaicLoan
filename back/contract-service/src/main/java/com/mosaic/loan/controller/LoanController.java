@@ -35,6 +35,7 @@ public class LoanController {
 		@RequestHeader("X-MEMBER-ID") Integer memberId,
 		@RequestHeader("X-IS-BOT") Boolean isBot) throws JsonProcessingException {
 		loanService.createLoan(createLoanRequestDto, memberId, timeUtil.now(isBot), isBot);
+
 		return ResponseEntity.accepted().build();
 	}
 

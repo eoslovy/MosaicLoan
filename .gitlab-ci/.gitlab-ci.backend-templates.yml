@@ -49,14 +49,14 @@
     - mkdir -p ~/.ssh
     - echo "$BASTION_PRIVATE_KEY_B64" | base64 -d > bastion.pem
     - chmod 600 bastion.pem
-    - echo "$ENV_FILE_CONTENT" > .env
+    - echo "$ENV_FILE_CONTENT" > 환경변수.env
       # 2️⃣ 배포 서버에 Docker 로그인 정보 전송
       #- ssh -T -o StrictHostKeyChecking=no -i bastion.pem ubuntu@$BASTION_HOST "echo \"$DOCKER_HUB_TOKEN\" | docker login --username \"$DOCKER_HUB_USERNAME\" --password-stdin"
     - cat docker-compose.deploy.yml
       # 3️⃣ 환경변수가 반영된 `docker-compose.yml`을 배포 서버로 전송
     - envsubst < docker-compose.deploy.yml > docker-compose.processed.yml
     - cat docker-compose.processed.yml
-    - scp -o StrictHostKeyChecking=no -i bastion.pem .env ubuntu@$BASTION_HOST:/home/ubuntu/.env
+    - scp -o StrictHostKeyChecking=no -i bastion.pem 환경변수.env ubuntu@$BASTION_HOST:/home/ubuntu/환경변수.env
 
     - scp -o StrictHostKeyChecking=no -i bastion.pem docker-compose.processed.yml ubuntu@$BASTION_HOST:/home/ubuntu/docker-compose.yml
 
@@ -94,14 +94,14 @@
     - mkdir -p ~/.ssh
     - echo "$BASTION_PRIVATE_KEY_B64" | base64 -d > bastion.pem
     - chmod 600 bastion.pem
-    - echo "$ENV_FILE_CONTENT" > .env
+    - echo "$ENV_FILE_CONTENT" > 환경변수.env
       # 2️⃣ 배포 서버에 Docker 로그인 정보 전송
       #- ssh -T -o StrictHostKeyChecking=no -i bastion.pem ubuntu@$BASTION_HOST "echo \"$DOCKER_HUB_TOKEN\" | docker login --username \"$DOCKER_HUB_USERNAME\" --password-stdin"
     - cat docker-compose.model-deploy.yml
       # 3️⃣ 환경변수가 반영된 `docker-compose.yml`을 배포 서버로 전송
     - envsubst < docker-compose.model-deploy.yml > docker-compose.processed.yml
     - cat docker-compose.processed.yml
-    - scp -o StrictHostKeyChecking=no -i bastion.pem .env ubuntu@$MODEL_HOST:/home/ubuntu/.env
+    - scp -o StrictHostKeyChecking=no -i bastion.pem 환경변수.env ubuntu@$MODEL_HOST:/home/ubuntu/환경변수.env
 
     - scp -o StrictHostKeyChecking=no -i bastion.pem docker-compose.processed.yml ubuntu@$MODEL_HOST:/home/ubuntu/docker-compose.yml
 
