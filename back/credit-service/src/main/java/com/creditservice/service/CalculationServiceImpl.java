@@ -18,6 +18,7 @@ import com.creditservice.repository.CreditEvaluationRepository;
 import com.creditservice.repository.EconomySentimentRepository;
 import com.creditservice.util.RiskBasedYieldCalculator;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +31,7 @@ public class CalculationServiceImpl implements CalculationService {
 	private final EvaluationRedisService evaluationRedisService;
 	private final EconomySentimentRepository economySentimentRepository;
 
+	@Transactional
 	public CreditEvaluation createAndSaveEvaluation(Integer caseId, Integer memberId, Integer defaultRate,
 		Integer interestRate, Integer expectedYield, Integer maxLoanLimit, EvaluationStatus status, LocalDateTime now,
 		Boolean defaultFlag) {
@@ -45,7 +47,9 @@ public class CalculationServiceImpl implements CalculationService {
 			.defaultFlag(defaultFlag)
 			.build();
 
-		return evaluationRepository.save(evaluation);
+		CreditEvaluation eval = evaluationRepository.save(evaluation);
+		log.info("Created evaluation: {}", eval);
+		return eval;
 	}
 
 	// 전일 경제 심리지수를 조회하는 메서드
