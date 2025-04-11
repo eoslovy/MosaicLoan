@@ -5,9 +5,9 @@ import styles from '@/styles/uis/StatsSection.module.scss';
 
 const StatsSection = () => {
   const mainStats = {
-    totalUsers: 12345,
-    totalInvestment: 8650000,
-    totalrepaymentRate: 97.5,
+    totalUsers: 100000,
+    totalInvestment: 86500000,
+    totalrepaymentRate: 97.6,
   };
 
   return (
