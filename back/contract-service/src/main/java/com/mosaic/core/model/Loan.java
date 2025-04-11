@@ -51,9 +51,9 @@ public class Loan {
 	private LocalDateTime createdAt;
 
 	public static Loan requestOnlyFormLoan(CreateLoanRequestDto request,
-		CreditEvaluationResponseDto creditEvaluationResponseDto, LocalDateTime now) {
+		CreditEvaluationResponseDto creditEvaluationResponseDto, Integer memberId, LocalDateTime now) {
 		return Loan.builder()
-			.accountId(creditEvaluationResponseDto.getMemberId())
+			.accountId(memberId)
 			.amount(BigDecimal.valueOf(0))
 			.createdAt(now)
 			.dueDate(now.plusWeeks(request.targetWeeks()).toLocalDate())
