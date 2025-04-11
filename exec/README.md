@@ -15,7 +15,7 @@
 
 #환경변수
 환경변수.env = .ENV
-- 일반 통합개발환경 백엔드/프론트엔드 = s.docker-compose.yml
+- 일반 통합개발환경 백엔드/프론트엔드 = docker-compose.yml
 - 일반 통합개발환경 모델링 = docker-compose.model.yml
 - 프론트/백엔드 배포용 설정 = docker-compose.deploy.yml
 - 모델링 배포용 설정 = docker-compose.deploy.yml
