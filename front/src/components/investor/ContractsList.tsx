@@ -161,11 +161,20 @@ const ContractsList = ({
         cells: [
           {
             key: 'contractId',
-            content: transaction.contractId,
+            content: `contract - ${transaction.contractId}`,
           },
           {
             key: 'investmentId',
-            content: transaction.investmentId,
+            content: `investment - ${transaction.investmentId}`,
+          },
+          {
+            key: 'createdAt',
+            content:
+              format(parseISO(transaction.createdAt), 'yyyy-MM-dd') || '-',
+          },
+          {
+            key: 'dueDate',
+            content: transaction.dueDate,
           },
           {
             key: 'amount',
@@ -174,23 +183,14 @@ const ContractsList = ({
             ).toLocaleString(),
           },
           {
-            key: 'createdAt',
-            content:
-              format(parseISO(transaction.createdAt), 'yyyy-MM-dd') || '-',
-          },
-          {
-            key: 'status',
-            content: transaction.status,
-          },
-          {
-            key: 'dueDate',
-            content: transaction.dueDate,
-          },
-          {
             key: 'interestRate',
             content: transaction.interestRate
               ? `${(Number(transaction.interestRate) / 100).toFixed(2)} %`
               : '-',
+          },
+          {
+            key: 'status',
+            content: transaction.status,
           },
         ],
       }));
