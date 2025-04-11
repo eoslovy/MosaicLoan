@@ -11,6 +11,7 @@ import type {
   SortKey,
   PillVariant,
 } from '@/types/components';
+import { format, parseISO } from 'date-fns';
 import Pill from '@/components/common/Pill';
 
 interface Transaction {
@@ -141,6 +142,60 @@ const ContractsList = ({
     ? []
     : transactions.map(formatTransactionForDisplay);
 
+  const formatTransactionsToRows = (
+    investTransactions: Transaction[],
+  ): BasicTableRow[] => {
+    const uniqueKeys = new Set();
+
+    return investTransactions
+      .filter((transaction) => {
+        const key = `${transaction.contractId}-${transaction.investmentId}`;
+        if (uniqueKeys.has(key)) {
+          return false;
+        }
+        uniqueKeys.add(key);
+        return true;
+      })
+      .map((transaction) => ({
+        key: `${transaction.contractId}-${transaction.investmentId}`,
+        cells: [
+          {
+            key: 'contractId',
+            content: transaction.contractId,
+          },
+          {
+            key: 'investmentId',
+            content: transaction.investmentId,
+          },
+          {
+            key: 'amount',
+            content: Math.round(
+              Number(transaction.amount) || 0,
+            ).toLocaleString(),
+          },
+          {
+            key: 'createdAt',
+            content:
+              format(parseISO(transaction.createdAt), 'yyyy-MM-dd') || '-',
+          },
+          {
+            key: 'status',
+            content: transaction.status,
+          },
+          {
+            key: 'dueDate',
+            content: transaction.dueDate,
+          },
+          {
+            key: 'interestRate',
+            content: transaction.interestRate
+              ? `${(Number(transaction.interestRate) / 100).toFixed(2)} %`
+              : '-',
+          },
+        ],
+      }));
+  };
+
   const columnHeaders = [
     <SortableTableHeader
       key='product'
@@ -171,13 +226,7 @@ const ContractsList = ({
       onSort={handleSort}
     />,
     '거래 금액',
-    // <SortableTableHeader
-    //   key='interestRate'
-    //   label='금리'
-    //   sortKey='interestRate'
-    //   sortStates={sortStates}
-    //   onSort={handleSort}
-    // />,
+    '금리',
     '분류',
   ];
 
@@ -194,7 +243,7 @@ const ContractsList = ({
           <BasicTable
             title='채권 거래 내역'
             columns={columnHeaders}
-            rows={rows}
+            rows={hasTransactions ? formatTransactionsToRows(transactions) : []}
           />
           {hasTransactions && (
             <Pagination

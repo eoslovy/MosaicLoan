@@ -277,7 +277,7 @@ const LoanList: React.FC<LoanListProps> = ({
                   <td>{loan.dueDate}</td>
                   <td>
                     {loan.interestRate
-                      ? loan.interestRate.toLocaleString()
+                      ? `${(Number(loan.interestRate) / 100).toFixed(2)} %`
                       : '-'}
                   </td>
                   <td>
