@@ -69,7 +69,7 @@ public class LoanServiceImpl implements LoanService {
 	@Override
 	@Transactional
 	public void liquidateScheduledDelinquentLoans(LocalDateTime now, Boolean isBot) throws Exception {
-		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate().minusDays(1),
+		List<Loan> loans = loanRepository.findAllByDueDateAndStatus(now.toLocalDate().minusMonths(3),
 			LoanStatus.DELINQUENT);
 		for (Loan loan : loans) {
 			liquidateDelinquentLoan(loan, now);
