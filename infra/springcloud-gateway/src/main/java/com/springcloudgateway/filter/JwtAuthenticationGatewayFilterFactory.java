@@ -11,8 +11,10 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.springcloudgateway.dto.MemberInfoResponse;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Component("jwt-authentication")
 public class JwtAuthenticationGatewayFilterFactory
 	extends AbstractGatewayFilterFactory<JwtAuthenticationGatewayFilterFactory.Config> {
