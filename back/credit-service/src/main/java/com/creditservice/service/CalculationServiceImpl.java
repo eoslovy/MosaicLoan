@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.creditservice.domain.CreditEvaluation;
 import com.creditservice.domain.EconomySentiment;
@@ -18,7 +19,6 @@ import com.creditservice.repository.CreditEvaluationRepository;
 import com.creditservice.repository.EconomySentimentRepository;
 import com.creditservice.util.RiskBasedYieldCalculator;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
