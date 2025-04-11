@@ -142,10 +142,12 @@ const ContractsList = ({
     ? []
     : transactions.map(formatTransactionForDisplay);
 
-  const formatTransactionsToRows = (transactions: Transaction[]): BasicTableRow[] => {
+  const formatTransactionsToRows = (
+    investTransactions: Transaction[],
+  ): BasicTableRow[] => {
     const uniqueKeys = new Set();
-    
-    return transactions
+
+    return investTransactions
       .filter((transaction) => {
         const key = `${transaction.contractId}-${transaction.investmentId}`;
         if (uniqueKeys.has(key)) {
@@ -157,39 +159,42 @@ const ContractsList = ({
       .map((transaction) => ({
         key: `${transaction.contractId}-${transaction.investmentId}`,
         cells: [
-          { 
-            key: 'contractId', 
-            content: transaction.contractId 
+          {
+            key: 'contractId',
+            content: transaction.contractId,
           },
-          { 
-            key: 'investmentId', 
-            content: transaction.investmentId 
+          {
+            key: 'investmentId',
+            content: transaction.investmentId,
           },
-          { 
-            key: 'amount', 
-            content: Math.round(Number(transaction.amount) || 0).toLocaleString() 
+          {
+            key: 'amount',
+            content: Math.round(
+              Number(transaction.amount) || 0,
+            ).toLocaleString(),
           },
-          { 
-            key: 'createdAt', 
-            content: format(parseISO(transaction.createdAt), 'yyyy-MM-dd') || '-' 
+          {
+            key: 'createdAt',
+            content:
+              format(parseISO(transaction.createdAt), 'yyyy-MM-dd') || '-',
           },
-          { 
-            key: 'status', 
-            content: transaction.status 
+          {
+            key: 'status',
+            content: transaction.status,
           },
-          { 
-            key: 'dueDate', 
-            content: transaction.dueDate 
+          {
+            key: 'dueDate',
+            content: transaction.dueDate,
           },
-          { 
-            key: 'interestRate', 
-            content: transaction.interestRate ? 
-              `${(Number(transaction.interestRate) / 100).toFixed(2)} %` : 
-              '-' 
-          }
-        ]
+          {
+            key: 'interestRate',
+            content: transaction.interestRate
+              ? `${(Number(transaction.interestRate) / 100).toFixed(2)} %`
+              : '-',
+          },
+        ],
       }));
-    };
+  };
 
   const columnHeaders = [
     <SortableTableHeader
