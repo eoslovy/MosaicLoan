@@ -61,8 +61,11 @@ public class JwtAuthenticationGatewayFilterFactory
 
 					return chain.filter(mutatedExchange);
 				})
-				.onErrorResume(e -> unauthorized(exchange));
-
+				// .onErrorResume(e -> unauthorized(exchange));
+				.onErrorResume(e -> {
+					log.warn("❌ 인증 실패: {}", e.getMessage(), e);
+					return unauthorized(exchange);
+				});
 		};
 	}
 
