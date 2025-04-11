@@ -52,6 +52,26 @@ const templateData: UserData = {
   ],
 };
 
+function calculateRatiosFromCounts(items: GroupData[]): GroupData[] {
+  const totalCount = items.reduce((sum, item) => sum + item.count, 0);
+
+  let withRatios = items.map((item) => ({
+    ...item,
+    ratio: Math.round((item.count / totalCount) * 100),
+  }));
+
+  const totalRatio = withRatios.reduce((sum, item) => sum + item.ratio, 0);
+  if (totalRatio !== 100) {
+    withRatios = withRatios.map((item, index) =>
+      index === withRatios.length - 1
+        ? { ...item, ratio: item.ratio + (100 - totalRatio) }
+        : item,
+    );
+  }
+
+  return withRatios;
+}
+
 function generateRandomData(userId: string | number): UserData {
   const numericSeed =
     typeof userId === 'string'
@@ -60,54 +80,29 @@ function generateRandomData(userId: string | number): UserData {
 
   const random = new SeededRandom(numericSeed);
 
-  function adjustRatios(items: GroupData[]): GroupData[] {
-    const randomized = items.map((item) => ({
-      ...item,
-      ratio: random.nextInt(10, 35),
-    }));
+  const byAgeWithCounts = templateData.byAge.map((item) => ({
+    ...item,
+    count: random.nextInt(100, 500),
+    amount: random.nextInt(500000, 1500000),
+  }));
 
-    const total = randomized.reduce((sum, item) => sum + item.ratio, 0);
+  const byAge = calculateRatiosFromCounts(byAgeWithCounts);
 
-    let normalized = randomized.map((item) => ({
-      ...item,
-      ratio: Math.round((item.ratio / total) * 100),
-    }));
+  const byFamilyStatusWithCounts = templateData.byFamilyStatus.map((item) => ({
+    ...item,
+    count: random.nextInt(150, 450),
+    amount: random.nextInt(600000, 1200000),
+  }));
 
-    const adjustedTotal = normalized.reduce((sum, item) => sum + item.ratio, 0);
-    if (adjustedTotal !== 100) {
-      normalized = normalized.map((item, index) =>
-        index === normalized.length - 1
-          ? { ...item, ratio: item.ratio + (100 - adjustedTotal) }
-          : item,
-      );
-    }
+  const byFamilyStatus = calculateRatiosFromCounts(byFamilyStatusWithCounts);
 
-    return normalized;
-  }
+  const byResidenceWithCounts = templateData.byResidence.map((item) => ({
+    ...item,
+    count: random.nextInt(120, 350),
+    amount: random.nextInt(750000, 1300000),
+  }));
 
-  const byAge = adjustRatios(
-    templateData.byAge.map((item) => ({
-      ...item,
-      count: random.nextInt(100, 500),
-      amount: random.nextInt(500000, 1500000),
-    })),
-  );
-
-  const byFamilyStatus = adjustRatios(
-    templateData.byFamilyStatus.map((item) => ({
-      ...item,
-      count: random.nextInt(150, 450),
-      amount: random.nextInt(600000, 1200000),
-    })),
-  );
-
-  const byResidence = adjustRatios(
-    templateData.byResidence.map((item) => ({
-      ...item,
-      count: random.nextInt(120, 350),
-      amount: random.nextInt(750000, 1300000),
-    })),
-  );
+  const byResidence = calculateRatiosFromCounts(byResidenceWithCounts);
 
   const byIndustry = (() => {
     const updated = templateData.byIndustry.map((item) => ({
