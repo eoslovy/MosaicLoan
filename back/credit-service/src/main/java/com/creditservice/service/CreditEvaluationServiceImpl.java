@@ -50,7 +50,7 @@ public class CreditEvaluationServiceImpl implements CreditEvaluationService {
 				long hoursDiff = ChronoUnit.HOURS.between(createdAt, now);
 				log.info("서버 로컬 시각 : {} DB 시각 : {} 시간 차이 : {}", now, createdAt, hoursDiff);
 				if (hoursDiff >= 24) {
-					throw new EvaluationNotFoundException(ErrorCode.EVALUATION_EXPIRED, memberId);
+					//throw new EvaluationNotFoundException(ErrorCode.EVALUATION_EXPIRED, memberId);
 				}
 				if (evaluation.getStatus().equals(EvaluationStatus.DECLINED)) {
 					throw new EvaluationNotFoundException(ErrorCode.EVALUATION_NOT_FOUND, memberId);
