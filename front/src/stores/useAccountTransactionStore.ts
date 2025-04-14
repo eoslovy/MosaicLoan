@@ -51,6 +51,15 @@ const useAccountTransactionStore = create<AccountTransactionStore>(
       const page = override.page ?? state.pagination.page;
       const pageSize = override.pageSize ?? state.pagination.pageSize;
 
+      // 디버깅 로그 추가
+      console.log('fetchTransactions 요청 파라미터:', {
+        startDate,
+        endDate,
+        types,
+        page,
+        pageSize,
+      });
+
       set({
         isLoading: true,
         error: null,
@@ -69,9 +78,17 @@ const useAccountTransactionStore = create<AccountTransactionStore>(
           pageSize,
         });
 
+        // 디버깅 로그 추가
+        console.log('API 응답:', res);
+
+        // 중요: 응답에서 받은 pagination과 요청한 page를 조합
+        // API가 올바른 페이지 번호를 반환하지 않을 경우를 대비
         set({
           transactions: res.transactions,
-          pagination: res.pagination,
+          pagination: {
+            ...res.pagination,
+            page,
+          },
           isLoading: false,
         });
       } catch (err: unknown) {

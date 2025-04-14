@@ -7,22 +7,24 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Select, { MultiValue, StylesConfig } from 'react-select';
 import { ChevronDown, ChevronUp, Filter } from 'lucide-react';
 import FilterSelectTable from '@/components/common/FilterSelectTable';
-import { subYears, isBefore, format } from 'date-fns';
+import { subMonths, isBefore, format } from 'date-fns';
 import type { PillVariant } from '@/types/components';
 import Pill from '@/components/common/Pill';
 import request from '@/service/apis/request';
 import type { ContractResponse, Investment } from '@/types/pages';
 
 const typeOptions = [
-  { value: 'repayment', label: '상환' },
-  { value: 'delayed', label: '연체' },
-  { value: 'defaulted', label: '부실' },
+  { value: 'LOAN', label: '대출' },
+  { value: 'INTEREST', label: '이자' },
+  { value: 'PRINCIPAL', label: '원금' },
+  { value: 'OWNERSHIP_TRANSFER', label: '소유권 이전' },
 ];
 
 const typeValueToApiValue = {
-  repayment: '원금상환',
-  delayed: '이자상환',
-  defaulted: '환급',
+  LOAN: '대출',
+  INTEREST: '이자',
+  PRINCIPAL: '원금',
+  OWNERSHIP_TRANSFER: '소유권 이전',
 };
 
 const customSelectStyles: StylesConfig<{ label: string; value: string }, true> =
@@ -53,9 +55,9 @@ interface ContractsFilterProps {
 
 const ContractsFilter = ({ onSearch }: ContractsFilterProps) => {
   const today = new Date();
-  const oneYearAgo = subYears(today, 1);
+  const oneMonthAgo = subMonths(today, 1);
 
-  const [startDate, setStartDate] = useState<Date | null>(oneYearAgo);
+  const [startDate, setStartDate] = useState<Date | null>(oneMonthAgo);
   const [endDate, setEndDate] = useState<Date | null>(today);
   const [selectedTypes, setSelectedTypes] =
     useState<MultiValue<{ label: string; value: string }>>(typeOptions);
@@ -128,10 +130,11 @@ const ContractsFilter = ({ onSearch }: ContractsFilterProps) => {
     const formattedStartDate = startDate ? format(startDate, 'yyyy-MM-dd') : '';
     const formattedEndDate = endDate ? format(endDate, 'yyyy-MM-dd') : '';
 
-    const types = selectedTypes.map(
-      (type) =>
-        typeValueToApiValue[type.value as keyof typeof typeValueToApiValue],
-    );
+    // const types = selectedTypes.map(
+    //   (type) =>
+    //     typeValueToApiValue[type.value as keyof typeof typeValueToApiValue],
+    // );
+    const types = selectedTypes.map((type) => type.value);
 
     const searchParams = {
       startDate: formattedStartDate,

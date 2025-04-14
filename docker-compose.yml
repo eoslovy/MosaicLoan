@@ -175,6 +175,7 @@ services:
     ports:
       - "3307:3306"
     volumes:
+      - ./infra/rdbms/member/member_inserts.sql:/opt/init-sql/insert.sql
       - member-db-data:/var/lib/mysql
 
   account-db:
@@ -198,6 +199,7 @@ services:
     ports:
       - "3308:3306"
     volumes:
+      - ./infra\rdbms\account\account_inserts.sql:/opt/init-sql/insert.sql
       - account-db-data:/var/lib/mysql
 
   contract-db:
@@ -268,28 +270,6 @@ services:
       - "3311:3306"
     volumes:
       - credit-db-data:/var/lib/mysql
-  model-credit:
-    container_name: model-credit
-    build:
-      context: ./modeling/credit
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-model-credit:${IMAGE_TAG:-latest}
-    restart: always
-    ports:
-      - "9000:8000"
-  model-news:
-    container_name: model-news
-    build:
-      context: ./modeling/news
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-model-news:${IMAGE_TAG:-latest}
-    restart: always
-    ports:
-      - "9001:8000"
 
 volumes:
   member-db-data:

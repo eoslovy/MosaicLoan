@@ -10,6 +10,7 @@ import com.creditservice.domain.CreditEvaluation;
 
 @Repository
 public interface CreditEvaluationRepository extends JpaRepository<CreditEvaluation, Integer> {
-    List<CreditEvaluation> findByMemberIdOrderByCreatedAtDesc(Integer memberId);
-    Optional<CreditEvaluation> findTopByMemberIdOrderByCreatedAtDesc(Integer memberId);
+	List<CreditEvaluation> findByMemberIdOrderByCreatedAtDesc(Integer memberId);
+
+	Optional<CreditEvaluation> findTopByMemberIdOrderByCreatedAtDesc(Integer memberId);
 }

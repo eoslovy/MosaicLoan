@@ -16,7 +16,7 @@ export interface PostLoanRequestBody {
 export interface LoanOverviewResponse {
   recentLoans: {
     dueDate: string;
-    principal: number;
+    outstandingAmount: number;
     interestRate: number;
     amount: number;
   }[];

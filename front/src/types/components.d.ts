@@ -205,7 +205,7 @@ export interface ProgressGroupProps {
 }
 
 export interface StatusBadgeProps {
-  status: '상환완료' | '상환중' | '부실';
+  status: 'COMPLETED' | 'IN_PROGRESS' | 'DELINQUENT';
 }
 
 export type SortKey =
@@ -217,7 +217,8 @@ export type SortKey =
   | 'amount'
   | 'loanDate'
   | 'loanMaturityDate'
-  | 'dueDate';
+  | 'dueDate'
+  | 'requestAmount';
 
 export interface SortState {
   key: SortKey;
@@ -318,10 +319,9 @@ export interface IndustryRatio {
 
 export interface LoanTransaction {
   id: number;
-  contractId: number;
-  amount: string;
+  requestAmount: string;
   createdAt: string;
-  status: string; //
+  status: string;
   dueDate: string;
   interestRate: number;
   detail?: LoanTransactionDetail[];

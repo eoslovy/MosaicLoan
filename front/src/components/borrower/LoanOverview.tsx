@@ -29,7 +29,7 @@ const LoanOverview = ({
   const safeAvgRate =
     Number.isNaN(averageInterestRate) || averageInterestRate < 1
       ? '0.00'
-      : (averageInterestRate / 100).toFixed(2);
+      : (averageInterestRate / 10000).toFixed(2);
 
   return (
     <section className={styles.wrapper}>
@@ -41,7 +41,7 @@ const LoanOverview = ({
         />
         <BasicInfoCard
           icon='clock'
-          label='평균 금리'
+          label='완료 대출 평균 금리'
           value={`${safeAvgRate} %`}
         />
         <BasicInfoCard

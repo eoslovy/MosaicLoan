@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.creditservice.domain.CreditEvaluation;
+import com.creditservice.domain.EvaluationStatus;
 import com.creditservice.dto.CreditEvaluationResponseDto;
 import com.creditservice.exception.ErrorCode;
 import com.creditservice.exception.EvaluationNotFoundException;
@@ -49,9 +50,11 @@ public class CreditEvaluationServiceImpl implements CreditEvaluationService {
 				long hoursDiff = ChronoUnit.HOURS.between(createdAt, now);
 				log.info("서버 로컬 시각 : {} DB 시각 : {} 시간 차이 : {}", now, createdAt, hoursDiff);
 				if (hoursDiff >= 24) {
-					throw new EvaluationNotFoundException(ErrorCode.EVALUATION_EXPIRED, memberId);
+					//throw new EvaluationNotFoundException(ErrorCode.EVALUATION_EXPIRED, memberId);
 				}
-
+				if (evaluation.getStatus().equals(EvaluationStatus.DECLINED)) {
+					throw new EvaluationNotFoundException(ErrorCode.EVALUATION_NOT_FOUND, memberId);
+				}
 				return convertToDtoWithDefaultFlag(evaluation);
 			})
 			.orElseThrow(() -> new EvaluationNotFoundException(ErrorCode.LATEST_EVALUATION_NOT_FOUND, memberId));
@@ -70,6 +73,7 @@ public class CreditEvaluationServiceImpl implements CreditEvaluationService {
 			.caseId(evaluation.getCaseId())
 			.status(evaluation.getStatus())
 			.defaultFlag(evaluation.getDefaultFlag())
+			.expectYield(evaluation.getExpectYield())
 			.build();
 	}
 } 

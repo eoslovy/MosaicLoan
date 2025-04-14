@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.creditservice.domain.CreditEvaluation;
 import com.creditservice.domain.EconomySentiment;
@@ -37,7 +38,7 @@ public class CalculationServiceImpl implements CalculationService {
 			.memberId(memberId)
 			.defaultRate(defaultRate)
 			.interestRate(interestRate)
-			.expectedYield(expectedYield)
+			.expectYield(expectedYield)
 			.maxLoanLimit(maxLoanLimit)
 			.createdAt(now)
 			.caseId(caseId)

@@ -24,7 +24,7 @@ const DEFAULT_RATE = 8.8;
 const DEFAULT_WEEKS = 4;
 const MAX_AMOUNT = 30000000; // 최대 3000만원
 const MIN_AMOUNT = 10000; // 최소 1만원
-const MIN_RATE = 8; // 최소 8%
+const MIN_RATE = 5; // 최소 5%
 const MAX_RATE = 15; // 최대 15%
 
 const InvestmentModal = ({
@@ -200,7 +200,7 @@ const InvestmentModal = ({
             type='number'
             value={localRate}
             onChange={(e) => handleRateChange(Number(e.target.value))}
-            placeholder='기대 수익률을 입력하세요'
+            placeholder='0.0'
             min={MIN_RATE}
             max={MAX_RATE}
             step={0.1}

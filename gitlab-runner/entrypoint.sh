@@ -3,8 +3,8 @@ set -e
 
 echo "📌 GitLab Runner 등록 중..."
 
-# .env 파일 로드
-if [ -f .env ]; then
+# 환경변수.env 파일 로드
+if [ -f 환경변수.env ]; then
   . .env
   echo "📋 .env 값:"
   echo "  GITLAB_RUNNER_TOKEN=${GITLAB_RUNNER_TOKEN}"

@@ -7,14 +7,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class KafkaConnectionVerifier implements ApplicationRunner {
-    private final KafkaTemplate<String, String> kafkaTemplate;
+	private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public KafkaConnectionVerifier(KafkaTemplate<String, String> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
-    }
-    @Override
-    public void run(ApplicationArguments args) {
-        kafkaTemplate.send("test-topic", "ping");
-        System.out.println("✅ Kafka test message sent");
-    }
+	public KafkaConnectionVerifier(KafkaTemplate<String, String> kafkaTemplate) {
+		this.kafkaTemplate = kafkaTemplate;
+	}
+
+	@Override
+	public void run(ApplicationArguments args) {
+		kafkaTemplate.send("test-topic", "ping");
+		System.out.println("✅ Kafka test message sent");
+	}
 }

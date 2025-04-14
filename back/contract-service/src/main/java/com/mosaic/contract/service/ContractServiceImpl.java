@@ -1,13 +1,12 @@
 package com.mosaic.contract.service;
 
-import java.time.LocalDateTime;
-
-import org.springframework.stereotype.Service;
-
 import com.mosaic.core.model.Contract;
 import com.mosaic.core.model.ContractTransaction;
 import com.mosaic.core.model.Investment;
 import com.mosaic.core.model.Loan;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 public class ContractServiceImpl implements ContractService {
@@ -51,7 +50,7 @@ public class ContractServiceImpl implements ContractService {
 	@Override
 	public void addDelinquentMarginInterest(Loan loan) {
 		if (loan.getContracts() == null) {
-			throw new IllegalArgumentException("Loan is null");
+			throw new IllegalArgumentException("문제가 생겼어요!! Loan is null");
 		}
 		for (Contract contract : loan.getContracts()) {
 			contract.addExtraInterestDaily();

@@ -1,32 +1,18 @@
 package com.mosaic.core.model;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mosaic.core.model.status.InvestmentStatus;
 import com.mosaic.core.util.TimeUtil;
 import com.mosaic.investment.dto.RequestInvestmentDto;
 import com.mosaic.payload.AccountTransactionPayload;
+import jakarta.persistence.*;
+import lombok.*;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -64,9 +50,9 @@ public class Investment {
 	@Column(name = "expect_yield", precision = 18, scale = 5)
 	private BigDecimal expectYield;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "investment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
-    private List<Contract> contracts = new ArrayList<>();
+	@Builder.Default
+	@OneToMany(mappedBy = "investment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
+	private List<Contract> contracts = new ArrayList<>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
@@ -80,6 +66,7 @@ public class Investment {
 			.currentRate(0)
 			.dueDate(TimeUtil.dueDate(now, requestDto.targetWeeks()))
 			.accountId(memberId)
+			.expectYield(BigDecimal.ZERO)
 			.principal(requestDto.principal())
 			.amount(BigDecimal.valueOf(0))
 			.createdAt(now)
@@ -117,17 +104,25 @@ public class Investment {
 
 	public void subtractLiquidatedAmount(ContractTransaction transaction) {
 		this.amount = this.amount.add(transaction.getAmount());
-		this.currentRate = this.currentRate - transaction.getAmount().divide(this.principal).multiply(BigDecimal.valueOf(10000)).intValue();
+		this.currentRate = this.currentRate - transaction.getAmount()
+			.divide(this.principal, 5, BigDecimal.ROUND_DOWN)
+			.multiply(BigDecimal.valueOf(10000))
+			.intValue();
 	}
+
 	public void subtractExpectYield(Contract contract) {
 		this.expectYield = this.expectYield.subtract(contract.getExpectYield());
 	}
+
 	public void addExpectYield(Contract contract) {
 		this.expectYield = this.expectYield.add(contract.getExpectYield());
 	}
 
 	public void addCurrentRate(ContractTransaction interestTransaction, Contract contract) {
-		Integer adjustedRate = interestTransaction.getAmount().divide(this.principal).multiply(BigDecimal.valueOf(10000)).intValue(); //원금대비 이자액을 비율로 환산
+		Integer adjustedRate = interestTransaction.getAmount()
+			.divide(this.principal, 5, RoundingMode.DOWN)
+			.multiply(BigDecimal.valueOf(10000))
+			.intValue(); //원금대비 이자액을 비율로 환산
 		this.currentRate = this.currentRate + adjustedRate;
 	}
 }

@@ -1,31 +1,17 @@
 package com.mosaic.core.model;
 
+import com.mosaic.core.model.status.LoanStatus;
+import com.mosaic.loan.dto.CreateLoanRequestDto;
+import com.mosaic.loan.dto.CreditEvaluationResponseDto;
+import com.mosaic.payload.AccountTransactionPayload;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.mosaic.core.model.status.LoanStatus;
-import com.mosaic.loan.dto.CreateLoanRequestDto;
-import com.mosaic.loan.dto.CreditEvaluationResponseDto;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -65,12 +51,12 @@ public class Loan {
 	private LocalDateTime createdAt;
 
 	public static Loan requestOnlyFormLoan(CreateLoanRequestDto request,
-		CreditEvaluationResponseDto creditEvaluationResponseDto, LocalDateTime now) {
+		CreditEvaluationResponseDto creditEvaluationResponseDto, Integer memberId, LocalDateTime now) {
 		return Loan.builder()
-			.accountId(request.id())
+			.accountId(memberId)
 			.amount(BigDecimal.valueOf(0))
 			.createdAt(now)
-			.dueDate(request.due_date())
+			.dueDate(now.plusWeeks(request.targetWeeks()).toLocalDate())
 			.evaluationId(creditEvaluationResponseDto.getId())
 			.requestAmount(request.requestAmount())
 			.status(LoanStatus.PENDING)
@@ -107,5 +93,19 @@ public class Loan {
 		}
 	}
 
-	public void setStatusComplete() { this.status = LoanStatus.COMPLETED;}
+	public void setStatusComplete() {
+		this.status = LoanStatus.COMPLETED;
+	}
+
+	public void addAmount(AccountTransactionPayload accountTransactionComplete) {
+		this.amount = this.amount.add(accountTransactionComplete.amount());
+	}
+
+	public void repay(BigDecimal repaidAmountResidue) {
+		this.amount = repaidAmountResidue;
+	}
+
+	public void liquidate() {
+		this.status = LoanStatus.TRANSFERRED;
+	}
 }

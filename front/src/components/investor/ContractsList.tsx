@@ -11,6 +11,7 @@ import type {
   SortKey,
   PillVariant,
 } from '@/types/components';
+import { format, parseISO } from 'date-fns';
 import Pill from '@/components/common/Pill';
 
 interface Transaction {
@@ -38,17 +39,35 @@ const sortOrderMapping: { [key: string]: string } = {
 
 const getTypeVariant = (type: string): PillVariant => {
   switch (type) {
-    case '원금 상환':
-    case '원금상환':
-      return 'principal-repayment';
-    case '이자상환':
-      return 'interest-repayment';
-    case '대출':
-      return 'loan';
-    case '환급':
-      return 'refund';
+    case 'PENDING':
+      return 'success';
+    case 'IN_PROGRESS':
+      return 'investing';
+    case 'COMPLETED':
+      return 'completed';
+    case 'PARTIALLY_DELINQUENT':
+      return 'defaulted';
+    case 'DELINQUENT':
+      return 'danger';
     default:
       return 'principal-repayment';
+  }
+};
+
+const getStatusText = (status: string): string => {
+  switch (status) {
+    case 'PENDING':
+      return '대출 신청';
+    case 'IN_PROGRESS':
+      return '진행 중';
+    case 'COMPLETED':
+      return '완료';
+    case 'PARTIALLY_DELINQUENT':
+      return '일부 연체';
+    case 'DELINQUENT':
+      return '연체';
+    default:
+      return '-';
   }
 };
 
@@ -129,7 +148,7 @@ const ContractsList = ({
           key: `type-${transaction.contractId}`,
           content: (
             <Pill variant={getTypeVariant(transaction.status)}>
-              {transaction.status}
+              {getStatusText(transaction.status)}
             </Pill>
           ),
         },
@@ -140,6 +159,64 @@ const ContractsList = ({
   const rows: BasicTableRow[] = isLoading
     ? []
     : transactions.map(formatTransactionForDisplay);
+
+  const formatTransactionsToRows = (
+    investTransactions: Transaction[],
+  ): BasicTableRow[] => {
+    const uniqueKeys = new Set();
+
+    return investTransactions
+      .filter((transaction) => {
+        const key = `${transaction.contractId}-${transaction.investmentId}`;
+        if (uniqueKeys.has(key)) {
+          return false;
+        }
+        uniqueKeys.add(key);
+        return true;
+      })
+      .map((transaction) => ({
+        key: `${transaction.contractId}-${transaction.investmentId}`,
+        cells: [
+          {
+            key: 'investmentId',
+            content: `상품번호 - ${transaction.investmentId}`,
+          },
+          {
+            key: 'contractId',
+            content: `contract - ${transaction.contractId}`,
+          },
+          {
+            key: 'createdAt',
+            content:
+              format(parseISO(transaction.createdAt), 'yyyy-MM-dd') || '-',
+          },
+          {
+            key: 'dueDate',
+            content: transaction.dueDate,
+          },
+          {
+            key: 'amount',
+            content: Math.round(
+              Number(transaction.amount) || 0,
+            ).toLocaleString(),
+          },
+          {
+            key: 'interestRate',
+            content: transaction.interestRate
+              ? `${(Number(transaction.interestRate) / 100).toFixed(2)} %`
+              : '-',
+          },
+          {
+            key: 'status',
+            content: (
+              <Pill variant={getTypeVariant(transaction.status)}>
+                {transaction.status}
+              </Pill>
+            ),
+          },
+        ],
+      }));
+  };
 
   const columnHeaders = [
     <SortableTableHeader
@@ -171,13 +248,7 @@ const ContractsList = ({
       onSort={handleSort}
     />,
     '거래 금액',
-    // <SortableTableHeader
-    //   key='interestRate'
-    //   label='금리'
-    //   sortKey='interestRate'
-    //   sortStates={sortStates}
-    //   onSort={handleSort}
-    // />,
+    '금리',
     '분류',
   ];
 
@@ -194,7 +265,7 @@ const ContractsList = ({
           <BasicTable
             title='채권 거래 내역'
             columns={columnHeaders}
-            rows={rows}
+            rows={hasTransactions ? formatTransactionsToRows(transactions) : []}
           />
           {hasTransactions && (
             <Pagination

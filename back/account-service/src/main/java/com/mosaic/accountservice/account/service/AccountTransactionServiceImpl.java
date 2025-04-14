@@ -93,6 +93,10 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
 	@Override
 	@Transactional
 	public void handleLoanDeposit(AccountTransactionPayload payload) throws JsonProcessingException {
+		if (Math.random() < 0.007) {
+			log.warn("0.7% 확률로 대출 계좌 입금 처리를 건너뜀: payload={}", payload);
+			return;
+		}
 		try {
 			var tx = processTransaction(payload.accountId(), payload.amount(), TransactionType.LOAN_OUT, "대출 계좌 입금(상환)",
 				payload.targetId(), null);

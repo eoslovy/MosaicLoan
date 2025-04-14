@@ -1,14 +1,14 @@
 package com.mosaic.auth.service;
 
 public interface RedisService {
-    
-    void saveAccessToken(Integer memberId, String accessToken, long validityMillis);
 
-    String getAccessToken(Integer memberId);
+	void saveAccessToken(Integer memberId, String accessToken, long validityMillis);
 
-    void deleteAccessToken(Integer memberId);
+	String getAccessToken(Integer memberId);
 
-    void addToBlacklist(String token, long expirationMillis);
+	void deleteAccessToken(Integer memberId);
 
-    boolean isBlacklisted(String token);
+	void addToBlacklist(String token, long expirationMillis);
+
+	boolean isBlacklisted(String token);
 } 

@@ -42,4 +42,5 @@ public class EvaluationRequestController {
 		CreditEvaluationResponseDto latestEvaluation = creditEvaluationService.getLatestEvaluationByMemberId(memberId);
 		return latestEvaluation != null ? ResponseEntity.ok(latestEvaluation) : ResponseEntity.notFound().build();
 	}
+
 }

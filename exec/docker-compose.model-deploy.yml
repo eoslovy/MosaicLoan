@@ -1,0 +1,17 @@
+services:
+  model-credit:
+    container_name: model-credit
+    env_file:
+      - 환경변수.env
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-model-credit:${IMAGE_TAG:-latest}
+    restart: always
+    ports:
+      - "9000:8000"
+  model-news:
+    container_name: model-news
+    env_file:
+      - 환경변수.env
+    image: ${DOCKERHUB_USERNAME:-recreatekang}/mosaic-model-news:${IMAGE_TAG:-latest}
+    restart: always
+    ports:
+      - "9001:8000"

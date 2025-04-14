@@ -7,10 +7,10 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Props {
   recentLoans: {
-    dueDate: string;
-    principal: number;
-    interestRate: number;
-    amount: number;
+    dueDate: string | null;
+    outstandingAmount: number | null;
+    interestRate: number | null;
+    amount: number | null;
   }[];
 }
 
@@ -28,17 +28,23 @@ const LoanDetailSlider = ({ recentLoans }: Props) => {
   const getDDay = (dueDate: string) => {
     const now = new Date();
     const due = new Date(dueDate);
-    const diffTime = due.getTime() - now.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const diffTime = -(due.getTime() - now.getTime());
+    const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return days > 0 ? `+${days}` : days.toString();
   };
 
   const hasLoans = recentLoans.length > 0;
   const currentLoan = recentLoans[currentIndex];
-  // const loansLength = recentLoans.length > 5 ? 5 : recentLoans.length;
 
   return (
     <div className={styles.sliderWrapper}>
-      <Text text='진행중인 대출' size='lg' weight='bold' color='primary-blue' />
+      <Text
+        text='대출 신청 현황'
+        size='lg'
+        weight='bold'
+        color='primary-blue'
+      />
 
       <div className={styles.tableWrapper}>
         {hasLoans ? (
@@ -50,32 +56,43 @@ const LoanDetailSlider = ({ recentLoans }: Props) => {
                 <tr>
                   <td>상환 예정일</td>
                   <td colSpan={2}>
-                    {currentLoan.dueDate}
-                    <span className={styles.badge}>
-                      D-{getDDay(currentLoan.dueDate)}
-                    </span>
+                    {currentLoan.dueDate ? (
+                      <>
+                        {currentLoan.dueDate}
+                        <span className={styles.badge}>
+                          D{getDDay(currentLoan.dueDate)}
+                        </span>
+                      </>
+                    ) : (
+                      <span className={styles.badge}>보류중</span>
+                    )}
                   </td>
                 </tr>
                 <tr>
                   <td>원금</td>
                   <td colSpan={2}>
-                    {currentLoan?.principal?.toLocaleString()}
+                    {currentLoan.dueDate
+                      ? (currentLoan.outstandingAmount?.toLocaleString() ?? '-')
+                      : '-'}
                   </td>
                 </tr>
                 <tr>
                   <td>금리</td>
                   <td colSpan={2}>
-                    {typeof currentLoan.interestRate === 'number'
-                      ? `${(currentLoan.interestRate / 100).toFixed(2)} %`
+                    {currentLoan.dueDate
+                      ? `${((currentLoan.interestRate ?? 0) / 10000).toFixed(2)} %`
                       : '-'}
                   </td>
                 </tr>
                 <tr>
                   <td>총 상환액</td>
                   <td colSpan={2}>
-                    {(
-                      currentLoan.principal + currentLoan.amount
-                    )?.toLocaleString()}
+                    {currentLoan.dueDate
+                      ? (
+                          (currentLoan.outstandingAmount ?? 0) +
+                          (currentLoan.amount ?? 0)
+                        ).toLocaleString()
+                      : '-'}
                   </td>
                 </tr>
               </tbody>

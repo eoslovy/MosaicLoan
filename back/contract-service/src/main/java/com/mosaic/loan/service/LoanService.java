@@ -1,33 +1,33 @@
 package com.mosaic.loan.service;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mosaic.core.model.Loan;
-import com.mosaic.investment.dto.WithdrawalInvestmentDto;
 import com.mosaic.loan.dto.CreateLoanRequestDto;
-import com.mosaic.loan.dto.RepayLoanDto;
 import com.mosaic.payload.AccountTransactionPayload;
+import jakarta.transaction.Transactional;
+
+import java.time.LocalDateTime;
 
 public interface LoanService {
-	void createLoan(CreateLoanRequestDto request, Boolean isBot) throws JsonProcessingException;
-
-	void publishLoanWithdrawalRequest(WithdrawalInvestmentDto requestDto, Boolean isBot) throws
+	void createLoan(CreateLoanRequestDto request, Integer memberId, LocalDateTime now, Boolean isBot) throws
 		JsonProcessingException;
 
-	void manageInterestOfDelinquentLoans(LocalDateTime now);
+	@Transactional
+	void manageInterestOfDelinquentLoans(LocalDateTime now, Boolean isBot);
 
-	void liquidateScheduledDelinquentLoans(LocalDateTime now) throws Exception;
-
-	void liquidateLoan(Loan loan, LocalDateTime now) throws Exception;
+	@Transactional
+	void liquidateScheduledDelinquentLoans(LocalDateTime now, Boolean isBot) throws Exception;
 
 	//상환입금
-	void publishAndCalculateLoanRepayRequest(RepayLoanDto requestDto, Boolean isBot) throws
+	void publishAndCalculateLoanRepayRequest(Loan loan,
+		Boolean isBot, LocalDateTime now) throws JsonProcessingException;
+
+	void completeLoanDepositRequest(AccountTransactionPayload accountTransactionComplete) throws
 		JsonProcessingException;
 
-	void completeLoanRepayRequest(AccountTransactionPayload requestDto) throws Exception;
+	void findRepaymentDueLoansAndRequestRepayment(LocalDateTime time, Boolean isBot) throws JsonProcessingException;
 
-	void rollbackLoanWithdrawal(AccountTransactionPayload payload);
+	void executeDueLoanRepayments(LocalDateTime time, Boolean isBot) throws Exception;
 
-	void failLoanRepayRequest(AccountTransactionPayload accountTransactionFail);
+	// void executeLoanRepaymentsById(Integer loanId, LocalDateTime now, Boolean isBot) throws Exception;
 }
